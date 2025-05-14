@@ -1,6 +1,8 @@
 spring:
   config:
     import: optional:file:.env
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration
   datasource:
     url: jdbc:${DB_TYPE:mysql}://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:test}?${DB_PARAMS}
     username: ${DB_USERNAME}

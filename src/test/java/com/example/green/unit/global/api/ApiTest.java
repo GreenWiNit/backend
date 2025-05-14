@@ -1,18 +1,21 @@
-package com.example.green.global.api;
+package com.example.green.unit.global.api;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-@WebMvcTest(ApiDummyController.class)
 class ApiTest {
 
-	@Autowired
 	private MockMvc mockMvc;
+
+	@BeforeEach
+	void setUp() {
+		mockMvc = MockMvcBuilders.standaloneSetup(new ApiDummyController()).build();
+	}
 
 	@Test
 	void API_응답을_가져온다() throws Exception {

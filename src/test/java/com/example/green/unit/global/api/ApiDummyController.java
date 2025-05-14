@@ -1,7 +1,10 @@
-package com.example.green.global.api;
+package com.example.green.unit.global.api;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.example.green.global.api.ApiResponse;
+import com.example.green.global.api.NoContent;
 
 @RestController
 public class ApiDummyController {
