@@ -26,8 +26,20 @@ repositories {
 
 dependencies {
     // spring boot
-    //implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    // dotenv - 환경 변수 관리용
+    implementation 'me.paulschwarz:spring-dotenv:4.0.0'
+
+    // DB - local & dev & prod -> 추후 변경 가능
+    implementation 'mysql:mysql-connector-java:8.0.33'
+
+    // QueryDSL
+    implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
+    annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jakarta"
+    annotationProcessor 'jakarta.annotation:jakarta.annotation-api'
+    annotationProcessor 'jakarta.persistence:jakarta.persistence-api'
 
     // lombok
     compileOnly 'org.projectlombok:lombok'
@@ -38,6 +50,7 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
+// 아래로 Test 관련
 tasks.named('test') {
     useJUnitPlatform()
 }
@@ -47,19 +60,40 @@ jacoco {
     toolVersion = "0.8.13"
 }
 
-def classDirectoriesFilter = {
-    project.fileTree(
-            dir: it,
-            // 상황에 따라 제거할 클래스 및 패키지 추가
-            excludes: ['**/GreenApplication.class']
-    )
+// QClass 패턴을 찾는 메서드
+def findQClassPatterns() {
+    def excludedPatterns = []
+    def generatedDir = layout.buildDirectory.dir("generated").get().asFile
+
+    fileTree(generatedDir).include("**/Q*.java")
+            .each { File file ->
+                def className = file.name.replace('.java', '')
+                excludedPatterns.add("**/${className}.class")
+            }
+
+    return excludedPatterns
+}
+
+// Jacoco 제외 항목 추가
+def createFilteredClassDirectories() {
+    def defaultExcludedPatterns = [
+            '**/GreenApplication.class',
+            '**/infra/**'
+    ]
+
+    return sourceSets.main.output.classesDirs.files.collect { dirPath ->
+        fileTree(
+                dir: dirPath,
+                excludes: defaultExcludedPatterns + findQClassPatterns()
+        )
+    }
 }
 
 jacocoTestReport {
     dependsOn test
 
     afterEvaluate {
-        classDirectories.setFrom(files(classDirectories.files.collect(classDirectoriesFilter)))
+        classDirectories.setFrom(files(createFilteredClassDirectories()))
     }
 
     reports {
@@ -74,7 +108,7 @@ jacocoTestReport {
 
 jacocoTestCoverageVerification {
     afterEvaluate {
-        classDirectories.setFrom(files(classDirectories.files.collect(classDirectoriesFilter)))
+        classDirectories.setFrom(files(createFilteredClassDirectories()))
     }
 
     violationRules {

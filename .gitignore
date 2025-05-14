@@ -211,3 +211,9 @@ gradle-app.setting
 # End of https://www.toptal.com/developers/gitignore/api/gradle,windows,java,intellij,git
 
 .idea/**
+
+# 모든 .env 파일 무시
+.env*
+
+# .env.example은 제외 (포함)
+!src/main/resources/.env.example

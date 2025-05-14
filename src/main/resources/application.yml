@@ -1,0 +1,28 @@
+spring:
+  config:
+    import: optional:file:.env
+  datasource:
+    url: jdbc:${DB_TYPE:mysql}://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:test}?${DB_PARAMS}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: ${DB_DRIVER:com.mysql.cj.jdbc.Driver}
+  jpa:
+    hibernate:
+      ddl-auto: ${DB_DDL_AUTO:create-drop}
+      naming:
+        physical-strategy: com.example.green.infra.database.strategy.UpperSnakeNamingStrategy
+    properties:
+      hibernate:
+        default_batch_fetch_size: ${BATCH_FETCH_SIZE:100}
+        format_sql: ${FORMAT_SQL:false}
+    open-in-view: false
+    defer-datasource-initialization: ${DEFER_INIT:false}
+  sql:
+    init:
+      data-locations: ${SQL_DATA_LOCATION}
+      mode: ${SQL_INIT_MODE:never}
+
+logging:
+  level:
+    org.springframework: ${LOG_LEVEL_SPRING:INFO}
+    org.hibernate.SQL: ${LOG_LEVEL_SQL:DEBUG}
