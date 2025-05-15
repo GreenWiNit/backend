@@ -10,8 +10,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import com.example.green.global.error.GlobalExceptionHandler;
 import com.example.green.global.error.exception.GlobalExceptionMessage;
+import com.example.green.unit.dummy.ErrorDummyController;
 
-public class ExceptionHandlerTest {
+class ExceptionHandlerTest {
 
 	private MockMvc mockMvc;
 
@@ -33,7 +34,7 @@ public class ExceptionHandlerTest {
 	@Test
 	void endpoint가_없으면_no_resource_예외가_발생한다() throws Exception {
 		// given
-		GlobalExceptionMessage message = GlobalExceptionMessage.NO_RESOURCE_EXCEPTION_MESSAGE;
+		GlobalExceptionMessage message = GlobalExceptionMessage.NO_RESOURCE_MESSAGE;
 
 		// when & then
 		mockMvc.perform(get("/no-endpoint"))
