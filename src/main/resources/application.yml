@@ -28,3 +28,9 @@ logging:
   level:
     org.springframework: ${LOG_LEVEL_SPRING:INFO}
     org.hibernate.SQL: ${LOG_LEVEL_SQL:DEBUG}
+
+decorator:
+  datasource:
+    p6spy:
+      enable-logging: ${P6_SPY:false}
+      multiline: true

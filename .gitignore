@@ -217,3 +217,4 @@ gradle-app.setting
 
 # .env.example은 제외 (포함)
 !src/main/resources/.env.example
+./logs/**

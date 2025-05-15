@@ -28,7 +28,7 @@ public class GlobalExceptionHandler {
 	// 이유를 알 수 없는 에러
 	@ExceptionHandler
 	public ResponseEntity<ExceptionResponse> handleException(Exception exception) {
-		log.error("{} : {}", exception.getClass(), exception.getMessage());
+		log.error("{} : {}", exception.getClass(), exception.toString());
 		return buildExceptionResponse(GlobalExceptionMessage.INTERNAL_SERVER_ERROR_MESSAGE);
 	}
 
@@ -84,13 +84,13 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<ExceptionResponse> handleHttpMediaTypeNotSupportedException(
 		HttpMediaTypeNotSupportedException exception
 	) {
-		log.error("{} : {}", exception.getClass(), exception.getMessage());
+		log.error("[{}] : {}", exception.getClass(), exception.getMessage());
 		return buildExceptionResponse(GlobalExceptionMessage.UNSUPPORTED_MEDIA_TYPE_MESSAGE);
 	}
 
 	@ExceptionHandler
-	public ResponseEntity<ExceptionResponse> handleBadRequestException(BusinessException exception) {
-		log.error("{} : {}", exception.getClass(), exception.getMessage());
+	public ResponseEntity<ExceptionResponse> handleBusinessException(BusinessException exception) {
+		log.error("{} {}", exception.extractExceptionLocation(), exception.getMessage());
 		return buildExceptionResponse(exception.getExceptionMessage());
 	}
 

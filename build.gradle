@@ -37,6 +37,9 @@ dependencies {
     // DB - local & dev & prod -> 추후 변경 가능
     implementation 'mysql:mysql-connector-java:8.0.33'
 
+    // p6spy
+    implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.10.0'
+
     // QueryDSL
     implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
     annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jakarta"
