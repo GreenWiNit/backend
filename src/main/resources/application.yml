@@ -1,4 +1,11 @@
 spring:
+  cloud:
+    aws:
+      credentials:
+        access-key: ${AWS_ACCESS_KEY}
+        secret-key: ${AWS_SECRET_KEY}
+      region:
+        static: ${AWS_STATIC_REGION}
   config:
     import: optional:file:.env
   autoconfigure:
@@ -34,3 +41,8 @@ decorator:
     p6spy:
       enable-logging: ${P6_SPY:false}
       multiline: true
+
+app:
+  storage:
+    bucket: ${STORAGE_BUCKET}
+    base-url: ${STORAGE_BASE_URL}
