@@ -34,3 +34,7 @@ decorator:
     p6spy:
       enable-logging: ${P6_SPY:false}
       multiline: true
+
+springdoc:
+  swagger-ui:
+    path: ${SWAGGER_PATH:/swagger-ui.html}
