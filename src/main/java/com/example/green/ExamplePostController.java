@@ -23,8 +23,6 @@ import com.example.green.global.api.ExamplePostResponseMessage;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -41,7 +39,7 @@ public class ExamplePostController {
 	@ApiResponse(
 		responseCode = "200",
 		description = "게시글 생성 성공",
-		content = @Content(schema = @Schema(implementation = PostResponse.class))
+		useReturnTypeSchema = true
 	)
 	@PostMapping
 	public ApiTemplate<PostResponse> createPost(@Valid @RequestBody PostRequest request) {
@@ -60,7 +58,7 @@ public class ExamplePostController {
 	@ApiResponse(
 		responseCode = "200",
 		description = "게시글 수정 성공",
-		content = @Content(schema = @Schema(implementation = PostResponse.class))
+		useReturnTypeSchema = true
 	)
 	@PutMapping("/{postId}")
 	public ApiTemplate<PostResponse> updatePost(
@@ -89,7 +87,7 @@ public class ExamplePostController {
 	@ApiResponse(
 		responseCode = "200",
 		description = "게시글 삭제 성공",
-		content = @Content(schema = @Schema(implementation = Void.class))
+		useReturnTypeSchema = true
 	)
 	@DeleteMapping("/{postId}")
 	public ApiTemplate<Void> deletePost(
@@ -110,7 +108,7 @@ public class ExamplePostController {
 	@ApiResponse(
 		responseCode = "200",
 		description = "게시글 조회 성공",
-		content = @Content(schema = @Schema(implementation = PostResponse.class))
+		useReturnTypeSchema = true
 	)
 	@GetMapping("/{postId}")
 	public ApiTemplate<PostResponse> getPostById(
@@ -138,7 +136,7 @@ public class ExamplePostController {
 	@ApiResponse(
 		responseCode = "200",
 		description = "게시글 목록 조회 성공",
-		content = @Content(schema = @Schema(implementation = PostListResponse.class))
+		useReturnTypeSchema = true
 	)
 	@GetMapping
 	public ApiTemplate<PostListResponse> getPosts(
