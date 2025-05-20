@@ -1,4 +1,4 @@
-package com.example.green.global.utils.base;
+package com.example.green.unit.utils;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -7,9 +7,11 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 
-class DefaultUriValidatorTest {
+import com.example.green.global.utils.UriValidator;
 
-	private final DefaultUriValidator validator = new DefaultUriValidator();
+class UriValidatorTest {
+
+	private final UriValidator validator = new UriValidator();
 
 	@ParameterizedTest
 	@NullAndEmptySource

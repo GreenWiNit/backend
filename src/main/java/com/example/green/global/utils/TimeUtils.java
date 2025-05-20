@@ -1,33 +1,38 @@
-package com.example.green.global.utils.base;
+package com.example.green.global.utils;
 
+import java.text.SimpleDateFormat;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.Date;
 
 import org.springframework.stereotype.Component;
 
-import com.example.green.global.utils.DateUtils;
-
 @Component
-public class DefaultDateUtils implements DateUtils {
+public class TimeUtils {
 
 	private final Clock clock;
 
-	public DefaultDateUtils() {
+	public TimeUtils() {
 		this(Clock.systemDefaultZone());
 	}
 
-	public DefaultDateUtils(Clock clock) {
+	public TimeUtils(Clock clock) {
 		this.clock = clock;
 	}
 
-	@Override
 	public Date getDate() {
 		return Date.from(Instant.now(clock));
 	}
 
-	@Override
 	public Date getDate(long dateTime) {
 		return new Date(dateTime);
+	}
+
+	public long getCurrentTimeMillis() {
+		return Instant.now(clock).toEpochMilli();
+	}
+
+	public String getFormattedDate(String format) {
+		return new SimpleDateFormat(format).format(getDate());
 	}
 }
