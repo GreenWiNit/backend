@@ -2,7 +2,7 @@ package com.example.green.infra.storage;
 
 import org.springframework.stereotype.Component;
 
-import com.example.green.domain.file.secondary.FileUploader;
+import com.example.green.domain.file.secondary.StorageHelper;
 import com.example.green.global.error.exception.StorageException;
 
 import lombok.RequiredArgsConstructor;
@@ -13,23 +13,28 @@ import software.amazon.awssdk.services.s3.model.S3Exception;
 
 @Component
 @RequiredArgsConstructor
-public class S3Uploader implements FileUploader {
+public class S3StorageHelper implements StorageHelper {
 
 	private static final String IMAGE_KEY_SUFFIX = "images/";
 
 	private final S3Properties s3Properties;
 	private final S3Client s3Client;
 
-	public String uploadImage(String key, byte[] content, String contentType) {
+	@Override
+	public void uploadImage(String key, byte[] content, String contentType) {
 		try {
 			String fullKey = IMAGE_KEY_SUFFIX + key;
 			PutObjectRequest request = generatePutObjectRequest(fullKey, contentType);
 			s3Client.putObject(request, RequestBody.fromBytes(content));
-
-			return String.format("%s/%s", s3Properties.getBaseUrl(), fullKey);
 		} catch (S3Exception e) {
 			throw new StorageException(e);
 		}
+	}
+
+	@Override
+	public String getFullUrl(String key) {
+		String fullKey = IMAGE_KEY_SUFFIX + key;
+		return String.format("%s/%s", s3Properties.getBaseUrl(), fullKey);
 	}
 
 	private PutObjectRequest generatePutObjectRequest(String key, String contentType) {
