@@ -13,15 +13,20 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 public class BaseEntity {
-    // Entity가 생성되어 저장될 때 시간이 자동 저장됩니다.
+
     @CreatedDate
     private LocalDateTime createdDate;
 
-    // 조회한 Entity 값을 변경할 때 시간이 자동 저장됩니다.
     @LastModifiedDate
     private LocalDateTime modifiedDate;
 
-    // 삭제 시점
-    private LocalDateTime deletedDate;
+    // 생성자 정보 (현재는 Security 설정이 되어있지 않아 주석처리)
+    // @CreatedBy
+    private String createdBy;
 
+    // 수정자 정보 (현재는 Security 설정이 되어있지 않아 주석처리)
+    // @LastModifiedBy
+    private String lastModifiedBy;
+
+    private boolean isDeleted = false;
 }
