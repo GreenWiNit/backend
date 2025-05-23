@@ -1,4 +1,4 @@
-package com.example.green.global.api;
+package com.example.green.global.docs;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
