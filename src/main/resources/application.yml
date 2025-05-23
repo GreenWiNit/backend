@@ -30,6 +30,10 @@ spring:
     init:
       data-locations: ${SQL_DATA_LOCATION}
       mode: ${SQL_INIT_MODE:never}
+  servlet:
+    multipart:
+      max-file-size: ${MAX_FILE_SIZE:10MB}
+      max-request-size: ${MAX_REQUEST_SIZE:35MB}
 
 logging:
   level:
