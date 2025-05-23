@@ -23,36 +23,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 @Documented
 @ApiResponses({
 	@ApiResponse(
-		responseCode = "400",
-		description = "잘못된 요청 (입력값 검증 실패, 타입 오류 등)",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(implementation = ExceptionResponse.class),
-			examples = {
-				@ExampleObject(
-					name = "ValidationError_MissingTitle",
-					summary = "유효성 검증 실패 예시 - 제목 미기입",
-					value = """
-					{
-					  "success": false,
-					  "message": "제목은 필수 입력값입니다."
-					}
-				"""
-				),
-				@ExampleObject(
-					name = "TypeMismatch_IdShouldBeNumber",
-					summary = "타입 오류 - 숫자 필드에 문자 입력",
-					value = """
-					{
-					  "success": false,
-					  "message": "게시글 ID는 숫자여야 합니다."
-					}
-				"""
-				)
-			}
-		)
-	),
-	@ApiResponse(
 		responseCode = "401",
 		description = "인증되지 않은 사용자 (토큰 누락 또는 만료)",
 		content = @Content(
@@ -82,7 +52,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 				value = """
 					{
 					  "success": false,
-					  "message": "요청하신 게시글을 찾을 수 없습니다."
+					  "message": "요청하신 페이지를 찾을 수 없습니다."
 					}
 				"""
 			)

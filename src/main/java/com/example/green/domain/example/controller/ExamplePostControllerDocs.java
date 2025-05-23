@@ -5,6 +5,7 @@ import com.example.green.domain.example.dto.PostRequest;
 import com.example.green.domain.example.dto.PostResponse;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.NoContent;
+import com.example.green.global.docs.ApiError400;
 import com.example.green.global.docs.ApiErrorStandard;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,11 +19,13 @@ public interface ExamplePostControllerDocs {
 
 	@Operation(summary = "게시글 생성", description = "게시글을 생성합니다.")
 	@ApiErrorStandard
+	@ApiError400
 	@ApiResponse(responseCode = "200", description = "게시글 생성 성공", useReturnTypeSchema = true)
 	ApiTemplate<PostResponse> createPost(PostRequest request);
 
 	@Operation(summary = "게시글 수정", description = "게시글 ID로 게시글을 수정합니다.")
 	@ApiErrorStandard
+	@ApiError400
 	@ApiResponse(responseCode = "200", description = "게시글 수정 성공", useReturnTypeSchema = true)
 	ApiTemplate<PostResponse> updatePost(
 		@Parameter(name = "postId", description = "수정할 게시글의 ID", in = ParameterIn.PATH, required = true, example = "1") Long postId,
