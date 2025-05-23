@@ -1,9 +1,13 @@
 package com.example.green.infra.storage;
 
-import org.springframework.stereotype.Component;
+import java.io.IOException;
+import java.io.InputStream;
 
-import com.example.green.domain.file.secondary.StorageHelper;
-import com.example.green.global.error.exception.StorageException;
+import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.example.green.domain.file.exception.StorageException;
+import com.example.green.domain.file.outport.StorageHelper;
 
 import lombok.RequiredArgsConstructor;
 import software.amazon.awssdk.core.sync.RequestBody;
@@ -21,27 +25,28 @@ public class S3StorageHelper implements StorageHelper {
 	private final S3Client s3Client;
 
 	@Override
-	public void uploadImage(String key, byte[] content, String contentType) {
-		try {
+	public void uploadImage(String key, MultipartFile imageFile) {
+		try (InputStream inputStream = imageFile.getInputStream()) {
 			String fullKey = IMAGE_KEY_SUFFIX + key;
-			PutObjectRequest request = generatePutObjectRequest(fullKey, contentType);
-			s3Client.putObject(request, RequestBody.fromBytes(content));
-		} catch (S3Exception e) {
+			PutObjectRequest request = generatePutObjectRequest(fullKey, imageFile);
+			s3Client.putObject(request, RequestBody.fromInputStream(inputStream, imageFile.getSize()));
+		} catch (IOException | S3Exception e) {
 			throw new StorageException(e);
 		}
 	}
 
 	@Override
-	public String getFullUrl(String key) {
+	public String getFullImageUrl(String key) {
 		String fullKey = IMAGE_KEY_SUFFIX + key;
 		return String.format("%s/%s", s3Properties.getBaseUrl(), fullKey);
 	}
 
-	private PutObjectRequest generatePutObjectRequest(String key, String contentType) {
+	private PutObjectRequest generatePutObjectRequest(String key, MultipartFile file) {
 		return PutObjectRequest.builder()
 			.bucket(s3Properties.getBucket())
 			.key(key)
-			.contentType(contentType)
+			.contentType(file.getContentType())
+			.contentLength(file.getSize())
 			.build();
 	}
 }

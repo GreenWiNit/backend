@@ -1,4 +1,4 @@
-package com.example.green.global.error.exception;
+package com.example.green.domain.file.exception;
 
 public class StorageException extends RuntimeException {
 
