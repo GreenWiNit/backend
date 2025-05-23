@@ -18,7 +18,19 @@ class IdUtilsTest {
 		String result = idUtils.generateUniqueId(4);
 
 		// then
-		String expected = fixedUuid.substring(0, 4);
-		assertThat(result).isEqualTo(expected);
+		assertThat(result).isEqualTo("abcd");
+	}
+
+	@Test
+	void 고유한_ID는_매번_다른_값을_생성한다() {
+		// given
+		IdUtils idUtils = new IdUtils();
+
+		// when
+		String firstUuid = idUtils.generateUniqueId(8);
+		String secondUuid = idUtils.generateUniqueId(8);
+
+		// then
+		assertThat(firstUuid).isNotEqualTo(secondUuid);
 	}
 }

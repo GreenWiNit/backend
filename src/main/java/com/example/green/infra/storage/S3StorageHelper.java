@@ -6,7 +6,6 @@ import java.io.InputStream;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.example.green.domain.file.exception.StorageException;
 import com.example.green.domain.file.outport.StorageHelper;
 
 import lombok.RequiredArgsConstructor;
@@ -31,7 +30,7 @@ public class S3StorageHelper implements StorageHelper {
 			PutObjectRequest request = generatePutObjectRequest(fullKey, imageFile);
 			s3Client.putObject(request, RequestBody.fromInputStream(inputStream, imageFile.getSize()));
 		} catch (IOException | S3Exception e) {
-			throw new StorageException(e);
+			throw new RuntimeException(e);
 		}
 	}
 
