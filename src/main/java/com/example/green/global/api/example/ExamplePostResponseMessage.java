@@ -1,4 +1,6 @@
-package com.example.green.global.api;
+package com.example.green.global.api.example;
+
+import com.example.green.global.api.ResponseMessage;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
