@@ -14,13 +14,8 @@ import com.example.green.domain.file.exception.FileExceptionMessage;
 @Component
 public class ImageValidator {
 
-	private static final String IMAGE_PREFIX = "image/";
-	private static final List<String> ALLOWED_IMAGE_EXTENSIONS = Arrays.asList(
-		// 일반 이미지
-		".jpg", ".jpeg", ".png", ".gif", ".webp", ".bmp", ".tiff", ".tif",
-		// 아이콘 관련
-		".svg", ".ico", ".icon"
-	);
+	private static final List<String> ALLOWED_CONTENT_TYPES = Arrays.asList("image/jpeg", "image/png");
+	private static final List<String> ALLOWED_IMAGE_EXTENSIONS = Arrays.asList(".jpg", ".jpeg", ".png");
 
 	private final long maxImageSize;
 
@@ -49,7 +44,7 @@ public class ImageValidator {
 	}
 
 	private void validateImageContentType(String contentType) {
-		if (contentType == null || !contentType.startsWith(IMAGE_PREFIX)) {
+		if (contentType == null || !ALLOWED_CONTENT_TYPES.contains(contentType)) {
 			throw new FileException(FileExceptionMessage.INVALID_IMAGE_TYPE);
 		}
 	}

@@ -61,8 +61,8 @@ class ImageValidatorTest {
 
 	@ParameterizedTest
 	@NullSource
-	@ValueSource(strings = {"text/..", "application/..", "multipart/..", "audio/..", "text/.."})
-	void 이미지_파일의_content_type이_image_형식이_아니라면_검증이_실패한다(String contentType) {
+	@ValueSource(strings = {"text/..", "application/..", "multipart/..", "audio/..", "text/..", "image/bmp"})
+	void 허용된_이미지_content_type이_아니라면_검증이_실패한다(String contentType) {
 		// given
 		when(multipartFile.getOriginalFilename()).thenReturn("validImage.jpeg");
 		when(multipartFile.getContentType()).thenReturn(contentType);
@@ -88,11 +88,7 @@ class ImageValidatorTest {
 
 	@ParameterizedTest
 	@CsvSource(value = {
-		// 일반 이미지
-		"test.jpg-image/jpg-0", "test.jpeg-image/jpeg-1", "test.png-image/png-2", "test.gif-image/gif-3",
-		"test.webp-image/webp-4", "test.bmp-image/bmp-5", "test.tiff-image/tiff-6", "test.tif-image/tif-7",
-		// 아이콘 관련
-		"test.svg-image/svg-8", "test.ico-image/ico-9", "test.icon-image/icon-10"
+		"test.jpg-image/jpeg-0", "test.jpeg-image/jpeg-1", "test.png-image/png-2"
 	}, delimiter = '-')
 	void 유효한_이미지_파일은_검증에_성공한다(String originalFilename, String contentType, long size) {
 		// given
