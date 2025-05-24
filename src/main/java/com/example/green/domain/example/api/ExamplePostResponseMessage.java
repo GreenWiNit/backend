@@ -1,4 +1,4 @@
-package com.example.green.global.api.example;
+package com.example.green.domain.example.api;
 
 import com.example.green.global.api.ResponseMessage;
 

@@ -13,12 +13,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.green.domain.example.api.ExamplePostResponseMessage;
 import com.example.green.domain.example.dto.PostListResponse;
 import com.example.green.domain.example.dto.PostRequest;
 import com.example.green.domain.example.dto.PostResponse;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.NoContent;
-import com.example.green.global.api.example.ExamplePostResponseMessage;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

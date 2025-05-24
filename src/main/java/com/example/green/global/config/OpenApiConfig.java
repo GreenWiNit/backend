@@ -1,4 +1,4 @@
-package com.example.green.global;
+package com.example.green.global.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
