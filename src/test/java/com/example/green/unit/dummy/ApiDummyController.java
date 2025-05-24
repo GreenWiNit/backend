@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.green.global.api.ApiResponse;
+import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.NoContent;
 
 import jakarta.validation.Valid;
@@ -15,8 +15,8 @@ import jakarta.validation.Valid;
 public class ApiDummyController {
 
 	@GetMapping("/api-response")
-	public ApiResponse<String> getApi() {
-		return ApiResponse.ok(() -> "성공", "OK");
+	public ApiTemplate<String> getApi() {
+		return ApiTemplate.ok(() -> "성공", "OK");
 	}
 
 	@GetMapping("/no-content")
