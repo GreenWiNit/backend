@@ -1,6 +1,23 @@
 package com.example.green.global.utils;
 
-public interface UriValidator {
+import java.net.URI;
+import java.net.URISyntaxException;
 
-	boolean isValidUri(String uriString);
+import org.springframework.stereotype.Component;
+
+@Component
+public class UriValidator {
+
+	public boolean isValidUri(String uriString) {
+		if (uriString == null || uriString.trim().isEmpty()) {
+			return false;
+		}
+
+		try {
+			URI uri = new URI(uriString);
+			return uri.isAbsolute();
+		} catch (URISyntaxException e) {
+			return false;
+		}
+	}
 }
