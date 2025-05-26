@@ -90,7 +90,7 @@ def findQClassPatterns() {
 def createFilteredClassDirectories() {
     def defaultExcludedPatterns = [
             '**/GreenApplication.class',
-            '**/infra/**', '**/config/**', '**/docs/**', '**/example/**'
+            '**/infra/**', '**/config/**', '**/docs/**', '**/com/example/green/**/example/**'
     ]
 
     return sourceSets.main.output.classesDirs.files.collect { dirPath ->
