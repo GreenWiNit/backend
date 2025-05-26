@@ -1,4 +1,4 @@
-package com.example.green.domain.file.domain;
+package com.example.green.domain.file.domain.vo;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -10,7 +10,6 @@ import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.example.green.domain.file.domain.vo.FileMetaData;
 import com.example.green.domain.file.exception.FileException;
 import com.example.green.domain.file.exception.FileExceptionMessage;
 

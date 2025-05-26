@@ -31,7 +31,7 @@ class FileKeyGeneratorTest {
 		given(timeUtils.getCurrentTimeMillis()).willReturn(1703318400000L);
 
 		// when
-		String result = fileKeyGenerator.generate("profile", "test.png");
+		String result = fileKeyGenerator.generate("profile", ".png");
 
 		// then
 		String expected = "profile/ab/20250523/abcd1234_1703318400000.png";
@@ -46,25 +46,10 @@ class FileKeyGeneratorTest {
 		given(timeUtils.getCurrentTimeMillis()).willReturn(1703318400000L);
 
 		// when
-		String result = fileKeyGenerator.generate("profile", "noExtensionFile");
+		String result = fileKeyGenerator.generate("profile", "");
 
 		// then
 		String expected = "profile/ab/20250523/abcd1234_1703318400000";
-		assertThat(result).isEqualTo(expected);
-	}
-
-	@Test
-	void 숨김_파일도_파일키를_생성한다() {
-		// given
-		given(idUtils.generateUniqueId(8)).willReturn("abcd1234");
-		given(timeUtils.getFormattedDate("yyyyMMdd")).willReturn("20250523");
-		given(timeUtils.getCurrentTimeMillis()).willReturn(1703318400000L);
-
-		// when
-		String result = fileKeyGenerator.generate("profile", ".gitignore");
-
-		// then
-		String expected = "profile/ab/20250523/abcd1234_1703318400000.gitignore";
 		assertThat(result).isEqualTo(expected);
 	}
 }

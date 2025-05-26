@@ -18,22 +18,14 @@ public class FileKeyGenerator {
 	private final IdUtils idUtils;
 	private final TimeUtils timeUtils;
 
-	public String generate(String purpose, String originalFilename) {
+	public String generate(String purpose, String extension) {
 		return String.format(FILE_KEY_FORMAT,
 			purpose,
 			idUtils.generateUniqueId(FILE_KEY_SUFFIX_LENGTH).substring(0, 2),
 			timeUtils.getFormattedDate(FILE_DATE_FORMAT),
 			idUtils.generateUniqueId(FILE_KEY_SUFFIX_LENGTH),
 			timeUtils.getCurrentTimeMillis(),
-			extractExtension(originalFilename));
-	}
-
-	private String extractExtension(String originalFileName) {
-		String lowerCaseFileName = originalFileName.toLowerCase();
-		int index = lowerCaseFileName.lastIndexOf(".");
-		if (index < 0) {
-			return "";
-		}
-		return lowerCaseFileName.substring(index);
+			extension
+		);
 	}
 }
