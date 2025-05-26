@@ -1,5 +1,7 @@
 package com.example.green.domain.file.domain;
 
+import org.hibernate.annotations.DynamicUpdate;
+
 import com.example.green.domain.common.BaseEntity;
 import com.example.green.domain.file.domain.vo.FileMetaData;
 import com.example.green.domain.file.domain.vo.FileStatus;
@@ -27,6 +29,7 @@ import lombok.NoArgsConstructor;
 })
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@DynamicUpdate
 public class FileEntity extends BaseEntity {
 
 	@Id

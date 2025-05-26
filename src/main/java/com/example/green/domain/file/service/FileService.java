@@ -44,13 +44,14 @@ public class FileService implements FileManager {
 
 	@Override
 	public void confirmUsingImage(String imageUrl) {
-		imageValidator.validateUrl(imageUrl);
-
-		String imageKey = getImageKey(imageUrl);
-		FileEntity fileEntity = fileJpaRepository.findByFileKey(imageKey)
-			.orElseThrow(() -> new FileException(FileExceptionMessage.NOT_FOUND_FILE));
-
+		FileEntity fileEntity = getFileEntityFromImageUrl(imageUrl);
 		fileEntity.markAsPermanent();
+	}
+
+	@Override
+	public void unUseImage(String imageUrl) {
+		FileEntity fileEntity = getFileEntityFromImageUrl(imageUrl);
+		fileEntity.markDeleted();
 	}
 
 	private void processUpload(String imageKey, MultipartFile imageFile) {
@@ -62,11 +63,14 @@ public class FileService implements FileManager {
 		}
 	}
 
-	private String getImageKey(String imageUrl) {
+	private FileEntity getFileEntityFromImageUrl(String imageUrl) {
+		imageValidator.validateUrl(imageUrl);
 		try {
-			return storageHelper.extractImageKey(imageUrl);
+			String imageKey = storageHelper.extractImageKey(imageUrl);
+			return fileJpaRepository.findByFileKey(imageKey)
+				.orElseThrow(() -> new FileException(FileExceptionMessage.NOT_FOUND_FILE));
 		} catch (IllegalArgumentException exception) {
-			log.error("file not found: {}", exception.getMessage());
+			log.error("invalid image url in storage: {}", exception.getMessage());
 			throw new FileException(FileExceptionMessage.INVALID_IMAGE_URL);
 		}
 	}

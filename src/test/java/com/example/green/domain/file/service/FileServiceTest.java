@@ -136,4 +136,22 @@ class FileServiceTest {
 
 		verify(imageValidator).validateUrl(imageUrl);
 	}
+
+	@Test
+	void 미사용_이미지는_논리적_삭제를_진행한다() {
+		// given
+		String imageUrl = "imageUrl";
+		String imageKey = "imageKey";
+		when(storageHelper.extractImageKey(imageUrl)).thenReturn(imageKey);
+
+		FileEntity fileEntity = mock(FileEntity.class);
+		when(fileJpaRepository.findByFileKey(eq(imageKey))).thenReturn(Optional.of(fileEntity));
+
+		// when
+		fileService.unUseImage(imageUrl);
+
+		// then
+		verify(imageValidator).validateUrl(imageUrl);
+		verify(fileEntity).markDeleted();
+	}
 }
