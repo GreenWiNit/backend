@@ -9,4 +9,6 @@ public interface StorageHelper {
 	String getFullImageUrl(String key);
 
 	String extractImageKey(String imageUrl);
+
+	String generateFileKey(String purpose, String extension);
 }

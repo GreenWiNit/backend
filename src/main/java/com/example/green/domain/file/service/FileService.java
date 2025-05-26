@@ -11,7 +11,6 @@ import com.example.green.domain.file.exception.FileException;
 import com.example.green.domain.file.exception.FileExceptionMessage;
 import com.example.green.domain.file.outport.StorageHelper;
 import com.example.green.domain.file.repository.FileJpaRepository;
-import com.example.green.domain.file.utils.FileKeyGenerator;
 import com.example.green.domain.file.utils.ImageValidator;
 
 import jakarta.transaction.Transactional;
@@ -27,13 +26,12 @@ public class FileService implements FileManager {
 	private final StorageHelper storageHelper;
 	private final FileJpaRepository fileJpaRepository;
 	private final ImageValidator imageValidator;
-	private final FileKeyGenerator fileKeyGenerator;
 
 	public String uploadImage(MultipartFile imageFile, Purpose purpose) {
 		imageValidator.validate(imageFile);
 
 		FileMetaData fileMetaData = FileMetaData.from(imageFile);
-		String imageKey = fileKeyGenerator.generate(purpose.getValue(), fileMetaData.getExtension());
+		String imageKey = storageHelper.generateFileKey(purpose.getValue(), fileMetaData.getExtension());
 		FileEntity fileEntity = FileEntity.create(fileMetaData, imageKey, purpose);
 		fileJpaRepository.save(fileEntity);
 

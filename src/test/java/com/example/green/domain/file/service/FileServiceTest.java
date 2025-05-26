@@ -18,7 +18,6 @@ import com.example.green.domain.file.exception.FileException;
 import com.example.green.domain.file.exception.FileExceptionMessage;
 import com.example.green.domain.file.outport.StorageHelper;
 import com.example.green.domain.file.repository.FileJpaRepository;
-import com.example.green.domain.file.utils.FileKeyGenerator;
 import com.example.green.domain.file.utils.ImageValidator;
 
 @ExtendWith(MockitoExtension.class)
@@ -30,8 +29,6 @@ class FileServiceTest {
 	private FileJpaRepository fileJpaRepository;
 	@Mock
 	private ImageValidator imageValidator;
-	@Mock
-	private FileKeyGenerator fileKeyGenerator;
 	@InjectMocks
 	private FileService fileService;
 
@@ -48,7 +45,7 @@ class FileServiceTest {
 		when(purpose.getValue()).thenReturn(purposeValue);
 
 		String imageKey = "imageKey";
-		when(fileKeyGenerator.generate(eq(purposeValue), anyString())).thenReturn(imageKey);
+		when(storageHelper.generateFileKey(eq(purposeValue), anyString())).thenReturn(imageKey);
 
 		String imageUrl = "imageUrl";
 		when(storageHelper.getFullImageUrl(eq(imageKey))).thenReturn(imageUrl);
@@ -76,7 +73,7 @@ class FileServiceTest {
 		when(purpose.getValue()).thenReturn(purposeValue);
 
 		String imageKey = "imageKey";
-		when(fileKeyGenerator.generate(eq(purposeValue), anyString())).thenReturn(imageKey);
+		when(storageHelper.generateFileKey(eq(purposeValue), anyString())).thenReturn(imageKey);
 
 		doThrow(IllegalArgumentException.class).when(storageHelper).uploadImage(imageKey, imageFile);
 
