@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.green.domain.file.exception.FileException;
 import com.example.green.domain.file.exception.FileExceptionMessage;
+import com.example.green.global.utils.UriValidator;
 
 @Component
 public class ImageValidator {
@@ -17,10 +18,15 @@ public class ImageValidator {
 	private static final List<String> ALLOWED_CONTENT_TYPES = Arrays.asList("image/jpeg", "image/png");
 	private static final List<String> ALLOWED_IMAGE_EXTENSIONS = Arrays.asList(".jpg", ".jpeg", ".png");
 
+	private final UriValidator uriValidator;
 	private final long maxImageSize;
 
-	public ImageValidator(@Value("${spring.servlet.multipart.max-file-size}") final DataSize maxImageSize) {
+	public ImageValidator(
+		@Value("${spring.servlet.multipart.max-file-size}") final DataSize maxImageSize,
+		final UriValidator uriValidator
+	) {
 		this.maxImageSize = maxImageSize.toBytes();
+		this.uriValidator = uriValidator;
 	}
 
 	public void validate(MultipartFile imageFile) {
@@ -30,6 +36,12 @@ public class ImageValidator {
 		validateExtension(originalFilename.toLowerCase());
 		validateImageContentType(imageFile.getContentType());
 		validateImageSize(imageFile.getSize());
+	}
+
+	public void validateUrl(String imageUrl) {
+		if (!uriValidator.isValidUri(imageUrl)) {
+			throw new FileException(FileExceptionMessage.INVALID_IMAGE_URL);
+		}
 	}
 
 	private void validateImageFile(MultipartFile imageFile) {

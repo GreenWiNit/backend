@@ -3,7 +3,8 @@ package com.example.green.domain.file.service;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import org.junit.jupiter.api.BeforeEach;
+import java.util.Optional;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -34,19 +35,14 @@ class FileServiceTest {
 	@InjectMocks
 	private FileService fileService;
 
-	@Mock
-	private MultipartFile imageFile;
-
-	@BeforeEach
-	void setUp() {
-		when(imageFile.getOriginalFilename()).thenReturn("test.png");
-		when(imageFile.getContentType()).thenReturn("image/png");
-		when(imageFile.getSize()).thenReturn(1000L);
-	}
-
 	@Test
 	void 유효한_이미지_파일로_업로드에_성공하면_이미지_URL을_반환한다() {
 		// given
+		MultipartFile imageFile = mock(MultipartFile.class);
+		when(imageFile.getOriginalFilename()).thenReturn("test.png");
+		when(imageFile.getContentType()).thenReturn("image/png");
+		when(imageFile.getSize()).thenReturn(1000L);
+
 		Purpose purpose = mock(Purpose.class);
 		String purposeValue = "purposeValue";
 		when(purpose.getValue()).thenReturn(purposeValue);
@@ -70,6 +66,11 @@ class FileServiceTest {
 	@Test
 	void 이미지_파일_업로드_중_에러가_발생하면_예외를_떨어트린다() {
 		// given
+		MultipartFile imageFile = mock(MultipartFile.class);
+		when(imageFile.getOriginalFilename()).thenReturn("test.png");
+		when(imageFile.getContentType()).thenReturn("image/png");
+		when(imageFile.getSize()).thenReturn(1000L);
+
 		Purpose purpose = mock(Purpose.class);
 		String purposeValue = "purposeValue";
 		when(purpose.getValue()).thenReturn(purposeValue);
@@ -77,7 +78,7 @@ class FileServiceTest {
 		String imageKey = "imageKey";
 		when(fileKeyGenerator.generate(eq(purposeValue), anyString())).thenReturn(imageKey);
 
-		doThrow(RuntimeException.class).when(storageHelper).uploadImage(imageKey, imageFile);
+		doThrow(IllegalArgumentException.class).when(storageHelper).uploadImage(imageKey, imageFile);
 
 		// when & then
 		assertThatThrownBy(() -> fileService.uploadImage(imageFile, purpose))
@@ -86,5 +87,53 @@ class FileServiceTest {
 
 		verify(fileJpaRepository).save(any(FileEntity.class));
 		verify(imageValidator).validate(imageFile);
+	}
+
+	@Test
+	void imageUrl의_이미지_정보_사용을_확정한다() {
+		// given
+		String imageUrl = "imageUrl";
+		String imageKey = "imageKey";
+		when(storageHelper.extractImageKey(imageUrl)).thenReturn(imageKey);
+
+		FileEntity fileEntity = mock(FileEntity.class);
+		when(fileJpaRepository.findByFileKey(eq(imageKey))).thenReturn(Optional.of(fileEntity));
+
+		// when
+		fileService.confirmUsingImage(imageUrl);
+
+		// then
+		verify(imageValidator).validateUrl(imageUrl);
+		verify(fileEntity).markAsPermanent();
+	}
+
+	@Test
+	void imageUrl에서_이미지_키_추출_중_버그가_발생하면_예외를_던진다() {
+		// given
+		String imageUrl = "imageUrl";
+		doThrow(IllegalArgumentException.class).when(storageHelper).extractImageKey(imageUrl);
+
+		// when & then
+		assertThatThrownBy(() -> fileService.confirmUsingImage(imageUrl))
+			.isInstanceOf(FileException.class)
+			.hasFieldOrPropertyWithValue("exceptionMessage", FileExceptionMessage.INVALID_IMAGE_URL);
+
+		verify(imageValidator).validateUrl(imageUrl);
+	}
+
+	@Test
+	void 존재하지_않는_이미지_키_일_경우_예외를_던진다() {
+		// given
+		String imageUrl = "imageUrl";
+		String imageKey = "imageKey";
+		when(storageHelper.extractImageKey(imageUrl)).thenReturn(imageKey);
+		when(fileJpaRepository.findByFileKey(eq(imageKey))).thenReturn(Optional.empty());
+
+		// when & then
+		assertThatThrownBy(() -> fileService.confirmUsingImage(imageUrl))
+			.isInstanceOf(FileException.class)
+			.hasFieldOrPropertyWithValue("exceptionMessage", FileExceptionMessage.NOT_FOUND_FILE);
+
+		verify(imageValidator).validateUrl(imageUrl);
 	}
 }

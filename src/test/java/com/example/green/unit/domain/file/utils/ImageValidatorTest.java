@@ -15,7 +15,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.util.unit.DataSize;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,20 +22,23 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.green.domain.file.exception.FileException;
 import com.example.green.domain.file.exception.FileExceptionMessage;
 import com.example.green.domain.file.utils.ImageValidator;
+import com.example.green.global.utils.UriValidator;
 
 @ExtendWith(MockitoExtension.class)
 class ImageValidatorTest {
 
 	private static final long MAX_FILE_SIZE = 10 * 1024 * 1024;
 
-	@Mock
 	private MultipartFile multipartFile;
+	private DataSize maxImageSize = DataSize.ofBytes(MAX_FILE_SIZE);
+	private UriValidator uriValidator;
 	private ImageValidator imageValidator;
 
 	@BeforeEach
 	void setUp() {
-		DataSize maxImageSize = DataSize.ofBytes(MAX_FILE_SIZE);
-		imageValidator = new ImageValidator(maxImageSize);
+		multipartFile = mock(MultipartFile.class);
+		uriValidator = mock(UriValidator.class);
+		imageValidator = new ImageValidator(maxImageSize, uriValidator);
 	}
 
 	@ParameterizedTest
@@ -111,6 +113,29 @@ class ImageValidatorTest {
 
 		// when
 		assertThatCode(() -> imageValidator.validate(multipartFile))
+			.doesNotThrowAnyException();
+	}
+
+	@Test
+	void 이미지_uri가_잘못되었다면_예외가_발생한다() {
+		// given
+		String imageUrl = "imageUrl";
+		when(uriValidator.isValidUri(imageUrl)).thenReturn(false);
+
+		// when & then
+		assertThatThrownBy(() -> imageValidator.validateUrl(imageUrl))
+			.isInstanceOf(FileException.class)
+			.hasFieldOrPropertyWithValue("exceptionMessage", FileExceptionMessage.INVALID_IMAGE_URL);
+	}
+
+	@Test
+	void 유효한_이미지라면_검증이_성공한다() {
+		// given
+		String imageUrl = "imageUrl";
+		when(uriValidator.isValidUri(imageUrl)).thenReturn(true);
+
+		// when & then
+		assertThatCode(() -> imageValidator.validateUrl(imageUrl))
 			.doesNotThrowAnyException();
 	}
 

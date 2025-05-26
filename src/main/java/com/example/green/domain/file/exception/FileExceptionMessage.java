@@ -22,7 +22,9 @@ public enum FileExceptionMessage implements ExceptionMessage {
 	CANNOT_RESTORE_DELETED_FILE(BAD_REQUEST, "삭제된 파일은 복구할 수 없습니다."),
 	REQUIRED_FILE_METADATA(BAD_REQUEST, "파일 생성 시 메타데이터 정보는 필수입니다."),
 	REQUIRED_FILE_KEY(BAD_REQUEST, "파일 생성 시 파일 키 정보는 필수입니다."),
-	REQUIRED_FILE_PURPOSE(BAD_REQUEST, "파일 생성 시 파일의 목적 정보는 필수입니다.");
+	REQUIRED_FILE_PURPOSE(BAD_REQUEST, "파일 생성 시 파일의 목적 정보는 필수입니다."),
+	NOT_FOUND_FILE(NOT_FOUND, "업로드된 이미지가 존재하지 않습니다."),
+	INVALID_IMAGE_URL(BAD_REQUEST, "유효하지 않은 이미지 URL 형식입니다.");
 
 	private final HttpStatus httpStatus;
 	private final String message;

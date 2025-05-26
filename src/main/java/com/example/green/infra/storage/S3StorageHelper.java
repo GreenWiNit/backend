@@ -18,7 +18,7 @@ import software.amazon.awssdk.services.s3.model.S3Exception;
 @RequiredArgsConstructor
 public class S3StorageHelper implements StorageHelper {
 
-	private static final String IMAGE_KEY_SUFFIX = "images/";
+	private static final String IMAGE_KEY_PREFIX = "images";
 
 	private final S3Properties s3Properties;
 	private final S3Client s3Client;
@@ -26,18 +26,30 @@ public class S3StorageHelper implements StorageHelper {
 	@Override
 	public void uploadImage(String key, MultipartFile imageFile) {
 		try (InputStream inputStream = imageFile.getInputStream()) {
-			String fullKey = IMAGE_KEY_SUFFIX + key;
+			String fullKey = String.format("%s/%s", IMAGE_KEY_PREFIX, key);
 			PutObjectRequest request = generatePutObjectRequest(fullKey, imageFile);
 			s3Client.putObject(request, RequestBody.fromInputStream(inputStream, imageFile.getSize()));
 		} catch (IOException | S3Exception e) {
-			throw new RuntimeException(e);
+			throw new IllegalArgumentException(e);
 		}
 	}
 
 	@Override
 	public String getFullImageUrl(String key) {
-		String fullKey = IMAGE_KEY_SUFFIX + key;
-		return String.format("%s/%s", s3Properties.getBaseUrl(), fullKey);
+		return String.format("%s/%s", getImageUrlPrefix(), key);
+	}
+
+	@Override
+	public String extractImageKey(String imageUrl) {
+		String imageUrlPrefix = getImageUrlPrefix();
+		if (!imageUrl.startsWith(imageUrlPrefix)) {
+			throw new IllegalArgumentException("invalid url: " + imageUrl);
+		}
+		return imageUrl.substring(imageUrlPrefix.length() + 1);
+	}
+
+	private String getImageUrlPrefix() {
+		return String.format("%s/%s", s3Properties.getBaseUrl(), IMAGE_KEY_PREFIX);
 	}
 
 	private PutObjectRequest generatePutObjectRequest(String key, MultipartFile file) {

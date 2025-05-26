@@ -3,6 +3,7 @@ package com.example.green.domain.file.service;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.green.domain.common.outport.FileManager;
 import com.example.green.domain.file.domain.FileEntity;
 import com.example.green.domain.file.domain.vo.FileMetaData;
 import com.example.green.domain.file.domain.vo.Purpose;
@@ -21,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Transactional
 @Slf4j
-public class FileService {
+public class FileService implements FileManager {
 
 	private final StorageHelper storageHelper;
 	private final FileJpaRepository fileJpaRepository;
@@ -37,16 +38,36 @@ public class FileService {
 		fileJpaRepository.save(fileEntity);
 
 		processUpload(imageKey, imageFile);
-		
+
 		return storageHelper.getFullImageUrl(imageKey);
+	}
+
+	@Override
+	public void confirmUsingImage(String imageUrl) {
+		imageValidator.validateUrl(imageUrl);
+
+		String imageKey = getImageKey(imageUrl);
+		FileEntity fileEntity = fileJpaRepository.findByFileKey(imageKey)
+			.orElseThrow(() -> new FileException(FileExceptionMessage.NOT_FOUND_FILE));
+
+		fileEntity.markAsPermanent();
 	}
 
 	private void processUpload(String imageKey, MultipartFile imageFile) {
 		try {
 			storageHelper.uploadImage(imageKey, imageFile);
-		} catch (RuntimeException exception) {
+		} catch (IllegalArgumentException exception) {
 			log.error("s3 uploading failed: {}", exception.getMessage());
 			throw new FileException(FileExceptionMessage.IMAGE_UPLOAD_FAILED);
+		}
+	}
+
+	private String getImageKey(String imageUrl) {
+		try {
+			return storageHelper.extractImageKey(imageUrl);
+		} catch (IllegalArgumentException exception) {
+			log.error("file not found: {}", exception.getMessage());
+			throw new FileException(FileExceptionMessage.INVALID_IMAGE_URL);
 		}
 	}
 }
