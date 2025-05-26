@@ -22,7 +22,7 @@ public class FileService {
 	private final FileKeyGenerator fileKeyGenerator;
 
 	public String uploadImage(MultipartFile imageFile) {
-		imageValidator.validateImageFile(imageFile);
+		imageValidator.validate(imageFile);
 		String originalFilename = imageFile.getOriginalFilename();
 		String imageKey = fileKeyGenerator.generate("domain", originalFilename);
 		processUpload(imageKey, imageFile);

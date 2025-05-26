@@ -3,11 +3,15 @@ package com.example.green.unit.domain.file.utils;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import java.util.stream.Stream;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -36,13 +40,22 @@ class ImageValidatorTest {
 	}
 
 	@ParameterizedTest
+	@MethodSource("invalidMultipartFiles")
+	void 이미지_파일이_null이거나_비어있으면_예외가_발생한다(MultipartFile multipartFile) {
+		// when & then
+		assertThatThrownBy(() -> imageValidator.validate(multipartFile))
+			.isInstanceOf(FileException.class)
+			.hasFieldOrPropertyWithValue("exceptionMessage", FileExceptionMessage.REQUIRED_IMAGE_FILE);
+	}
+
+	@ParameterizedTest
 	@NullAndEmptySource
 	void 이미지_파일_이름이_비어있거나_null일_경우_검증이_실패한다(String originalFilename) {
 		// given
 		when(multipartFile.getOriginalFilename()).thenReturn(originalFilename);
 
 		// when & then
-		assertThatThrownBy(() -> imageValidator.validateImageFile(multipartFile))
+		assertThatThrownBy(() -> imageValidator.validate(multipartFile))
 			.isInstanceOf(FileException.class)
 			.hasFieldOrPropertyWithValue("exceptionMessage", FileExceptionMessage.EMPTY_IMAGE_FILE_NAME);
 	}
@@ -54,7 +67,7 @@ class ImageValidatorTest {
 		when(multipartFile.getOriginalFilename()).thenReturn(originalFilename);
 
 		// when & then
-		assertThatThrownBy(() -> imageValidator.validateImageFile(multipartFile))
+		assertThatThrownBy(() -> imageValidator.validate(multipartFile))
 			.isInstanceOf(FileException.class)
 			.hasFieldOrPropertyWithValue("exceptionMessage", FileExceptionMessage.INVALID_IMAGE_TYPE);
 	}
@@ -68,7 +81,7 @@ class ImageValidatorTest {
 		when(multipartFile.getContentType()).thenReturn(contentType);
 
 		// when & then
-		assertThatThrownBy(() -> imageValidator.validateImageFile(multipartFile))
+		assertThatThrownBy(() -> imageValidator.validate(multipartFile))
 			.isInstanceOf(FileException.class)
 			.hasFieldOrPropertyWithValue("exceptionMessage", FileExceptionMessage.INVALID_IMAGE_TYPE);
 	}
@@ -81,7 +94,7 @@ class ImageValidatorTest {
 		when(multipartFile.getSize()).thenReturn(MAX_FILE_SIZE + 1);
 
 		// when & then
-		assertThatThrownBy(() -> imageValidator.validateImageFile(multipartFile))
+		assertThatThrownBy(() -> imageValidator.validate(multipartFile))
 			.isInstanceOf(FileException.class)
 			.hasFieldOrPropertyWithValue("exceptionMessage", FileExceptionMessage.OVER_MAX_IMAGE_SIZE);
 	}
@@ -97,8 +110,17 @@ class ImageValidatorTest {
 		when(multipartFile.getSize()).thenReturn(size);
 
 		// when
-		assertThatCode(() -> imageValidator.validateImageFile(multipartFile))
+		assertThatCode(() -> imageValidator.validate(multipartFile))
 			.doesNotThrowAnyException();
 	}
 
+	static Stream<Arguments> invalidMultipartFiles() {
+		MultipartFile emptyFile = mock(MultipartFile.class);
+		when(emptyFile.isEmpty()).thenReturn(true);
+
+		return Stream.of(
+			Arguments.of((MultipartFile)null),
+			Arguments.of(emptyFile)
+		);
+	}
 }

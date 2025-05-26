@@ -23,7 +23,8 @@ public class ImageValidator {
 		this.maxImageSize = maxImageSize.toBytes();
 	}
 
-	public void validateImageFile(MultipartFile imageFile) {
+	public void validate(MultipartFile imageFile) {
+		validateImageFile(imageFile);
 		String originalFilename = imageFile.getOriginalFilename();
 		validateOriginalFileName(originalFilename);
 		validateExtension(originalFilename.toLowerCase());
@@ -31,8 +32,14 @@ public class ImageValidator {
 		validateImageSize(imageFile.getSize());
 	}
 
+	private void validateImageFile(MultipartFile imageFile) {
+		if (imageFile == null || imageFile.isEmpty()) {
+			throw new FileException(FileExceptionMessage.REQUIRED_IMAGE_FILE);
+		}
+	}
+
 	private void validateOriginalFileName(String originalFilename) {
-		if (originalFilename == null || originalFilename.isEmpty()) {
+		if (originalFilename == null || originalFilename.trim().isEmpty()) {
 			throw new FileException(FileExceptionMessage.EMPTY_IMAGE_FILE_NAME);
 		}
 	}

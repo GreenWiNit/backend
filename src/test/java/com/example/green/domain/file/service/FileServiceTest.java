@@ -41,7 +41,7 @@ class FileServiceTest {
 
 		// then
 		assertThat(result).isEqualTo("imageUrl");
-		verify(imageValidator).validateImageFile(imageFile);
+		verify(imageValidator).validate(imageFile);
 		verify(storageHelper).uploadImage("imageKey", imageFile);
 	}
 
@@ -57,6 +57,6 @@ class FileServiceTest {
 		assertThatThrownBy(() -> fileService.uploadImage(imageFile))
 			.isInstanceOf(FileException.class)
 			.hasFieldOrPropertyWithValue("exceptionMessage", FileExceptionMessage.IMAGE_UPLOAD_FAILED);
-		verify(imageValidator).validateImageFile(imageFile);
+		verify(imageValidator).validate(imageFile);
 	}
 }
