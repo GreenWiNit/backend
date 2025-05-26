@@ -28,7 +28,8 @@ public interface ExamplePostControllerDocs {
 	@ApiError400
 	@ApiResponse(responseCode = "200", description = "게시글 수정 성공", useReturnTypeSchema = true)
 	ApiTemplate<PostResponse> updatePost(
-		@Parameter(name = "postId", description = "수정할 게시글의 ID", in = ParameterIn.PATH, required = true, example = "1") Long postId,
+		@Parameter(name = "postId", description = "수정할 게시글의 ID",
+			in = ParameterIn.PATH, required = true, example = "1") Long postId,
 		PostRequest request
 	);
 
@@ -36,14 +37,16 @@ public interface ExamplePostControllerDocs {
 	@ApiErrorStandard
 	@ApiResponse(responseCode = "200", description = "게시글 삭제 성공", useReturnTypeSchema = true)
 	NoContent deletePost(
-		@Parameter(name = "postId", description = "삭제할 게시글의 ID", in = ParameterIn.PATH, required = true, example = "1") Long postId
+		@Parameter(name = "postId", description = "삭제할 게시글의 ID",
+			in = ParameterIn.PATH, required = true, example = "1") Long postId
 	);
 
 	@Operation(summary = "게시글 조회", description = "게시글 ID로 게시글을 조회합니다.")
 	@ApiErrorStandard
 	@ApiResponse(responseCode = "200", description = "게시글 조회 성공", useReturnTypeSchema = true)
 	ApiTemplate<PostResponse> getPostById(
-		@Parameter(name = "postId", description = "조회할 게시글의 ID", in = ParameterIn.PATH, required = true, example = "1") Long postId
+		@Parameter(name = "postId", description = "조회할 게시글의 ID",
+			in = ParameterIn.PATH, required = true, example = "1") Long postId
 	);
 
 	@Operation(summary = "게시글 목록 조회", description = "페이징 정보를 기준으로 게시글 목록을 조회합니다.")

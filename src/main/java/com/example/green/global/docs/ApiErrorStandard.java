@@ -33,13 +33,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 				summary = "인증 실패 예시",
 				value = """
 					{
-					  "success": false,
-					  "message": "인증 정보가 없습니다. 다시 로그인해주세요."
+						"success": false,
+						"message": "인증 정보가 없습니다. 다시 로그인해주세요."
 					}
-				"""
+					"""
 			)
-		)
-	),
+		)),
 	@ApiResponse(
 		responseCode = "404",
 		description = "리소스를 찾을 수 없습니다",
@@ -50,14 +49,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 				name = "NotFoundError",
 				summary = "존재하지 않는 리소스 예시",
 				value = """
-					{
-					  "success": false,
-					  "message": "요청하신 페이지를 찾을 수 없습니다."
-					}
-				"""
+						{
+							"success": false,
+							"message": "요청하신 페이지를 찾을 수 없습니다."
+						}
+					"""
 			)
-		)
-	),
+		)),
 	@ApiResponse(
 		responseCode = "500",
 		description = "서버 내부 오류",
@@ -68,17 +66,17 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 				name = "ServerError",
 				summary = "알 수 없는 서버 오류 예시",
 				value = """
-					{
-					  "success": false,
-					  "message": "알 수 없는 서버 에러가 발생했습니다."
-					}
-				"""
+						{
+							"success": false,
+							"message": "알 수 없는 서버 에러가 발생했습니다."
+						}
+					"""
 			)
-		)
-	)
+		))
 })
 public @interface ApiErrorStandard {
 
 	String summary() default "";
+
 	String description() default "";
 }

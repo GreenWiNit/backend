@@ -32,28 +32,26 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 					name = "ValidationError_MissingTitle",
 					summary = "유효성 검증 실패 예시 - 제목 미기입",
 					value = """
-					{
-					  "success": false,
-					  "message": "제목은 필수 입력값입니다."
-					}
-				"""
-				),
+						{
+							"success": false,
+							"message": "제목은 필수 입력값입니다."
+						}
+						"""),
 				@ExampleObject(
 					name = "TypeMismatch_IdShouldBeNumber",
 					summary = "타입 오류 - 숫자 필드에 문자 입력",
 					value = """
-					{
-					  "success": false,
-					  "message": "해당 필드는 숫자여야 합니다."
-					}
-				"""
-				)
+							{
+								"success": false,
+								"message": "해당 필드는 숫자여야 합니다."
+							}
+						""")
 			}
-		)
-	)
+		))
 })
 public @interface ApiError400 {
 
 	String summary() default "";
+
 	String description() default "";
 }
