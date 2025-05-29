@@ -7,4 +7,8 @@ public interface StorageHelper {
 	void uploadImage(String key, MultipartFile imageFile);
 
 	String getFullImageUrl(String key);
+
+	String extractImageKey(String imageUrl);
+
+	String generateFileKey(String purpose, String extension);
 }
