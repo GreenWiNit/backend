@@ -23,16 +23,12 @@ public class S3TestContainerConfig {
 
 	@Bean
 	public S3Client testS3Client(LocalStackContainer localStackContainer) {
-		S3Client s3Client = S3Client.builder()
+		return S3Client.builder()
 			.endpointOverride(localStackContainer.getEndpointOverride(LocalStackContainer.Service.S3))
 			.credentialsProvider(StaticCredentialsProvider.create(
 				AwsBasicCredentials.create("test", "test")
 			))
 			.region(Region.of(localStackContainer.getRegion()))
 			.build();
-
-		s3Client.createBucket(b -> b.bucket("test-bucket"));
-
-		return s3Client;
 	}
 }
