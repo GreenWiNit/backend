@@ -30,13 +30,15 @@ public class ExamplePostController implements ExamplePostControllerDocs {
 
 	@PostMapping
 	public ApiTemplate<PostResponse> createPost(@Valid @RequestBody PostRequest request) {
-		PostResponse response = new PostResponse(1L, request.getTitle(), request.getContent(), "홍길동", LocalDateTime.now());
+		PostResponse response = new PostResponse(1L, request.getTitle(), request.getContent(), "홍길동",
+			LocalDateTime.now());
 		return ApiTemplate.ok(ExamplePostResponseMessage.POST_CREATED, response);
 	}
 
 	@PutMapping("/{postId}")
 	public ApiTemplate<PostResponse> updatePost(@PathVariable Long postId, @Valid @RequestBody PostRequest request) {
-		PostResponse response = new PostResponse(postId, request.getTitle(), request.getContent(), "홍길동", LocalDateTime.now());
+		PostResponse response = new PostResponse(postId, request.getTitle(), request.getContent(), "홍길동",
+			LocalDateTime.now());
 		return ApiTemplate.ok(ExamplePostResponseMessage.POST_UPDATED, response);
 	}
 
@@ -52,7 +54,8 @@ public class ExamplePostController implements ExamplePostControllerDocs {
 	}
 
 	@GetMapping
-	public ApiTemplate<PostListResponse> getPosts(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size) {
+	public ApiTemplate<PostListResponse> getPosts(@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "20") int size) {
 		List<PostResponse> posts = List.of(
 			new PostResponse(1L, "첫 번째 글", "내용입니다", "홍길동", LocalDateTime.now()),
 			new PostResponse(2L, "두 번째 글", "내용입니다", "김철수", LocalDateTime.now())
