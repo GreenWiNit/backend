@@ -1,4 +1,4 @@
-package com.example.green.unit.dummy;
+package com.example.green.dummy;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;

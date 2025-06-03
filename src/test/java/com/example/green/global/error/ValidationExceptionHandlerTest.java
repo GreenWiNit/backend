@@ -1,4 +1,4 @@
-package com.example.green.unit.global.error;
+package com.example.green.global.error;
 
 import static io.restassured.module.mockmvc.RestAssuredMockMvc.*;
 import static org.hamcrest.Matchers.*;
@@ -14,10 +14,9 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.http.MediaType;
 
-import com.example.green.global.error.GlobalExceptionHandler;
+import com.example.green.dummy.ErrorDummyController;
+import com.example.green.dummy.ValidationDto;
 import com.example.green.global.error.exception.GlobalExceptionMessage;
-import com.example.green.unit.dummy.ErrorDummyController;
-import com.example.green.unit.dummy.ValidationDto;
 
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 

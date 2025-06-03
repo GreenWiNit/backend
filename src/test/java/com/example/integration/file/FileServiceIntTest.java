@@ -46,7 +46,7 @@ public class FileServiceIntTest extends ServiceIntegrationTest {
 	}
 
 	@Test
-	void 이미지_업로드_중_예외가_발생하면_DB에_저장된_파일이_롤백된다() {
+	void 이미지_업로드_중_예외가_발생하면_db에_저장된_파일이_롤백된다() {
 		// given
 		MultipartFile imageFile = createMockFile("image.png", "image/png");
 		fileTestUtil.clearBucket();
