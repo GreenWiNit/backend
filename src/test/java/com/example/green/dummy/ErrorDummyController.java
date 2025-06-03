@@ -1,4 +1,4 @@
-package com.example.green.unit.dummy;
+package com.example.green.dummy;
 
 import org.apache.logging.log4j.util.InternalException;
 import org.springframework.http.HttpMethod;

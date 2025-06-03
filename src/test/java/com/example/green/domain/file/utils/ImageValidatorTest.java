@@ -1,4 +1,4 @@
-package com.example.green.unit.domain.file.utils;
+package com.example.green.domain.file.utils;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -21,7 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.green.domain.file.exception.FileException;
 import com.example.green.domain.file.exception.FileExceptionMessage;
-import com.example.green.domain.file.utils.ImageValidator;
 import com.example.green.global.utils.UriValidator;
 
 @ExtendWith(MockitoExtension.class)

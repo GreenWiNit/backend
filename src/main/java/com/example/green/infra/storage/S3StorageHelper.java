@@ -21,7 +21,7 @@ import software.amazon.awssdk.services.s3.model.S3Exception;
 public class S3StorageHelper implements StorageHelper {
 
 	private static final String IMAGE_KEY_PREFIX = "images";
-	private static final String FILE_KEY_FORMAT = "%s/%s/%s/%s_%s%s";
+	private static final String FILE_KEY_FORMAT = "%s/%s/%s/%s/%s_%s%s";
 	private static final String FILE_DATE_FORMAT = "yyyyMMdd";
 	private static final int FILE_KEY_SUFFIX_LENGTH = 8;
 
@@ -32,10 +32,9 @@ public class S3StorageHelper implements StorageHelper {
 	private final TimeUtils timeUtils;
 
 	@Override
-	public void uploadImage(String key, MultipartFile imageFile) {
+	public void uploadImage(String imageKey, MultipartFile imageFile) {
 		try (InputStream inputStream = imageFile.getInputStream()) {
-			String fullKey = String.format("%s/%s", IMAGE_KEY_PREFIX, key);
-			PutObjectRequest request = generatePutObjectRequest(fullKey, imageFile);
+			PutObjectRequest request = generatePutObjectRequest(imageKey, imageFile);
 			s3Client.putObject(request, RequestBody.fromInputStream(inputStream, imageFile.getSize()));
 		} catch (IOException | S3Exception e) {
 			throw new IllegalArgumentException(e);
@@ -43,22 +42,24 @@ public class S3StorageHelper implements StorageHelper {
 	}
 
 	@Override
-	public String getFullImageUrl(String key) {
-		return String.format("%s/%s", getImageUrlPrefix(), key);
+	public String getFullImageUrl(String imageKey) {
+		return String.format("%s/%s", s3Properties.getBaseUrl(), imageKey);
 	}
 
 	@Override
 	public String extractImageKey(String imageUrl) {
-		String imageUrlPrefix = getImageUrlPrefix();
+		String baseUrl = s3Properties.getBaseUrl();
+		String imageUrlPrefix = String.format("%s/%s", baseUrl, IMAGE_KEY_PREFIX);
 		if (!imageUrl.startsWith(imageUrlPrefix)) {
-			throw new IllegalArgumentException("invalid url: " + imageUrl);
+			throw new IllegalArgumentException("invalid image url: " + imageUrl);
 		}
-		return imageUrl.substring(imageUrlPrefix.length() + 1);
+		return imageUrl.substring(baseUrl.length() + 1);
 	}
 
 	@Override
 	public String generateFileKey(String purpose, String extension) {
 		return String.format(FILE_KEY_FORMAT,
+			IMAGE_KEY_PREFIX,
 			purpose,
 			idUtils.generateUniqueId(FILE_KEY_SUFFIX_LENGTH).substring(0, 2),
 			timeUtils.getFormattedDate(FILE_DATE_FORMAT),
@@ -66,10 +67,6 @@ public class S3StorageHelper implements StorageHelper {
 			timeUtils.getCurrentTimeMillis(),
 			extension
 		);
-	}
-
-	private String getImageUrlPrefix() {
-		return String.format("%s/%s", s3Properties.getBaseUrl(), IMAGE_KEY_PREFIX);
 	}
 
 	private PutObjectRequest generatePutObjectRequest(String key, MultipartFile file) {

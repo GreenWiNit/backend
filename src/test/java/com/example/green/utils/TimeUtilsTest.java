@@ -1,4 +1,4 @@
-package com.example.green.unit.utils;
+package com.example.green.utils;
 
 import static org.assertj.core.api.Assertions.*;
 

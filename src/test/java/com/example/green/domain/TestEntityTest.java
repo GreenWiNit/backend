@@ -1,8 +1,6 @@
-package com.example.green.unit.domain;
+package com.example.green.domain;
 
 import org.junit.jupiter.api.Test;
-
-import com.example.green.domain.TestEntity;
 
 class TestEntityTest {
 

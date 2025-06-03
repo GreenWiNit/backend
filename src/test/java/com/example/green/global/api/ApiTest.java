@@ -1,4 +1,4 @@
-package com.example.green.unit.global.api;
+package com.example.green.global.api;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -9,8 +9,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import com.example.green.unit.dummy.ApiDummyController;
-import com.example.green.unit.dummy.ValidationDto;
+import com.example.green.dummy.ApiDummyController;
+import com.example.green.dummy.ValidationDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 class ApiTest {

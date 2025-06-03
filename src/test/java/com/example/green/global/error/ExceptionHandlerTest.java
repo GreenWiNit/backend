@@ -1,4 +1,4 @@
-package com.example.green.unit.global.error;
+package com.example.green.global.error;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -8,9 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import com.example.green.global.error.GlobalExceptionHandler;
+import com.example.green.dummy.ErrorDummyController;
 import com.example.green.global.error.exception.GlobalExceptionMessage;
-import com.example.green.unit.dummy.ErrorDummyController;
 
 class ExceptionHandlerTest {
 
