@@ -10,7 +10,6 @@ public enum MemberRole {
     ADMIN("관리자 ")
     ;
 
-
     private final String description;
 
 }
