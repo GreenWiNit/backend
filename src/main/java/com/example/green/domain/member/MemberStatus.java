@@ -1,16 +1,13 @@
-package com.example.green.domain.user.member;
+package com.example.green.domain.member;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum MemberRole {
-    USER("일반유저"),
-    ADMIN("관리자 ")
+public enum MemberStatus {
+    NORMAL("NORMAL"),
+    DELETED("DELETED")
     ;
-
-
     private final String description;
-
 }
