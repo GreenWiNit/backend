@@ -6,7 +6,7 @@ import java.io.InputStream;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.example.green.domain.file.outport.StorageHelper;
+import com.example.green.domain.file.service.StorageHelper;
 import com.example.green.global.utils.IdUtils;
 import com.example.green.global.utils.TimeUtils;
 
