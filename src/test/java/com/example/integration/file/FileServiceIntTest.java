@@ -30,6 +30,7 @@ public class FileServiceIntTest extends ServiceIntegrationTest {
 	@AfterEach
 	void tearDown() {
 		fileTestUtil.clearBucket();
+		fileTestUtil.clearDatabase();
 	}
 
 	@Test
