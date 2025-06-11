@@ -1,0 +1,40 @@
+name: CD Deploy
+
+on:
+  workflow_run:
+    workflows: [ "CI Build" ]
+    types:
+      - completed
+
+jobs:
+  deploy:
+    # 이전 작업 성공 + main에서만 배포 실행
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: app-jar
+
+      - name: Copy artifact to EC2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          source: |
+            "*.jar"
+            ".env"
+          target: "~/backend"
+
+      - name: Run reload.sh
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          script: |
+            chmod +x ~/reload.sh
+            ~/reload.sh

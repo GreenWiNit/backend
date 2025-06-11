@@ -5,7 +5,7 @@ spring:
         access-key: ${AWS_ACCESS_KEY}
         secret-key: ${AWS_SECRET_KEY}
       region:
-        static: ${AWS_STATIC_REGION}
+        static: ${AWS_STATIC_REGION:ap-northeast-2}
   config:
     import: optional:file:.env
   autoconfigure:
@@ -47,9 +47,11 @@ decorator:
       multiline: true
 
 springdoc:
+  api-docs:
+    enabled: true
   swagger-ui:
     path: ${SWAGGER_PATH:/swagger-ui.html}
-    
+
 app:
   storage:
     bucket: ${STORAGE_BUCKET}
