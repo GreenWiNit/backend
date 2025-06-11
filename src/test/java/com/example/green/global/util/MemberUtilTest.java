@@ -3,10 +3,10 @@ package com.example.green.global.util;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import com.example.green.domain.member.Member;
-import com.example.green.domain.member.MemberRole;
-import com.example.green.domain.member.MemberStatus;
-import com.example.green.domain.member.Profile;
+import com.example.green.domain.member.entity.Member;
+import com.example.green.domain.member.entity.enums.MemberRole;
+import com.example.green.domain.member.entity.enums.MemberStatus;
+import com.example.green.domain.member.entity.vo.Profile;
 import com.example.green.domain.member.repository.MemberRepository;
 import com.example.green.global.utils.MemberUtil;
 import org.junit.jupiter.api.DisplayName;
@@ -64,7 +64,7 @@ class MemberUtilTest {
         assertEquals("testImageUrl", currentMember.getProfile().profileImageUrl());
     }
 
-    @DisplayName("이미 회원이 존재하고 있는 상황에서 임시 회원일 삽입하지 않는다.")
+    @DisplayName("이미 회원이 존재하고 있는 상황에서 임시 회원을 삽입하지 않는다.")
     @Test
     void shouldNotInsertTemporaryMemberWhenMemberAlreadyExists() {
         // given

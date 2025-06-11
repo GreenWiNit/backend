@@ -2,8 +2,8 @@ package com.example.green.global.utils;
 
 import org.springframework.stereotype.Component;
 
-import com.example.green.domain.member.Member;
-import com.example.green.domain.member.Profile;
+import com.example.green.domain.member.entity.Member;
+import com.example.green.domain.member.entity.vo.Profile;
 import com.example.green.domain.member.exception.MemberExceptionMessage;
 import com.example.green.domain.member.repository.MemberRepository;
 import com.example.green.global.error.exception.BusinessException;
@@ -17,7 +17,6 @@ public class MemberUtil {
     private final SecurityUtil securityUtil;
     private final MemberRepository memberRepository;
 
-    // TODO: 개발 단계에서만 사용하는 Mock 데이터 삽입 메서드
     private void insertMockMemberIfNotExist() {
         if (memberRepository.count() != 0) {
             return;
@@ -30,7 +29,6 @@ public class MemberUtil {
     }
 
     public Member getCurrentMember() {
-        // TODO: 개발 단계에서만 Mock 데이터 삽입
         insertMockMemberIfNotExist();
 
         return memberRepository.findById(securityUtil.getCurrentMemberId())

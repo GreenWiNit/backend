@@ -13,7 +13,6 @@ import lombok.Getter;
 @Getter
 public enum MemberExceptionMessage implements ExceptionMessage {
 
-	// Member 관련
 	MEMBER_NOT_FOUND(NOT_FOUND, "해당 회원을 찾을 수 없습니다.")
 	;
 

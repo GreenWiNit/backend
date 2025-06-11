@@ -1,6 +1,9 @@
-package com.example.green.domain.member;
+package com.example.green.domain.member.entity;
 
 import com.example.green.domain.common.BaseEntity;
+import com.example.green.domain.member.entity.enums.MemberRole;
+import com.example.green.domain.member.entity.enums.MemberStatus;
+import com.example.green.domain.member.entity.vo.Profile;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
