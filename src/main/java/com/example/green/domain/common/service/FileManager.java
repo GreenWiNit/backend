@@ -1,4 +1,4 @@
-package com.example.green.domain.common.outport;
+package com.example.green.domain.common.service;
 
 public interface FileManager {
 

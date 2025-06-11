@@ -1,4 +1,4 @@
-package com.example.green.domain.file.outport;
+package com.example.green.domain.file.service;
 
 import org.springframework.web.multipart.MultipartFile;
 

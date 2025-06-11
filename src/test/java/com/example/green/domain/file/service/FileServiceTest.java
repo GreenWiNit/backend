@@ -16,7 +16,6 @@ import com.example.green.domain.file.domain.FileEntity;
 import com.example.green.domain.file.domain.vo.Purpose;
 import com.example.green.domain.file.exception.FileException;
 import com.example.green.domain.file.exception.FileExceptionMessage;
-import com.example.green.domain.file.outport.StorageHelper;
 import com.example.green.domain.file.repository.FileJpaRepository;
 import com.example.green.domain.file.utils.ImageValidator;
 
