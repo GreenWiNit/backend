@@ -2,11 +2,12 @@ package com.example.green.global.util;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.example.green.domain.member.Member;
 import com.example.green.domain.member.MemberRole;
 import com.example.green.domain.member.MemberStatus;
+import com.example.green.domain.member.Profile;
+import com.example.green.domain.member.repository.MemberRepository;
 import com.example.green.global.utils.MemberUtil;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,6 +21,9 @@ class MemberUtilTest {
 
     @Autowired
     private MemberUtil memberUtil;
+
+    @Autowired
+    private MemberRepository memberRepository;
 
     @Test
     @DisplayName("현재 로그인한 회원의 전체 정보를 올바르게 반환한다")
@@ -58,6 +62,20 @@ class MemberUtilTest {
         assertNotNull(currentMember.getProfile());
         assertEquals("testNickname", currentMember.getProfile().nickname());
         assertEquals("testImageUrl", currentMember.getProfile().profileImageUrl());
+    }
+
+    @DisplayName("이미 회원이 존재하고 있는 상황에서 임시 회원일 삽입하지 않는다.")
+    @Test
+    void shouldNotInsertTemporaryMemberWhenMemberAlreadyExists() {
+        // given
+        Member member = Member.createNormalMember(new Profile("testNickname", "testImageUrl"));
+        memberRepository.save(member);
+
+        // when
+        memberUtil.getCurrentMember();
+
+        // then
+        assertEquals(1, memberRepository.count());
     }
 
     // TODO: 실제 JWT 구현 후 추가할 테스트들
