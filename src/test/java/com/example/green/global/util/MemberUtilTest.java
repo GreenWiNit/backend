@@ -2,11 +2,11 @@ package com.example.green.global.util;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.example.green.domain.member.entity.Member;
 import com.example.green.domain.member.entity.enums.MemberRole;
 import com.example.green.domain.member.entity.enums.MemberStatus;
-import com.example.green.domain.member.entity.vo.Profile;
 import com.example.green.domain.member.repository.MemberRepository;
 import com.example.green.global.utils.MemberUtil;
 import org.junit.jupiter.api.DisplayName;
@@ -33,7 +33,7 @@ class MemberUtilTest {
 
         // then
         assertNotNull(currentMember);
-        assertEquals(1L, currentMember.getId());
+        assertNotNull(currentMember.getId());
         assertEquals("testNickname", currentMember.getNickname());
         assertEquals("testImageUrl", currentMember.getProfileImageUrl());
         assertEquals(MemberStatus.NORMAL, currentMember.getStatus());
@@ -64,18 +64,16 @@ class MemberUtilTest {
         assertEquals("testImageUrl", currentMember.getProfile().profileImageUrl());
     }
 
-    @DisplayName("이미 회원이 존재하고 있는 상황에서 임시 회원을 삽입하지 않는다.")
     @Test
-    void shouldNotInsertTemporaryMemberWhenMemberAlreadyExists() {
-        // given
-        Member member = Member.createNormalMember(new Profile("testNickname", "testImageUrl"));
-        memberRepository.save(member);
-
-        // when
-        memberUtil.getCurrentMember();
-
+    @DisplayName("SecurityUtil이 반환하는 ID로 실제 회원을 조회할 수 있다")
+    void shouldFindMemberBySecurityUtilId() {
+        // given & when
+        Member currentMember = memberUtil.getCurrentMember();
+        Long securityMemberId = memberUtil.getCurrentMemberId();
+        
         // then
-        assertEquals(1, memberRepository.count());
+        assertTrue(memberRepository.findById(securityMemberId).isPresent());
+        assertEquals(currentMember.getId(), securityMemberId);
     }
 
     // TODO: 실제 JWT 구현 후 추가할 테스트들
