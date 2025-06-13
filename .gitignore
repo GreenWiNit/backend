@@ -219,9 +219,6 @@ gradle-app.setting
 !src/main/resources/.env.example
 ./logs/**
 
-### yml ###
-src/main/resources/*.yml
-
 ### DS_Store 제거(애플에서 정의한 파일 포맷) ###
 .DS_Store
 ._.DS_Store
