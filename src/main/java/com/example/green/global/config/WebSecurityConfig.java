@@ -36,7 +36,7 @@ public class WebSecurityConfig {
 			.cors(cors -> cors.configurationSource(corsConfigurationSource()))
 			.csrf(AbstractHttpConfigurer::disable)
 			.headers(headers -> headers
-				.frameOptions(frame -> frame.disable()) // H2 Console용
+				.frameOptions(frame -> frame.disable())
 			)
 			.authorizeHttpRequests(auth -> auth
 				// 정적 리소스 및 공개 경로

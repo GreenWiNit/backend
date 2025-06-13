@@ -9,24 +9,19 @@ spring:
   autoconfigure:
     exclude: org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration
   datasource:
-    url: jdbc:mysql://localhost:3306/green_test?serverTimezone=Asia/Seoul&characterEncoding=UTF-8&allowPublicKeyRetrieval=true&useSSL=false
-    username: root
-    password: root
+    url: jdbc:mysql://localhost:3306/test-db
+    username: test
+    password: test
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
-    database-platform: org.hibernate.dialect.MySQLDialect
     hibernate:
       ddl-auto: create-drop
       naming:
         physical-strategy: com.example.green.infra.database.strategy.UpperSnakeNamingStrategy
     defer-datasource-initialization: false
-    properties:
-      hibernate:
-        format_sql: true
-        default_batch_fetch_size: 100
-    open-in-view: false
   sql:
     init:
+      data-locations:
       mode: never
   servlet:
     multipart:
@@ -35,22 +30,20 @@ spring:
 
 logging:
   level:
-    org.springframework: INFO
-    org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
-    root: INFO
+    org.springframework: ${LOG_LEVEL_SPRING:INFO}
+    org.hibernate.SQL: ${LOG_LEVEL_SQL:DEBUG}
 
 decorator:
   datasource:
     p6spy:
-      enable-logging: false
+      enable-logging: ${P6_SPY:false}
       multiline: true
 
 springdoc:
   swagger-ui:
-    path: /swagger-ui.html
+    path: ${SWAGGER_PATH:/swagger-ui.html}
 
 app:
   storage:
     bucket: test-bucket
-    base-url: http://localhost:4566 
+    base-url: http://localhost:4566

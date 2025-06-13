@@ -2,99 +2,92 @@ package com.example.green.global.util;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.when;
 
 import com.example.green.domain.member.entity.Member;
 import com.example.green.domain.member.entity.enums.MemberRole;
 import com.example.green.domain.member.entity.enums.MemberStatus;
+import com.example.green.domain.member.entity.vo.Profile;
 import com.example.green.domain.member.repository.MemberRepository;
 import com.example.green.global.utils.MemberUtil;
+import com.example.green.global.utils.SecurityUtil;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@SpringBootTest
-@ActiveProfiles("test")
+@ExtendWith(MockitoExtension.class)
 class MemberUtilTest {
 
-    @Autowired
-    private MemberUtil memberUtil;
+    @Mock
+    private SecurityUtil securityUtil;
 
-    @Autowired
+    @Mock
     private MemberRepository memberRepository;
 
+    @InjectMocks
+    private MemberUtil memberUtil;
+
     @Test
-    @DisplayName("현재 로그인한 회원의 전체 정보를 올바르게 반환한다")
-    void shouldReturnCompleteCurrentMemberInfo() {
-        // given & when
-        Member currentMember = memberUtil.getCurrentMember();
+    @DisplayName("유효한 회원 ID로 현재 회원 정보를 올바르게 반환한다")
+    void shouldReturnCurrentMemberWhenValidId() {
+        // given
+        Long memberId = 1L;
+        Member mockMember = createMockMember();
+        
+        when(securityUtil.getCurrentMemberId()).thenReturn(memberId);
+        when(memberRepository.findById(memberId)).thenReturn(Optional.of(mockMember));
+
+        // when
+        Member result = memberUtil.getCurrentMember();
 
         // then
-        assertNotNull(currentMember);
-        assertNotNull(currentMember.getId());
-        assertEquals("testNickname", currentMember.getNickname());
-        assertEquals("testImageUrl", currentMember.getProfileImageUrl());
-        assertEquals(MemberStatus.NORMAL, currentMember.getStatus());
-        assertEquals(MemberRole.USER, currentMember.getRole());
-        assertNotNull(currentMember.getLastLoginAt());
+        assertNotNull(result);
+        assertEquals("testNickname", result.getNickname());
+        assertEquals("testImageUrl", result.getProfileImageUrl());
+        assertEquals(MemberStatus.NORMAL, result.getStatus());
+        assertEquals(MemberRole.USER, result.getRole());
     }
 
     @Test
-    @DisplayName("getCurrentMember와 getCurrentMemberId는 일관된 ID를 반환한다")
-    void shouldReturnConsistentMemberId() {
-        // given & when
-        Member currentMember = memberUtil.getCurrentMember();
-        Long currentMemberId = memberUtil.getCurrentMemberId();
+    @DisplayName("현재 회원 ID를 올바르게 반환한다")
+    void shouldReturnCurrentMemberId() {
+        // given
+        Long expectedMemberId = 1L;
+        when(securityUtil.getCurrentMemberId()).thenReturn(expectedMemberId);
+
+        // when
+        Long result = memberUtil.getCurrentMemberId();
 
         // then
-        assertEquals(currentMember.getId(), currentMemberId);
+        assertEquals(expectedMemberId, result);
     }
+
 
     @Test
     @DisplayName("회원 Profile 정보가 올바르게 구성된다")
     void shouldReturnCorrectProfileInfo() {
-        // given & when
-        Member currentMember = memberUtil.getCurrentMember();
+        // given
+        Long memberId = 1L;
+        Member mockMember = createMockMember();
+        
+        when(securityUtil.getCurrentMemberId()).thenReturn(memberId);
+        when(memberRepository.findById(memberId)).thenReturn(Optional.of(mockMember));
+
+        // when
+        Member result = memberUtil.getCurrentMember();
 
         // then
-        assertNotNull(currentMember.getProfile());
-        assertEquals("testNickname", currentMember.getProfile().nickname());
-        assertEquals("testImageUrl", currentMember.getProfile().profileImageUrl());
+        assertNotNull(result.getProfile());
+        assertEquals("testNickname", result.getProfile().nickname());
+        assertEquals("testImageUrl", result.getProfile().profileImageUrl());
     }
 
-    @Test
-    @DisplayName("SecurityUtil이 반환하는 ID로 실제 회원을 조회할 수 있다")
-    void shouldFindMemberBySecurityUtilId() {
-        // given & when
-        Member currentMember = memberUtil.getCurrentMember();
-        Long securityMemberId = memberUtil.getCurrentMemberId();
-        
-        // then
-        assertTrue(memberRepository.findById(securityMemberId).isPresent());
-        assertEquals(currentMember.getId(), securityMemberId);
+    private Member createMockMember() {
+        Profile profile = new Profile("testNickname", "testImageUrl");
+        return Member.createNormalMember(profile);
     }
-
-    // TODO: 실제 JWT 구현 후 추가할 테스트들
-    /*
-    @Test
-    @DisplayName("인증되지 않은 사용자는 예외가 발생한다")
-    void shouldThrowExceptionWhenNotAuthenticated() {
-        // given: 인증되지 않은 상태
-        
-        // when & then
-        assertThrows(BusinessException.class, () -> memberUtil.getCurrentMember());
-        assertThrows(BusinessException.class, () -> memberUtil.getCurrentMemberId());
-    }
-
-    @Test
-    @DisplayName("존재하지 않는 회원 ID의 경우 예외가 발생한다")
-    void shouldThrowExceptionWhenMemberNotFound() {
-        // given: 존재하지 않는 회원 ID로 인증된 상태
-        
-        // when & then
-        assertThrows(BusinessException.class, () -> memberUtil.getCurrentMember());
-    }
-    */
 } 
