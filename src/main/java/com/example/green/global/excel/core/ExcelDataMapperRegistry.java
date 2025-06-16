@@ -35,8 +35,7 @@ public class ExcelDataMapperRegistry {
 	private void checkDuplicateMapper(ExcelDataMapper<?> mapper, Class<?> dataType) {
 		if (mapperMap.containsKey(dataType)) {
 			String errorMessage = String.format(
-				"동일한 데이터 타입을 처리하는 ExcelDataMapper가 중복 등록되었습니다. " +
-					"데이터 타입: %s, 기존: %s, 중복: %s",
+				"동일한 데이터 타입을 처리하는 ExcelDataMapper가 중복 등록되었습니다. 데이터 타입: %s, 기존: %s, 중복: %s",
 				dataType.getSimpleName(),
 				mapperMap.get(dataType).getClass().getSimpleName(),
 				mapper.getClass().getSimpleName()

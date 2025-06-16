@@ -18,6 +18,8 @@ class MockUserDataMapper implements ExcelDataMapper<MockUser> {
 
 	@Override
 	public Object[] extractRowData(MockUser data) {
-		return new Object[0];
+		return new Object[] {
+			data.getName()
+		};
 	}
 }

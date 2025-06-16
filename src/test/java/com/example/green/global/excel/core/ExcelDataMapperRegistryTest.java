@@ -9,21 +9,28 @@ import org.junit.jupiter.api.Test;
 
 import com.example.green.global.excel.exception.ExcelException;
 import com.example.green.global.excel.exception.ExcelExceptionMessage;
+import com.example.green.global.excel.style.ExcelField;
 
 class ExcelDataMapperRegistryTest {
 
 	@Test
-	void 정상적으로_Exporter를_등록하고_조회할_수_있다() {
+	void 정상적으로_매퍼를_등록하고_조회할_수_있다() {
 		// given
-		List<ExcelDataMapper<?>> mappers = Arrays.asList(new MockUserDataMapper());
+		MockUserDataMapper mockUserDataMapper = new MockUserDataMapper();
+		List<ExcelDataMapper<?>> mappers = Arrays.asList(mockUserDataMapper);
+		ExcelDataMapperRegistry registry = new ExcelDataMapperRegistry(mappers);
+		MockUser mockUser = new MockUser("test");
 
 		// when
-		ExcelDataMapperRegistry registry = new ExcelDataMapperRegistry(mappers);
+		ExcelDataMapper<MockUser> mapper = registry.getMapper(MockUser.class);
 
 		// then
-		ExcelDataMapper<MockUser> result = registry.getMapper(MockUser.class);
-		assertThat(result).isNotNull();
-		assertThat(result).isInstanceOf(MockUserDataMapper.class);
+		String sheetName = mapper.getSheetName();
+		List<ExcelField> fields = mapper.getFields();
+		Object[] objects = mapper.extractRowData(mockUser);
+		assertThat(sheetName).isEqualTo(mockUserDataMapper.getSheetName());
+		assertThat(fields).isEqualTo(mockUserDataMapper.getFields());
+		assertThat(objects).isEqualTo(mockUserDataMapper.extractRowData(mockUser));
 	}
 
 	@Test
