@@ -1,21 +1,19 @@
-name: PR Check
+name: Integration Test
 
 on:
   pull_request:
+    types: [labeled, synchronize]
     branches: [ "main" ]
-  push:
-    branches: [ "main" ]
-  workflow_call:
-    outputs:
-      success:
-        description: "PR Check success status"
-        value: ${{ jobs.check.outputs.success }}
 
 jobs:
-  check:
+  integration-test:
+    # 1. 라벨을 붙였을 때 (labeled 이벤트)
+    # 2. 라벨이 있는 상태에서 새로운 커밋이 푸시되었을 때 (synchronize 이벤트)
+    if: |
+      github.event_name == 'pull_request' && 
+      contains(github.event.pull_request.labels.*.name, 'run-integration-test') &&
+      (github.event.action == 'labeled' || github.event.action == 'synchronize')
     runs-on: ubuntu-latest
-    outputs:
-      success: ${{ steps.set-output.outputs.success }}
 
     steps:
       - name: Checkout code
@@ -27,28 +25,27 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
-      - name: Run Unit Tests
-        run: ./gradlew test --tests "com.example.green.*" -x integrationTest
+      - name: Run All Tests
+        run: ./gradlew test
 
       - name: Generate Jacoco Report
         run: ./gradlew jacocoTestReport -x jacocoTestCoverageVerification
 
-      - name: Add Unit Test Coverage Comment
+      - name: Add Integration Test Coverage Comment
         uses: madrapps/jacoco-report@v1.5
         with:
           paths: ${{ github.workspace }}/build/reports/jacoco/test/jacocoTestReport.xml
           token: ${{ secrets.GITHUB_TOKEN }}
           min-coverage-overall: 60
           min-coverage-changed-files: 60
-          title: "Unit Test Coverage Report"
+          title: "Integration Test Coverage Report"
           update-comment: true
-
-      - name: Run Checkstyle
-        run: ./gradlew checkstyleMain checkstyleTest
 
       - name: Build Project
         run: ./gradlew clean build -x test
 
-      - name: Set success output
-        id: set-output
-        run: echo "success=true" >> $GITHUB_OUTPUT
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app
+          path: build/libs/*.jar 
