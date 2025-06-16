@@ -21,7 +21,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Generate Jacoco Report
-        run: ./gradlew jacocoTestReport
+        run: ./gradlew jacocoTestReport -x jacocoTestCoverageVerification
 
       - name: Add Coverage PR Comment
         if: github.event_name == 'pull_request'

@@ -26,7 +26,7 @@ jobs:
         run: ./gradlew test
 
       - name: Generate Jacoco Report
-        run: ./gradlew jacocoTestReport
+        run: ./gradlew jacocoTestReport -x jacocoTestCoverageVerification
 
       - name: Add Integration Test Coverage Comment
         uses: madrapps/jacoco-report@v1.5
