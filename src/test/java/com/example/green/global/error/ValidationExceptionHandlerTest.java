@@ -45,7 +45,7 @@ class ValidationExceptionHandlerTest {
 			.then()
 			.status(message.getHttpStatus())
 			.body("success", equalTo(false))
-			.body("message", equalTo(message.getMessage()));
+			.body("message", containsString(message.getMessage()));
 	}
 
 	@Test
@@ -62,7 +62,7 @@ class ValidationExceptionHandlerTest {
 			.then()
 			.status(message.getHttpStatus())
 			.body("success", equalTo(false))
-			.body("message", equalTo(message.getMessage()));
+			.body("message", containsString(message.getMessage()));
 	}
 
 	@Test
@@ -79,7 +79,7 @@ class ValidationExceptionHandlerTest {
 			.then()
 			.status(message.getHttpStatus())
 			.body("success", equalTo(false))
-			.body("message", equalTo(message.getMessage()));
+			.body("message", containsString(message.getMessage()));
 	}
 
 	@ParameterizedTest
@@ -97,7 +97,7 @@ class ValidationExceptionHandlerTest {
 			.then()
 			.status(message.getHttpStatus())
 			.body("success", equalTo(false))
-			.body("message", equalTo(message.getMessage()));
+			.body("message", containsString(message.getMessage()));
 	}
 
 	@Test
@@ -113,7 +113,7 @@ class ValidationExceptionHandlerTest {
 			.then()
 			.status(message.getHttpStatus())
 			.body("success", equalTo(false))
-			.body("message", equalTo(message.getMessage()));
+			.body("message", containsString(message.getMessage()));
 	}
 
 	@Test
@@ -128,7 +128,7 @@ class ValidationExceptionHandlerTest {
 			.then()
 			.status(message.getHttpStatus())
 			.body("success", equalTo(false))
-			.body("message", equalTo(message.getMessage()));
+			.body("message", containsString(message.getMessage()));
 	}
 
 	@Test
@@ -144,7 +144,7 @@ class ValidationExceptionHandlerTest {
 			.then()
 			.status(message.getHttpStatus())
 			.body("success", equalTo(false))
-			.body("message", equalTo(message.getMessage()));
+			.body("message", containsString(message.getMessage()));
 	}
 
 	@ParameterizedTest
@@ -162,7 +162,7 @@ class ValidationExceptionHandlerTest {
 			.then()
 			.status(message.getHttpStatus())
 			.body("success", equalTo(false))
-			.body("message", equalTo(message.getMessage()));
+			.body("message", containsString(message.getMessage()));
 	}
 
 	@Test
@@ -179,7 +179,7 @@ class ValidationExceptionHandlerTest {
 			.then()
 			.status(message.getHttpStatus())
 			.body("success", equalTo(false))
-			.body("message", equalTo(message.getMessage()));
+			.body("message", containsString(message.getMessage()));
 	}
 
 	// 더 많은 제약들이 존재하지만 정상 통과하는 것을 확인

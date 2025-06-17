@@ -15,4 +15,8 @@ public record ExceptionResponse(
 	public static ExceptionResponse fail(ExceptionMessage exceptionMessage) {
 		return new ExceptionResponse(false, exceptionMessage.getMessage());
 	}
+
+	public static ExceptionResponse fail(String message) {
+		return new ExceptionResponse(false, message);
+	}
 }

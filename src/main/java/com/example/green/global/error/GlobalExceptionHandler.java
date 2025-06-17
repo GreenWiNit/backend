@@ -1,5 +1,7 @@
 package com.example.green.global.error;
 
+import static com.example.green.global.error.exception.GlobalExceptionMessage.*;
+
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -29,14 +31,14 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler
 	public ResponseEntity<ExceptionResponse> handleException(Exception exception) {
 		log.error("{} : {}", exception.getClass(), exception.toString());
-		return buildExceptionResponse(GlobalExceptionMessage.INTERNAL_SERVER_ERROR_MESSAGE);
+		return buildExceptionResponse(INTERNAL_SERVER_ERROR_MESSAGE);
 	}
 
 	// 존재 하지 않는 End-Point로 접근 시 발생하는 에러
 	@ExceptionHandler
 	public ResponseEntity<ExceptionResponse> handleNoResourceFoundException(NoResourceFoundException exception) {
-		log.error("{} : {}", exception.getClass(), exception.getMessage());
-		return buildExceptionResponse(GlobalExceptionMessage.NO_RESOURCE_MESSAGE);
+		log.warn("{} : {}", exception.getClass(), exception.getMessage());
+		return buildExceptionResponse(NO_RESOURCE_MESSAGE);
 	}
 
 	// BeanValidation(jakarta.validation.constraints) 유효성 검증 에러 처리
@@ -44,12 +46,12 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<ExceptionResponse> handleMethodArgumentNotValidException(
 		MethodArgumentNotValidException exception
 	) {
-		log.error("{} : {}", exception.getClass(), extractErrorSpots(exception));
+		List<ErrorSpot> errorSpots = extractErrorSpots(exception);
+		log.warn("[{}] : {}", exception.getClass(), errorSpots);
 		if (hasTypeMismatch(exception)) {
-			return buildExceptionResponse(GlobalExceptionMessage.ARGUMENT_TYPE_MISMATCH_MESSAGE);
+			return buildExceptionResponse(ARGUMENT_TYPE_MISMATCH_MESSAGE, errorSpots);
 		}
-
-		return buildExceptionResponse(GlobalExceptionMessage.ARGUMENT_NOT_VALID_MESSAGE);
+		return buildExceptionResponse(ARGUMENT_NOT_VALID_MESSAGE, errorSpots);
 	}
 
 	// RequestParam, PathVariable Type Mismatch 에러 처리
@@ -57,8 +59,9 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<ExceptionResponse> handleMethodArgumentTypeMismatchException(
 		MethodArgumentTypeMismatchException exception
 	) {
-		log.error("{} : {}", exception.getClass(), extractErrorSpot(exception));
-		return buildExceptionResponse(GlobalExceptionMessage.ARGUMENT_TYPE_MISMATCH_MESSAGE);
+		ErrorSpot errorSpot = extractErrorSpot(exception);
+		log.warn("{} : {}", exception.getClass(), errorSpot);
+		return buildExceptionResponse(ARGUMENT_TYPE_MISMATCH_MESSAGE, errorSpot);
 	}
 
 	// RequestParam 이 누락된 경우 에러 처리
@@ -66,8 +69,9 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<ExceptionResponse> handleMissingServletRequestParameterException(
 		MissingServletRequestParameterException exception
 	) {
-		log.error("{} : {}", exception.getClass(), extractErrorSpot(exception));
-		return buildExceptionResponse(GlobalExceptionMessage.MISSING_PARAMETER_MESSAGE);
+		ErrorSpot errorSpot = extractErrorSpot(exception);
+		log.warn("{} : {}", exception.getClass(), errorSpot);
+		return buildExceptionResponse(MISSING_PARAMETER_MESSAGE, errorSpot);
 	}
 
 	// 잘못된 Dto 정보에 대해 에러 처리
@@ -75,7 +79,7 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<ExceptionResponse> handleHttpMessageNotReadableException(
 		HttpMessageNotReadableException exception
 	) {
-		log.error("{} : {}", exception.getClass(), exception.getMessage());
+		log.warn("{} : {}", exception.getClass(), exception.getMessage());
 		return buildExceptionResponse(GlobalExceptionMessage.DATA_NOT_READABLE_MESSAGE);
 	}
 
@@ -84,7 +88,7 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<ExceptionResponse> handleHttpMediaTypeNotSupportedException(
 		HttpMediaTypeNotSupportedException exception
 	) {
-		log.error("[{}] : {}", exception.getClass(), exception.getMessage());
+		log.warn("[{}] : {}", exception.getClass(), exception.getMessage());
 		return buildExceptionResponse(GlobalExceptionMessage.UNSUPPORTED_MEDIA_TYPE_MESSAGE);
 	}
 
@@ -94,9 +98,25 @@ public class GlobalExceptionHandler {
 		return buildExceptionResponse(exception.getExceptionMessage());
 	}
 
+	private ResponseEntity<ExceptionResponse> buildExceptionResponse(
+		ExceptionMessage exceptionMessage,
+		List<ErrorSpot> errorSpots
+	) {
+		return ResponseEntity.status(exceptionMessage.getHttpStatus())
+			.body(ExceptionResponse.fail(exceptionMessage.getMessage() + "\n" + errorSpots));
+	}
+
 	private ResponseEntity<ExceptionResponse> buildExceptionResponse(ExceptionMessage exceptionMessage) {
 		return ResponseEntity.status(exceptionMessage.getHttpStatus())
 			.body(ExceptionResponse.fail(exceptionMessage));
+	}
+
+	private ResponseEntity<ExceptionResponse> buildExceptionResponse(
+		ExceptionMessage exceptionMessage,
+		ErrorSpot errorSpot
+	) {
+		return ResponseEntity.status(exceptionMessage.getHttpStatus())
+			.body(ExceptionResponse.fail(exceptionMessage.getMessage() + errorSpot));
 	}
 
 	private List<ErrorSpot> extractErrorSpots(MethodArgumentNotValidException exception) {
@@ -123,5 +143,4 @@ public class GlobalExceptionHandler {
 			.stream()
 			.anyMatch(FieldError::isBindingFailure);
 	}
-
 }
