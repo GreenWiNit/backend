@@ -13,6 +13,11 @@ import com.example.green.global.excel.style.ExcelField;
 public interface ExcelDataMapper<T> {
 
 	/**
+	 * @return 생성할 엑셀 파일명
+	 */
+	String getFileName();
+
+	/**
 	 * 이 Mapper가 처리할 데이터 타입을 반환합니다.
 	 * Registry에서 적절한 Mapper를 찾기 위해 사용됩니다.
 	 *
