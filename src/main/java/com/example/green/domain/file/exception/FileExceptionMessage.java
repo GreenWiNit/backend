@@ -17,7 +17,7 @@ public enum FileExceptionMessage implements ExceptionMessage {
 	EMPTY_IMAGE_FILE_NAME(BAD_REQUEST, "이미지 파일의 이름이 존재하지 않습니다."),
 	INVALID_IMAGE_TYPE(BAD_REQUEST, "이미지 유형의 파일이 아닙니다."),
 	OVER_MAX_IMAGE_SIZE(BAD_REQUEST, "최대 이미지 파일 크기를 초과했습니다."),
-	IMAGE_UPLOAD_FAILED(INTERNAL_SERVER_ERROR, "이미지 업로드에 실패했습니다."),
+	IMAGE_UPLOAD_FAILED(BAD_GATEWAY, "이미지 업로드에 실패했습니다."),
 	INVALID_FILE_METADATA(BAD_REQUEST, "파일 메타데이터 정보가 누락되었습니다."),
 	CANNOT_RESTORE_DELETED_FILE(BAD_REQUEST, "삭제된 파일은 복구할 수 없습니다."),
 	REQUIRED_FILE_METADATA(BAD_REQUEST, "파일 생성 시 메타데이터 정보는 필수입니다."),

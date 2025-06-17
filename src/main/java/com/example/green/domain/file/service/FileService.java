@@ -34,9 +34,7 @@ public class FileService implements FileManager {
 		FileEntity fileEntity = FileEntity.create(fileMetaData, imageKey, purpose);
 		fileJpaRepository.save(fileEntity);
 
-		processUpload(imageKey, imageFile);
-
-		return storageHelper.getFullImageUrl(imageKey);
+		return storageHelper.uploadImage(imageKey, imageFile);
 	}
 
 	@Override
@@ -49,15 +47,6 @@ public class FileService implements FileManager {
 	public void unUseImage(String imageUrl) {
 		FileEntity fileEntity = getFileEntityFromImageUrl(imageUrl);
 		fileEntity.markDeleted();
-	}
-
-	private void processUpload(String imageKey, MultipartFile imageFile) {
-		try {
-			storageHelper.uploadImage(imageKey, imageFile);
-		} catch (IllegalArgumentException exception) {
-			log.error("s3 uploading failed: {}", exception.getMessage());
-			throw new FileException(FileExceptionMessage.IMAGE_UPLOAD_FAILED);
-		}
 	}
 
 	private FileEntity getFileEntityFromImageUrl(String imageUrl) {
