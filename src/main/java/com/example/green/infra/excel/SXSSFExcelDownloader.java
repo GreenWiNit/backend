@@ -41,7 +41,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class SXSSFExcelDownloader implements ExcelDownloader { // @checkstyle:ignore
 	private static final String DISPOSITION_FORMAT = "attachment; filename=\"%s.%s\"";
-	private static final String EXCEL_FILE_EXTENSION = ".xlsx";
+	private static final String EXCEL_FILE_EXTENSION = "xlsx";
 	private static final int WINDOW_SIZE = 100;
 
 	private final ExcelDataMapperRegistry registry;
