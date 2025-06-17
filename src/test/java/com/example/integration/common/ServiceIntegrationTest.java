@@ -14,6 +14,6 @@ import com.example.integration.file.FileTestUtil;
 	MySqlTestContainerConfig.class,
 	S3TestContainerConfig.class,
 	TestBeanConfig.class
-})
+}, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class ServiceIntegrationTest {
 }
