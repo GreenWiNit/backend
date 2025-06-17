@@ -1,5 +1,9 @@
 name: Integration Test
 
+# 워크플로우 실행 조건
+# 1. PR에 'run-integration-test' 라벨이 추가될 때
+# 2. 라벨이 있는 PR에 새로운 커밋이 push될 때
+# 주의: PR이 merge될 때는 실행되지 않음 (deploy.yaml에서 실행)
 on:
   pull_request:
     types: [labeled, synchronize]
@@ -12,7 +16,8 @@ jobs:
     if: |
       github.event_name == 'pull_request' && 
       contains(github.event.pull_request.labels.*.name, 'run-integration-test') &&
-      (github.event.action == 'labeled' || github.event.action == 'synchronize')
+      (github.event.action == 'labeled' || github.event.action == 'synchronize') &&
+      github.event.pull_request.merged != true
     runs-on: ubuntu-latest
 
     steps:
@@ -25,12 +30,15 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
+      # 전체 테스트 실행 (통합 테스트 포함)
       - name: Run All Tests
         run: ./gradlew test
 
+      # 테스트 커버리지 리포트 생성
       - name: Generate Jacoco Report
         run: ./gradlew jacocoTestReport -x jacocoTestCoverageVerification
 
+      # PR에 통합 테스트 커버리지 결과를 코멘트로 추가
       - name: Add Integration Test Coverage Comment
         uses: madrapps/jacoco-report@v1.5
         with:
@@ -42,10 +50,4 @@ jobs:
           update-comment: true
 
       - name: Build Project
-        run: ./gradlew clean build -x test
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: app
-          path: build/libs/*.jar 
+        run: ./gradlew clean build -x test 

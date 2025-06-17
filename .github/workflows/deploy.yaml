@@ -1,5 +1,7 @@
 name: CD Deploy
 
+# 워크플로우 실행 조건
+# PR이 main 브랜치로 merge될 때만 실행
 on:
   pull_request:
     types: [closed]
@@ -7,10 +9,9 @@ on:
 
 jobs:
   deploy:
-    # PR이 merge되었을 때만 배포
+    # PR이 merge된 경우에만 실행
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -21,9 +22,23 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
+      # 전체 테스트 실행 (단위 테스트 + 통합 테스트)
+      - name: Run All Tests
+        run: ./gradlew test
+
+      # 테스트 커버리지 리포트 생성
+      - name: Generate Jacoco Report
+        run: ./gradlew jacocoTestReport -x jacocoTestCoverageVerification
+
+      # 코드 스타일 검사
+      - name: Run Checkstyle
+        run: ./gradlew checkstyleMain checkstyleTest
+
+      # 프로젝트 빌드
       - name: Build Project
         run: ./gradlew clean build -x test
 
+      # 환경 변수 설정
       - name: GitHub Secrets To .env
         run: |
           echo "DB_TYPE=mysql" >> .env
@@ -42,8 +57,8 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           source: |
-            "build/libs/*.jar"
-            ".env"
+            build/libs/green*.jar
+            .env
           target: "~/backend"
 
       - name: Run reload.sh

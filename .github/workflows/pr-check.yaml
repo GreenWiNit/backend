@@ -1,7 +1,13 @@
 name: PR Check
 
+# 워크플로우 실행 조건
+# 1. PR이 main 브랜치로 생성될 때 (opened)
+# 2. PR에 새로운 커밋이 push될 때 (synchronize)
+# 3. 닫혔던 PR이 다시 열릴 때 (reopened)
+# 주의: PR이 merge될 때는 실행되지 않음 (deploy.yaml에서 실행)
 on:
   pull_request:
+    types: [opened, synchronize, reopened]
     branches: [ "main" ]
   push:
     branches: [ "main" ]
@@ -13,6 +19,7 @@ on:
 
 jobs:
   check:
+    if: github.event.pull_request.merged != true
     runs-on: ubuntu-latest
     outputs:
       success: ${{ steps.set-output.outputs.success }}
@@ -30,9 +37,11 @@ jobs:
       - name: Run Unit Tests
         run: ./gradlew test --tests "com.example.green.*"
 
+      # 테스트 커버리지 리포트 생성
       - name: Generate Jacoco Report
         run: ./gradlew jacocoTestReport -x jacocoTestCoverageVerification
 
+      # PR에 테스트 커버리지 결과를 코멘트로 추가
       - name: Add Unit Test Coverage Comment
         uses: madrapps/jacoco-report@v1.5
         with:
