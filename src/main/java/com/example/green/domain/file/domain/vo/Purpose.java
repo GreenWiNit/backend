@@ -7,7 +7,9 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum Purpose {
 
-	PROFILE("profile");
+	CHALLENGE("challenge"),
+	SHARE("share"),
+	PRODUCT("product");
 
 	private final String value;
 }
