@@ -1,6 +1,7 @@
 package com.example.green.domain.file.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.green.domain.common.service.FileManager;
@@ -12,7 +13,6 @@ import com.example.green.domain.file.exception.FileExceptionMessage;
 import com.example.green.domain.file.repository.FileJpaRepository;
 import com.example.green.domain.file.utils.ImageValidator;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -51,13 +51,8 @@ public class FileService implements FileManager {
 
 	private FileEntity getFileEntityFromImageUrl(String imageUrl) {
 		imageValidator.validateUrl(imageUrl);
-		try {
-			String imageKey = storageHelper.extractImageKey(imageUrl);
-			return fileJpaRepository.findByFileKey(imageKey)
-				.orElseThrow(() -> new FileException(FileExceptionMessage.NOT_FOUND_FILE));
-		} catch (IllegalArgumentException exception) {
-			log.error("invalid image url in storage: {}", exception.getMessage());
-			throw new FileException(FileExceptionMessage.INVALID_IMAGE_URL);
-		}
+		String imageKey = storageHelper.extractImageKey(imageUrl);
+		return fileJpaRepository.findByFileKey(imageKey)
+			.orElseThrow(() -> new FileException(FileExceptionMessage.NOT_FOUND_FILE));
 	}
 }

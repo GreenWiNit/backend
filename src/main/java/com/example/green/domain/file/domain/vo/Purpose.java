@@ -8,7 +8,8 @@ import lombok.Getter;
 public enum Purpose {
 
 	CHALLENGE("challenge"),
-	SHARE("share"),
+	CHALLENGE_AUTHENTICATION("challenge_authentication"),
+	INFO("info"),
 	PRODUCT("product");
 
 	private final String value;

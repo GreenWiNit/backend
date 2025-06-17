@@ -57,7 +57,7 @@ public class S3StorageHelper implements StorageHelper {
 		String baseUrl = s3Properties.getBaseUrl();
 		String imageUrlPrefix = String.format("%s/%s", baseUrl, IMAGE_KEY_PREFIX);
 		if (!imageUrl.startsWith(imageUrlPrefix)) {
-			throw new IllegalArgumentException("invalid image url: " + imageUrl);
+			throw new FileException(FileExceptionMessage.INVALID_IMAGE_URL);
 		}
 		return imageUrl.substring(baseUrl.length() + 1);
 	}

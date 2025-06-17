@@ -81,20 +81,6 @@ class FileServiceTest {
 	}
 
 	@Test
-	void imageUrl에서_이미지_키_추출_중_버그가_발생하면_예외를_던진다() {
-		// given
-		String imageUrl = "imageUrl";
-		doThrow(IllegalArgumentException.class).when(storageHelper).extractImageKey(imageUrl);
-
-		// when & then
-		assertThatThrownBy(() -> fileService.confirmUsingImage(imageUrl))
-			.isInstanceOf(FileException.class)
-			.hasFieldOrPropertyWithValue("exceptionMessage", FileExceptionMessage.INVALID_IMAGE_URL);
-
-		verify(imageValidator).validateUrl(imageUrl);
-	}
-
-	@Test
 	void 존재하지_않는_이미지_키_일_경우_예외를_던진다() {
 		// given
 		String imageUrl = "imageUrl";
