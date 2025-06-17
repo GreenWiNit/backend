@@ -44,8 +44,8 @@ class MemberUtilTest {
 
         // then
         assertNotNull(result);
-        assertEquals("testNickname", result.getNickname());
-        assertEquals("testImageUrl", result.getProfileImageUrl());
+        assertEquals("testNickname", result.getProfile().getNickname());
+        assertEquals("testImageUrl", result.getProfile().getProfileImageUrl());
         assertEquals(MemberStatus.NORMAL, result.getStatus());
         assertEquals(MemberRole.USER, result.getRole());
     }
@@ -80,8 +80,8 @@ class MemberUtilTest {
 
         // then
         assertNotNull(result.getProfile());
-        assertEquals("testNickname", result.getProfile().nickname());
-        assertEquals("testImageUrl", result.getProfile().profileImageUrl());
+        assertEquals("testNickname", result.getProfile().getNickname());
+        assertEquals("testImageUrl", result.getProfile().getProfileImageUrl());
     }
 
     private Member createMockMember() {

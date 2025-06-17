@@ -21,11 +21,8 @@ public class Member extends BaseEntity {
     @Column(name = "member_id")
     private Long id;
 
-    @Column(name = "nickname")
-    private String nickname;
-    
-    @Column(name = "profile_image_url")
-    private String profileImageUrl;
+    @Embedded
+    private Profile profile;
 
     @Enumerated(EnumType.STRING)
     private MemberStatus status;
@@ -37,13 +34,11 @@ public class Member extends BaseEntity {
 
     @Builder(access = AccessLevel.PRIVATE)
     private Member(
-            String nickname,
-            String profileImageUrl,
+            Profile profile,
             MemberStatus status,
             MemberRole role,
             LocalDateTime lastLoginAt) {
-        this.nickname = nickname;
-        this.profileImageUrl = profileImageUrl;
+        this.profile = profile;
         this.status = status;
         this.role = role;
         this.lastLoginAt = lastLoginAt;
@@ -51,15 +46,12 @@ public class Member extends BaseEntity {
 
     public static Member createNormalMember(Profile profile) {
         return Member.builder()
-                .nickname(profile.nickname())
-                .profileImageUrl(profile.profileImageUrl())
+                .profile(profile)
                 .status(MemberStatus.NORMAL)
                 .role(MemberRole.USER)
                 .lastLoginAt(LocalDateTime.now())
                 .build();
     }
-    
-    public Profile getProfile() {
-        return new Profile(nickname, profileImageUrl);
-    }
+
+
 }
