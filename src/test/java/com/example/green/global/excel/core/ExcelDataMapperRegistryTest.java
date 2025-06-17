@@ -57,4 +57,66 @@ class ExcelDataMapperRegistryTest {
 		assertThatThrownBy(() -> new ExcelDataMapperRegistry(mappers))
 			.isInstanceOf(IllegalStateException.class);
 	}
+
+	class MockUser {
+		private String name;
+
+		public MockUser(String name) {
+			this.name = name;
+		}
+
+		public String getName() {
+			return name;
+		}
+	}
+
+	class MockUserDataMapper implements ExcelDataMapper<MockUser> {
+
+		@Override
+		public String getFileName() {
+			return "";
+		}
+
+		@Override
+		public Class<MockUser> getDataType() {
+			return MockUser.class;
+		}
+
+		@Override
+		public List<ExcelField> getFields() {
+			return List.of();
+		}
+
+		@Override
+		public Object[] extractRowData(MockUser data) {
+			return new Object[] {
+				data.getName()
+			};
+		}
+	}
+
+	public class AnotherMockUserDataMapper implements ExcelDataMapper<MockUser> {
+		@Override
+		public String getFileName() {
+			return "Test";
+		}
+
+		@Override
+		public Class<MockUser> getDataType() {
+			return MockUser.class;
+		}
+
+		@Override
+		public List<ExcelField> getFields() {
+			return List.of();
+		}
+
+		@Override
+		public Object[] extractRowData(MockUser data) {
+			return new Object[0];
+		}
+	}
+
+	class UnregisteredType {
+	}
 }

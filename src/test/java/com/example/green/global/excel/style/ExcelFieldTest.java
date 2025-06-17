@@ -16,7 +16,7 @@ class ExcelFieldTest {
 		// given
 		String fieldName = "test";
 		BackGroundColor backgroundColor = BackGroundColor.WHITE;
-		DataFormat format = DataFormat.NUMBER;
+		FieldFormat format = FieldFormat.NUMBER;
 
 		// when
 		ExcelField field = ExcelField.of(fieldName, backgroundColor, format);
@@ -32,7 +32,7 @@ class ExcelFieldTest {
 	void 필드명이_비어있으면_예외가_발생한다(String fieldName) {
 		// given
 		BackGroundColor backgroundColor = BackGroundColor.WHITE;
-		DataFormat format = DataFormat.NUMBER;
+		FieldFormat format = FieldFormat.NUMBER;
 
 		// when & then
 		assertThatThrownBy(() -> ExcelField.of(fieldName, backgroundColor, format))
@@ -45,7 +45,7 @@ class ExcelFieldTest {
 		// given
 		String fieldName = "test";
 		BackGroundColor backgroundColor = null;
-		DataFormat format = DataFormat.NUMBER;
+		FieldFormat format = FieldFormat.NUMBER;
 
 		// when & then
 		assertThatThrownBy(() -> ExcelField.of(fieldName, backgroundColor, format))
@@ -58,7 +58,7 @@ class ExcelFieldTest {
 		// given
 		String fieldName = "test";
 		BackGroundColor backgroundColor = BackGroundColor.LIGHT_GRAY;
-		DataFormat format = null;
+		FieldFormat format = null;
 
 		// when & then
 		assertThatThrownBy(() -> ExcelField.of(fieldName, backgroundColor, format))

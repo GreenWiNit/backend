@@ -15,9 +15,9 @@ public class ExcelField {
 
 	private final String name;
 	private final BackGroundColor backGroundColor;
-	private final DataFormat format;
+	private final FieldFormat format;
 
-	public static ExcelField of(String name, BackGroundColor backGroundColor, DataFormat format) {
+	public static ExcelField of(String name, BackGroundColor backGroundColor, FieldFormat format) {
 		if (name == null || name.isEmpty()) {
 			log.error("excel field 명이 비어있습니다.");
 			throw new ExcelException(ExcelExceptionMessage.EXCEL_GENERATION_FAILED);
