@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
+import com.example.green.global.error.dto.DetailedExceptionResponse;
 import com.example.green.global.error.dto.ErrorSpot;
 import com.example.green.global.error.dto.ExceptionResponse;
 import com.example.green.global.error.exception.BusinessException;
@@ -47,11 +48,11 @@ public class GlobalExceptionHandler {
 		MethodArgumentNotValidException exception
 	) {
 		List<ErrorSpot> errorSpots = extractErrorSpots(exception);
+		ExceptionMessage exceptionMessage = extractExceptionMessage(exception);
 		log.warn("[{}] : {}", exception.getClass(), errorSpots);
-		if (hasTypeMismatch(exception)) {
-			return buildExceptionResponse(ARGUMENT_TYPE_MISMATCH_MESSAGE, errorSpots);
-		}
-		return buildExceptionResponse(ARGUMENT_NOT_VALID_MESSAGE, errorSpots);
+
+		return ResponseEntity.status(exceptionMessage.getHttpStatus())
+			.body(DetailedExceptionResponse.fail(exceptionMessage, errorSpots));
 	}
 
 	// RequestParam, PathVariable Type Mismatch 에러 처리
@@ -59,9 +60,12 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<ExceptionResponse> handleMethodArgumentTypeMismatchException(
 		MethodArgumentTypeMismatchException exception
 	) {
-		ErrorSpot errorSpot = extractErrorSpot(exception);
+		final String type = exception.getRequiredType().getSimpleName();
+		final String customMessage = " (으)로 변환할 수 없는 요청입니다.";
+		ErrorSpot errorSpot = new ErrorSpot(exception.getName(), type + customMessage);
 		log.warn("{} : {}", exception.getClass(), errorSpot);
-		return buildExceptionResponse(ARGUMENT_TYPE_MISMATCH_MESSAGE, errorSpot);
+		return ResponseEntity.status(ARGUMENT_TYPE_MISMATCH_MESSAGE.getHttpStatus())
+			.body(DetailedExceptionResponse.fail(ARGUMENT_TYPE_MISMATCH_MESSAGE, errorSpot));
 	}
 
 	// RequestParam 이 누락된 경우 에러 처리
@@ -69,9 +73,10 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<ExceptionResponse> handleMissingServletRequestParameterException(
 		MissingServletRequestParameterException exception
 	) {
-		ErrorSpot errorSpot = extractErrorSpot(exception);
+		ErrorSpot errorSpot = new ErrorSpot(exception.getParameterName(), exception.getParameterType());
 		log.warn("{} : {}", exception.getClass(), errorSpot);
-		return buildExceptionResponse(MISSING_PARAMETER_MESSAGE, errorSpot);
+		return ResponseEntity.status(MISSING_PARAMETER_MESSAGE.getHttpStatus())
+			.body(DetailedExceptionResponse.fail(MISSING_PARAMETER_MESSAGE, errorSpot));
 	}
 
 	// 잘못된 Dto 정보에 대해 에러 처리
@@ -98,25 +103,9 @@ public class GlobalExceptionHandler {
 		return buildExceptionResponse(exception.getExceptionMessage());
 	}
 
-	private ResponseEntity<ExceptionResponse> buildExceptionResponse(
-		ExceptionMessage exceptionMessage,
-		List<ErrorSpot> errorSpots
-	) {
-		return ResponseEntity.status(exceptionMessage.getHttpStatus())
-			.body(ExceptionResponse.fail(exceptionMessage.getMessage() + "\n" + errorSpots));
-	}
-
 	private ResponseEntity<ExceptionResponse> buildExceptionResponse(ExceptionMessage exceptionMessage) {
 		return ResponseEntity.status(exceptionMessage.getHttpStatus())
 			.body(ExceptionResponse.fail(exceptionMessage));
-	}
-
-	private ResponseEntity<ExceptionResponse> buildExceptionResponse(
-		ExceptionMessage exceptionMessage,
-		ErrorSpot errorSpot
-	) {
-		return ResponseEntity.status(exceptionMessage.getHttpStatus())
-			.body(ExceptionResponse.fail(exceptionMessage.getMessage() + errorSpot));
 	}
 
 	private List<ErrorSpot> extractErrorSpots(MethodArgumentNotValidException exception) {
@@ -127,20 +116,15 @@ public class GlobalExceptionHandler {
 			.toList();
 	}
 
-	private ErrorSpot extractErrorSpot(MethodArgumentTypeMismatchException exception) {
-		final String type = exception.getRequiredType().getSimpleName();
-		final String customMessage = " (으)로 변환할 수 없는 요청입니다.";
-		return new ErrorSpot(exception.getName(), type + customMessage);
-	}
-
-	private static ErrorSpot extractErrorSpot(MissingServletRequestParameterException exception) {
-		return new ErrorSpot(exception.getParameterName(), exception.getParameterType());
-	}
-
-	private boolean hasTypeMismatch(MethodArgumentNotValidException exception) {
-		return exception.getBindingResult()
+	private ExceptionMessage extractExceptionMessage(MethodArgumentNotValidException exception) {
+		boolean hasTypeMismatch = exception.getBindingResult()
 			.getFieldErrors()
 			.stream()
 			.anyMatch(FieldError::isBindingFailure);
+
+		if (hasTypeMismatch) {
+			return ARGUMENT_TYPE_MISMATCH_MESSAGE;
+		}
+		return ARGUMENT_NOT_VALID_MESSAGE;
 	}
 }
