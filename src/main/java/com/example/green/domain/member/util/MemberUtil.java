@@ -1,5 +1,6 @@
-package com.example.green.global.utils;
+package com.example.green.domain.member.util;
 
+import com.example.green.global.utils.SecurityUtil;
 import org.springframework.stereotype.Component;
 
 import com.example.green.domain.member.entity.Member;
