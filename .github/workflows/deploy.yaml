@@ -4,7 +4,7 @@ name: CD Deploy
 # PR이 main 브랜치로 merge될 때만 실행
 on:
   pull_request:
-    types: [closed]
+    types: [ closed ]
     branches: [ "main" ]
 
 jobs:
@@ -40,6 +40,7 @@ jobs:
 
       # 환경 변수 설정
       - name: GitHub Secrets To .env
+        working-directory: backend
         run: |
           echo "DB_TYPE=mysql" >> .env
           echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
@@ -57,8 +58,8 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           source: |
-            build/libs/green*.jar
-            .env
+            backend/build/libs/green*.jar
+            backend/.env
           target: "~/backend"
 
       - name: Run reload.sh
