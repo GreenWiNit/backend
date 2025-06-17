@@ -6,7 +6,6 @@ import com.example.green.global.excel.core.ExcelDataMapper;
 import com.example.green.global.excel.style.BackGroundColor;
 import com.example.green.global.excel.style.ExcelField;
 import com.example.green.global.excel.style.FieldFormat;
-import com.example.green.global.excel.style.FormatType;
 
 public class TestExcelDataMapper implements ExcelDataMapper<TestDto> {
 
@@ -24,7 +23,7 @@ public class TestExcelDataMapper implements ExcelDataMapper<TestDto> {
 	public List<ExcelField> getFields() {
 		BackGroundColor singleBackGroundColor = BackGroundColor.LIGHT_GRAY;
 		return List.of(
-			ExcelField.of("ID", singleBackGroundColor, FieldFormat.of("#@", FormatType.TEXT)),
+			ExcelField.of("ID", singleBackGroundColor, FieldFormat.of("#@")),
 			ExcelField.of("이름", singleBackGroundColor, FieldFormat.TEXT),
 			ExcelField.of("나이", singleBackGroundColor, FieldFormat.NUMBER),
 			ExcelField.of("생년월일", singleBackGroundColor, FieldFormat.DATE),
