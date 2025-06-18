@@ -22,8 +22,6 @@ import lombok.RequiredArgsConstructor;
 
 /**
  * Spring Security 설정 클래스입니다.
- *
- * 주요 변경사항:
  * - 경로별 세부 권한 설정을 @PreAuthorize 메타 어노테이션으로 위임합니다.
  * - 기본적인 보안 설정만 중앙에서 관리합니다.
  * - 도메인별 보안 정책은 각 컨트롤러에서 명시적으로 선언합니다.
@@ -37,12 +35,12 @@ public class WebSecurityConfig {
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http
-				.cors(cors -> cors.configurationSource(corsConfigurationSource()))
-				.csrf(AbstractHttpConfigurer::disable)
-				.headers(headers -> headers.frameOptions(frame -> frame.disable()))
-				.authorizeHttpRequests(auth -> auth
+			.cors(cors -> cors.configurationSource(corsConfigurationSource()))
+			.csrf(AbstractHttpConfigurer::disable)
+			.headers(headers -> headers.frameOptions(frame -> frame.disable()))
+			.authorizeHttpRequests(auth -> auth
 				// 정적 리소스는 항상 허용
-						.requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
+				.requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
 				// 개발/운영 도구 경로 허용
 				.requestMatchers(
 					"/h2-console/**",
@@ -54,9 +52,13 @@ public class WebSecurityConfig {
 					"/favicon.ico",
 					"/actuator/health"
 				).permitAll()
-				// 나머지는 @PreAuthorize 어노테이션으로 제어하므로 일단 허용
-						.anyRequest().permitAll()
-				);
+				// API 경로는 메소드 레벨 @PreAuthorize로 세밀하게 제어
+				.requestMatchers("/api/**").permitAll()
+				// 나머지 경로
+				.anyRequest().permitAll()
+			)
+			// HTTP Basic 인증 활성화 (테스트용)
+			.httpBasic(httpBasic -> httpBasic.realmName("Test Realm"));
 
 		return http.build();
 	}
@@ -78,6 +80,7 @@ public class WebSecurityConfig {
 	@Bean
 	public UserDetailsService userDetailsService() {
 		UserDetails mockUser = new PrincipalDetails(1L, "ROLE_USER");
-		return new InMemoryUserDetailsManager(mockUser);
+		UserDetails mockAdmin = new PrincipalDetails(2L, "ROLE_ADMIN");
+		return new InMemoryUserDetailsManager(mockUser, mockAdmin);
 	}
 }
