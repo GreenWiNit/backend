@@ -28,7 +28,8 @@ public class GlobalExceptionHandler {
 
 	// Spring Security 권한 예외 처리
 	@ExceptionHandler
-	public ResponseEntity<ExceptionResponse> handleAuthorizationDeniedException(AuthorizationDeniedException exception) {
+	public ResponseEntity<ExceptionResponse> handleAuthorizationDeniedException(
+			AuthorizationDeniedException exception) {
 		log.error("{} : {}", exception.getClass(), exception.getMessage());
 		return buildExceptionResponse(GlobalExceptionMessage.ACCESS_DENIED_MESSAGE);
 	}

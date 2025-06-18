@@ -1,10 +1,18 @@
 package com.example.green.domain.member.entity;
 
+
 import com.example.green.domain.common.BaseEntity;
 import com.example.green.domain.member.entity.enums.MemberRole;
 import com.example.green.domain.member.entity.enums.MemberStatus;
 import com.example.green.domain.member.entity.vo.Profile;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -53,5 +61,5 @@ public class Member extends BaseEntity {
                 .build();
     }
 
-
 }
+

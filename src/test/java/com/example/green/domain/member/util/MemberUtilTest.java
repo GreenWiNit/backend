@@ -36,7 +36,7 @@ class MemberUtilTest {
         // given
         Long memberId = 1L;
         Member mockMember = createMockMember();
-        
+
         when(securityUtil.getCurrentMemberId()).thenReturn(memberId);
         when(memberRepository.findById(memberId)).thenReturn(Optional.of(mockMember));
 
@@ -72,7 +72,7 @@ class MemberUtilTest {
         // given
         Long memberId = 1L;
         Member mockMember = createMockMember();
-        
+
         when(securityUtil.getCurrentMemberId()).thenReturn(memberId);
         when(memberRepository.findById(memberId)).thenReturn(Optional.of(mockMember));
 
@@ -89,4 +89,4 @@ class MemberUtilTest {
         Profile profile = new Profile("testNickname", "testImageUrl");
         return Member.createNormalMember(profile);
     }
-} 
+}

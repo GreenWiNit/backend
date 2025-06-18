@@ -31,9 +31,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 public @interface AdminApi {
 
 	String DEFAULT_REASON = "관리자 권한 필요";
-	
+
 	/**
 	 * 관리자 권한이 필요한 사유를 명시 (문서화 목적)
 	 */
 	String reason() default DEFAULT_REASON;
-} 
+}

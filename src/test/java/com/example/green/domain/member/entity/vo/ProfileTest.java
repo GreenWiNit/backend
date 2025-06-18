@@ -13,10 +13,10 @@ class ProfileTest {
         // given
         String nickname = "testUser";
         String profileImageUrl = "https://example.com/image.jpg";
-        
+
         Profile profile1 = new Profile(nickname, profileImageUrl);
         Profile profile2 = new Profile(nickname, profileImageUrl);
-        
+
         // when & then
         assertThat(profile1).isEqualTo(profile2);
         assertThat(profile1.hashCode()).isEqualTo(profile2.hashCode());
@@ -28,7 +28,7 @@ class ProfileTest {
         // given
         Profile profile1 = new Profile("user1", "https://example.com/image.jpg");
         Profile profile2 = new Profile("user2", "https://example.com/image.jpg");
-        
+
         // when & then
         assertThat(profile1).isNotEqualTo(profile2);
     }
@@ -39,7 +39,7 @@ class ProfileTest {
         // given
         Profile profile1 = new Profile("testUser", "https://example.com/image1.jpg");
         Profile profile2 = new Profile("testUser", "https://example.com/image2.jpg");
-        
+
         // when & then
         assertThat(profile1).isNotEqualTo(profile2);
     }
@@ -49,7 +49,7 @@ class ProfileTest {
     void shouldNotBeEqualWhenComparedWithNull() {
         // given
         Profile profile = new Profile("testUser", "https://example.com/image.jpg");
-        
+
         // when & then
         assertThat(profile).isNotEqualTo(null);
     }
@@ -59,7 +59,7 @@ class ProfileTest {
     void shouldBeEqualWithItself() {
         // given
         Profile profile = new Profile("testUser", "https://example.com/image.jpg");
-        
+
         // when & then
         assertThat(profile).isEqualTo(profile);
     }
@@ -71,7 +71,7 @@ class ProfileTest {
         Profile profileWithImage = new Profile("user", "https://example.com/image.jpg");
         Profile profileWithoutImage = new Profile("user", null);
         Profile profileWithBlankImage = new Profile("user", "   ");
-        
+
         // when & then
         assertThat(profileWithImage.hasProfileImage()).isTrue();
         assertThat(profileWithoutImage.hasProfileImage()).isFalse();
@@ -86,11 +86,11 @@ class ProfileTest {
         Profile tooShortProfile = new Profile("a", "https://example.com/image.jpg");
         Profile tooLongProfile = new Profile("a".repeat(21), "https://example.com/image.jpg");
         Profile nullNicknameProfile = new Profile(null, "https://example.com/image.jpg");
-        
+
         // when & then
         assertThat(validProfile.isValidNickname()).isTrue();
         assertThat(tooShortProfile.isValidNickname()).isFalse();
         assertThat(tooLongProfile.isValidNickname()).isFalse();
         assertThat(nullNicknameProfile.isValidNickname()).isFalse();
     }
-} 
+}

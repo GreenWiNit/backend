@@ -32,9 +32,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 public @interface AuthenticatedApi {
 
 	String DEFAULT_REASON = "인증 필요";
-	
+
 	/**
 	 * API의 인증 요구 사유를 명시 (문서화 목적)
 	 */
 	String reason() default DEFAULT_REASON;
-} 
+}

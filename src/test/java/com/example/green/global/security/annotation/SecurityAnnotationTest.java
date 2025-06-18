@@ -67,4 +67,4 @@ class SecurityAnnotationTest {
                 .andDo(print())
                 .andExpect(status().isOk());
     }
-} 
+}

@@ -18,4 +18,4 @@ public enum MemberExceptionMessage implements ExceptionMessage {
 
 	private final HttpStatus httpStatus;
 	private final String message;
-} 
+}

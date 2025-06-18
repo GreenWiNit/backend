@@ -12,13 +12,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of = {"nickname", "profileImageUrl"})
 public class Profile {
-    
+
     @Column(name = "nickname")
     private String nickname;
-    
+
     @Column(name = "profile_image_url")
     private String profileImageUrl;
-    
+
     public Profile(String nickname, String profileImageUrl) {
         this.nickname = nickname;
         this.profileImageUrl = profileImageUrl;

@@ -32,4 +32,4 @@ public @interface PublicApi {
      * API의 공개 사유를 명시 (문서화 목적)
      */
     String reason() default DEFAULT_REASON;
-} 
+}
