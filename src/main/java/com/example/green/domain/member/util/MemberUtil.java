@@ -1,15 +1,15 @@
 package com.example.green.domain.member.util;
 
-
-
 import com.example.green.domain.member.entity.Member;
 import com.example.green.domain.member.entity.vo.Profile;
 import com.example.green.domain.member.exception.MemberExceptionMessage;
 import com.example.green.domain.member.repository.MemberRepository;
 import com.example.green.global.error.exception.BusinessException;
 import com.example.green.global.security.SecurityUtil;
-import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Component;
+
+import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
