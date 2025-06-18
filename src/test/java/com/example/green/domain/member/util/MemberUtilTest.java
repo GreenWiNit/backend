@@ -1,4 +1,4 @@
-package com.example.green.global.utils;
+package com.example.green.domain.member.util;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -9,7 +9,6 @@ import com.example.green.domain.member.entity.enums.MemberRole;
 import com.example.green.domain.member.entity.enums.MemberStatus;
 import com.example.green.domain.member.entity.vo.Profile;
 import com.example.green.domain.member.repository.MemberRepository;
-import com.example.green.domain.member.util.MemberUtil;
 import com.example.green.global.security.SecurityUtil;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
