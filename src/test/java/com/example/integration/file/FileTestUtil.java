@@ -72,6 +72,10 @@ public class FileTestUtil {
 		}
 	}
 
+	public void clearDatabase() {
+		fileJpaRepository.deleteAll();
+	}
+
 	private boolean hasBucket(String bucket) {
 		try {
 			s3Client.headBucket(builder -> builder.bucket(bucket));

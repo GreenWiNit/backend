@@ -3,13 +3,12 @@ package com.example.green.domain.file.service;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.example.green.domain.common.outport.FileManager;
+import com.example.green.domain.common.service.FileManager;
 import com.example.green.domain.file.domain.FileEntity;
 import com.example.green.domain.file.domain.vo.FileMetaData;
 import com.example.green.domain.file.domain.vo.Purpose;
 import com.example.green.domain.file.exception.FileException;
 import com.example.green.domain.file.exception.FileExceptionMessage;
-import com.example.green.domain.file.outport.StorageHelper;
 import com.example.green.domain.file.repository.FileJpaRepository;
 import com.example.green.domain.file.utils.ImageValidator;
 
