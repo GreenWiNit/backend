@@ -7,22 +7,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.example.green.GreenApplication;
+import com.example.integration.common.ServiceIntegrationTest;
 
-/**
- * Security 애노테이션 테스트
- * 컨트롤러와 Security 설정만 로드하여 테스트합니다.
- */
-@SpringBootTest(classes = GreenApplication.class, webEnvironment = SpringBootTest.WebEnvironment.MOCK)
-@AutoConfigureMockMvc
-@ActiveProfiles("local")
-class SecurityAnnotationTest {
+class SecurityAnnotationTest extends ServiceIntegrationTest {
 
 	@Autowired
 	private MockMvc mockMvc;
