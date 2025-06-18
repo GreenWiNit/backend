@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -24,6 +25,14 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+	// Spring Security 권한 예외 처리
+	@ExceptionHandler
+	public ResponseEntity<ExceptionResponse> handleAuthorizationDeniedException(
+			AuthorizationDeniedException exception) {
+		log.error("{} : {}", exception.getClass(), exception.getMessage());
+		return buildExceptionResponse(GlobalExceptionMessage.ACCESS_DENIED_MESSAGE);
+	}
 
 	// 이유를 알 수 없는 에러
 	@ExceptionHandler

@@ -1,5 +1,6 @@
 package com.example.integration.common;
 
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.example.green.GreenApplication;
@@ -13,5 +14,6 @@ import com.example.integration.file.FileTestUtil;
 	MySqlTestContainerConfig.class,
 	S3TestContainerConfig.class
 })
+@AutoConfigureMockMvc
 public class ServiceIntegrationTest {
 }
