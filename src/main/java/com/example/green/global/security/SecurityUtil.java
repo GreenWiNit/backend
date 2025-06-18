@@ -1,4 +1,4 @@
-package com.example.green.global.utils;
+package com.example.green.global.security;
 
 import com.example.green.global.config.PrincipalDetails;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

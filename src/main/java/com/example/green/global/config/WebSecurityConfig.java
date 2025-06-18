@@ -1,28 +1,36 @@
 package com.example.green.global.config;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 
 import lombok.RequiredArgsConstructor;
-import java.util.Arrays;
-import java.util.List;
 
+/**
+ * Spring Security 설정 클래스입니다.
+ *
+ * 주요 변경사항:
+ * - 경로별 세부 권한 설정을 @PreAuthorize 메타 어노테이션으로 위임합니다.
+ * - 기본적인 보안 설정만 중앙에서 관리합니다.
+ * - 도메인별 보안 정책은 각 컨트롤러에서 명시적으로 선언합니다.
+ */
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity
+@EnableMethodSecurity(prePostEnabled = true) // @PreAuthorize 활성화
 @RequiredArgsConstructor
 public class WebSecurityConfig {
 
@@ -33,21 +41,21 @@ public class WebSecurityConfig {
 				.csrf(AbstractHttpConfigurer::disable)
 				.headers(headers -> headers.frameOptions(frame -> frame.disable()))
 				.authorizeHttpRequests(auth -> auth
-						// 1) 스프링 내장 정적 리소스
+				// 정적 리소스는 항상 허용
 						.requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-						// 2) 추가 공개 경로
-						.requestMatchers(SecurityPathConfig.PUBLIC_STATIC_PATHS).permitAll()
-						// 3) 공개 GET API
-						.requestMatchers(HttpMethod.GET, SecurityPathConfig.PUBLIC_GET_PATHS).permitAll()
-						// 4) 회원 API (GET/POST 모두 공개)
-						.requestMatchers(HttpMethod.GET,  SecurityPathConfig.USER_API_PATH).permitAll()
-						.requestMatchers(HttpMethod.POST, SecurityPathConfig.USER_API_PATH).permitAll()
-						// 5) Green API (조회만 공개)
-						.requestMatchers(HttpMethod.GET, SecurityPathConfig.GREEN_API_PATH).permitAll()
-						// 6) (dev profile에서만 활성화) v1 API
-						.requestMatchers(SecurityPathConfig.DEV_API_PATH).permitAll()
-						// 7) 그 외는 인증 필요
-						.anyRequest().authenticated()
+				// 개발/운영 도구 경로 허용
+				.requestMatchers(
+					"/h2-console/**",
+					"/swagger-ui/**",
+					"/v3/api-docs/**",
+					"/swagger-ui.html",
+					"/swagger-resources/**",
+					"/webjars/**",
+					"/favicon.ico",
+					"/actuator/health"
+				).permitAll()
+				// 나머지는 @PreAuthorize 어노테이션으로 제어하므로 일단 허용
+						.anyRequest().permitAll()
 				);
 
 		return http.build();
@@ -57,7 +65,7 @@ public class WebSecurityConfig {
 	public CorsConfigurationSource corsConfigurationSource() {
 		CorsConfiguration cfg = new CorsConfiguration();
 		cfg.setAllowedOriginPatterns(List.of("*"));
-		cfg.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE","OPTIONS","PATCH"));
+		cfg.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
 		cfg.setAllowedHeaders(List.of("*"));
 		cfg.setAllowCredentials(true);
 		cfg.setMaxAge(3600L);

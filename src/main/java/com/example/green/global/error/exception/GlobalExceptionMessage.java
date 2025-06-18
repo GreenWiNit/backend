@@ -20,7 +20,8 @@ public enum GlobalExceptionMessage implements ExceptionMessage {
 	UNSUPPORTED_MEDIA_TYPE_MESSAGE(UNSUPPORTED_MEDIA_TYPE, "지원되지 않는 content-type 입니다."),
 
 	// Security 관련
-	AUTH_NOT_FOUND(INTERNAL_SERVER_ERROR, "시큐리티 인증 정보를 찾을 수 없습니다.")
+	AUTH_NOT_FOUND(INTERNAL_SERVER_ERROR, "시큐리티 인증 정보를 찾을 수 없습니다."),
+	ACCESS_DENIED_MESSAGE(FORBIDDEN, "접근이 거부되었습니다.")
 	;
 
 	private final HttpStatus httpStatus;
