@@ -1,5 +1,7 @@
 package com.example.green.global.error;
 
+import static com.example.green.global.error.exception.GlobalExceptionMessage.*;
+
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
+import com.example.green.global.error.dto.DetailedExceptionResponse;
 import com.example.green.global.error.dto.ErrorSpot;
 import com.example.green.global.error.dto.ExceptionResponse;
 import com.example.green.global.error.exception.BusinessException;
@@ -38,14 +41,14 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler
 	public ResponseEntity<ExceptionResponse> handleException(Exception exception) {
 		log.error("{} : {}", exception.getClass(), exception.toString());
-		return buildExceptionResponse(GlobalExceptionMessage.INTERNAL_SERVER_ERROR_MESSAGE);
+		return buildExceptionResponse(INTERNAL_SERVER_ERROR_MESSAGE);
 	}
 
 	// 존재 하지 않는 End-Point로 접근 시 발생하는 에러
 	@ExceptionHandler
 	public ResponseEntity<ExceptionResponse> handleNoResourceFoundException(NoResourceFoundException exception) {
-		log.error("{} : {}", exception.getClass(), exception.getMessage());
-		return buildExceptionResponse(GlobalExceptionMessage.NO_RESOURCE_MESSAGE);
+		log.warn("{} : {}", exception.getClass(), exception.getMessage());
+		return buildExceptionResponse(NO_RESOURCE_MESSAGE);
 	}
 
 	// BeanValidation(jakarta.validation.constraints) 유효성 검증 에러 처리
@@ -53,12 +56,12 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<ExceptionResponse> handleMethodArgumentNotValidException(
 		MethodArgumentNotValidException exception
 	) {
-		log.error("{} : {}", exception.getClass(), extractErrorSpots(exception));
-		if (hasTypeMismatch(exception)) {
-			return buildExceptionResponse(GlobalExceptionMessage.ARGUMENT_TYPE_MISMATCH_MESSAGE);
-		}
+		List<ErrorSpot> errorSpots = extractErrorSpots(exception);
+		ExceptionMessage exceptionMessage = extractExceptionMessage(exception);
+		log.warn("[{}] : {}", exception.getClass(), errorSpots);
 
-		return buildExceptionResponse(GlobalExceptionMessage.ARGUMENT_NOT_VALID_MESSAGE);
+		return ResponseEntity.status(exceptionMessage.getHttpStatus())
+			.body(DetailedExceptionResponse.fail(exceptionMessage, errorSpots));
 	}
 
 	// RequestParam, PathVariable Type Mismatch 에러 처리
@@ -66,8 +69,12 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<ExceptionResponse> handleMethodArgumentTypeMismatchException(
 		MethodArgumentTypeMismatchException exception
 	) {
-		log.error("{} : {}", exception.getClass(), extractErrorSpot(exception));
-		return buildExceptionResponse(GlobalExceptionMessage.ARGUMENT_TYPE_MISMATCH_MESSAGE);
+		final String type = exception.getRequiredType().getSimpleName();
+		final String customMessage = " (으)로 변환할 수 없는 요청입니다.";
+		ErrorSpot errorSpot = new ErrorSpot(exception.getName(), type + customMessage);
+		log.warn("{} : {}", exception.getClass(), errorSpot);
+		return ResponseEntity.status(ARGUMENT_TYPE_MISMATCH_MESSAGE.getHttpStatus())
+			.body(DetailedExceptionResponse.fail(ARGUMENT_TYPE_MISMATCH_MESSAGE, errorSpot));
 	}
 
 	// RequestParam 이 누락된 경우 에러 처리
@@ -75,8 +82,10 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<ExceptionResponse> handleMissingServletRequestParameterException(
 		MissingServletRequestParameterException exception
 	) {
-		log.error("{} : {}", exception.getClass(), extractErrorSpot(exception));
-		return buildExceptionResponse(GlobalExceptionMessage.MISSING_PARAMETER_MESSAGE);
+		ErrorSpot errorSpot = new ErrorSpot(exception.getParameterName(), exception.getParameterType());
+		log.warn("{} : {}", exception.getClass(), errorSpot);
+		return ResponseEntity.status(MISSING_PARAMETER_MESSAGE.getHttpStatus())
+			.body(DetailedExceptionResponse.fail(MISSING_PARAMETER_MESSAGE, errorSpot));
 	}
 
 	// 잘못된 Dto 정보에 대해 에러 처리
@@ -84,7 +93,7 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<ExceptionResponse> handleHttpMessageNotReadableException(
 		HttpMessageNotReadableException exception
 	) {
-		log.error("{} : {}", exception.getClass(), exception.getMessage());
+		log.warn("{} : {}", exception.getClass(), exception.getMessage());
 		return buildExceptionResponse(GlobalExceptionMessage.DATA_NOT_READABLE_MESSAGE);
 	}
 
@@ -93,7 +102,7 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<ExceptionResponse> handleHttpMediaTypeNotSupportedException(
 		HttpMediaTypeNotSupportedException exception
 	) {
-		log.error("[{}] : {}", exception.getClass(), exception.getMessage());
+		log.warn("[{}] : {}", exception.getClass(), exception.getMessage());
 		return buildExceptionResponse(GlobalExceptionMessage.UNSUPPORTED_MEDIA_TYPE_MESSAGE);
 	}
 
@@ -116,21 +125,15 @@ public class GlobalExceptionHandler {
 			.toList();
 	}
 
-	private ErrorSpot extractErrorSpot(MethodArgumentTypeMismatchException exception) {
-		final String type = exception.getRequiredType().getSimpleName();
-		final String customMessage = " (으)로 변환할 수 없는 요청입니다.";
-		return new ErrorSpot(exception.getName(), type + customMessage);
-	}
-
-	private static ErrorSpot extractErrorSpot(MissingServletRequestParameterException exception) {
-		return new ErrorSpot(exception.getParameterName(), exception.getParameterType());
-	}
-
-	private boolean hasTypeMismatch(MethodArgumentNotValidException exception) {
-		return exception.getBindingResult()
+	private ExceptionMessage extractExceptionMessage(MethodArgumentNotValidException exception) {
+		boolean hasTypeMismatch = exception.getBindingResult()
 			.getFieldErrors()
 			.stream()
 			.anyMatch(FieldError::isBindingFailure);
-	}
 
+		if (hasTypeMismatch) {
+			return ARGUMENT_TYPE_MISMATCH_MESSAGE;
+		}
+		return ARGUMENT_NOT_VALID_MESSAGE;
+	}
 }
