@@ -6,11 +6,14 @@ import java.io.InputStream;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.green.domain.file.exception.FileException;
+import com.example.green.domain.file.exception.FileExceptionMessage;
 import com.example.green.domain.file.service.StorageHelper;
 import com.example.green.global.utils.IdUtils;
 import com.example.green.global.utils.TimeUtils;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
@@ -18,6 +21,7 @@ import software.amazon.awssdk.services.s3.model.S3Exception;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class S3StorageHelper implements StorageHelper {
 
 	private static final String IMAGE_KEY_PREFIX = "images";
@@ -32,12 +36,14 @@ public class S3StorageHelper implements StorageHelper {
 	private final TimeUtils timeUtils;
 
 	@Override
-	public void uploadImage(String imageKey, MultipartFile imageFile) {
+	public String uploadImage(String imageKey, MultipartFile imageFile) {
 		try (InputStream inputStream = imageFile.getInputStream()) {
 			PutObjectRequest request = generatePutObjectRequest(imageKey, imageFile);
 			s3Client.putObject(request, RequestBody.fromInputStream(inputStream, imageFile.getSize()));
+			return getFullImageUrl(imageKey);
 		} catch (IOException | S3Exception e) {
-			throw new IllegalArgumentException(e);
+			log.error("S3 업로드 중 예외 발생: ", e);
+			throw new FileException(FileExceptionMessage.IMAGE_UPLOAD_FAILED);
 		}
 	}
 
@@ -51,7 +57,7 @@ public class S3StorageHelper implements StorageHelper {
 		String baseUrl = s3Properties.getBaseUrl();
 		String imageUrlPrefix = String.format("%s/%s", baseUrl, IMAGE_KEY_PREFIX);
 		if (!imageUrl.startsWith(imageUrlPrefix)) {
-			throw new IllegalArgumentException("invalid image url: " + imageUrl);
+			throw new FileException(FileExceptionMessage.INVALID_IMAGE_URL);
 		}
 		return imageUrl.substring(baseUrl.length() + 1);
 	}

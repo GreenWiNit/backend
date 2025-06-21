@@ -35,9 +35,7 @@ class FileServiceTest {
 	void 유효한_이미지_파일로_업로드에_성공하면_이미지_URL을_반환한다() {
 		// given
 		MultipartFile imageFile = mock(MultipartFile.class);
-		when(imageFile.getOriginalFilename()).thenReturn("test.png");
-		when(imageFile.getContentType()).thenReturn("image/png");
-		when(imageFile.getSize()).thenReturn(1000L);
+		createImageStub(imageFile);
 
 		Purpose purpose = mock(Purpose.class);
 		String purposeValue = "purposeValue";
@@ -47,7 +45,7 @@ class FileServiceTest {
 		when(storageHelper.generateFileKey(eq(purposeValue), anyString())).thenReturn(imageKey);
 
 		String imageUrl = "imageUrl";
-		when(storageHelper.getFullImageUrl(eq(imageKey))).thenReturn(imageUrl);
+		when(storageHelper.uploadImage(eq(imageKey), eq(imageFile))).thenReturn(imageUrl);
 
 		// when
 		String result = fileService.uploadImage(imageFile, purpose);
@@ -56,33 +54,12 @@ class FileServiceTest {
 		assertThat(result).isEqualTo(imageUrl);
 		verify(imageValidator).validate(imageFile);
 		verify(fileJpaRepository).save(any(FileEntity.class));
-		verify(storageHelper).uploadImage(imageKey, imageFile);
 	}
 
-	@Test
-	void 이미지_파일_업로드_중_에러가_발생하면_예외를_떨어트린다() {
-		// given
-		MultipartFile imageFile = mock(MultipartFile.class);
+	private static void createImageStub(MultipartFile imageFile) {
 		when(imageFile.getOriginalFilename()).thenReturn("test.png");
 		when(imageFile.getContentType()).thenReturn("image/png");
 		when(imageFile.getSize()).thenReturn(1000L);
-
-		Purpose purpose = mock(Purpose.class);
-		String purposeValue = "purposeValue";
-		when(purpose.getValue()).thenReturn(purposeValue);
-
-		String imageKey = "imageKey";
-		when(storageHelper.generateFileKey(eq(purposeValue), anyString())).thenReturn(imageKey);
-
-		doThrow(IllegalArgumentException.class).when(storageHelper).uploadImage(imageKey, imageFile);
-
-		// when & then
-		assertThatThrownBy(() -> fileService.uploadImage(imageFile, purpose))
-			.isInstanceOf(FileException.class)
-			.hasFieldOrPropertyWithValue("exceptionMessage", FileExceptionMessage.IMAGE_UPLOAD_FAILED);
-
-		verify(fileJpaRepository).save(any(FileEntity.class));
-		verify(imageValidator).validate(imageFile);
 	}
 
 	@Test
@@ -101,20 +78,6 @@ class FileServiceTest {
 		// then
 		verify(imageValidator).validateUrl(imageUrl);
 		verify(fileEntity).markAsPermanent();
-	}
-
-	@Test
-	void imageUrl에서_이미지_키_추출_중_버그가_발생하면_예외를_던진다() {
-		// given
-		String imageUrl = "imageUrl";
-		doThrow(IllegalArgumentException.class).when(storageHelper).extractImageKey(imageUrl);
-
-		// when & then
-		assertThatThrownBy(() -> fileService.confirmUsingImage(imageUrl))
-			.isInstanceOf(FileException.class)
-			.hasFieldOrPropertyWithValue("exceptionMessage", FileExceptionMessage.INVALID_IMAGE_URL);
-
-		verify(imageValidator).validateUrl(imageUrl);
 	}
 
 	@Test

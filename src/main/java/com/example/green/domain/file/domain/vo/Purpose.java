@@ -7,7 +7,10 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum Purpose {
 
-	PROFILE("profile");
+	CHALLENGE("challenge"),
+	CHALLENGE_AUTHENTICATION("challenge_authentication"),
+	INFO("info"),
+	PRODUCT("product");
 
 	private final String value;
 }
