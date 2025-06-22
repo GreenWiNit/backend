@@ -79,16 +79,21 @@ public class SXSSFExcelDownloader implements ExcelDownloader { // @checkstyle:ig
 			workbook.setCompressTempFiles(true);
 
 			SXSSFSheet sheet = workbook.createSheet(mapper.getSheetName());
-			sheet.trackAllColumnsForAutoSizing();
 			List<ExcelField> fields = mapper.getFields();
-
 			createHeaderRow(workbook, sheet, fields);
-			createDataRows(workbook, sheet, fields, dataList, mapper);
-			autoSizeColumns(sheet, fields.size());
+
+			List<CellStyle> cellStyles = createColumnStyles(fields, workbook);
+			createDataRows(sheet, fields, dataList, mapper, cellStyles);
 
 			workbook.write(outputStream);
 			outputStream.flush();
 		}
+	}
+
+	private List<CellStyle> createColumnStyles(List<ExcelField> fields, Workbook workbook) {
+		return fields.stream()
+			.map(field -> renderDataStyle(workbook, field.getFormat()))
+			.toList();
 	}
 
 	private void createHeaderRow(Workbook workbook, Sheet sheet, List<ExcelField> fields) {
@@ -109,29 +114,31 @@ public class SXSSFExcelDownloader implements ExcelDownloader { // @checkstyle:ig
 	}
 
 	private <T> void createDataRows(
-		Workbook workbook,
 		Sheet sheet,
 		List<ExcelField> fields,
 		List<T> dataList,
-		ExcelDataMapper<T> mapper
+		ExcelDataMapper<T> mapper,
+		List<CellStyle> columnStyles
 	) {
 		for (int rowIndex = 0; rowIndex < dataList.size(); rowIndex++) {
 			Row dataRow = sheet.createRow(rowIndex + 1);
 			T data = dataList.get(rowIndex);
 			Object[] rowData = mapper.extractRowData(data);
-			createDataColsByRow(workbook, fields, rowData, dataRow);
+			createDataColsByRow(fields, rowData, dataRow, columnStyles);
 		}
 	}
 
-	private void createDataColsByRow(Workbook workbook, List<ExcelField> fields, Object[] rowData, Row dataRow) {
+	private void createDataColsByRow(
+		List<ExcelField> fields,
+		Object[] rowData,
+		Row dataRow,
+		List<CellStyle> columnStyles
+	) {
 		int colCount = Math.min(fields.size(), rowData.length);
 		for (int colIndex = 0; colIndex < colCount; colIndex++) {
-			ExcelField field = fields.get(colIndex);
 			Cell cell = dataRow.createCell(colIndex);
 			setCellValue(cell, rowData[colIndex]);
-
-			CellStyle dataStyle = renderDataStyle(workbook, field.getFormat());
-			cell.setCellStyle(dataStyle);
+			cell.setCellStyle(columnStyles.get(colIndex));
 		}
 	}
 
@@ -177,19 +184,5 @@ public class SXSSFExcelDownloader implements ExcelDownloader { // @checkstyle:ig
 			return;
 		}
 		cell.setCellValue(value.toString());
-	}
-
-	private void autoSizeColumns(Sheet sheet, int columnCount) {
-		for (int i = 0; i < columnCount; i++) {
-			sheet.autoSizeColumn(i);
-			setMaximumSheetWidth(sheet, i);
-		}
-	}
-
-	private static void setMaximumSheetWidth(Sheet sheet, int index) {
-		final int maxColumnWidth = 15000;
-		if (sheet.getColumnWidth(index) > maxColumnWidth) {
-			sheet.setColumnWidth(index, maxColumnWidth);
-		}
 	}
 }
