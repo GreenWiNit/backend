@@ -63,7 +63,7 @@ dependencies {
     testImplementation 'org.testcontainers:mysql:1.21.0'
     testImplementation 'org.testcontainers:localstack:1.21.0'
     testImplementation 'org.testcontainers:junit-jupiter:1.21.0'
-    
+
     // swagger
     implementation "org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.8"
 
@@ -77,6 +77,9 @@ dependencies {
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
 
+    // excel
+    implementation 'org.apache.poi:poi:5.4.1'
+    implementation 'org.apache.poi:poi-ooxml:5.4.1'
 }
 
 // 아래로 Test 관련
