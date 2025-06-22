@@ -14,7 +14,9 @@ import com.example.green.domain.member.entity.Member;
 import com.example.green.domain.member.repository.MemberRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
@@ -26,7 +28,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
 		OAuth2User oAuth2User = super.loadUser(userRequest);
 
-		System.out.println(oAuth2User);
+		log.info("loadUser : {}", oAuth2User);
 
 		String registrationId = userRequest.getClientRegistration().getRegistrationId();
 
