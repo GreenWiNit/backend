@@ -28,7 +28,7 @@ class ImageUploadControllerTest extends BaseControllerUnitTest {
 		String filename = "filename.jpg";
 		byte[] bytes = "test image content".getBytes();
 		String contentType = "image/jpeg";
-		String purpose = "CHALLENGE";
+		String purpose = "challenge";
 		when(fileService.uploadImage(any(MultipartFile.class), any(Purpose.class))).thenReturn(imageKey);
 
 		// when
