@@ -39,7 +39,7 @@ public class FileServiceIntTest extends ServiceIntegrationTest {
 		MultipartFile imageFile = createMockFile("image1.jpg", "image/jpeg");
 
 		// when
-		String imageUrl = fileService.uploadImage(imageFile, Purpose.PROFILE);
+		String imageUrl = fileService.uploadImage(imageFile, Purpose.CHALLENGE);
 
 		// then
 		assertThat(fileTestUtil.existsImageInS3(imageUrl)).isTrue();
@@ -53,7 +53,7 @@ public class FileServiceIntTest extends ServiceIntegrationTest {
 		fileTestUtil.clearBucket();
 
 		// when & then
-		assertThatThrownBy(() -> fileService.uploadImage(imageFile, Purpose.PROFILE))
+		assertThatThrownBy(() -> fileService.uploadImage(imageFile, Purpose.CHALLENGE))
 			.isInstanceOf(FileException.class)
 			.hasFieldOrPropertyWithValue("exceptionMessage", FileExceptionMessage.IMAGE_UPLOAD_FAILED);
 
