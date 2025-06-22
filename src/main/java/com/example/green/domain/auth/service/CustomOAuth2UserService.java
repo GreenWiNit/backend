@@ -4,13 +4,22 @@ import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserServ
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.stereotype.Service;
 
 import com.example.green.domain.auth.dto.CustomOAuth2User;
 import com.example.green.domain.auth.dto.GoogleResponseDto;
 import com.example.green.domain.auth.dto.OAuth2Response;
 import com.example.green.domain.auth.dto.UserDto;
+import com.example.green.domain.member.entity.Member;
+import com.example.green.domain.member.repository.MemberRepository;
 
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
+
+	private final MemberRepository memberRepository;
 
 	@Override
 	public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -39,14 +48,37 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 		// 리소스 서버에서 발급 받은 정보로 사용자를 특정할 아이디값을 만든다.
 		String username = oAuth2Response.getProvider() + " " + oAuth2Response.getProviderId();
 
-		UserDto userDto = new UserDto(
-			"ROLE_USER",
-			oAuth2Response.getName(),
-			username
-		);
+		Member existData = memberRepository.findByUsername(username);
 
-		return new CustomOAuth2User(userDto);
+		if (existData == null) {
+			// 새로운 회원 생성
+			Member member = Member.createOAuth2Member(
+				username,
+				oAuth2Response.getName(),
+				oAuth2Response.getEmail()
+			);
+			memberRepository.save(member);
 
+			UserDto userDto = new UserDto(
+				"ROLE_USER",
+				oAuth2Response.getName(),
+				username
+			);
+
+			return new CustomOAuth2User(userDto);
+		} else {
+			// name과 email 정보만 업데이트
+			existData.updateOAuth2Info(oAuth2Response.getName(), oAuth2Response.getEmail());
+			memberRepository.save(existData);
+
+			UserDto userDto = new UserDto(
+				"ROLE_" + existData.getRole().name(),
+				oAuth2Response.getName(),
+				existData.getUsername()
+			);
+
+			return new CustomOAuth2User(userDto);
+		}
 	}
 }
 
