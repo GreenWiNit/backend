@@ -50,6 +50,7 @@ jobs:
           echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
           echo "STORAGE_BUCKET=${{ secrets.STORAGE_BUCKET }}" >> .env
           echo "STORAGE_BASE_URL=${{ secrets.STORAGE_BASE_URL }}" >> .env
+          echo "SWAGGER_PATH=${{ secrets.SWAGGER_PATH }}" >> .env
 
       - name: Copy artifact to EC2
         uses: appleboy/scp-action@v0.1.7
