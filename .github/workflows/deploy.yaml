@@ -3,8 +3,7 @@ name: CD Deploy
 # 워크플로우 실행 조건
 # PR이 main 브랜치로 merge될 때만 실행
 on:
-  pull_request:
-    types: [ closed ]
+  push:
     branches: [ "main" ]
 
 jobs:
@@ -41,6 +40,7 @@ jobs:
       # 환경 변수 설정
       - name: GitHub Secrets To .env
         run: |
+          rm -f .env
           echo "DB_TYPE=mysql" >> .env
           echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
           echo "DB_PORT=${{ secrets.DB_PORT }}" >> .env
@@ -51,7 +51,22 @@ jobs:
           echo "STORAGE_BASE_URL=${{ secrets.STORAGE_BASE_URL }}" >> .env
           echo "SWAGGER_PATH=${{ secrets.SWAGGER_PATH }}" >> .env
 
-      # EC2에 빌드 결과 및 .env 복사
+      # 파일 존재 여부 검증
+      - name: Fail if required files missing
+        run: |
+          [ -f .env ] || (echo "❌ .env 파일 없음" && exit 1)
+          [ -f build/libs/green-0.0.1-SNAPSHOT.jar ] || (echo "❌ .jar 파일 없음" && exit 1)
+
+      # 파일 목록 출력 (디버깅용)
+      - name: Check generated files
+        run: |
+          echo "Current path: $(pwd)"
+          echo "build/libs:"
+          ls -alh build/libs
+          echo ".env file:"
+          ls -alh .env
+
+      # EC2에 복사
       - name: Copy artifact to EC2
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -59,7 +74,7 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           source: |
-            build/libs/green*.jar
+            build/libs/green-0.0.1-SNAPSHOT.jar
             .env
           target: "~/backend"
 
