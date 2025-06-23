@@ -8,8 +8,6 @@ on:
 
 jobs:
   deploy:
-    # PR이 merge된 경우에만 실행
-    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
