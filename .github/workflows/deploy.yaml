@@ -41,16 +41,17 @@ jobs:
       # 환경 변수 설정
       - name: GitHub Secrets To .env
         run: |
-          echo "DB_TYPE=mysql" >> backend/.env
-          echo "DB_HOST=${{ secrets.DB_HOST }}" >> backend/.env
-          echo "DB_PORT=${{ secrets.DB_PORT }}" >> backend/.env
-          echo "DB_NAME=${{ secrets.DB_NAME }}" >> backend/.env
-          echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> backend/.env
-          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> backend/.env
-          echo "STORAGE_BUCKET=${{ secrets.STORAGE_BUCKET }}" >> backend/.env
-          echo "STORAGE_BASE_URL=${{ secrets.STORAGE_BASE_URL }}" >> backend/.env
-          echo "SWAGGER_PATH=${{ secrets.SWAGGER_PATH }}" >> backend/.env
+          echo "DB_TYPE=mysql" >> .env
+          echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
+          echo "DB_PORT=${{ secrets.DB_PORT }}" >> .env
+          echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
+          echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> .env
+          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+          echo "STORAGE_BUCKET=${{ secrets.STORAGE_BUCKET }}" >> .env
+          echo "STORAGE_BASE_URL=${{ secrets.STORAGE_BASE_URL }}" >> .env
+          echo "SWAGGER_PATH=${{ secrets.SWAGGER_PATH }}" >> .env
 
+      # EC2에 빌드 결과 및 .env 복사
       - name: Copy artifact to EC2
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -58,8 +59,8 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           source: |
-            backend/build/libs/green*.jar
-            backend/.env
+            build/libs/green*.jar
+            .env
           target: "~/backend"
 
       - name: Run reload.sh
