@@ -5,6 +5,8 @@ name: CD Deploy
 on:
   push:
     branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
 
 jobs:
   deploy:
@@ -64,16 +66,22 @@ jobs:
           echo ".env file:"
           ls -alh .env
 
-      # EC2에 복사
-      - name: Copy artifact to EC2
+      - name: Copy JAR to EC2
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
           key: ${{ secrets.EC2_PRIVATE_KEY }}
-          source: |
-            build/libs/green-0.0.1-SNAPSHOT.jar
-            .env
+          source: build/libs/green-0.0.1-SNAPSHOT.jar
+          target: "~/backend"
+
+      - name: Copy .env to EC2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          source: .env
           target: "~/backend"
 
       - name: Run reload.sh
