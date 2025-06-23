@@ -21,7 +21,7 @@ class PointProductTest {
 	String code = "PRD-AA-001";
 	String name = "name";
 	String description = "description";
-	String thumbnail = "thumbnail";
+	String thumbnail = "http://example.com/image.jpg";
 	int point = 1000;
 	int stock = 100;
 
@@ -59,9 +59,9 @@ class PointProductTest {
 	}
 
 	@ParameterizedTest
-	@ValueSource(ints = -1)
+	@ValueSource(ints = {-1, 0})
 	@NullSource
-	void 상품_생성시_상품_재고는_필수값으로_0개_이상이_아니라면_생성할_수_없다(Integer invalidStock) {
+	void 상품_생성시_상품_재고는_필수값으로_1개_이상이_아니라면_생성할_수_없다(Integer invalidStock) {
 		// given
 		// when & then
 		assertThatThrownBy(() -> PointProduct.create(code, name, description, thumbnail, point, invalidStock))
@@ -106,7 +106,7 @@ class PointProductTest {
 		// when & then
 		assertThatThrownBy(() -> PointProduct.create(code, name, null, thumbnail, point, stock))
 			.isInstanceOf(BusinessException.class)
-			.hasFieldOrPropertyWithValue("exceptionMessage", INVALID_PRODUCT_NAME);
+			.hasFieldOrPropertyWithValue("exceptionMessage", INVALID_PRODUCT_DESCRIPTION);
 	}
 
 	@Test
@@ -116,7 +116,7 @@ class PointProductTest {
 		// when & then
 		assertThatThrownBy(() -> PointProduct.create(code, name, invalidDescription, thumbnail, point, stock))
 			.isInstanceOf(BusinessException.class)
-			.hasFieldOrPropertyWithValue("exceptionMessage", INVALID_PRODUCT_NAME);
+			.hasFieldOrPropertyWithValue("exceptionMessage", INVALID_PRODUCT_DESCRIPTION);
 	}
 
 	static Stream<Arguments> invalidProductCodeTestCases() {
