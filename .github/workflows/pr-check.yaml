@@ -7,9 +7,7 @@ name: PR Check
 # 주의: PR이 merge될 때는 실행되지 않음 (deploy.yaml에서 실행)
 on:
   pull_request:
-    types: [opened, synchronize, reopened]
-    branches: [ "main" ]
-  push:
+    types: [ opened, synchronize, reopened ]
     branches: [ "main" ]
   workflow_call:
     outputs:
