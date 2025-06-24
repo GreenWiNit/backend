@@ -32,4 +32,29 @@ class StockTest {
 			.isInstanceOf(BusinessException.class)
 			.hasFieldOrPropertyWithValue("exceptionMessage", INVALID_PRODUCT_STOCK);
 	}
+
+	@Test
+	void 상품_재고를_감소하면_남은_재고를_반환한다() {
+		// given
+		int amount = 50;
+		Stock stock = new Stock(100);
+
+		// when
+		Integer decreased = stock.decrease(amount);
+
+		// then
+		assertThat(decreased).isEqualTo(100 - amount);
+	}
+
+	@Test
+	void 상품_재고보다_많은_수량으로_감소하면_예외가_발생한다() {
+		// given
+		int amount = 101;
+		Stock stock = new Stock(100);
+
+		// when & then
+		assertThatThrownBy(() -> stock.decrease(amount))
+			.isInstanceOf(BusinessException.class)
+			.hasFieldOrPropertyWithValue("exceptionMessage", OUT_OF_PRODUCT_STOCK);
+	}
 }

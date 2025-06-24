@@ -10,4 +10,12 @@ public record Stock(Integer stock) {
 			throw new PointProductException(PointProductExceptionMessage.INVALID_PRODUCT_STOCK);
 		}
 	}
+
+	public Integer decrease(int amount) {
+		if (this.stock < amount) {
+			throw new PointProductException(PointProductExceptionMessage.OUT_OF_PRODUCT_STOCK);
+		}
+		return this.stock - amount;
+	}
+
 }

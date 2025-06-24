@@ -58,4 +58,45 @@ public class PointProduct {
 			new Stock(stock)
 		);
 	}
+
+	public void updateBasicInfo(String code, String name, String description) {
+		BasicInfo newBasicInfo = new BasicInfo(code, name, description);
+		this.code = newBasicInfo.code();
+		this.name = newBasicInfo.name();
+		this.description = newBasicInfo.description();
+	}
+
+	public void updateMedia(String thumbnailUrl) {
+		Media newMedia = new Media(thumbnailUrl);
+		this.thumbnailUrl = newMedia.thumbnailUrl();
+	}
+
+	public void updatePrice(Integer price) {
+		Price newPrice = new Price(price);
+		this.price = newPrice.price();
+	}
+
+	public void updateStock(Integer stock) {
+		Stock newStock = new Stock(stock);
+		this.stock = newStock.stock();
+	}
+
+	public void decreaseStock(int amount) {
+		this.stock = new Stock(stock).decrease(amount);
+		if (this.stock == 0) {
+			this.status = PointProductStatus.OUT_OF_STOCK;
+		}
+	}
+
+	public void soldOut() {
+		this.status = PointProductStatus.OUT_OF_STOCK;
+	}
+
+	public void show() {
+		this.display = PointProductDisplay.DISPLAY;
+	}
+
+	public void hide() {
+		this.display = PointProductDisplay.HIDDEN;
+	}
 }
