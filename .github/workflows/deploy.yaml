@@ -67,22 +67,13 @@ jobs:
           [ -f "build/libs/green-0.0.1-SNAPSHOT.jar" ] && echo "✅ JAR 파일 존재" || echo "❌ JAR 파일 없음"
           [ -f ".env" ] && echo "✅ .env 파일 존재" || echo "❌ .env 파일 없음"
 
-      # SSH 키 파일 생성
-      - name: Create SSH Key file
-        run: |
-          echo "${{ secrets.EC2_PRIVATE_KEY }}" | base64 --decode > private_key.pem
-          chmod 600 private_key.pem
-          echo "SSH 키 파일이 생성되었습니다."
-          echo "키 파일 권한 확인:"
-          ls -la private_key.pem
-
       # JAR 파일 복사
       - name: Copy JAR to EC2
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
-          key_path: private_key.pem
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
           source: "build/libs/green-0.0.1-SNAPSHOT.jar"
           target: "~/backend/"
 
@@ -92,7 +83,7 @@ jobs:
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
-          key_path: private_key.pem
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
           source: ".env"
           target: "~/backend/"
 
@@ -102,14 +93,8 @@ jobs:
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
-          key_path: private_key.pem
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
             chmod +x ~/reload.sh
             ~/reload.sh
 
-      # SSH 키 파일 정리
-      - name: Clean up SSH key
-        if: always()
-        run: |
-          rm -f private_key.pem
-          echo "SSH 키 파일이 삭제되었습니다."
