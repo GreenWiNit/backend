@@ -4,9 +4,9 @@ name: CD Deploy
 # PR이 main 브랜치로 merge될 때만 실행
 on:
   push:
-    branches: ["main"]
+    branches: [ "main" ]
   pull_request:
-    branches: ["main"]
+    branches: [ "main" ]
 
 jobs:
   deploy:
@@ -47,6 +47,7 @@ jobs:
           echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
           echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> .env
           echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+          echo "DB_PARAMS=${{ secrets.DB_PARAMS }}" >> .env
           echo "STORAGE_BUCKET=${{ secrets.STORAGE_BUCKET }}" >> .env
           echo "STORAGE_BASE_URL=${{ secrets.STORAGE_BASE_URL }}" >> .env
           echo "SWAGGER_PATH=${{ secrets.SWAGGER_PATH }}" >> .env
