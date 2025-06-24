@@ -71,8 +71,10 @@ jobs:
       - name: Create SSH Key file
         run: |
           echo "${{ secrets.EC2_PRIVATE_KEY }}" | base64 --decode > private_key.pem
-          chmod 400 private_key.pem
+          chmod 600 private_key.pem
           echo "SSH 키 파일이 생성되었습니다."
+          echo "키 파일 권한 확인:"
+          ls -la private_key.pem
 
       # JAR 파일 복사
       - name: Copy JAR to EC2
