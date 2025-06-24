@@ -16,8 +16,8 @@ jobs:
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
-          java-version: '21'
-          distribution: 'temurin'
+          java-version: "21"
+          distribution: "temurin"
 
       # 전체 테스트 실행 (단위 테스트 + 통합 테스트)
       - name: Run All Tests
@@ -31,51 +31,38 @@ jobs:
       - name: Run Checkstyle
         run: ./gradlew checkstyleMain checkstyleTest
 
+      # 환경변수 한 파일로 관리
+      - name: Create .env file from GitHub Secret
+        run: |
+          cat <<EOF > .env
+          ${{ secrets.ENV_FILE }}
+          EOF
+
       # 프로젝트 빌드
       - name: Build Project
         run: ./gradlew clean build -x test
 
-      # 환경 변수 설정
-      - name: GitHub Secrets To .env
-        run: |
-          rm -f .env
-          echo "DB_TYPE=mysql" >> .env
-          echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
-          echo "DB_PORT=${{ secrets.DB_PORT }}" >> .env
-          echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
-          echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> .env
-          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
-          echo "STORAGE_BUCKET=${{ secrets.STORAGE_BUCKET }}" >> .env
-          echo "STORAGE_BASE_URL=${{ secrets.STORAGE_BASE_URL }}" >> .env
-          echo "SWAGGER_PATH=${{ secrets.SWAGGER_PATH }}" >> .env
-
-      # 파일 존재 여부 검증
-      - name: Fail if required files missing
-        run: |
-          [ -f .env ] || (echo "❌ .env 파일 없음" && exit 1)
-          [ -f build/libs/green-0.0.1-SNAPSHOT.jar ] || (echo "❌ .jar 파일 없음" && exit 1)
-
-      # 파일 목록 출력 (디버깅용)
-      - name: Check generated files
-        run: |
-          echo "Current path: $(pwd)"
-          echo "build/libs:"
-          ls -alh build/libs
-          echo ".env file:"
-          ls -alh .env
-
-      # EC2에 복사
-      - name: Copy artifact to EC2
+      # JAR 파일 복사
+      - name: Copy JAR to EC2
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
           key: ${{ secrets.EC2_PRIVATE_KEY }}
-          source: |
-            build/libs/green-0.0.1-SNAPSHOT.jar
-            .env
-          target: "~/backend"
+          source: "build/libs/green-0.0.1-SNAPSHOT.jar"
+          target: "~/backend/"
 
+      # .env 파일 복사
+      - name: Copy .env to EC2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          source: ".env"
+          target: "~/backend/"
+
+      # EC2에서 애플리케이션 재시작
       - name: Run reload.sh
         uses: appleboy/ssh-action@v0.1.10
         with:
@@ -83,5 +70,5 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
-            chmod +x ~/reload.sh
+            sudo chmod +x ~/reload.sh
             ~/reload.sh
