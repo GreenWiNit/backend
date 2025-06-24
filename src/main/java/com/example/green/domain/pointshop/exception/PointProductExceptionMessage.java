@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 public enum PointProductExceptionMessage implements ExceptionMessage {
 
 	INVALID_PRODUCT_CODE(BAD_REQUEST, "상품 코드는 PRD-AA-000 형식입니다."),
-	INVALID_PRODUCT_POINT(BAD_REQUEST, "상품 포인트는 0원 이상이어야 합니다."),
+	INVALID_PRODUCT_PRICE(BAD_REQUEST, "상품 가격은 0원 이상이어야 합니다."),
 	INVALID_PRODUCT_STOCK(BAD_REQUEST, "상품 재고는 1개 이상이어야 합니다."),
 	INVALID_PRODUCT_NAME(BAD_REQUEST, "상품명은 2글자 ~ 15글자로 구성되어야 합니다."),
 	INVALID_PRODUCT_THUMBNAIL(BAD_REQUEST, "상품 썸네일 주소가 잘못되었습니다."),
