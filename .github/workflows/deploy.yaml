@@ -66,9 +66,12 @@ jobs:
           echo ".env file:"
           ls -alh .env
 
-      # SSH 키 환경 변수로 설정
-      - name: Set SSH Key
-        run: echo "SSH_PRIVATE_KEY=$(echo '${{ secrets.EC2_PRIVATE_KEY }}' | base64 --decode)" >> $GITHUB_ENV
+      # SSH 키 파일 생성
+      - name: Create SSH Key file
+        run: |
+          echo "${{ secrets.EC2_PRIVATE_KEY }}" | base64 --decode > private_key.pem
+          chmod 400 private_key.pem
+          echo "SSH 키 파일이 생성되었습니다."
 
       # EC2로 파일 복사
       - name: Copy files to EC2
@@ -76,7 +79,7 @@ jobs:
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
-          key: ${{ env.SSH_PRIVATE_KEY }}
+          key_path: private_key.pem
           source: |
             build/libs/green-0.0.1-SNAPSHOT.jar
             .env
@@ -88,7 +91,14 @@ jobs:
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
-          key: ${{ env.SSH_PRIVATE_KEY }}
+          key_path: private_key.pem
           script: |
             chmod +x ~/reload.sh
             ~/reload.sh
+
+      # SSH 키 파일 정리
+      - name: Clean up SSH key
+        if: always()
+        run: |
+          rm -f private_key.pem
+          echo "SSH 키 파일이 삭제되었습니다."
