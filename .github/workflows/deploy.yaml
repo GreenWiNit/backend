@@ -40,15 +40,6 @@ jobs:
           ${{ secrets.ENV_FILE }}
           EOF
 
-      - name: Load and test .env variables
-        run: |
-          set -a
-          source .env
-          set +a
-          
-          echo "DB_HOST = $DB_HOST"
-          echo "DB_PORT = $DB_PORT"
-
       # 프로젝트 빌드
       - name: Build Project
         run: ./gradlew clean build -x test
