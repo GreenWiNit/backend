@@ -19,7 +19,7 @@ public enum PointProductExceptionMessage implements ExceptionMessage {
 	INVALID_PRODUCT_NAME(BAD_REQUEST, "상품명은 2글자 ~ 15글자로 구성되어야 합니다."),
 	INVALID_PRODUCT_THUMBNAIL(BAD_REQUEST, "상품 썸네일 주소가 잘못되었습니다."),
 	INVALID_PRODUCT_DESCRIPTION(BAD_REQUEST, "상품 설명은 최대 100글자로 구성되어야 합니다."),
-	;
+	OUT_OF_PRODUCT_STOCK(BAD_REQUEST, "상품 재고가 부족합니다.");
 
 	private final HttpStatus httpStatus;
 	private final String message;
