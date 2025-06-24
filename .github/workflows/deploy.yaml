@@ -66,48 +66,29 @@ jobs:
           echo ".env file:"
           ls -alh .env
 
-      - name: Decode SSH Key
-        run: |
-          echo "${{ secrets.EC2_PRIVATE_KEY }}" | base64 --decode > private_key.pem
-          chmod 400 private_key.pem
+      # SSH 키 환경 변수로 설정
+      - name: Set SSH Key
+        run: echo "SSH_PRIVATE_KEY=$(echo '${{ secrets.EC2_PRIVATE_KEY }}' | base64 --decode)" >> $GITHUB_ENV
 
-      - name: Copy JAR to EC2
+      # EC2로 파일 복사
+      - name: Copy files to EC2
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
-          key: ./private_key.pem
-          source: build/libs/green-0.0.1-SNAPSHOT.jar
-          target: "~/backend"
-
-      - name: Copy .env to EC2
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ubuntu
-          key: ./private_key.pem
-          source: .env
-          target: "~/backend"
-
-
-      - name: Copy artifact to EC2
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ubuntu
-          key: ./private_key.pem
+          key: ${{ env.SSH_PRIVATE_KEY }}
           source: |
             build/libs/green-0.0.1-SNAPSHOT.jar
             .env
           target: "~/backend"
 
-
+      # EC2에서 애플리케이션 재시작
       - name: Run reload.sh
         uses: appleboy/ssh-action@v0.1.10
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ubuntu
-          key: ./private_key.pem
+          key: ${{ env.SSH_PRIVATE_KEY }}
           script: |
             chmod +x ~/reload.sh
             ~/reload.sh
