@@ -33,40 +33,25 @@ jobs:
       - name: Run Checkstyle
         run: ./gradlew checkstyleMain checkstyleTest
 
+      # 환경변수 한 파일로 관리
+      - name: Create .env file from GitHub Secret
+        run: |
+          cat <<EOF > .env
+          ${{ secrets.ENV_FILE }}
+          EOF
+
+      - name: Load and test .env variables
+        run: |
+          set -a
+          source .env
+          set +a
+          
+          echo "DB_HOST = $DB_HOST"
+          echo "DB_PORT = $DB_PORT"
+
       # 프로젝트 빌드
       - name: Build Project
         run: ./gradlew clean build -x test
-
-      # 환경 변수 설정
-      - name: GitHub Secrets To .env
-        run: |
-          rm -f .env
-          echo "DB_TYPE=mysql" >> .env
-          echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
-          echo "DB_PORT=${{ secrets.DB_PORT }}" >> .env
-          echo "DB_NAME=${{ secrets.DB_NAME }}" >> .env
-          echo "DB_USERNAME=${{ secrets.DB_USERNAME }}" >> .env
-          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
-          echo "DB_PARAMS=${{ secrets.DB_PARAMS }}" >> .env
-          echo "STORAGE_BUCKET=${{ secrets.STORAGE_BUCKET }}" >> .env
-          echo "STORAGE_BASE_URL=${{ secrets.STORAGE_BASE_URL }}" >> .env
-          echo "SWAGGER_PATH=${{ secrets.SWAGGER_PATH }}" >> .env
-      # 파일 목록 출력 (디버깅용)
-      - name: Check generated files
-        run: |
-          echo "Current path: $(pwd)"
-          echo "All files in current directory:"
-          ls -la
-          echo "build/libs directory:"
-          ls -alh build/libs/
-          echo ".env file:"
-          ls -alh .env
-          echo "Absolute paths:"
-          echo "JAR: $(pwd)/build/libs/green-0.0.1-SNAPSHOT.jar"
-          echo "ENV: $(pwd)/.env"
-          echo "File existence check:"
-          [ -f "build/libs/green-0.0.1-SNAPSHOT.jar" ] && echo "✅ JAR 파일 존재" || echo "❌ JAR 파일 없음"
-          [ -f ".env" ] && echo "✅ .env 파일 존재" || echo "❌ .env 파일 없음"
 
       # JAR 파일 복사
       - name: Copy JAR to EC2
