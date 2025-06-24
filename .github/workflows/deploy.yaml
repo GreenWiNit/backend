@@ -4,9 +4,9 @@ name: CD Deploy
 # PR이 main 브랜치로 merge될 때만 실행
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
   deploy:
@@ -18,8 +18,8 @@ jobs:
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
-          java-version: '21'
-          distribution: 'temurin'
+          java-version: "21"
+          distribution: "temurin"
 
       # 전체 테스트 실행 (단위 테스트 + 통합 테스트)
       - name: Run All Tests
@@ -95,6 +95,5 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
-            chmod +x ~/reload.sh
+            sudo chmod +x ~/reload.sh
             ~/reload.sh
-
