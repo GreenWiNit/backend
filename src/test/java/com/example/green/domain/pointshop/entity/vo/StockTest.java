@@ -19,13 +19,13 @@ class StockTest {
 		Stock stock = new Stock(100);
 
 		// then
-		assertThat(stock.stock()).isEqualTo(100);
+		assertThat(stock.getStock()).isEqualTo(100);
 	}
 
 	@ParameterizedTest
-	@ValueSource(ints = {-1, 0})
+	@ValueSource(ints = {-1})
 	@NullSource
-	void 상품_생성시_상품_재고는_필수값으로_1개_이상이_아니라면_생성할_수_없다(Integer invalidStock) {
+	void 상품_생성시_상품_재고는_필수값으로_0개_이상이_아니라면_생성할_수_없다(Integer invalidStock) {
 		// given
 		// when & then
 		assertThatThrownBy(() -> new Stock(invalidStock))
@@ -40,10 +40,10 @@ class StockTest {
 		Stock stock = new Stock(100);
 
 		// when
-		Integer decreased = stock.decrease(amount);
+		Stock result = stock.decrease(amount);
 
 		// then
-		assertThat(decreased).isEqualTo(100 - amount);
+		assertThat(result).isEqualTo(new Stock(50));
 	}
 
 	@Test

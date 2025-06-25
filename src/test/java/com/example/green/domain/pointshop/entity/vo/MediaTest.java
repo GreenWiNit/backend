@@ -19,7 +19,7 @@ class MediaTest {
 		// when
 		Media media = new Media(thumbnailUrl);
 		// then
-		assertThat(media.thumbnailUrl()).isEqualTo(thumbnailUrl);
+		assertThat(media.getThumbnailUrl()).isEqualTo(thumbnailUrl);
 	}
 
 	@ParameterizedTest

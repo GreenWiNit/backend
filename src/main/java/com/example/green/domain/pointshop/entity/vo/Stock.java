@@ -3,19 +3,37 @@ package com.example.green.domain.pointshop.entity.vo;
 import com.example.green.domain.pointshop.exception.PointProductException;
 import com.example.green.domain.pointshop.exception.PointProductExceptionMessage;
 
-public record Stock(Integer stock) {
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
+import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-	public Stock {
-		if (stock == null || stock < 1) {
+@Embeddable
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
+@EqualsAndHashCode
+public class Stock {
+
+	@Column(nullable = false)
+	private Integer stock;
+
+	public Stock(Integer stock) {
+		if (stock == null || stock < 0) {
 			throw new PointProductException(PointProductExceptionMessage.INVALID_PRODUCT_STOCK);
 		}
+		this.stock = stock;
 	}
 
-	public Integer decrease(int amount) {
+	public Stock decrease(int amount) {
 		if (this.stock < amount) {
 			throw new PointProductException(PointProductExceptionMessage.OUT_OF_PRODUCT_STOCK);
 		}
-		return this.stock - amount;
+		return new Stock(this.stock - amount);
 	}
 
+	public boolean isOutOfStock() {
+		return stock == 0;
+	}
 }
