@@ -5,13 +5,35 @@ import java.net.URI;
 import com.example.green.domain.pointshop.exception.PointProductException;
 import com.example.green.domain.pointshop.exception.PointProductExceptionMessage;
 
-public record Media(String thumbnailUrl) {
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
+import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-	public Media {
+@Embeddable
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
+@EqualsAndHashCode
+public class Media {
+
+	@Column(nullable = false)
+	private String thumbnailUrl;
+
+	public Media(String thumbnailUrl) {
+		validateNullCheck(thumbnailUrl);
+		validateUri(thumbnailUrl);
+		this.thumbnailUrl = thumbnailUrl;
+	}
+
+	private static void validateNullCheck(String thumbnailUrl) {
 		if (thumbnailUrl == null) {
 			throw new PointProductException(PointProductExceptionMessage.INVALID_PRODUCT_THUMBNAIL);
 		}
-		thumbnailUrl = thumbnailUrl.trim();
+	}
+
+	private static void validateUri(String thumbnailUrl) {
 		try {
 			validateAbsoluteUri(new URI(thumbnailUrl));
 		} catch (Exception e) {

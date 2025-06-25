@@ -26,9 +26,9 @@ class BasicInfoTest {
 		BasicInfo basicInfo = new BasicInfo(code, name, description);
 
 		// then
-		assertThat(basicInfo.code()).isEqualTo(code);
-		assertThat(basicInfo.name()).isEqualTo(name);
-		assertThat(basicInfo.description()).isEqualTo(description);
+		assertThat(basicInfo.getCode()).isEqualTo(code);
+		assertThat(basicInfo.getName()).isEqualTo(name);
+		assertThat(basicInfo.getDescription()).isEqualTo(description);
 	}
 
 	@ParameterizedTest

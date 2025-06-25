@@ -18,7 +18,7 @@ class PriceTest {
 		// when
 		Price price = new Price(1000);
 		// then
-		assertThat(price.price()).isEqualTo(1000);
+		assertThat(price.getPrice()).isEqualTo(1000);
 	}
 
 	@ParameterizedTest
