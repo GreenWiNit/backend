@@ -14,12 +14,9 @@ public record AdminInfoDetailResponse(
 	String infoCategoryName,
 	String content,
 	String imageurl,
-
 	String lastModifiedBy,
-
 	String isDisplay,
 	LocalDateTime modifiedDate, // TODO [확인필요] Date 타입 프론트
-
 	LocalDateTime createdDate
 
 ) {
