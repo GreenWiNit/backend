@@ -11,7 +11,7 @@ public record AdminInfoSearchResponse(
 	String id,
 	String title,
 	String infoCategoryName, // @JsonValue로 Json직렬화 단계 확인 가능 but 명시적인 방법 채택
-	String registerId,
+	String createdBy,
 	String isDisplay,
 	LocalDateTime createdDate // TODO [확인필요] Date 타입 프론트
 
@@ -21,7 +21,7 @@ public record AdminInfoSearchResponse(
 			e.getId(),
 			e.getTitle(),
 			e.getInfoCategory().getDescription(),
-			String.valueOf(e.getRegisterId()),
+			String.valueOf(e.getCreatedBy()),
 			e.getIsDisplay(),
 			e.getCreatedDate()
 		);
