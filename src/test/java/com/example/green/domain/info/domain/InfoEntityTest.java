@@ -1,6 +1,7 @@
 package com.example.green.domain.info.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
@@ -15,6 +16,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.example.green.domain.info.domain.vo.InfoCategory;
+import com.example.green.domain.info.exception.InfoException;
 import com.example.green.domain.info.utils.PrefixSequenceIdGenerator;
 
 /**
@@ -62,6 +64,16 @@ class InfoEntityTest {
 
 		Serializable id = generator.generate(session, new Object());
 		assertEquals("P000043", id);
+	}
+
+	@Test
+	void 정보커스텀ID_생성시_오류가_발생하면_예외를_던진다() {
+		when(session.createNativeQuery(anyString())).thenReturn(query);
+		when(query.uniqueResult()).thenThrow(new RuntimeException("DB Error"));
+
+		assertThatThrownBy(() -> generator.generate(session, new Object()))
+			.isInstanceOf(InfoException.class)
+			.hasMessageContaining("정보 ID 생성 중 오류가 발생했습니다.");
 	}
 
 	@Test
