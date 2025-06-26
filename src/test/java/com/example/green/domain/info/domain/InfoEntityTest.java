@@ -82,7 +82,6 @@ class InfoEntityTest {
 		//when
 		InfoCategory updateInfoCategory = mock(InfoCategory.class);
 		when(updateInfoCategory.getDescription()).thenReturn("커뮤니티");
-		when(updateInfoCategory.getCode()).thenReturn("COMMUNITIY");
 
 		infoEntity.update(
 			"updateTitle",
