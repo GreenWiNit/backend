@@ -8,7 +8,7 @@ import com.example.green.domain.info.domain.InfoEntity;
  * 관리자 정보 상세
  * - 상세보기 페이지를 생성과 수정에서 함께 쓰고 있어서 Response 하나로 통함
  * */
-public record AdminInfoDetailResponse(
+public record InfoDetailResponseByAdmin(
 	String id,
 	String title,
 	String infoCategoryName,
@@ -20,8 +20,8 @@ public record AdminInfoDetailResponse(
 	LocalDateTime createdDate
 
 ) {
-	public static AdminInfoDetailResponse from(InfoEntity e) {
-		return new AdminInfoDetailResponse(
+	public static InfoDetailResponseByAdmin from(InfoEntity e) {
+		return new InfoDetailResponseByAdmin(
 			e.getId(),
 			e.getTitle(),
 			e.getInfoCategory().getDescription(),// @JsonValue 대신 명시적인 방법으로 사용
