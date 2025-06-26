@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * 사용자 전체 목록 조회
  * */
-public record UserInfoSearchListResponse(
-	List<UserInfoSearchResponse> content
+public record InfoSearchListResponseByUser(
+	List<InfoSearchResponseByUser> content
 ) {
 }
