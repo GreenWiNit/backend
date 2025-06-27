@@ -1,4 +1,4 @@
-package com.example.green.domain.pointshop.entity.vo;
+package com.example.green.domain.pointshop.entity.pointproduct.vo;
 
 import com.example.green.domain.pointshop.exception.PointProductException;
 import com.example.green.domain.pointshop.exception.PointProductExceptionMessage;
@@ -33,7 +33,7 @@ public class Stock {
 		return new Stock(this.stock - amount);
 	}
 
-	public boolean isOutOfStock() {
-		return stock == 0;
+	public boolean isSoldOut() {
+		return this.stock == 0;
 	}
 }
