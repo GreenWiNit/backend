@@ -1,4 +1,4 @@
-package com.example.green.domain.pointshop.entity.vo;
+package com.example.green.domain.pointshop.entity.pointproduct.vo;
 
 import com.example.green.domain.pointshop.exception.PointProductException;
 import com.example.green.domain.pointshop.exception.PointProductExceptionMessage;

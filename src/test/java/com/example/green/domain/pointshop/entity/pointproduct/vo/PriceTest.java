@@ -1,4 +1,4 @@
-package com.example.green.domain.pointshop.entity.vo;
+package com.example.green.domain.pointshop.entity.pointproduct.vo;
 
 import static com.example.green.domain.pointshop.exception.PointProductExceptionMessage.*;
 import static org.assertj.core.api.Assertions.*;

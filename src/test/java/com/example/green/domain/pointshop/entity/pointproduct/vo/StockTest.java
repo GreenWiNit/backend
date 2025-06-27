@@ -1,4 +1,4 @@
-package com.example.green.domain.pointshop.entity.vo;
+package com.example.green.domain.pointshop.entity.pointproduct.vo;
 
 import static com.example.green.domain.pointshop.exception.PointProductExceptionMessage.*;
 import static org.assertj.core.api.Assertions.*;
@@ -36,25 +36,49 @@ class StockTest {
 	@Test
 	void 상품_재고를_감소하면_남은_재고를_반환한다() {
 		// given
-		int amount = 50;
 		Stock stock = new Stock(100);
+		int amount = 50;
 
 		// when
 		Stock result = stock.decrease(amount);
 
 		// then
-		assertThat(result).isEqualTo(new Stock(50));
+		assertThat(result.getStock()).isEqualTo(50);
 	}
 
 	@Test
 	void 상품_재고보다_많은_수량으로_감소하면_예외가_발생한다() {
 		// given
-		int amount = 101;
 		Stock stock = new Stock(100);
+		int amount = 101;
 
 		// when & then
 		assertThatThrownBy(() -> stock.decrease(amount))
 			.isInstanceOf(BusinessException.class)
 			.hasFieldOrPropertyWithValue("exceptionMessage", OUT_OF_PRODUCT_STOCK);
+	}
+
+	@Test
+	void 상품_재고가_0개라면_매진이다() {
+		// given
+		Stock stock = new Stock(0);
+
+		// when
+		boolean result = stock.isSoldOut();
+
+		// then
+		assertThat(result).isTrue();
+	}
+
+	@Test
+	void 상품_재고가_0개가_아니라면_매진이_아니다() {
+		// given
+		Stock stock = new Stock(1);
+
+		// when
+		boolean result = stock.isSoldOut();
+
+		// then
+		assertThat(result).isFalse();
 	}
 }
