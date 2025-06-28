@@ -1,5 +1,6 @@
 package com.example.green.global.utils;
 
+import java.util.List;
 import java.util.Objects;
 
 import com.example.green.global.error.exception.BusinessException;
@@ -30,6 +31,13 @@ public class EntityValidator {
 	public static void validateEmptyString(String string, String message) {
 		log.error(message);
 		if (string == null || string.isBlank()) {
+			throw new BusinessException(GlobalExceptionMessage.UNPROCESSABLE_ENTITY);
+		}
+	}
+
+	public static void validateEmptyList(List<?> list, String message) {
+		log.error(message);
+		if (list == null || list.isEmpty()) {
 			throw new BusinessException(GlobalExceptionMessage.UNPROCESSABLE_ENTITY);
 		}
 	}
