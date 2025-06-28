@@ -1,5 +1,7 @@
 package com.example.green.domain.info.domain;
 
+import org.hibernate.annotations.GenericGenerator;
+
 import com.example.green.domain.common.BaseEntity;
 import com.example.green.domain.info.domain.vo.InfoCategory;
 
@@ -8,7 +10,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
@@ -22,9 +23,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class InfoEntity extends BaseEntity {
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "info_id")
-	private Long id;
+	@GeneratedValue(generator = "info-id-gen")
+	@GenericGenerator(
+		name = "info-id-gen",
+		strategy = "com.example.green.domain.info.utils.PrefixSequenceIdGenerator"
+	)
+	@Column(name = "info_id", length = 7, nullable = false, updatable = false)
+	private String id;
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false, columnDefinition = "VARCHAR(20)")
@@ -42,16 +47,12 @@ public class InfoEntity extends BaseEntity {
 	@Column(nullable = false, columnDefinition = "CHAR(1)")
 	private String isDisplay;
 
-	@Column(nullable = false)
-	private String registerId;
-
 	@Builder
 	private InfoEntity(
 		final String title,
 		final String content,
 		final InfoCategory infoCategory,
 		final String isDisplay,
-		final String registerId,
 		final String imageUrl
 	) {
 		this.title = title;
@@ -59,22 +60,20 @@ public class InfoEntity extends BaseEntity {
 		this.infoCategory = infoCategory;
 		this.imageUrl = imageUrl;
 		this.isDisplay = isDisplay;
-		this.registerId = registerId;
 	}
 
+	// 변수 직접 받아 필드 변경 -> 도미엔단 외부 영향도 최소화
 	public void update(
 		final String updateTitle,
 		final String updateContent,
 		final InfoCategory updateInfoCategory,
 		final String updateImageUrl,
-		final String updateIsDisplay,
-		final String updateRegisterId
+		final String updateIsDisplay
 	) {
 		this.title = updateTitle;
 		this.content = updateContent;
 		this.infoCategory = updateInfoCategory;
 		this.imageUrl = updateImageUrl;
 		this.isDisplay = updateIsDisplay;
-		this.registerId = updateRegisterId;
 	}
 }
