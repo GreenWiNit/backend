@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import com.example.green.global.error.exception.BusinessException;
@@ -22,9 +21,15 @@ class StockTest {
 		assertThat(stock.getStock()).isEqualTo(100);
 	}
 
+	@Test
+	void 상품_재고는_NULL값_일_수_없다() {
+		// given
+		// when & then
+		assertThatThrownBy(() -> new Stock(null)).isInstanceOf(BusinessException.class);
+	}
+
 	@ParameterizedTest
 	@ValueSource(ints = {-1})
-	@NullSource
 	void 상품_생성시_상품_재고는_필수값으로_0개_이상이_아니라면_생성할_수_없다(Integer invalidStock) {
 		// given
 		// when & then

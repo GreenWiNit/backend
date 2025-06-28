@@ -1,5 +1,7 @@
 package com.example.green.domain.pointshop.entity.pointproduct.vo;
 
+import static com.example.green.global.utils.EntityValidator.*;
+
 import java.util.regex.Pattern;
 
 import com.example.green.domain.pointshop.exception.PointProductException;
@@ -37,44 +39,38 @@ public class BasicInfo {
 		String trimmedName = name.trim();
 		String trimmedDescription = description.trim();
 
-		validateDetail(trimmedCode, trimmedName, trimmedDescription);
+		validateBusiness(trimmedCode, trimmedName, trimmedDescription);
 		this.code = trimmedCode;
 		this.name = trimmedName;
 		this.description = trimmedDescription;
 	}
 
-	private void validateDetail(String code, String name, String description) {
+	private void validateBusiness(String code, String name, String description) {
 		validateCode(code);
 		validateName(name);
 		validateDescription(description);
 	}
 
-	private void validateNullCheck(String code, String name, String description) {
-		if (code == null) {
-			throw new PointProductException(PointProductExceptionMessage.INVALID_PRODUCT_CODE);
-		}
-		if (name == null) {
-			throw new PointProductException(PointProductExceptionMessage.INVALID_PRODUCT_NAME);
-		}
-		if (description == null) {
-			throw new PointProductException(PointProductExceptionMessage.INVALID_PRODUCT_DESCRIPTION);
-		}
+	private static void validateNullCheck(String code, String name, String description) {
+		validateNullData(code, "상품 코드가 null 값 입니다.");
+		validateNullData(name, "상품명이 null 값 입니다.");
+		validateNullData(description, "상품 정보가 null 값 입니다.");
 	}
 
-	private void validateCode(String code) {
+	private static void validateCode(String code) {
 		if (!POINT_CODE_PATTERN.matcher(code.trim()).matches()) {
 			throw new PointProductException(PointProductExceptionMessage.INVALID_PRODUCT_CODE);
 		}
 	}
 
-	private void validateName(String name) {
+	private static void validateName(String name) {
 		int length = name.length();
 		if (length < POINT_NAME_MIN_LENGTH || length > POINT_NAME_MAX_LENGTH) {
 			throw new PointProductException(PointProductExceptionMessage.INVALID_PRODUCT_NAME);
 		}
 	}
 
-	private void validateDescription(String description) {
+	private static void validateDescription(String description) {
 		if (description.length() > POINT_DESCRIPTION_MAX_LENGTH) {
 			throw new PointProductException(PointProductExceptionMessage.INVALID_PRODUCT_DESCRIPTION);
 		}

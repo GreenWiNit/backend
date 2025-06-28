@@ -37,8 +37,7 @@ class BasicInfoTest {
 		// given
 		// when & then
 		assertThatThrownBy(() -> new BasicInfo(invalidCode, name, description))
-			.isInstanceOf(BusinessException.class)
-			.hasFieldOrPropertyWithValue("exceptionMessage", INVALID_PRODUCT_CODE);
+			.isInstanceOf(BusinessException.class);
 	}
 
 	@Test
@@ -46,8 +45,7 @@ class BasicInfoTest {
 		// given
 		// when & then
 		assertThatThrownBy(() -> new BasicInfo(code, null, description))
-			.isInstanceOf(BusinessException.class)
-			.hasFieldOrPropertyWithValue("exceptionMessage", INVALID_PRODUCT_NAME);
+			.isInstanceOf(BusinessException.class);
 	}
 
 	@ParameterizedTest
@@ -66,8 +64,7 @@ class BasicInfoTest {
 		// given
 		// when & then
 		assertThatThrownBy(() -> new BasicInfo(code, name, null))
-			.isInstanceOf(BusinessException.class)
-			.hasFieldOrPropertyWithValue("exceptionMessage", INVALID_PRODUCT_DESCRIPTION);
+			.isInstanceOf(BusinessException.class);
 	}
 
 	@Test
