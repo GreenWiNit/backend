@@ -8,6 +8,8 @@ import com.example.green.domain.common.TimeBaseEntity;
 import com.example.green.domain.pointshop.entity.order.vo.DeliveryAddressSnapshot;
 import com.example.green.domain.pointshop.entity.order.vo.MemberSnapshot;
 import com.example.green.domain.pointshop.entity.order.vo.OrderDeliveryStatus;
+import com.example.green.domain.pointshop.exception.OrderException;
+import com.example.green.domain.pointshop.exception.OrderExceptionMessage;
 import com.example.green.global.utils.EntityValidator;
 
 import jakarta.persistence.CascadeType;
@@ -109,5 +111,19 @@ public class Order extends TimeBaseEntity {
 		this.totalPrice = this.orderItems.stream()
 			.map(OrderItem::calculateItemFinalPrice)
 			.reduce(BigDecimal.ZERO, BigDecimal::add);
+	}
+
+	public void startShipping() {
+		if (status != OrderDeliveryStatus.PENDING_DELIVERY) {
+			throw new OrderException(OrderExceptionMessage.NO_PENDING_STATUS);
+		}
+		this.status = OrderDeliveryStatus.SHIPPING;
+	}
+
+	public void completeDelivery() {
+		if (status != OrderDeliveryStatus.SHIPPING) {
+			throw new OrderException(OrderExceptionMessage.NO_SHIPPING_STATUS);
+		}
+		this.status = OrderDeliveryStatus.DELIVERED;
 	}
 }
