@@ -1,5 +1,6 @@
 package com.example.green.domain.pointshop.entity.pointproduct.vo;
 
+import static com.example.green.domain.pointshop.exception.PointProductExceptionMessage.*;
 import static com.example.green.global.utils.EntityValidator.*;
 
 import java.net.URI;
@@ -24,7 +25,7 @@ public class Media {
 	private String thumbnailUrl;
 
 	public Media(String thumbnailUrl) {
-		validateNullData(thumbnailUrl, "상품 thumbnail 정보가 null 값입니다.");
+		validateNullData(thumbnailUrl, REQUIRED_MEDIA);
 		validateUri(thumbnailUrl);
 		this.thumbnailUrl = thumbnailUrl;
 	}

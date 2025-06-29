@@ -1,5 +1,6 @@
 package com.example.green.domain.pointshop.entity.pointproduct.vo;
 
+import static com.example.green.domain.pointshop.exception.PointProductExceptionMessage.*;
 import static com.example.green.global.utils.EntityValidator.*;
 
 import com.example.green.domain.pointshop.exception.PointProductException;
@@ -22,7 +23,7 @@ public class Stock {
 	private Integer stock;
 
 	public Stock(Integer stock) {
-		validateNullData(stock, "상품 재고가 null 값 입니다.");
+		validateNullData(stock, REQUIRED_STOCK);
 		if (stock < 0) {
 			throw new PointProductException(PointProductExceptionMessage.INVALID_PRODUCT_STOCK);
 		}

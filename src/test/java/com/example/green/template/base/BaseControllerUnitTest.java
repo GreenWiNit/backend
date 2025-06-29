@@ -1,7 +1,6 @@
 package com.example.green.template.base;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
@@ -13,7 +12,6 @@ import org.springframework.web.context.WebApplicationContext;
 
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 
-@WebMvcTest
 @Import(BaseControllerUnitTest.TestWebSecurityConfig.class)
 public class BaseControllerUnitTest {
 
