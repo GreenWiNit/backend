@@ -36,7 +36,7 @@ public class BasicInfo {
 
 	public BasicInfo(String code, String name, String description) {
 		validateNullCheck(code, name, description);
-		String trimmedCode = code.trim();
+		String trimmedCode = code.trim().toUpperCase();
 		String trimmedName = name.trim();
 		String trimmedDescription = description.trim();
 
