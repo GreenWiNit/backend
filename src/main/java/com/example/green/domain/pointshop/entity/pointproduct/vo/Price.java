@@ -1,5 +1,6 @@
 package com.example.green.domain.pointshop.entity.pointproduct.vo;
 
+import static com.example.green.domain.pointshop.exception.PointProductExceptionMessage.*;
 import static com.example.green.global.utils.EntityValidator.*;
 
 import java.math.BigDecimal;
@@ -25,7 +26,7 @@ public class Price {
 	private BigDecimal price;
 
 	public Price(BigDecimal price) {
-		validateNullData(price, "상품 가격이 null 값 입니다.");
+		validateNullData(price, REQUIRED_PRICE);
 		if (price.compareTo(BigDecimal.ZERO) < 0) {
 			throw new PointProductException(PointProductExceptionMessage.INVALID_PRODUCT_PRICE);
 		}

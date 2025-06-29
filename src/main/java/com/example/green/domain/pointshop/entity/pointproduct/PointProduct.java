@@ -1,5 +1,6 @@
 package com.example.green.domain.pointshop.entity.pointproduct;
 
+import static com.example.green.domain.pointshop.exception.PointProductExceptionMessage.*;
 import static com.example.green.global.utils.EntityValidator.*;
 
 import org.hibernate.annotations.DynamicUpdate;
@@ -78,32 +79,32 @@ public class PointProduct extends BaseEntity {
 	}
 
 	private static void validatePointProduct(BasicInfo basicInfo, Media media, Price price, Stock stock) {
-		validateNullData(basicInfo, "상품 기본 정보가 null 값 입니다. 상품 생성 파라미터를 확인해주세요.");
-		validateNullData(media, "상품 미디어 정보가 null 값 입니다. 상품 생성 파라미터를 확인해주세요.");
-		validateNullData(price, "상품 가격이 null 값 입니다. 상품 생성 파라미터를 확인해주세요.");
-		validateNullData(stock, "상품 재고가 null 값 입니다. 상품 생성 파라미터를 확인해주세요.");
+		validateNullData(basicInfo, REQUIRED_BASIC_INFO);
+		validateNullData(media, REQUIRED_MEDIA);
+		validateNullData(price, REQUIRED_PRICE);
+		validateNullData(stock, REQUIRED_STOCK);
 		if (stock.isSoldOut()) {
 			throw new PointProductException(PointProductExceptionMessage.INVALID_PRODUCT_STOCK_CREATION);
 		}
 	}
 
 	public void updateBasicInfo(BasicInfo basicInfo) {
-		validateNullData(basicInfo, "상품 기본 정보가 null 값 입니다. 상품 생성 파라미터를 확인해주세요.");
+		validateNullData(basicInfo, REQUIRED_BASIC_INFO);
 		this.basicInfo = basicInfo;
 	}
 
 	public void updateMedia(Media media) {
-		validateNullData(media, "상품 미디어 정보가 null 값 입니다. 상품 생성 파라미터를 확인해주세요.");
+		validateNullData(media, REQUIRED_MEDIA);
 		this.media = media;
 	}
 
 	public void updatePrice(Price price) {
-		validateNullData(price, "상품 가격이 null 값 입니다. 상품 생성 파라미터를 확인해주세요.");
+		validateNullData(price, REQUIRED_PRICE);
 		this.price = price;
 	}
 
 	public void updateStock(Stock stock) {
-		validateNullData(stock, "상품 재고가 null 값 입니다. 상품 생성 파라미터를 확인해주세요.");
+		validateNullData(stock, REQUIRED_STOCK);
 		this.stock = stock;
 		this.sellingStatus = determineSellingStatus();
 	}

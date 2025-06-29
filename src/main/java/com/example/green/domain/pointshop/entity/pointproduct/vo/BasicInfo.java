@@ -1,5 +1,6 @@
 package com.example.green.domain.pointshop.entity.pointproduct.vo;
 
+import static com.example.green.domain.pointshop.exception.PointProductExceptionMessage.*;
 import static com.example.green.global.utils.EntityValidator.*;
 
 import java.util.regex.Pattern;
@@ -45,16 +46,16 @@ public class BasicInfo {
 		this.description = trimmedDescription;
 	}
 
+	private static void validateNullCheck(String code, String name, String description) {
+		validateNullData(code, REQUIRED_CODE);
+		validateNullData(name, REQUIRED_NAME);
+		validateNullData(description, REQUIRED_DESCRIPTION);
+	}
+
 	private void validateBusiness(String code, String name, String description) {
 		validateCode(code);
 		validateName(name);
 		validateDescription(description);
-	}
-
-	private static void validateNullCheck(String code, String name, String description) {
-		validateNullData(code, "상품 코드가 null 값 입니다.");
-		validateNullData(name, "상품명이 null 값 입니다.");
-		validateNullData(description, "상품 정보가 null 값 입니다.");
 	}
 
 	private static void validateCode(String code) {
