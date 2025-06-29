@@ -11,7 +11,7 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import org.springframework.stereotype.Component;
 
 import com.example.green.domain.auth.dto.CustomOAuth2User;
-import com.example.green.global.utils.JwtUtil;
+import com.example.green.domain.auth.utils.JwtUtil;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
