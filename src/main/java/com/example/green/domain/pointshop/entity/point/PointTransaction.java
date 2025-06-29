@@ -7,6 +7,7 @@ import com.example.green.domain.pointshop.entity.point.vo.PointAmount;
 import com.example.green.domain.pointshop.entity.point.vo.PointSource;
 import com.example.green.domain.pointshop.entity.point.vo.TransactionType;
 
+import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -38,7 +39,9 @@ public class PointTransaction extends TimeBaseEntity {
 	private Long memberId;
 
 	private PointSource pointSource;
+	@AttributeOverride(name = "amount", column = @Column(name = "point_amount"))
 	private PointAmount pointAmount;
+	@AttributeOverride(name = "amount", column = @Column(name = "balance_after"))
 	private PointAmount balanceAfter;
 
 	@Column(nullable = false)
