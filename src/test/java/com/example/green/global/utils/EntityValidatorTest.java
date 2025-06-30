@@ -2,8 +2,11 @@ package com.example.green.global.utils;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -52,6 +55,20 @@ class EntityValidatorTest {
 	@Test
 	void 빈_문자열이_아닌_유효한_문자라면_예외가_발생하지_않는다() {
 		assertThatCode(() -> EntityValidator.validateEmptyString("String", "message"))
+			.doesNotThrowAnyException();
+	}
+
+	@ParameterizedTest
+	@NullAndEmptySource
+	void 유효한_리스트를_검증한다(List<?> datas) {
+		assertThatThrownBy(() -> EntityValidator.validateEmptyList(datas, "message"))
+			.isInstanceOf(BusinessException.class)
+			.hasFieldOrPropertyWithValue("exceptionMessage", GlobalExceptionMessage.UNPROCESSABLE_ENTITY);
+	}
+
+	@Test
+	void 리스트가_1개_이상_존재하면_예외가_발생하지_않는다() {
+		assertThatCode(() -> EntityValidator.validateEmptyList(List.of(new Object()), "message"))
 			.doesNotThrowAnyException();
 	}
 }
