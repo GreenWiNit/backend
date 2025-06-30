@@ -1,9 +1,13 @@
 package com.example.green.domain.info.domain;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Where;
 
 import com.example.green.domain.common.BaseEntity;
 import com.example.green.domain.info.domain.vo.InfoCategory;
+import com.example.green.global.error.exception.BusinessException;
+import com.example.green.global.error.exception.GlobalExceptionMessage;
+import com.example.green.global.utils.EntityValidator;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -21,6 +25,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "INFO")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Where(clause = "deleted = false AND is_display = 'Y'")
 public class InfoEntity extends BaseEntity {
 	@Id
 	@GeneratedValue(generator = "info-id-gen")
@@ -44,6 +49,11 @@ public class InfoEntity extends BaseEntity {
 	@Column(nullable = false)
 	private String imageUrl;
 
+	/**
+	 * 전시 여부
+	 * - Y: 전시
+	 * - N: 비전시
+	 */
 	@Column(nullable = false, columnDefinition = "CHAR(1)")
 	private String isDisplay;
 
@@ -52,14 +62,15 @@ public class InfoEntity extends BaseEntity {
 		final String title,
 		final String content,
 		final InfoCategory infoCategory,
-		final String isDisplay,
-		final String imageUrl
+		final String imageUrl,
+		final String isDisplay
 	) {
+		validateNullInfo(title, content, infoCategory, isDisplay);
 		this.title = title;
 		this.content = content;
 		this.infoCategory = infoCategory;
 		this.imageUrl = imageUrl;
-		this.isDisplay = isDisplay;
+		this.isDisplay = validateFormatIsDisplay(isDisplay);
 	}
 
 	// 변수 직접 받아 필드 변경 -> 도미엔단 외부 영향도 최소화
@@ -70,10 +81,34 @@ public class InfoEntity extends BaseEntity {
 		final String updateImageUrl,
 		final String updateIsDisplay
 	) {
+		validateNullInfo(updateTitle, updateContent, updateInfoCategory, updateIsDisplay);
 		this.title = updateTitle;
 		this.content = updateContent;
 		this.infoCategory = updateInfoCategory;
 		this.imageUrl = updateImageUrl;
-		this.isDisplay = updateIsDisplay;
+		this.isDisplay = validateFormatIsDisplay(updateIsDisplay);
+	}
+
+	private void validateNullInfo(
+		String title,
+		String content,
+		InfoCategory infoCategory,
+		String isDisplay
+	) {
+		EntityValidator.validateEmptyString(title, "제목은 필수입니다.");
+		EntityValidator.validateEmptyString(content, "내용은 필수입니다.");
+		EntityValidator.validateNullData(infoCategory, "카테고리는 필수입니다.");
+		EntityValidator.validateEmptyString(isDisplay, "전시 여부는 필수입니다.");
+	}
+
+	private String validateFormatIsDisplay(String isDisplay) {
+		if ("y".equalsIgnoreCase(isDisplay)) {
+			isDisplay = "Y";
+		} else if ("n".equalsIgnoreCase(isDisplay)) {
+			isDisplay = "N";
+		} else {
+			throw new BusinessException(GlobalExceptionMessage.UNPROCESSABLE_ENTITY);
+		}
+		return isDisplay;
 	}
 }

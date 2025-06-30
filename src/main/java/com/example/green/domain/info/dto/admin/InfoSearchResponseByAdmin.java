@@ -10,7 +10,7 @@ import com.example.green.domain.info.domain.InfoEntity;
 public record InfoSearchResponseByAdmin(
 	String id,
 	String title,
-	String infoCategoryName, // @JsonValue로 Json직렬화 단계 확인 가능 but 명시적인 방법 채택
+	String infoCategoryName,
 	String createdBy,
 	String isDisplay,
 	LocalDateTime createdDate // TODO [확인필요] Date 타입 프론트
@@ -20,7 +20,7 @@ public record InfoSearchResponseByAdmin(
 		return new InfoSearchResponseByAdmin(
 			e.getId(),
 			e.getTitle(),
-			e.getInfoCategory().getDescription(),
+			e.getInfoCategory().getDescription(),// @JsonValue 대신 명시적인 방법으로 사용
 			e.getCreatedBy(),
 			e.getIsDisplay(),
 			e.getCreatedDate()

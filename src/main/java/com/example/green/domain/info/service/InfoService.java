@@ -1,7 +1,46 @@
 package com.example.green.domain.info.service;
 
-/**
- * InfoService의 확장가능성은 낮기 때문에 추상화하지 않고 구체클래스 직접 사용
- * */
-public class InfoService {
+import com.example.green.domain.info.dto.InfoRequest;
+import com.example.green.domain.info.dto.admin.InfoDetailResponseByAdmin;
+import com.example.green.domain.info.dto.admin.InfoSearchListResponseByAdmin;
+import com.example.green.domain.info.dto.admin.InfoSearchResponseByAdmin;
+import com.example.green.domain.info.dto.user.InfoDetailResponseByUser;
+import com.example.green.domain.info.dto.user.InfoSearchListResponseByUser;
+
+public interface InfoService {
+	/**
+	 * 관리자 전체 Info 페이지 단위로 조회
+	 */
+	InfoSearchListResponseByAdmin getInfosForAdmin(int page, int size);
+
+	/**
+	 * 관리자 Info 상세 페이지 조회
+	 */
+	InfoSearchResponseByAdmin getInfoDetailForAdmin(String id);
+
+	/**
+	 * 관리자 Info 등록
+	 */
+	InfoDetailResponseByAdmin saveInfo(InfoRequest saveRequest);
+
+	/**
+	 * 관리자 Info 수정
+	 */
+	InfoDetailResponseByAdmin updateInfo(String id, InfoRequest updateRequest);
+
+	/**
+	 * 관리자 Info 삭제
+	 */
+	void deleteInfo(String deleteInfoId);
+
+	/**
+	 * 일반 사용자 노출 가능한 Info 전체 조회 (페이징 없음)
+	 */
+	InfoSearchListResponseByUser getInfosForUser();
+
+	/**
+	 * 로그인한 사용자 Info 상세 페이지 조회
+	 */
+	InfoDetailResponseByUser getInfoDetailForUser(String id);
+
 }
