@@ -10,6 +10,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
 import com.example.green.domain.common.service.FileManager;
@@ -35,6 +36,8 @@ class InfoServiceIntTest extends ServiceIntegrationTest {
 	private InfoService infoService;
 	@MockitoSpyBean
 	private FileManager fileManager;
+	@Autowired
+	private JdbcTemplate jdbcTemplate;
 
 	private static InfoRequest createSaveInfoRequest() {
 		return InfoRequest.builder()
@@ -57,8 +60,8 @@ class InfoServiceIntTest extends ServiceIntegrationTest {
 	}
 
 	@AfterEach
-	void cleanUp() {
-		infoRepository.deleteAll();
+	void tearDown() {
+		infoRepository.deleteAllInBatch();
 	}
 
 	@Nested
@@ -69,7 +72,6 @@ class InfoServiceIntTest extends ServiceIntegrationTest {
 
 			@BeforeEach
 			void setup() {
-				// 저장 된 정보가 없을 경우를 대비하여 테스트용 데이터 생성
 				InfoRequest infoRequest = createSaveInfoRequest();
 				infoEntity = infoRepository.save(infoRequest.toEntity());
 			}
@@ -189,6 +191,11 @@ class InfoServiceIntTest extends ServiceIntegrationTest {
 
 		@Nested
 		class 디폴트_Entity_생성하지_않음 {
+			@BeforeEach
+			void cleanUpBefore() {
+				jdbcTemplate.execute("TRUNCATE TABLE INFO");
+			}
+
 			@Test
 			void 정보를_등록한다() {
 				// TODO [리펙토링필요] -> 시큐리티 어노테이션 완성되면 사용자ID(lastModifiedBy) 값이 제대로 반영되는지 확인
@@ -214,7 +221,6 @@ class InfoServiceIntTest extends ServiceIntegrationTest {
 
 		@BeforeEach
 		void setup() {
-			// 저장 된 정보가 없을 경우를 대비하여 테스트용 데이터 생성
 			InfoRequest infoRequest = createSaveInfoRequest();
 			infoEntity = infoRepository.save(infoRequest.toEntity());
 		}

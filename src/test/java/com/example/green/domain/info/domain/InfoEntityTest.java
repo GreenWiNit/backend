@@ -88,7 +88,7 @@ class InfoEntityTest {
 		if (value.equals("notValid")) {
 			assertThatThrownBy(() -> createInfo(isDisplay))
 				.isInstanceOf(BusinessException.class)
-				.hasMessageContaining("경로 변수 또는 쿼리 파라미터의 타입이 잘못되었습니다.");
+				.hasMessageContaining("서버에서 본문을 처리할 수 없습니다.");
 		} else {
 			assertThat(createInfo(isDisplay).getIsDisplay()).isEqualTo("N");
 		}
