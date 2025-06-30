@@ -49,4 +49,9 @@ public class CustomOAuth2User implements OAuth2User {
 
 		return userDto.username();
 	}
+	
+	// UserDto 접근을 위한 메서드 추가
+	public UserDto getUserDto() {
+		return userDto;
+	}
 }
