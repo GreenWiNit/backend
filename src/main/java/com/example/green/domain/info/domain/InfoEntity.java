@@ -70,7 +70,7 @@ public class InfoEntity extends BaseEntity {
 		this.content = content;
 		this.infoCategory = infoCategory;
 		this.imageUrl = imageUrl;
-		this.isDisplay = validateFormatIsDisplay(isDisplay);
+		this.isDisplay = determineIsDisplay(isDisplay.trim());
 	}
 
 	// 변수 직접 받아 필드 변경 -> 도미엔단 외부 영향도 최소화
@@ -86,7 +86,7 @@ public class InfoEntity extends BaseEntity {
 		this.content = updateContent;
 		this.infoCategory = updateInfoCategory;
 		this.imageUrl = updateImageUrl;
-		this.isDisplay = validateFormatIsDisplay(updateIsDisplay);
+		this.isDisplay = determineIsDisplay(updateIsDisplay.trim());
 	}
 
 	private void validateNullInfo(
@@ -101,14 +101,10 @@ public class InfoEntity extends BaseEntity {
 		EntityValidator.validateEmptyString(isDisplay, "전시 여부는 필수입니다.");
 	}
 
-	private String validateFormatIsDisplay(String isDisplay) {
-		if ("y".equalsIgnoreCase(isDisplay)) {
-			isDisplay = "Y";
-		} else if ("n".equalsIgnoreCase(isDisplay)) {
-			isDisplay = "N";
-		} else {
+	private String determineIsDisplay(String isDisplay) {
+		if (!isDisplay.equalsIgnoreCase("Y") && !isDisplay.equalsIgnoreCase("N")) {
 			throw new BusinessException(GlobalExceptionMessage.UNPROCESSABLE_ENTITY);
 		}
-		return isDisplay;
+		return isDisplay.toUpperCase();
 	}
 }
