@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,7 +15,7 @@ import com.example.green.global.api.ApiTemplate;
 import com.example.green.template.base.BaseControllerUnitTest;
 import com.example.green.template.request.ImageUploadRequest;
 
-@Import(ImageUploadController.class)
+@WebMvcTest(ImageUploadController.class)
 class ImageUploadControllerTest extends BaseControllerUnitTest {
 
 	@MockitoBean

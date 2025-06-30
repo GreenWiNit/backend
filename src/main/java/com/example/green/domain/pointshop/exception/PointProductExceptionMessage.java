@@ -22,6 +22,14 @@ public enum PointProductExceptionMessage implements ExceptionMessage {
 	INVALID_PRODUCT_DESCRIPTION(BAD_REQUEST, "상품 설명은 최대 100글자로 구성되어야 합니다."),
 	OUT_OF_PRODUCT_STOCK(BAD_REQUEST, "상품 재고가 부족합니다.");
 
+	public static final String REQUIRED_BASIC_INFO = "상품 기본 정보가 null 값 입니다. 파라미터를 확인해주세요.";
+	public static final String REQUIRED_CODE = "상품 코드 정보가 null 값 입니다. 파라미터를 확인해주세요.";
+	public static final String REQUIRED_NAME = "상품 이름 정보가 null 값 입니다. 파라미터를 확인해주세요.";
+	public static final String REQUIRED_DESCRIPTION = "상품 설명 정보가 null 값 입니다. 파라미터를 확인해주세요.";
+	public static final String REQUIRED_MEDIA = "상품 미디어 정보가 null 값 입니다. 파라미터를 확인해주세요.";
+	public static final String REQUIRED_PRICE = "상품 가격이 null 값 입니다. 파라미터를 확인해주세요.";
+	public static final String REQUIRED_STOCK = "상품 재고가 null 값 입니다. 파라미터를 확인해주세요.";
+
 	private final HttpStatus httpStatus;
 	private final String message;
 }

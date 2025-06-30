@@ -3,6 +3,7 @@ package com.example.green.domain.pointshop.entity.pointproduct;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import java.math.BigDecimal;
 import java.util.stream.Stream;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -83,7 +84,7 @@ class PointProductTest {
 	@Test
 	void 상품_포인트_정보가_수정된다() {
 		// given
-		Price newPrice = new Price(2000);
+		Price newPrice = new Price(BigDecimal.valueOf(2000));
 
 		// when
 		pointProduct.updatePrice(newPrice);

@@ -1,6 +1,10 @@
 package com.example.green.domain.pointshop.entity.pointproduct.vo;
 
+import static com.example.green.domain.pointshop.exception.PointProductExceptionMessage.*;
 import static com.example.green.global.utils.EntityValidator.*;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import com.example.green.domain.pointshop.exception.PointProductException;
 import com.example.green.domain.pointshop.exception.PointProductExceptionMessage;
@@ -18,14 +22,14 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode
 public class Price {
 
-	@Column(nullable = false)
-	private Integer price;
+	@Column(nullable = false, precision = 19, scale = 2)
+	private BigDecimal price;
 
-	public Price(Integer price) {
-		validateNullData(price, "상품 가격이 null 값 입니다.");
-		if (price < 0) {
+	public Price(BigDecimal price) {
+		validateNullData(price, REQUIRED_PRICE);
+		if (price.compareTo(BigDecimal.ZERO) < 0) {
 			throw new PointProductException(PointProductExceptionMessage.INVALID_PRODUCT_PRICE);
 		}
-		this.price = price;
+		this.price = price.setScale(2, RoundingMode.DOWN);
 	}
 }
