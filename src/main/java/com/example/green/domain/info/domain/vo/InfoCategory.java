@@ -10,9 +10,9 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum InfoCategory {
-	PARTICIPANT("참여형"),
+	EVENT("이벤트"),
 	CONTENTS("콘텐츠"),
-	COMMUNITIY("커뮤니티");
+	ETC("기타");
 
 	private final String description;
 
