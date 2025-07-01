@@ -5,23 +5,30 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import com.example.green.domain.pointshop.controller.dto.PointProductCreateDto;
+import com.example.green.domain.pointshop.controller.dto.PointProductSearchCondition;
+import com.example.green.domain.pointshop.controller.dto.PointProductSearchResponse;
+import com.example.green.domain.pointshop.controller.query.PointProductQueryRepository;
 import com.example.green.domain.pointshop.controller.request.PointProductRequest;
+import com.example.green.domain.pointshop.entity.pointproduct.vo.SellingStatus;
 import com.example.green.domain.pointshop.service.PointProductService;
 import com.example.green.domain.pointshop.service.command.PointProductCreateCommand;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.template.base.BaseControllerUnitTest;
 
-@WebMvcTest(PointProductController.class)
-class PointProductControllerTest extends BaseControllerUnitTest {
+@WebMvcTest(PointProductAdminController.class)
+class PointProductAdminControllerTest extends BaseControllerUnitTest {
 
 	@MockitoBean
 	private PointProductService pointProductService;
+	@MockitoBean
+	private PointProductQueryRepository pointProductQueryRepository;
 
 	@Test
 	void 포인트_상품_생성_요청에_성공한다() {
@@ -35,6 +42,25 @@ class PointProductControllerTest extends BaseControllerUnitTest {
 		// then
 		assertThat(response.result()).isEqualTo(1L);
 		assertThat(response.message()).isEqualTo(POINT_PRODUCT_CREATION_SUCCESS.getMessage());
+	}
+
+	@Test
+	void 포인트_상품_목록_조회에_성공한다() {
+		// given
+		PointProductSearchCondition condition = getSearchCondition();
+		List<PointProductSearchResponse> mockResult = List.of(mock(PointProductSearchResponse.class));
+		when(pointProductQueryRepository.findTop10PointProducts(condition)).thenReturn(mockResult);
+
+		// when
+		ApiTemplate<List<PointProductSearchResponse>> response = PointProductRequest.searchProducts(condition);
+
+		// then
+		assertThat(response.result()).usingRecursiveComparison().isEqualTo(mockResult);
+		assertThat(response.message()).isEqualTo(POINT_PRODUCTS_SEARCH_SUCCESS.getMessage());
+	}
+
+	private static PointProductSearchCondition getSearchCondition() {
+		return new PointProductSearchCondition(1, 1, "keyword", SellingStatus.SOLD_OUT);
 	}
 
 	private static PointProductCreateDto getCreateDto() {

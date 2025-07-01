@@ -1,9 +1,13 @@
 package com.example.green.domain.pointshop.controller.request;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
 import com.example.green.domain.pointshop.controller.dto.PointProductCreateDto;
+import com.example.green.domain.pointshop.controller.dto.PointProductSearchCondition;
+import com.example.green.domain.pointshop.controller.dto.PointProductSearchResponse;
 import com.example.green.global.api.ApiTemplate;
 
 import io.restassured.common.mapper.TypeRef;
@@ -17,6 +21,21 @@ public class PointProductRequest {
 			.contentType(MediaType.APPLICATION_JSON)
 			.body(dto)
 			.when().post("/api/point-products")
+			.then().log().all()
+			.status(HttpStatus.OK)
+			.extract().as(new TypeRef<>() {
+			});
+	}
+
+	public static ApiTemplate<List<PointProductSearchResponse>> searchProducts(PointProductSearchCondition condition) {
+		return RestAssuredMockMvc
+			.given().log().all()
+			.contentType(MediaType.APPLICATION_JSON)
+			.queryParam("page", condition.page())
+			.queryParam("size", condition.size())
+			.queryParam("keyword", condition.keyword())
+			.queryParam("status", condition.status().name())
+			.when().get("/api/point-products")
 			.then().log().all()
 			.status(HttpStatus.OK)
 			.extract().as(new TypeRef<>() {
