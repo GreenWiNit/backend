@@ -1,6 +1,7 @@
-package com.example.green.global.api;
+package com.example.green.global.api.page;
 
 import java.util.List;
+import java.util.Optional;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.NonNull;
@@ -21,4 +22,15 @@ public record PageTemplate<T>(
 	@NonNull
 	List<T> content
 ) {
+
+	public static <T> PageTemplate<T> of(List<T> content, Pagination pagination) {
+		return new PageTemplate<T>(
+			pagination.getTotalElements(),
+			pagination.getTotalPages(),
+			pagination.getCurrentPage(),
+			pagination.getPageSize(),
+			pagination.hasNext(),
+			Optional.ofNullable(content).orElse(List.of())
+		);
+	}
 }
