@@ -20,6 +20,7 @@ import com.example.green.domain.pointshop.entity.pointproduct.vo.SellingStatus;
 import com.example.green.domain.pointshop.service.PointProductService;
 import com.example.green.domain.pointshop.service.command.PointProductCreateCommand;
 import com.example.green.global.api.ApiTemplate;
+import com.example.green.global.api.page.PageTemplate;
 import com.example.green.template.base.BaseControllerUnitTest;
 
 @WebMvcTest(PointProductAdminController.class)
@@ -48,11 +49,13 @@ class PointProductAdminControllerTest extends BaseControllerUnitTest {
 	void 포인트_상품_목록_조회에_성공한다() {
 		// given
 		PointProductSearchCondition condition = getSearchCondition();
-		List<PointProductSearchResponse> mockResult = List.of(mock(PointProductSearchResponse.class));
-		when(pointProductQueryRepository.findTop10PointProducts(condition)).thenReturn(mockResult);
+		PointProductSearchResponse mock = mock(PointProductSearchResponse.class);
+		PageTemplate<PointProductSearchResponse> mockResult =
+			new PageTemplate<>(0, 0, 0, 0, false, List.of(mock));
+		when(pointProductQueryRepository.searchPointProducts(condition)).thenReturn(mockResult);
 
 		// when
-		ApiTemplate<List<PointProductSearchResponse>> response = PointProductRequest.searchProducts(condition);
+		ApiTemplate<PageTemplate<PointProductSearchResponse>> response = PointProductRequest.searchProducts(condition);
 
 		// then
 		assertThat(response.result()).usingRecursiveComparison().isEqualTo(mockResult);

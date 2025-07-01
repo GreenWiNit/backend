@@ -30,5 +30,5 @@ public class PointProductSearchResponse {
 	@Schema(description = "상품 전시 상태", allowableValues = {"DISPLAY", "HIDDEN"})
 	private DisplayStatus displayStatus;
 	@Schema(description = "상품 등록 일자")
-	private LocalDateTime createdAt;
+	private LocalDateTime createdDate;
 }

@@ -2,8 +2,6 @@ package com.example.green.domain.pointshop.controller;
 
 import static com.example.green.domain.pointshop.controller.message.PointProductResponseMessage.*;
 
-import java.util.List;
-
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -24,12 +22,11 @@ import com.example.green.domain.pointshop.entity.pointproduct.vo.Stock;
 import com.example.green.domain.pointshop.service.PointProductService;
 import com.example.green.domain.pointshop.service.command.PointProductCreateCommand;
 import com.example.green.global.api.ApiTemplate;
-import com.example.green.global.security.annotation.AdminApi;
+import com.example.green.global.api.page.PageTemplate;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
-@AdminApi
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/point-products")
@@ -51,10 +48,10 @@ public class PointProductAdminController implements PointProductControllerDocs {
 	}
 
 	@GetMapping
-	public ApiTemplate<List<PointProductSearchResponse>> findPointProducts(
+	public ApiTemplate<PageTemplate<PointProductSearchResponse>> findPointProducts(
 		@ParameterObject @ModelAttribute PointProductSearchCondition condition
 	) {
-		List<PointProductSearchResponse> result = pointProductQueryRepository.findTop10PointProducts(condition);
+		PageTemplate<PointProductSearchResponse> result = pointProductQueryRepository.searchPointProducts(condition);
 		return ApiTemplate.ok(POINT_PRODUCTS_SEARCH_SUCCESS, result);
 	}
 }
