@@ -41,6 +41,5 @@ public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long
 	@Query("SELECT COUNT(rt) FROM RefreshToken rt WHERE rt.member = :member AND rt.isRevoked = false AND rt.expiresAt > :now")
 	long countActiveSessionsByMember(@Param("member") Member member, @Param("now") LocalDateTime now);
 
-	// 특정 IP 주소의 RefreshToken 조회
-	List<RefreshToken> findByIpAddressAndIsRevokedFalse(String ipAddress);
-} 
+	;
+}
