@@ -27,5 +27,10 @@ public interface ImageUploadControllerDocs {
 		description = "이미지 업로드에 실패했습니다.",
 		content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
 	)
-	ApiTemplate<String> upload(MultipartFile imageFile, Purpose purpose);
+	ApiTemplate<String> upload(
+		@Schema(description = "이미지 파일")
+		MultipartFile imageFile,
+		@Schema(description = "이미지 업로드 목적")
+		Purpose purpose
+	);
 }
