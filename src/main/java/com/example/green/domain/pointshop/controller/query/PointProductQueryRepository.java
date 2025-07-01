@@ -1,10 +1,10 @@
 package com.example.green.domain.pointshop.controller.query;
 
-import java.util.List;
-
 import com.example.green.domain.pointshop.controller.dto.PointProductSearchCondition;
 import com.example.green.domain.pointshop.controller.dto.PointProductSearchResponse;
+import com.example.green.global.api.page.PageTemplate;
 
 public interface PointProductQueryRepository {
-	List<PointProductSearchResponse> findTop10PointProducts(PointProductSearchCondition condition);
+
+	PageTemplate<PointProductSearchResponse> searchPointProducts(PointProductSearchCondition condition);
 }

@@ -1,11 +1,10 @@
 package com.example.green.domain.pointshop.controller.docs;
 
-import java.util.List;
-
 import com.example.green.domain.pointshop.controller.dto.PointProductCreateDto;
 import com.example.green.domain.pointshop.controller.dto.PointProductSearchCondition;
 import com.example.green.domain.pointshop.controller.dto.PointProductSearchResponse;
 import com.example.green.global.api.ApiTemplate;
+import com.example.green.global.api.page.PageTemplate;
 import com.example.green.global.error.dto.ExceptionResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,5 +26,5 @@ public interface PointProductControllerDocs {
 
 	@Operation(summary = "포인트 상품 목록 조회(관리자)", description = "포인트 상품 목록을 조회합니다.")
 	@ApiResponse(responseCode = "200", description = "포인트 상품 목록 조회에 성공했습니다.")
-	ApiTemplate<List<PointProductSearchResponse>> findPointProducts(PointProductSearchCondition condition);
+	ApiTemplate<PageTemplate<PointProductSearchResponse>> findPointProducts(PointProductSearchCondition condition);
 }
