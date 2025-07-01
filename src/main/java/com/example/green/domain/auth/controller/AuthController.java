@@ -12,12 +12,21 @@ import com.example.green.domain.auth.service.AuthService;
 import com.example.green.domain.auth.service.TokenService;
 import com.example.green.global.annotation.PublicApi;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+@Tag(name = "인증 API", description = "OAuth2 로그인, 회원가입, 토큰 관리 등 인증 관련 API")
 @Slf4j
 @RestController
 @RequestMapping("/api/auth")
@@ -27,10 +36,66 @@ public class AuthController {
 	private final AuthService authService;
 	private final TokenService tokenService;
 
-	// 회원가입 API
+	@Operation(
+		summary = "회원가입",
+		description = "OAuth2 로그인 후 신규 사용자의 회원가입을 처리합니다. " +
+			"임시 토큰에서 Google 계정 정보를 추출하고, 추가 정보를 받아 회원 등록을 완료합니다."
+	)
+	@ApiResponses(value = {
+		@ApiResponse(
+			responseCode = "200",
+			description = "회원가입 성공",
+			content = @Content(
+				mediaType = "application/json",
+				schema = @Schema(implementation = TokenResponse.class),
+				examples = @ExampleObject(
+					value = """
+						{
+						  "accessToken": "eyJhbGciOiJIUzI1NiJ9...",
+						  "username": "google_123456789",
+						  "userName": "홍길동"
+						}
+						"""
+				)
+			)
+		),
+		@ApiResponse(
+			responseCode = "400",
+			description = "잘못된 요청 (임시 토큰 만료, 필수 필드 누락 등)",
+			content = @Content(
+				mediaType = "application/json",
+				examples = @ExampleObject(
+					value = """
+						{
+						  "error": "INVALID_REQUEST",
+						  "message": "임시 토큰이 만료되었습니다."
+						}
+						"""
+				)
+			)
+		)
+	})
 	@PublicApi
 	@PostMapping("/signup")
-	public ResponseEntity<TokenResponse> signup(@RequestBody SignupRequest request, HttpServletResponse response,
+	public ResponseEntity<TokenResponse> signup(
+		@Parameter(
+			description = "회원가입 요청 정보 (임시 토큰, 닉네임, 프로필 이미지 URL)",
+			required = true,
+			content = @Content(
+				schema = @Schema(implementation = SignupRequest.class),
+				examples = @ExampleObject(
+					value = """
+						{
+						  "tempToken": "eyJhbGciOiJIUzI1NiJ9...",
+						  "nickname": "홍길동",
+						  "profileImageUrl": "https://example.com/profile.jpg"
+						}
+						"""
+				)
+			)
+		)
+		@RequestBody SignupRequest request, 
+		HttpServletResponse response,
 		HttpServletRequest httpRequest) {
 		log.info("회원가입 요청: {}", request.tempToken());
 		
@@ -55,10 +120,64 @@ public class AuthController {
 		return ResponseEntity.ok(new TokenResponse(accessToken, username, tempTokenInfo.getName()));
 	}
 
-	// AccessToken 갱신 API
+	@Operation(
+		summary = "AccessToken 갱신",
+		description = "RefreshToken(쿠키)을 사용하여 만료된 AccessToken을 새로 발급받습니다. " +
+			"RefreshToken은 HTTP-Only 쿠키로 자동 전송되며, 새로운 AccessToken(15분 유효)을 응답합니다."
+	)
+	@ApiResponses(value = {
+		@ApiResponse(
+			responseCode = "200",
+			description = "AccessToken 갱신 성공",
+			content = @Content(
+				mediaType = "application/json",
+				schema = @Schema(implementation = TokenResponse.class),
+				examples = @ExampleObject(
+					value = """
+						{
+						  "accessToken": "eyJhbGciOiJIUzI1NiJ9...",
+						  "username": "google_123456789",
+						  "userName": null
+						}
+						"""
+				)
+			)
+		),
+		@ApiResponse(
+			responseCode = "400",
+			description = "RefreshToken이 없거나 유효하지 않음",
+			content = @Content(
+				mediaType = "application/json",
+				examples = @ExampleObject(
+					value = """
+						{
+						  "error": "INVALID_REFRESH_TOKEN",
+						  "message": "RefreshToken이 없거나 만료되었습니다."
+						}
+						"""
+				)
+			)
+		),
+		@ApiResponse(
+			responseCode = "401",
+			description = "RefreshToken 만료 또는 무효화됨",
+			content = @Content(
+				mediaType = "application/json",
+				examples = @ExampleObject(
+					value = """
+						{
+						  "error": "TOKEN_EXPIRED",
+						  "message": "다시 로그인해주세요."
+						}
+						"""
+				)
+			)
+		)
+	})
 	@PublicApi
 	@PostMapping("/refresh")
-	public ResponseEntity<TokenResponse> refreshToken(HttpServletRequest request) {
+	public ResponseEntity<TokenResponse> refreshToken(
+		@Parameter(hidden = true) HttpServletRequest request) {
 		// 쿠키에서 RefreshToken 추출
 		String refreshToken = extractRefreshTokenFromCookie(request);
 		if (refreshToken == null) {
@@ -73,33 +192,34 @@ public class AuthController {
 		return ResponseEntity.ok(new TokenResponse(newAccessToken, username, null));
 	}
 
-	// 쿠키 → 헤더 방식 전환 API (OAuth2 완료 후 사용)
-	@PublicApi
-	@PostMapping("/convert-token")
-	public ResponseEntity<TokenResponse> convertCookieToHeader(HttpServletRequest request) {
-		// 쿠키에서 RefreshToken 추출
-		String refreshToken = extractRefreshTokenFromCookie(request);
-		if (refreshToken == null) {
-			return ResponseEntity.badRequest().build();
-		}
-		
-		// 새로운 AccessToken/RefreshToken 발급
-		String username = tokenService.getUsername(refreshToken);
-		String newAccessToken = tokenService.createAccessToken(username, "ROLE_USER"); // TODO: 실제 role 조회
-		String newRefreshToken = tokenService.createRefreshToken(
-			username,
-			extractDeviceInfo(request),
-			extractClientIp(request)
-		);
-		
-		log.info("쿠키 → 헤더 방식 전환 완료: {}", username);
-		return ResponseEntity.ok(new TokenResponse(newAccessToken, newRefreshToken, username, null));
-	}
 
-	// 로그아웃 API
+
+	@Operation(
+		summary = "로그아웃",
+		description = "현재 디바이스에서 로그아웃합니다. " +
+			"RefreshToken을 DB에서 무효화하고 쿠키를 삭제합니다."
+	)
+	@ApiResponses(value = {
+		@ApiResponse(
+			responseCode = "200",
+			description = "로그아웃 성공",
+			content = @Content(
+				mediaType = "application/json",
+				examples = @ExampleObject(
+					value = """
+						{
+						  "message": "로그아웃이 완료되었습니다."
+						}
+						"""
+				)
+			)
+		)
+	})
 	@PublicApi
 	@PostMapping("/logout")
-	public ResponseEntity<Void> logout(HttpServletRequest request, HttpServletResponse response) {
+	public ResponseEntity<Void> logout(
+		@Parameter(hidden = true) HttpServletRequest request, 
+		@Parameter(hidden = true) HttpServletResponse response) {
 		// 쿠키에서 RefreshToken 추출
 		String refreshToken = extractRefreshTokenFromCookie(request);
 		if (refreshToken != null) {
@@ -118,10 +238,32 @@ public class AuthController {
 		return ResponseEntity.ok().build();
 	}
 
-	// 모든 디바이스 로그아웃 API
+	@Operation(
+		summary = "모든 디바이스 로그아웃",
+		description = "해당 사용자의 모든 디바이스에서 로그아웃합니다. " +
+			"DB에 저장된 모든 RefreshToken을 무효화하여 다른 디바이스의 세션도 강제 종료합니다."
+	)
+	@ApiResponses(value = {
+		@ApiResponse(
+			responseCode = "200",
+			description = "모든 디바이스 로그아웃 성공",
+			content = @Content(
+				mediaType = "application/json",
+				examples = @ExampleObject(
+					value = """
+						{
+						  "message": "모든 디바이스에서 로그아웃되었습니다."
+						}
+						"""
+				)
+			)
+		)
+	})
 	@PublicApi
 	@PostMapping("/logout-all")
-	public ResponseEntity<Void> logoutAll(HttpServletRequest request, HttpServletResponse response) {
+	public ResponseEntity<Void> logoutAll(
+		@Parameter(hidden = true) HttpServletRequest request, 
+		@Parameter(hidden = true) HttpServletResponse response) {
 		// 쿠키에서 RefreshToken 추출하여 사용자 확인
 		String refreshToken = extractRefreshTokenFromCookie(request);
 		if (refreshToken != null) {
