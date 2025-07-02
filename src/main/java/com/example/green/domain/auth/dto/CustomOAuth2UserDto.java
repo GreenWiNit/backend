@@ -7,11 +7,11 @@ import java.util.Map;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
-public class CustomOAuth2User implements OAuth2User {
+public class CustomOAuth2UserDto implements OAuth2User {
 
 	private final UserDto userDto;
 
-	public CustomOAuth2User(UserDto userDto) {
+	public CustomOAuth2UserDto(UserDto userDto) {
 
 		this.userDto = userDto;
 	}
@@ -27,14 +27,7 @@ public class CustomOAuth2User implements OAuth2User {
 
 		Collection<GrantedAuthority> collection = new ArrayList<>();
 
-		collection.add(new GrantedAuthority() {
-
-			@Override
-			public String getAuthority() {
-
-				return userDto.role();
-			}
-		});
+		collection.add((GrantedAuthority)() -> userDto.role());
 
 		return collection;
 	}
@@ -49,8 +42,7 @@ public class CustomOAuth2User implements OAuth2User {
 
 		return userDto.username();
 	}
-	
-	// UserDto 접근을 위한 메서드 추가
+
 	public UserDto getUserDto() {
 		return userDto;
 	}

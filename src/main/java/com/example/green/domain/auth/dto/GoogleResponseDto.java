@@ -2,7 +2,7 @@ package com.example.green.domain.auth.dto;
 
 import java.util.Map;
 
-public class GoogleResponseDto implements OAuth2Response {
+public class GoogleResponseDto implements OAuth2ResponseDto {
 
 	private final Map<String, Object> attribute;
 
