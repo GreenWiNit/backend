@@ -8,7 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.example.green.domain.auth.dto.CustomOAuth2User;
+import com.example.green.domain.auth.dto.CustomOAuth2UserDto;
 import com.example.green.domain.auth.dto.UserDto;
 import com.example.green.domain.auth.service.TokenService;
 import com.example.green.global.error.exception.BusinessException;
@@ -66,8 +66,8 @@ public class JwtFilter extends OncePerRequestFilter {
 			// UserDto 생성 (기존 사용자로 처리)
 			UserDto userDto = UserDto.forExistingUser(role, username, username);
 
-			// CustomOAuth2User 생성
-			CustomOAuth2User customOAuth2User = new CustomOAuth2User(userDto);
+			// CustomOAuth2UserDto 생성
+			CustomOAuth2UserDto customOAuth2User = new CustomOAuth2UserDto(userDto);
 
 			// Spring Security 인증 토큰 생성
 			Authentication authToken = new UsernamePasswordAuthenticationToken(
@@ -119,4 +119,4 @@ public class JwtFilter extends OncePerRequestFilter {
 		);
 		log.debug("Invalid AccessToken - 401 Unauthorized response sent");
 	}
-} 
+}

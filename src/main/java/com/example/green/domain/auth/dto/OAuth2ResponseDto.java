@@ -1,6 +1,6 @@
 package com.example.green.domain.auth.dto;
 
-public interface OAuth2Response {
+public interface OAuth2ResponseDto {
 
 	//provider (Ex. naver, google,kakao)
 	String getProvider();

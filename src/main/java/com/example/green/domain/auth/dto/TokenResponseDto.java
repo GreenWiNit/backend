@@ -1,6 +1,6 @@
 package com.example.green.domain.auth.dto;
 
-public record TokenResponse(
+public record TokenResponseDto(
 	String accessToken,
 	String username,
 	String userName
