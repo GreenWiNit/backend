@@ -43,8 +43,5 @@ public enum OAuth2Provider {
 	public OAuth2ResponseDto createResponse(Map<String, Object> attributes) {
 		return mapper.apply(attributes);
 	}
-
-	public String getRegistrationId() {
-		return registrationId;
-	}
+	
 }
