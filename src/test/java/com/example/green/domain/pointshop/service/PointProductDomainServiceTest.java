@@ -13,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.example.green.domain.pointshop.entity.pointproduct.PointProduct;
+import com.example.green.domain.pointshop.entity.pointproduct.vo.Code;
 import com.example.green.domain.pointshop.exception.PointProductException;
 import com.example.green.domain.pointshop.repository.PointProductRepository;
 
@@ -51,10 +52,11 @@ class PointProductDomainServiceTest {
 	@Test
 	void 업데이트_상품을_제외한_상품_중_상품_코드가_동일한게_있다면_예외가_발생한다() {
 		// given
-		when(pointProductRepository.existsByBasicInfoCodeAndIdNot(anyString(), anyLong())).thenReturn(true);
+		Code mockCode = mock(Code.class);
+		when(pointProductRepository.existsByCodeAndIdNot(any(Code.class), anyLong())).thenReturn(true);
 
 		// when & then
-		assertThatThrownBy(() -> pointProductDomainService.validateUniqueCodeForUpdate("code", 1L))
+		assertThatThrownBy(() -> pointProductDomainService.validateUniqueCodeForUpdate(mockCode, 1L))
 			.isInstanceOf(PointProductException.class)
 			.hasFieldOrPropertyWithValue("exceptionMessage", DUPLICATE_POINT_PRODUCT_CODE);
 	}
@@ -62,10 +64,11 @@ class PointProductDomainServiceTest {
 	@Test
 	void 업데이트_상품을_제외한_상품_중_상품_코드가_동일한게_없다면_예외가_발생하지_않는다() {
 		// given
-		when(pointProductRepository.existsByBasicInfoCodeAndIdNot(anyString(), anyLong())).thenReturn(false);
+		Code mockCode = mock(Code.class);
+		when(pointProductRepository.existsByCodeAndIdNot(any(Code.class), anyLong())).thenReturn(false);
 
 		// when & then
-		assertThatCode(() -> pointProductDomainService.validateUniqueCodeForUpdate("code", 1L))
+		assertThatCode(() -> pointProductDomainService.validateUniqueCodeForUpdate(mockCode, 1L))
 			.doesNotThrowAnyException();
 	}
 }

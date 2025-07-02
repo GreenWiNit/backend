@@ -26,6 +26,7 @@ public class PointProductService {
 	public Long create(PointProductCreateCommand command) {
 		validateProductCode(command.basicInfo());
 		PointProduct pointProduct = PointProduct.create(
+			command.code(),
 			command.basicInfo(),
 			command.media(),
 			command.price(),
@@ -43,12 +44,18 @@ public class PointProductService {
 	}
 
 	public void update(PointProductUpdateCommand command, Long pointProductId) {
-		pointProductDomainService.validateUniqueCodeForUpdate(command.basicInfo().getCode(), pointProductId);
+		pointProductDomainService.validateUniqueCodeForUpdate(command.code(), pointProductId);
+
 		PointProduct pointProduct = pointProductDomainService.getPointProduct(pointProductId);
+		pointProduct.updateCode(command.code());
 		pointProduct.updateBasicInfo(command.basicInfo());
 		pointProduct.updatePrice(command.price());
 		pointProduct.updateStock(command.stock());
 
+		processSideEffect(command, pointProduct);
+	}
+
+	private void processSideEffect(PointProductUpdateCommand command, PointProduct pointProduct) {
 		if (pointProduct.isNewImage(command.media())) {
 			fileManager.unUseImage(pointProduct.getThumbnailUrl());
 			pointProduct.updateMedia(command.media());

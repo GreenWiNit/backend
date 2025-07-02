@@ -15,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.example.green.domain.common.service.FileManager;
 import com.example.green.domain.pointshop.entity.pointproduct.PointProduct;
 import com.example.green.domain.pointshop.entity.pointproduct.vo.BasicInfo;
+import com.example.green.domain.pointshop.entity.pointproduct.vo.Code;
 import com.example.green.domain.pointshop.entity.pointproduct.vo.Media;
 import com.example.green.domain.pointshop.entity.pointproduct.vo.Price;
 import com.example.green.domain.pointshop.entity.pointproduct.vo.Stock;
@@ -75,7 +76,7 @@ class PointProductServiceTest {
 		pointProductService.update(command, 1L);
 
 		// then
-		verify(pointProductDomainService).validateUniqueCodeForUpdate(command.basicInfo().getCode(), 1L);
+		verify(pointProductDomainService).validateUniqueCodeForUpdate(command.code(), 1L);
 		verify(mockPointProduct).updateBasicInfo(command.basicInfo());
 		verify(mockPointProduct).updatePrice(command.price());
 		verify(mockPointProduct).updateStock(command.stock());
@@ -103,7 +104,8 @@ class PointProductServiceTest {
 
 	private PointProductUpdateCommand getUpdateCommand() {
 		return new PointProductUpdateCommand(
-			new BasicInfo("PRD-AA-001", "상품명", "상품 소개"),
+			new Code("PRD-AA-001"),
+			new BasicInfo("상품명", "상품 소개"),
 			new Media("https://thumbnail.url/image.jpg"),
 			new Price(BigDecimal.valueOf(1000)),
 			new Stock(50)
@@ -112,7 +114,8 @@ class PointProductServiceTest {
 
 	private PointProductCreateCommand getCreateCommand() {
 		return new PointProductCreateCommand(
-			new BasicInfo("PRD-AA-001", "상품명", "상품 소개"),
+			new Code("PRD-AA-001"),
+			new BasicInfo("상품명", "상품 소개"),
 			new Media("https://thumbnail.url/image.jpg"),
 			new Price(BigDecimal.valueOf(1000)),
 			new Stock(50)

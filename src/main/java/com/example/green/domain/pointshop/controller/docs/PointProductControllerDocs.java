@@ -38,5 +38,9 @@ public interface PointProductControllerDocs {
 		responseCode = "400", description = "중복된 상품 코드가 존재합니다.",
 		content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
 	)
+	@ApiResponse(
+		responseCode = "404", description = "포인트 상품을 찾을 수 없습니다.",
+		content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+	)
 	NoContent updatePointProduct(PointProductUpdateDto dto, Long pointProductId);
 }

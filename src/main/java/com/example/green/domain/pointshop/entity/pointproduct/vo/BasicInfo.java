@@ -3,8 +3,6 @@ package com.example.green.domain.pointshop.entity.pointproduct.vo;
 import static com.example.green.domain.pointshop.exception.PointProductExceptionMessage.*;
 import static com.example.green.global.utils.EntityValidator.*;
 
-import java.util.regex.Pattern;
-
 import com.example.green.domain.pointshop.exception.PointProductException;
 import com.example.green.domain.pointshop.exception.PointProductExceptionMessage;
 
@@ -21,47 +19,33 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode
 public class BasicInfo {
 
-	@Column(nullable = false)
-	private String code;
+	private static final int POINT_NAME_MIN_LENGTH = 2;
+	private static final int POINT_NAME_MAX_LENGTH = 15;
+	private static final int POINT_DESCRIPTION_MAX_LENGTH = 100;
+
 	@Column(nullable = false)
 	private String name;
 	@Column(nullable = false)
 	private String description;
 
-	private static final String POINT_CODE_REGEX = "^PRD-[A-Z]{2}-\\d{3}$";
-	private static final Pattern POINT_CODE_PATTERN = Pattern.compile(POINT_CODE_REGEX);
-	private static final int POINT_NAME_MIN_LENGTH = 2;
-	private static final int POINT_NAME_MAX_LENGTH = 15;
-	private static final int POINT_DESCRIPTION_MAX_LENGTH = 100;
-
-	public BasicInfo(String code, String name, String description) {
-		validateNullCheck(code, name, description);
-		String trimmedCode = code.trim().toUpperCase();
+	public BasicInfo(String name, String description) {
+		validateNullCheck(name, description);
 		String trimmedName = name.trim();
 		String trimmedDescription = description.trim();
 
-		validateBusiness(trimmedCode, trimmedName, trimmedDescription);
-		this.code = trimmedCode;
+		validateBusiness(trimmedName, trimmedDescription);
 		this.name = trimmedName;
 		this.description = trimmedDescription;
 	}
 
-	private static void validateNullCheck(String code, String name, String description) {
-		validateNullData(code, REQUIRED_CODE);
+	private static void validateNullCheck(String name, String description) {
 		validateNullData(name, REQUIRED_NAME);
 		validateNullData(description, REQUIRED_DESCRIPTION);
 	}
 
-	private void validateBusiness(String code, String name, String description) {
-		validateCode(code);
+	private void validateBusiness(String name, String description) {
 		validateName(name);
 		validateDescription(description);
-	}
-
-	private static void validateCode(String code) {
-		if (!POINT_CODE_PATTERN.matcher(code.trim()).matches()) {
-			throw new PointProductException(PointProductExceptionMessage.INVALID_PRODUCT_CODE);
-		}
 	}
 
 	private static void validateName(String name) {
