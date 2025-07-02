@@ -46,8 +46,14 @@ public class TokenService {
 	private static final String CLAIM_PROVIDER_ID = "providerId";
 
 	private final SecretKey secretKey;
+	
+	@Value("${jwt.access-expiration:900000}")
 	private final Long accessTokenExpiration; // 15분
+	
+	@Value("${jwt.refresh-expiration:604800000}")
 	private final Long refreshTokenExpiration; // 7일
+	
+	@Value("${jwt.temp-expiration:600000}")
 	private final Long tempTokenExpiration; // 10분
 
 	private final RefreshTokenRepository refreshTokenRepository;
@@ -55,9 +61,9 @@ public class TokenService {
 
 	public TokenService(
 		@Value("${jwt.secret}") String secret,
-		@Value("${jwt.access-expiration:900000}") Long accessTokenExpiration, // 15분 기본값
-		@Value("${jwt.refresh-expiration:604800000}") Long refreshTokenExpiration, // 7일 기본값
-		@Value("${jwt.temp-expiration:600000}") Long tempTokenExpiration, // 10분 기본값
+		@Value("${jwt.access-expiration:900000}") Long accessTokenExpiration,
+		@Value("${jwt.refresh-expiration:604800000}") Long refreshTokenExpiration,
+		@Value("${jwt.temp-expiration:600000}") Long tempTokenExpiration,
 		RefreshTokenRepository refreshTokenRepository,
 		MemberRepository memberRepository) {
 

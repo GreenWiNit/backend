@@ -12,9 +12,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-/**
- * TempToken Value Object
- */
 @Getter
 @EqualsAndHashCode(of = "tokenValue")
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)

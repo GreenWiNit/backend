@@ -15,6 +15,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -22,11 +23,13 @@ import lombok.NoArgsConstructor;
 @Table(name = "REFRESH_TOKEN")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 public class RefreshToken extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "REFRESH_TOKEN_ID")
+	@EqualsAndHashCode.Include
 	private Long id;
 
 	@Column(name = "TOKEN_VALUE", nullable = false, unique = true, length = 512)
@@ -60,7 +63,9 @@ public class RefreshToken extends BaseEntity {
 		return refreshToken;
 	}
 
-	// 토큰 무효화
+	/**
+	 * 토큰 무효화
+	 */
 	public void revoke() {
 		this.isRevoked = true;
 	}

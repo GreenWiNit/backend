@@ -11,9 +11,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-/**
- * AccessToken Value Object
- */
 @Getter
 @EqualsAndHashCode(of = "tokenValue")
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
