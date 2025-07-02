@@ -96,16 +96,16 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
 		String username = user.getUsername();
 
-		// AccessToken VO 생성
-		String accessTokenString = tokenService.createAccessToken(username, role);
-		AccessToken accessToken = AccessToken.from(accessTokenString, tokenService);
-
-		// RefreshToken 생성 (RefreshToken은 이미 엔티티로 잘 구현되어 있어서 String 유지)
+		// RefreshToken 먼저 생성 (기존 토큰 정리 + tokenVersion 증가)
 		String refreshTokenString = tokenService.createRefreshToken(
 			username,
 			"Web Browser", // 디바이스 정보 (추후 User-Agent에서 추출 가능)
 			"Unknown IP"   // IP 주소 (추후 HttpServletRequest에서 추출 가능)
 		);
+
+		// AccessToken 나중 생성 (새로운 tokenVersion으로)
+		String accessTokenString = tokenService.createAccessToken(username, role);
+		AccessToken accessToken = AccessToken.from(accessTokenString, tokenService);
 
 		// RefreshToken을 HTTP-Only 쿠키에 저장
 		Cookie refreshCookie = WebUtils.createRefreshTokenCookie(
