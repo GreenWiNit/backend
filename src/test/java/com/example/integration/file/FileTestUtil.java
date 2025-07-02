@@ -3,7 +3,7 @@ package com.example.integration.file;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.boot.test.context.TestComponent;
 
 import com.example.green.domain.file.repository.FileJpaRepository;
 import com.example.green.infra.storage.S3Properties;
@@ -19,7 +19,7 @@ import software.amazon.awssdk.services.s3.model.NoSuchBucketException;
 import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
 import software.amazon.awssdk.services.s3.model.ObjectIdentifier;
 
-@Component
+@TestComponent
 public class FileTestUtil {
 
 	@Autowired

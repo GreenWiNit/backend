@@ -7,9 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.example.green.global.excel.core.ExcelDataMapper;
 import com.example.green.global.excel.core.ExcelDataMapperRegistry;
-import com.example.integration.common.ServiceIntegrationTest;
+import com.example.integration.common.BaseIntegrationTest;
 
-class ExcelDataMapperRegistryIntTest extends ServiceIntegrationTest {
+class ExcelDataMapperRegistryIntTest extends BaseIntegrationTest {
 
 	@Autowired
 	private ExcelDataMapperRegistry excelDataMapperRegistry;

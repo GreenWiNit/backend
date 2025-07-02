@@ -13,9 +13,9 @@ import com.example.green.domain.file.domain.vo.Purpose;
 import com.example.green.domain.file.exception.FileException;
 import com.example.green.domain.file.exception.FileExceptionMessage;
 import com.example.green.domain.file.service.FileService;
-import com.example.integration.common.ServiceIntegrationTest;
+import com.example.integration.common.BaseIntegrationTest;
 
-public class FileServiceIntTest extends ServiceIntegrationTest {
+public class FileServiceIntTest extends BaseIntegrationTest {
 
 	@Autowired
 	private FileService fileService;
