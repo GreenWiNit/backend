@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.green.domain.pointshop.controller.dto.PointProductExcelCondition;
 import com.example.green.domain.pointshop.controller.dto.PointProductSearchCondition;
 import com.example.green.domain.pointshop.controller.dto.PointProductSearchResponse;
 import com.example.green.domain.pointshop.controller.query.PointProductQueryRepository;
@@ -150,6 +151,22 @@ class PointProductQueryTest extends ServiceIntegrationTest {
 			assertThat(res.totalElements()).isEqualTo(11);
 			assertThat(res.content()).hasSize(10);
 			assertThat(res.content()).isEqualTo(copy);
+		}
+	}
+
+	@Nested
+	class 엑셀_전용_쿼리_조회 {
+
+		@Test
+		void 엑셀_쿼리는_페이지_없이_조회한다() {
+			// given
+			PointProductExcelCondition condition = new PointProductExcelCondition(null, null);
+
+			// when
+			List<PointProductSearchResponse> res = pointProductQueryRepository.searchPointProductsForExcel(condition);
+
+			// then
+			assertThat(res.size()).isEqualTo(11);
 		}
 	}
 

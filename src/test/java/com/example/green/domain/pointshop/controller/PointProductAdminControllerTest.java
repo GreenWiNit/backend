@@ -12,6 +12,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import com.example.green.domain.pointshop.controller.dto.PointProductCreateDto;
+import com.example.green.domain.pointshop.controller.dto.PointProductExcelCondition;
 import com.example.green.domain.pointshop.controller.dto.PointProductSearchCondition;
 import com.example.green.domain.pointshop.controller.dto.PointProductSearchResponse;
 import com.example.green.domain.pointshop.controller.query.PointProductQueryRepository;
@@ -21,7 +22,10 @@ import com.example.green.domain.pointshop.service.PointProductService;
 import com.example.green.domain.pointshop.service.command.PointProductCreateCommand;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.page.PageTemplate;
+import com.example.green.global.excel.core.ExcelDownloader;
 import com.example.green.template.base.BaseControllerUnitTest;
+
+import jakarta.servlet.http.HttpServletResponse;
 
 @WebMvcTest(PointProductAdminController.class)
 class PointProductAdminControllerTest extends BaseControllerUnitTest {
@@ -30,6 +34,8 @@ class PointProductAdminControllerTest extends BaseControllerUnitTest {
 	private PointProductService pointProductService;
 	@MockitoBean
 	private PointProductQueryRepository pointProductQueryRepository;
+	@MockitoBean
+	private ExcelDownloader excelDownloader;
 
 	@Test
 	void 포인트_상품_생성_요청에_성공한다() {
@@ -37,10 +43,8 @@ class PointProductAdminControllerTest extends BaseControllerUnitTest {
 		PointProductCreateDto dto = getCreateDto();
 		when(pointProductService.create(any(PointProductCreateCommand.class))).thenReturn(1L);
 
-		// when
+		// when & then
 		ApiTemplate<Long> response = PointProductRequest.create(dto);
-
-		// then
 		assertThat(response.result()).isEqualTo(1L);
 		assertThat(response.message()).isEqualTo(POINT_PRODUCT_CREATION_SUCCESS.getMessage());
 	}
@@ -54,12 +58,22 @@ class PointProductAdminControllerTest extends BaseControllerUnitTest {
 			new PageTemplate<>(0, 0, 0, 0, false, List.of(mock));
 		when(pointProductQueryRepository.searchPointProducts(condition)).thenReturn(mockResult);
 
-		// when
+		// when & then
 		ApiTemplate<PageTemplate<PointProductSearchResponse>> response = PointProductRequest.searchProducts(condition);
-
-		// then
 		assertThat(response.result()).usingRecursiveComparison().isEqualTo(mockResult);
 		assertThat(response.message()).isEqualTo(POINT_PRODUCTS_SEARCH_SUCCESS.getMessage());
+	}
+
+	@Test
+	void 엑셀_다운로드에_성공한다() {
+		// given
+		List<PointProductSearchResponse> mockResult = List.of(mock(PointProductSearchResponse.class));
+		when(pointProductQueryRepository.searchPointProductsForExcel(any(PointProductExcelCondition.class)))
+			.thenReturn(mockResult);
+
+		// when & then
+		PointProductRequest.downloadExcel();
+		verify(excelDownloader).downloadAsStream(anyList(), any(HttpServletResponse.class));
 	}
 
 	private static PointProductSearchCondition getSearchCondition() {
