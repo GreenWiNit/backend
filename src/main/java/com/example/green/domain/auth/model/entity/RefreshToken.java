@@ -1,4 +1,4 @@
-package com.example.green.domain.auth.entity;
+package com.example.green.domain.auth.model.entity;
 
 import java.time.LocalDateTime;
 
