@@ -56,4 +56,4 @@ public class AuthService {
 		log.info("신규 사용자 회원가입 완료: {} ({})", tempTokenInfoDto.getName(), tempTokenInfoDto.getEmail());
 		return username;
 	}
-} 
+}

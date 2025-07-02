@@ -36,9 +36,6 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional
 public class TokenService {
 
-	// ================================
-	// JWT Claims 이름 (이 클래스에서만 사용)
-	// ================================
 	private static final String CLAIM_USERNAME = "username";
 	private static final String CLAIM_ROLE = "role";
 	private static final String CLAIM_TYPE = "type";
@@ -75,7 +72,6 @@ public class TokenService {
 		this.memberRepository = memberRepository;
 	}
 
-	// AccessToken 생성 (짧은 유효기간)
 	public String createAccessToken(String username, String role) {
 		try {
 			return Jwts.builder()
@@ -92,7 +88,6 @@ public class TokenService {
 		}
 	}
 
-	// RefreshToken 생성 (긴 유효기간) - DB 저장
 	public String createRefreshToken(String username, String deviceInfo, String ipAddress) {
 		try {
 			String tokenValue = Jwts.builder()
@@ -123,7 +118,6 @@ public class TokenService {
 		}
 	}
 
-	// 임시 토큰 생성 (신규 사용자용)
 	public String createTemporaryToken(String email, String name, String profileImageUrl, String provider,
 		String providerId) {
 		try {
@@ -144,7 +138,6 @@ public class TokenService {
 		}
 	}
 
-	// 토큰 검증
 	public boolean validateToken(String token) {
 		try {
 			Jwts.parser()
@@ -185,7 +178,6 @@ public class TokenService {
 		}
 	}
 
-	// 토큰에서 username 추출
 	public String getUsername(String token) {
 		try {
 			return Jwts.parser()
@@ -203,7 +195,6 @@ public class TokenService {
 		}
 	}
 
-	// 토큰에서 role 추출
 	public String getRole(String token) {
 		try {
 			return Jwts.parser()
@@ -221,7 +212,6 @@ public class TokenService {
 		}
 	}
 
-	// 토큰에서 타입 추출
 	public String getTokenType(String token) {
 		try {
 			return Jwts.parser()
@@ -236,7 +226,6 @@ public class TokenService {
 		}
 	}
 
-	// 임시 토큰에서 사용자 정보 추출
 	public TempTokenInfoDto extractTempTokenInfo(String tempToken) {
 		try {
 			Claims claims = Jwts.parser()
@@ -266,7 +255,6 @@ public class TokenService {
 		}
 	}
 
-	// RefreshToken으로 새 AccessToken 발급
 	public String refreshAccessToken(String refreshToken, String role) {
 		if (!validateRefreshToken(refreshToken)) {
 			throw new BusinessException(GlobalExceptionMessage.JWT_VALIDATION_FAILED);
@@ -281,14 +269,12 @@ public class TokenService {
 		return createAccessToken(username, role);
 	}
 
-	// RefreshToken 무효화 (로그아웃)
 	public void revokeRefreshToken(String tokenValue) {
 		refreshTokenRepository.findByTokenValueAndNotRevoked(tokenValue)
 			.ifPresent(RefreshToken::revoke);
 		log.info("RefreshToken 무효화 완료: {}", tokenValue.substring(0, 20) + "...");
 	}
 
-	// 사용자의 모든 RefreshToken 무효화 (모든 디바이스 로그아웃)
 	public void revokeAllRefreshTokens(String username) {
 		Member member = memberRepository.findOptionalByUsername(username)
 			.orElseThrow(() -> new BusinessException(MemberExceptionMessage.MEMBER_NOT_FOUND));
@@ -297,7 +283,6 @@ public class TokenService {
 		log.info("사용자의 모든 RefreshToken 무효화 완료: {}", username);
 	}
 
-	// 오래된 토큰 정리 (한 사용자당 최대 5개 세션 유지)
 	private void cleanupOldTokens(Member member) {
 		List<RefreshToken> tokens = refreshTokenRepository.findAllByMemberAndNotRevoked(member);
 
