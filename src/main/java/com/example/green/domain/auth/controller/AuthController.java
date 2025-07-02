@@ -109,9 +109,7 @@ public class AuthController {
 		TempTokenInfoDto tempInfo = tempToken.extractUserInfo();
 		String username = authService.signup(tempInfo, request.nickname(), request.profileImageUrl());
 
-		String accessTokenString = tokenService.createAccessToken(username, ROLE_USER);
-		AccessToken accessToken = AccessToken.from(accessTokenString, tokenService);
-
+		// RefreshToken 먼저 생성 (일관성 유지)
 		String refreshTokenString = tokenService.createRefreshToken(
 			username,
 			WebUtils.extractDeviceInfo(httpRequest),
@@ -123,6 +121,10 @@ public class AuthController {
 			REFRESH_TOKEN_MAX_AGE
 		);
 		response.addCookie(cookie);
+
+		// AccessToken 나중 생성
+		String accessTokenString = tokenService.createAccessToken(username, ROLE_USER);
+		AccessToken accessToken = AccessToken.from(accessTokenString, tokenService);
 
 		log.info("[SIGNUP] completed for username={}", username);
 		return ResponseEntity.ok(new TokenResponseDto(
@@ -204,7 +206,7 @@ public class AuthController {
 	@AuthenticatedApi(reason = "로그아웃은 로그인한 사용자만 가능합니다")
 	@Operation(
 		summary = "로그아웃",
-		description = "현재 디바이스에서 로그아웃합니다. RefreshToken을 DB에서 무효화하고 쿠키를 삭제합니다."
+		description = "현재 디바이스에서 로그아웃합니다. RefreshToken을 DB에서 무효화하고 AccessToken을 무효화합니다."
 	)
 	@PostMapping("/logout")
 	public ResponseEntity<Void> logout(
@@ -212,19 +214,28 @@ public class AuthController {
 		HttpServletResponse response,
 		@AuthenticationPrincipal PrincipalDetails currentUser
 	) {
+		String username = currentUser.getUsername();
+		
+		// 1. RefreshToken 무효화
 		String refreshToken = WebUtils.extractCookieValue(request, REFRESH_TOKEN_COOKIE_NAME);
 		if (refreshToken != null) {
 			tokenService.revokeRefreshToken(refreshToken);
-			log.info("[LOGOUT] User {} logged out from current device", currentUser.getUsername());
 		}
+		
+		// 2. AccessToken 무효화 (tokenVersion 증가)
+		authService.logout(username);
+		
+		// 3. 쿠키 삭제
 		WebUtils.removeRefreshTokenCookie(response);
+		
+		log.info("[LOGOUT] User {} logged out - RefreshToken revoked + AccessToken invalidated", username);
 		return ResponseEntity.ok().build();
 	}
 
 	@AuthenticatedApi(reason = "모든 디바이스 로그아웃은 로그인한 사용자만 가능합니다")
 	@Operation(
 		summary = "모든 디바이스 로그아웃",
-		description = "해당 사용자의 모든 디바이스에서 로그아웃합니다. DB에 저장된 모든 RefreshToken을 무효화합니다."
+		description = "해당 사용자의 모든 디바이스에서 로그아웃합니다. 모든 RefreshToken과 AccessToken을 무효화합니다."
 	)
 	@PostMapping("/logout-all")
 	public ResponseEntity<Void> logoutAll(
@@ -232,9 +243,18 @@ public class AuthController {
 		HttpServletResponse response,
 		@AuthenticationPrincipal PrincipalDetails currentUser
 	) {
-		tokenService.revokeAllRefreshTokens(currentUser.getUsername());
+		String username = currentUser.getUsername();
+		
+		// 1. 모든 RefreshToken 무효화
+		tokenService.revokeAllRefreshTokens(username);
+		
+		// 2. 모든 AccessToken 무효화 (tokenVersion 대폭 증가)
+		authService.logoutAllDevices(username);
+		
+		// 3. 쿠키 삭제
 		WebUtils.removeRefreshTokenCookie(response);
-		log.info("[LOGOUT-ALL] User {} logged out from all devices", currentUser.getUsername());
+		
+		log.info("[LOGOUT-ALL] User {} logged out from all devices - All tokens invalidated", username);
 		return ResponseEntity.ok().build();
 	}
 

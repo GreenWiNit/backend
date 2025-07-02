@@ -30,20 +30,12 @@ public class AccessToken {
 	}
 
 	/**
-	 * 토큰 유효성 검증
+	 * 토큰 유효성 검증 (JWT 형식 + tokenVersion 검증)
+	 * 로그아웃 후 AccessToken 재사용 방지
 	 */
 	public boolean isValid() {
 		try {
-			return tokenService.validateToken(tokenValue) && isAccessTokenType();
-		} catch (Exception e) {
-			return false;
-		}
-	}
-
-	private boolean isAccessTokenType() {
-		try {
-			String tokenType = tokenService.getTokenType(tokenValue);
-			return TOKEN_TYPE_ACCESS.equals(tokenType);
+			return tokenService.validateAccessToken(tokenValue);
 		} catch (Exception e) {
 			return false;
 		}
