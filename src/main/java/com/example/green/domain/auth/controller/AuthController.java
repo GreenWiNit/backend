@@ -42,9 +42,6 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class AuthController {
 
-	// ================================
-	// 쿠키 관련 (이 클래스에서만 사용)
-	// ================================
 	private static final int REFRESH_TOKEN_MAX_AGE = 7 * 24 * 60 * 60; // 7일
 
 	private final AuthService authService;
@@ -69,9 +66,7 @@ public class AuthController {
 					  "username": "google_123456789",
 					  "userName": "홍길동"
 					}
-					""")
-			)
-		),
+					"""))),
 		@ApiResponse(
 			responseCode = "400",
 			description = "잘못된 요청 (임시 토큰 만료, 필수 필드 누락 등)",
@@ -82,8 +77,7 @@ public class AuthController {
 					  "error": "INVALID_REQUEST",
 					  "message": "임시 토큰이 만료되었습니다."
 					}
-					""")
-			)
+					"""))
 		)
 	})
 	@PostMapping("/signup")
@@ -108,27 +102,18 @@ public class AuthController {
 	) {
 		log.info("[SIGNUP] tempToken={}, nickname={}", request.tempToken(), request.nickname());
 
-		// 1. TempToken VO로 감싸서 타입 안전성 확보
 		TempToken tempToken = TempToken.from(request.tempToken(), tokenService);
-
-		// 2. VO 메서드로 안전하게 정보 추출 (내부에서 유효성 검증 수행)
 		TempTokenInfoDto tempInfo = tempToken.extractUserInfo();
-
-		// 3. 회원가입 로직 실행
 		String username = authService.signup(tempInfo, request.nickname(), request.profileImageUrl());
 
-		// 4. AccessToken VO 생성
 		String accessTokenString = tokenService.createAccessToken(username, ROLE_USER);
 		AccessToken accessToken = AccessToken.from(accessTokenString, tokenService);
 
-		// 5. RefreshToken 생성 (RefreshToken은 이미 엔티티로 잘 구현되어 있어서 String 유지)
 		String refreshTokenString = tokenService.createRefreshToken(
 			username,
 			WebUtils.extractDeviceInfo(httpRequest),
 			WebUtils.extractClientIp(httpRequest)
 		);
-
-		// 6. RefreshToken 쿠키 설정
 		Cookie cookie = WebUtils.createRefreshTokenCookie(
 			refreshTokenString,
 			WebUtils.isSecureRequest(httpRequest),
@@ -138,9 +123,9 @@ public class AuthController {
 
 		log.info("[SIGNUP] completed for username={}", username);
 		return ResponseEntity.ok(new TokenResponseDto(
-			accessToken.getValue(),    // VO에서 원본 문자열 추출
+			accessToken.getValue(),
 			username,
-			tempToken.getName()        // VO 편의 메서드 활용
+			tempToken.getName()
 		));
 	}
 
@@ -201,16 +186,13 @@ public class AuthController {
 			return ResponseEntity.badRequest().build();
 		}
 
-		// RefreshToken을 통해 새 AccessToken 생성
 		String username = tokenService.getUsername(refreshTokenString);
 		String newAccessTokenString = tokenService.refreshAccessToken(refreshTokenString, ROLE_USER);
-
-		// 새 AccessToken을 VO로 감싸기 (타입 안전성)
 		AccessToken newAccessToken = AccessToken.from(newAccessTokenString, tokenService);
 
 		log.info("[REFRESH] issued new AccessToken for username={}", username);
 		return ResponseEntity.ok(new TokenResponseDto(
-			newAccessToken.getValue(),  // VO에서 원본 문자열 추출
+			newAccessToken.getValue(),
 			username,
 			null
 		));

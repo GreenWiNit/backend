@@ -37,11 +37,8 @@ public enum OAuth2Provider {
 				"지원하지 않는 OAuth2 공급자: " + registrationId));
 	}
 
-	/**
-	 * attributes를 OAuth2ResponseDto로 변환
-	 */
 	public OAuth2ResponseDto createResponse(Map<String, Object> attributes) {
 		return mapper.apply(attributes);
 	}
-	
+
 }
