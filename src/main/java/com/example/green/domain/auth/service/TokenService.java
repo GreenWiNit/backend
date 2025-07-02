@@ -11,6 +11,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,18 +47,19 @@ public class TokenService {
 	private static final String CLAIM_PROVIDER_ID = "providerId";
 
 	private final SecretKey secretKey;
-	
+
 	@Value("${jwt.access-expiration:900000}")
 	private final Long accessTokenExpiration; // 15분
-	
+
 	@Value("${jwt.refresh-expiration:604800000}")
 	private final Long refreshTokenExpiration; // 7일
-	
+
 	@Value("${jwt.temp-expiration:600000}")
 	private final Long tempTokenExpiration; // 10분
 
 	private final RefreshTokenRepository refreshTokenRepository;
 	private final MemberRepository memberRepository;
+	private final ApplicationEventPublisher eventPublisher;
 
 	public TokenService(
 		@Value("${jwt.secret}") String secret,
@@ -65,7 +67,8 @@ public class TokenService {
 		@Value("${jwt.refresh-expiration:604800000}") Long refreshTokenExpiration,
 		@Value("${jwt.temp-expiration:600000}") Long tempTokenExpiration,
 		RefreshTokenRepository refreshTokenRepository,
-		MemberRepository memberRepository) {
+		MemberRepository memberRepository,
+		ApplicationEventPublisher eventPublisher) {
 
 		this.secretKey = new SecretKeySpec(
 			secret.getBytes(StandardCharsets.UTF_8),
@@ -76,6 +79,7 @@ public class TokenService {
 		this.tempTokenExpiration = tempTokenExpiration;
 		this.refreshTokenRepository = refreshTokenRepository;
 		this.memberRepository = memberRepository;
+		this.eventPublisher = eventPublisher;
 	}
 
 	public String createAccessToken(String username, String role) {
@@ -289,20 +293,47 @@ public class TokenService {
 		log.info("사용자의 모든 RefreshToken 무효화 완료: {}", username);
 	}
 
+	/**
+	 * 락 점유 시간 최소화: 핵심 로직만 비관적 락으로 보호
+	 * 정리 작업은 트랜잭션 커밋 후 이벤트로 처리
+	 */
 	private void cleanupOldTokens(Member member) {
-		List<RefreshToken> tokens = refreshTokenRepository.findAllByMemberAndNotRevoked(member);
+		List<RefreshToken> tokens = refreshTokenRepository.findAllByMemberForCleanupWithLock(member);
 
-		// 최대 세션 수 제한 (예: 5개)
 		int maxSessions = 5;
-		if (tokens.size() >= maxSessions) {
-			// 가장 오래된 토큰들 무효화 (ID 기준 정렬 - 낮은 ID가 더 오래된 것)
-			tokens.stream()
-				.sorted((t1, t2) -> t1.getId().compareTo(t2.getId()))
-				.limit(tokens.size() - maxSessions + 1)
-				.forEach(RefreshToken::revoke);
+		if (tokens.size() < maxSessions) {
+			return; // 무효화할 토큰 없음
 		}
 
-		// 만료된 토큰 삭제
-		refreshTokenRepository.deleteExpiredAndRevokedTokensByMember(member, LocalDateTime.now());
+		int tokensToRevokeCount = tokens.size() - maxSessions + 1;
+		tokens.stream()
+			.limit(tokensToRevokeCount)
+			.forEach(RefreshToken::revoke); // @Version 증가
+		// 락 종료
+
+		// 이벤트 발행: 트랜잭션 커밋 후 정리 작업 예약
+		eventPublisher.publishEvent(new TokenCleanupEvent(member.getId(), member.getUsername()));
+
+		log.info("토큰 개수 제한 처리 완료 - 멤버: {}, 무효화: {}개",
+			member.getUsername(), tokensToRevokeCount);
+	}
+
+	// 토큰 정리 이벤트
+	public static class TokenCleanupEvent {
+		private final Long memberId;
+		private final String memberUsername;
+
+		public TokenCleanupEvent(Long memberId, String memberUsername) {
+			this.memberId = memberId;
+			this.memberUsername = memberUsername;
+		}
+
+		public Long getMemberId() {
+			return memberId;
+		}
+
+		public String getMemberUsername() {
+			return memberUsername;
+		}
 	}
 }

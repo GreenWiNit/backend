@@ -49,3 +49,4 @@ public class OAuth2FailureHandler extends SimpleUrlAuthenticationFailureHandler 
 		response.sendRedirect(redirectUrl);
 	}
 }
+ 

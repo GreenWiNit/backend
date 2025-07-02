@@ -14,6 +14,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -31,6 +32,9 @@ public class RefreshToken extends BaseEntity {
 	@Column(name = "REFRESH_TOKEN_ID")
 	@EqualsAndHashCode.Include
 	private Long id;
+
+	@Version
+	private Long version; //낙관적 락을 위한 버전 컬럼. 토큰 무효화 시 동시성 보장
 
 	@Column(name = "TOKEN_VALUE", nullable = false, unique = true, length = 512)
 	private String tokenValue;
@@ -63,9 +67,6 @@ public class RefreshToken extends BaseEntity {
 		return refreshToken;
 	}
 
-	/**
-	 * 토큰 무효화
-	 */
 	public void revoke() {
 		this.isRevoked = true;
 	}
