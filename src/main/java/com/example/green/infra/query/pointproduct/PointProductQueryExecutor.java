@@ -37,4 +37,13 @@ public class PointProductQueryExecutor {
 			.where(conditions)
 			.fetchOne();
 	}
+
+	public List<PointProductSearchResponse> findProductsForExcel(BooleanExpression expression) {
+		return jpaQueryFactory
+			.select(PointProductProjections.toSearchResponse(qPointProduct))
+			.from(qPointProduct)
+			.where(expression)
+			.orderBy(qPointProduct.createdDate.desc())
+			.fetch();
+	}
 }

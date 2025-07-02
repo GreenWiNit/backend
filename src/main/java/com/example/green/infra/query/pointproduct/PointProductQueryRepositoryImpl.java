@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
+import com.example.green.domain.pointshop.controller.dto.PointProductExcelCondition;
 import com.example.green.domain.pointshop.controller.dto.PointProductSearchCondition;
 import com.example.green.domain.pointshop.controller.dto.PointProductSearchResponse;
 import com.example.green.domain.pointshop.controller.query.PointProductQueryRepository;
@@ -29,5 +30,11 @@ public class PointProductQueryRepositoryImpl implements PointProductQueryReposit
 		List<PointProductSearchResponse> content = pointProductQueryExecutor.findProducts(expression, pagination);
 
 		return PageTemplate.of(content, pagination);
+	}
+
+	@Override
+	public List<PointProductSearchResponse> searchPointProductsForExcel(PointProductExcelCondition condition) {
+		BooleanExpression expression = PointProductPredicates.fromCondition(condition);
+		return pointProductQueryExecutor.findProductsForExcel(expression);
 	}
 }

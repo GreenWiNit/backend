@@ -2,6 +2,8 @@ package com.example.green.domain.pointshop.controller;
 
 import static com.example.green.domain.pointshop.controller.message.PointProductResponseMessage.*;
 
+import java.util.List;
+
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.green.domain.pointshop.controller.docs.PointProductControllerDocs;
 import com.example.green.domain.pointshop.controller.dto.PointProductCreateDto;
+import com.example.green.domain.pointshop.controller.dto.PointProductExcelCondition;
 import com.example.green.domain.pointshop.controller.dto.PointProductSearchCondition;
 import com.example.green.domain.pointshop.controller.dto.PointProductSearchResponse;
 import com.example.green.domain.pointshop.controller.query.PointProductQueryRepository;
@@ -23,7 +26,9 @@ import com.example.green.domain.pointshop.service.PointProductService;
 import com.example.green.domain.pointshop.service.command.PointProductCreateCommand;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.page.PageTemplate;
+import com.example.green.global.excel.core.ExcelDownloader;
 
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -34,6 +39,7 @@ public class PointProductAdminController implements PointProductControllerDocs {
 
 	private final PointProductService pointProductService;
 	private final PointProductQueryRepository pointProductQueryRepository;
+	private final ExcelDownloader excelDownloader;
 
 	@PostMapping
 	public ApiTemplate<Long> createPointProduct(@RequestBody @Valid PointProductCreateDto dto) {
@@ -53,5 +59,15 @@ public class PointProductAdminController implements PointProductControllerDocs {
 	) {
 		PageTemplate<PointProductSearchResponse> result = pointProductQueryRepository.searchPointProducts(condition);
 		return ApiTemplate.ok(POINT_PRODUCTS_SEARCH_SUCCESS, result);
+	}
+
+	@GetMapping("/excel")
+	public void findPointProducts(
+		@ParameterObject @ModelAttribute
+		PointProductExcelCondition condition,
+		HttpServletResponse response
+	) {
+		List<PointProductSearchResponse> result = pointProductQueryRepository.searchPointProductsForExcel(condition);
+		excelDownloader.downloadAsStream(result, response);
 	}
 }

@@ -25,9 +25,9 @@ public class PointProductSearchResponse {
 	private BigDecimal pointPrice;
 	@Schema(description = "상품 재고 수량", example = "10")
 	private Integer stockQuantity;
-	@Schema(description = "상품 판매 상태", allowableValues = {"EXCHANGEABLE", "SOLD_OUT"})
+	@Schema(description = "상품 판매 상태", example = "교환가능")
 	private SellingStatus sellingStatus;
-	@Schema(description = "상품 전시 상태", allowableValues = {"DISPLAY", "HIDDEN"})
+	@Schema(description = "상품 전시 상태", example = "전시")
 	private DisplayStatus displayStatus;
 	@Schema(description = "상품 등록 일자")
 	private LocalDateTime createdDate;
