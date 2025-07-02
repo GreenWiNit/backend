@@ -149,4 +149,4 @@ public class WebUtils {
 		}
 		return frontendUrl.contains(LOCALHOST) || frontendUrl.contains(IPV4_LOOPBACK);
 	}
-} 
+}

@@ -1,7 +1,7 @@
 package com.example.green.domain.auth.constants;
 
 /**
- * 인증 관련 공통 상수 정의 (여러 클래스에서 공유되는 상수들만 포함)
+ * 인증 관련 공통 상수 정의
  */
 public final class AuthConstants {
 

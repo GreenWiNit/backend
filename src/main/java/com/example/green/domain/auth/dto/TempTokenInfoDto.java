@@ -79,4 +79,4 @@ public class TempTokenInfoDto {
 			return new TempTokenInfoDto(email, name, profileImageUrl, provider, providerId);
 		}
 	}
-} 
+}
