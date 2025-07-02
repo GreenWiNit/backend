@@ -9,6 +9,7 @@ import com.example.green.domain.pointshop.exception.PointProductException;
 import com.example.green.domain.pointshop.exception.PointProductExceptionMessage;
 import com.example.green.domain.pointshop.repository.PointProductRepository;
 import com.example.green.domain.pointshop.service.command.PointProductCreateCommand;
+import com.example.green.domain.pointshop.service.command.PointProductUpdateCommand;
 
 import lombok.RequiredArgsConstructor;
 
@@ -35,5 +36,8 @@ public class PointProductService {
 		if (pointProductRepository.existsByBasicInfoCode(basicInfo.getCode())) {
 			throw new PointProductException(PointProductExceptionMessage.EXISTS_PRODUCT_CODE);
 		}
+	}
+
+	public void update(PointProductUpdateCommand command, Long pointProductId) {
 	}
 }
