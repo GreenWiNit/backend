@@ -22,6 +22,7 @@ import com.example.green.domain.pointshop.controller.dto.PointProductSearchRespo
 import com.example.green.domain.pointshop.controller.dto.PointProductUpdateDto;
 import com.example.green.domain.pointshop.controller.query.PointProductQueryRepository;
 import com.example.green.domain.pointshop.entity.pointproduct.vo.BasicInfo;
+import com.example.green.domain.pointshop.entity.pointproduct.vo.Code;
 import com.example.green.domain.pointshop.entity.pointproduct.vo.Media;
 import com.example.green.domain.pointshop.entity.pointproduct.vo.Price;
 import com.example.green.domain.pointshop.entity.pointproduct.vo.Stock;
@@ -49,7 +50,8 @@ public class PointProductAdminController implements PointProductControllerDocs {
 	@PostMapping
 	public ApiTemplate<Long> createPointProduct(@RequestBody @Valid PointProductCreateDto dto) {
 		PointProductCreateCommand command = new PointProductCreateCommand(
-			new BasicInfo(dto.code(), dto.name(), dto.description()),
+			new Code(dto.code()),
+			new BasicInfo(dto.name(), dto.description()),
 			new Media(dto.thumbnailUrl()),
 			new Price(dto.price()),
 			new Stock(dto.stock())
@@ -83,7 +85,8 @@ public class PointProductAdminController implements PointProductControllerDocs {
 		@PathVariable Long pointProductId
 	) {
 		PointProductUpdateCommand command = new PointProductUpdateCommand(
-			new BasicInfo(dto.code(), dto.name(), dto.description()),
+			new Code(dto.code()),
+			new BasicInfo(dto.name(), dto.description()),
 			new Media(dto.thumbnailUrl()),
 			new Price(dto.price()),
 			new Stock(dto.stock())
