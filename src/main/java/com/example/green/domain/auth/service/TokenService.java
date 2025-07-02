@@ -40,6 +40,7 @@ public class TokenService {
 	private static final String CLAIM_USERNAME = "username";
 	private static final String CLAIM_ROLE = "role";
 	private static final String CLAIM_TYPE = "type";
+	private static final String CLAIM_TOKEN_VERSION = "tokenVersion";
 	private static final String CLAIM_EMAIL = "email";
 	private static final String CLAIM_NAME = "name";
 	private static final String CLAIM_PROFILE_IMAGE_URL = "profileImageUrl";
@@ -84,10 +85,15 @@ public class TokenService {
 
 	public String createAccessToken(String username, String role) {
 		try {
+			// 사용자 조회해서 tokenVersion 가져오기
+			Member member = memberRepository.findOptionalByUsername(username)
+				.orElseThrow(() -> new BusinessException(MemberExceptionMessage.MEMBER_NOT_FOUND));
+			
 			return Jwts.builder()
 				.claim(CLAIM_USERNAME, username)
 				.claim(CLAIM_ROLE, role)
 				.claim(CLAIM_TYPE, TOKEN_TYPE_ACCESS)
+				.claim(CLAIM_TOKEN_VERSION, member.getTokenVersion())
 				.issuedAt(new Date(System.currentTimeMillis()))
 				.expiration(new Date(System.currentTimeMillis() + accessTokenExpiration))
 				.signWith(secretKey)
@@ -238,6 +244,68 @@ public class TokenService {
 		}
 	}
 
+	public Long getTokenVersion(String token) {
+		try {
+			return Jwts.parser()
+				.verifyWith(secretKey)
+				.build()
+				.parseSignedClaims(token)
+				.getPayload()
+				.get(CLAIM_TOKEN_VERSION, Long.class);
+		} catch (ExpiredJwtException e) {
+			log.debug("만료된 JWT 토큰에서 tokenVersion 추출 시도: {}", e.getMessage());
+			throw new BusinessException(GlobalExceptionMessage.JWT_TOKEN_EXPIRED);
+		} catch (JwtException e) {
+			log.error("JWT tokenVersion 추출 실패: {}", e.getMessage());
+			throw new BusinessException(GlobalExceptionMessage.JWT_PARSING_FAILED);
+		}
+	}
+
+	/**
+	 * AccessToken 완전 검증 (JWT 형식 + tokenVersion 비교)
+	 * 로그아웃 후 AccessToken 재사용 방지
+	 */
+	public boolean validateAccessToken(String accessToken) {
+		try {
+			// 1. JWT 형식 검증
+			if (!validateToken(accessToken)) {
+				return false;
+			}
+
+			// 2. AccessToken 타입 확인
+			String tokenType = getTokenType(accessToken);
+			if (!TOKEN_TYPE_ACCESS.equals(tokenType)) {
+				return false;
+			}
+
+			// 3. 사용자명과 토큰 버전 추출
+			String username = getUsername(accessToken);
+			Long tokenVersion = getTokenVersion(accessToken);
+
+			// 4. DB에서 현재 tokenVersion 조회
+			Member member = memberRepository.findOptionalByUsername(username)
+				.orElse(null);
+
+			if (member == null) {
+				log.debug("사용자를 찾을 수 없음: {}", username);
+				return false;
+			}
+
+			// 5. tokenVersion 비교
+			boolean isValidVersion = member.getTokenVersion().equals(tokenVersion);
+			if (!isValidVersion) {
+				log.debug("토큰 버전 불일치 - DB: {}, Token: {} (사용자: {})", 
+					member.getTokenVersion(), tokenVersion, username);
+			}
+
+			return isValidVersion;
+
+		} catch (Exception e) {
+			log.error("AccessToken 검증 실패: {}", e.getMessage());
+			return false;
+		}
+	}
+
 	public TempTokenInfoDto extractTempTokenInfo(String tempToken) {
 		try {
 			Claims claims = Jwts.parser()
@@ -304,21 +372,23 @@ public class TokenService {
 	private void cleanupOldTokens(Member member) {
 		List<RefreshToken> tokens = refreshTokenRepository.findAllByMemberForCleanupWithLock(member);
 
-		int maxSessions = 5;
+		int maxSessions = 1; // 1대 디바이스만 허용
 		if (tokens.size() < maxSessions) {
 			return; // 무효화할 토큰 없음
 		}
 
-		int tokensToRevokeCount = tokens.size() - maxSessions + 1;
-		tokens.stream()
-			.limit(tokensToRevokeCount)
-			.forEach(RefreshToken::revoke); // @Version 증가
-		// 락 종료
-
+		// 새 로그인 시 기존 모든 토큰 무효화 (1대 디바이스 제한)
+		int tokensToRevokeCount = tokens.size();
+		tokens.forEach(RefreshToken::revoke); // 모든 기존 RefreshToken 무효화
+		
+		// 기존 디바이스의 AccessToken도 즉시 무효화 (tokenVersion 증가)
+		member.logout();
+		memberRepository.save(member);
+		
 		// 이벤트 발행: 트랜잭션 커밋 후 정리 작업 예약
 		eventPublisher.publishEvent(new TokenCleanupEvent(member.getId(), member.getUsername()));
 
-		log.info("토큰 개수 제한 처리 완료 - 멤버: {}, 무효화: {}개",
+		log.info("1대 디바이스 제한 - 기존 모든 토큰 무효화: {} (RefreshToken: {}개, AccessToken: tokenVersion 증가)", 
 			member.getUsername(), tokensToRevokeCount);
 	}
 

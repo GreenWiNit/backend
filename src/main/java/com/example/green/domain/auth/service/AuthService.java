@@ -73,4 +73,42 @@ public class AuthService {
 		}
 	}
 
+	/**
+	 * 단일 디바이스 로그아웃 - tokenVersion 증가하여 AccessToken 무효화
+	 * 동시성 이슈 대응: 낙관적 락 실패 시 재시도
+	 */
+	@Retryable(
+		retryFor = {OptimisticLockException.class, ObjectOptimisticLockingFailureException.class},
+		maxAttempts = 3,
+		backoff = @Backoff(delay = 50, multiplier = 2.0, random = true)
+	)
+	public void logout(String username) {
+		Member member = memberRepository.findByUsername(username);
+		if (member != null) {
+			member.logout(); // tokenVersion++
+			memberRepository.save(member);
+			log.info("로그아웃 완료 - tokenVersion 증가: {} (새 버전: {})", 
+				username, member.getTokenVersion());
+		}
+	}
+
+	/**
+	 * 모든 디바이스 로그아웃 - tokenVersion 대폭 증가하여 모든 AccessToken 무효화
+	 * 동시성 이슈 대응: 낙관적 락 실패 시 재시도
+	 */
+	@Retryable(
+		retryFor = {OptimisticLockException.class, ObjectOptimisticLockingFailureException.class},
+		maxAttempts = 3,
+		backoff = @Backoff(delay = 50, multiplier = 2.0, random = true)
+	)
+	public void logoutAllDevices(String username) {
+		Member member = memberRepository.findByUsername(username);
+		if (member != null) {
+			member.logoutAllDevices(); // tokenVersion += 100
+			memberRepository.save(member);
+			log.info("모든 디바이스 로그아웃 완료 - tokenVersion 대폭 증가: {} (새 버전: {})", 
+				username, member.getTokenVersion());
+		}
+	}
+
 }
