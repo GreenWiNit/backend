@@ -27,7 +27,7 @@ import com.example.green.domain.pointshop.repository.PointProductRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 
-@Profile(value = {"!prod"})
+@Profile(value = {"!prod & !test"})
 @Component
 @RequiredArgsConstructor
 public class DbInitializer {
@@ -64,7 +64,7 @@ public class DbInitializer {
 						ReflectionUtils.setField(field, saved, randomDate);
 					}
 				}
-				
+
 				pointProductRepository.saveAll(savedProducts);
 				pointProducts.clear();
 			}

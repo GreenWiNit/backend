@@ -42,4 +42,13 @@ public class PointProductRequest {
 			.extract().as(new TypeRef<>() {
 			});
 	}
+
+	public static void downloadExcel() {
+		RestAssuredMockMvc
+			.given().log().all()
+			.contentType(MediaType.APPLICATION_JSON)
+			.when().get("/api/point-products/excel")
+			.then().log().all()
+			.status(HttpStatus.OK);
+	}
 }
