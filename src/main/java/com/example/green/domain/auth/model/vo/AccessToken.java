@@ -66,13 +66,6 @@ public class AccessToken {
 	}
 
 	/**
-	 * Authorization Bearer 헤더 형식으로 변환
-	 */
-	public String toBearerHeader() {
-		return "Bearer " + tokenValue;
-	}
-
-	/**
 	 * 원본 토큰 문자열 반환 (필요한 경우에만)
 	 */
 	public String getValue() {
