@@ -20,11 +20,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.green.global.excel.core.ExcelDownloader;
-import com.example.integration.common.ServiceIntegrationTest;
+import com.example.integration.common.BaseIntegrationTest;
 
 import jakarta.servlet.http.HttpServletResponse;
 
-public class ExcelDownloaderIntTest extends ServiceIntegrationTest {
+public class ExcelDownloaderIntTest extends BaseIntegrationTest {
 
 	private static final int DATA_ROW_SIZE = 10;
 
@@ -53,7 +53,6 @@ public class ExcelDownloaderIntTest extends ServiceIntegrationTest {
 	@Test
 	void 엑셀_파일_다운로드_테스트() throws IOException {
 		// when
-		// 🔥 절대 URL 사용
 		String url = "http://localhost:" + port + "/excel/down";
 		ResponseEntity<byte[]> response = restTemplate.getForEntity(url, byte[].class);
 
