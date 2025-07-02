@@ -14,6 +14,8 @@ import org.springframework.stereotype.Component;
 
 import com.example.green.domain.auth.dto.CustomOAuth2UserDto;
 import com.example.green.domain.auth.dto.OAuth2UserInfoDto;
+import com.example.green.domain.auth.model.vo.AccessToken;
+import com.example.green.domain.auth.model.vo.TempToken;
 import com.example.green.domain.auth.service.TokenService;
 import com.example.green.domain.auth.utils.WebUtils;
 
@@ -61,20 +63,28 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 	private void handleNewUser(CustomOAuth2UserDto user, HttpServletResponse response) throws IOException {
 		OAuth2UserInfoDto oauth2UserInfoDto = user.getUserDto().oauth2UserInfoDto();
 
-		// 임시 토큰 생성
-		String tempToken = tokenService.createTemporaryToken(
+		// TempToken VO 생성
+		String tempTokenString = tokenService.createTemporaryToken(
 			oauth2UserInfoDto.email(),
 			oauth2UserInfoDto.name(),
 			oauth2UserInfoDto.profileImageUrl(),
 			oauth2UserInfoDto.provider(),
 			oauth2UserInfoDto.providerId()
 		);
+		TempToken tempToken = TempToken.from(tempTokenString, tokenService);
 
 		// URL 인코딩
-		String encodedToken = URLEncoder.encode(tempToken, StandardCharsets.UTF_8);
+		String encodedToken = URLEncoder.encode(tempToken.getValue(), StandardCharsets.UTF_8);
 
-		// 프론트엔드로 리다이렉트
-		String redirectUrl = frontendBaseUrl + "/signup?tempToken=" + encodedToken;
+		// 환경별 리다이렉트 분기
+		String redirectUrl;
+		if (WebUtils.isLocalDevelopment(frontendBaseUrl)) {
+			// 개발 환경: 백엔드 테스트 페이지
+			redirectUrl = "/signup.html?tempToken=" + encodedToken;
+		} else {
+			// 프로덕션 환경: 실제 프론트엔드
+			redirectUrl = frontendBaseUrl + "/signup?tempToken=" + encodedToken;
+		}
 
 		log.info("신규 사용자 임시 토큰 생성 완료, 회원가입 페이지로 리다이렉트: {}", oauth2UserInfoDto.email());
 		response.sendRedirect(redirectUrl);
@@ -86,9 +96,12 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
 		String username = user.getUsername();
 
-		// AccessToken과 RefreshToken 생성
-		String accessToken = tokenService.createAccessToken(username, role);
-		String refreshToken = tokenService.createRefreshToken(
+		// AccessToken VO 생성
+		String accessTokenString = tokenService.createAccessToken(username, role);
+		AccessToken accessToken = AccessToken.from(accessTokenString, tokenService);
+
+		// RefreshToken 생성 (RefreshToken은 이미 엔티티로 잘 구현되어 있어서 String 유지)
+		String refreshTokenString = tokenService.createRefreshToken(
 			username,
 			"Web Browser", // 디바이스 정보 (추후 User-Agent에서 추출 가능)
 			"Unknown IP"   // IP 주소 (추후 HttpServletRequest에서 추출 가능)
@@ -96,19 +109,27 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
 		// RefreshToken을 HTTP-Only 쿠키에 저장
 		Cookie refreshCookie = WebUtils.createRefreshTokenCookie(
-			refreshToken,
+			refreshTokenString,
 			WebUtils.isLocalDevelopment(frontendBaseUrl) ? false : true,
 			7 * 24 * 60 * 60 // 7일
 		);
 		response.addCookie(refreshCookie);
 
 		// AccessToken과 사용자 정보를 쿼리 파라미터로 전달
-		String encodedAccessToken = URLEncoder.encode(accessToken, StandardCharsets.UTF_8);
+		String encodedAccessToken = URLEncoder.encode(accessToken.getValue(), StandardCharsets.UTF_8);
 		String encodedUserInfo = URLEncoder.encode(user.getName(), StandardCharsets.UTF_8);
 
-		// 프론트엔드로 리다이렉트
-		String redirectUrl = frontendBaseUrl + "/login/success?accessToken=" + encodedAccessToken
-			+ "&userName=" + encodedUserInfo;
+		// 환경별 리다이렉트 분기
+		String redirectUrl;
+		if (WebUtils.isLocalDevelopment(frontendBaseUrl)) {
+			// 개발 환경: 백엔드 테스트 페이지
+			redirectUrl = "/oauth-test.html?success=true&accessToken=" + encodedAccessToken
+				+ "&userName=" + encodedUserInfo;
+		} else {
+			// 프로덕션 환경: 실제 프론트엔드
+			redirectUrl = frontendBaseUrl + "/login/success?accessToken=" + encodedAccessToken
+				+ "&userName=" + encodedUserInfo;
+		}
 
 		log.info("기존 사용자 로그인 성공, AccessToken/RefreshToken 발급 완료: {}", username);
 		response.sendRedirect(redirectUrl);

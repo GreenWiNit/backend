@@ -1,5 +1,7 @@
 package com.example.green.domain.auth.service;
 
+import static com.example.green.domain.auth.constants.AuthConstants.*;
+
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -13,7 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.green.domain.auth.dto.TempTokenInfoDto;
-import com.example.green.domain.auth.entity.RefreshToken;
+import com.example.green.domain.auth.model.entity.RefreshToken;
 import com.example.green.domain.auth.repository.RefreshTokenRepository;
 import com.example.green.domain.member.entity.Member;
 import com.example.green.domain.member.exception.MemberExceptionMessage;
@@ -33,6 +35,18 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Transactional
 public class TokenService {
+
+	// ================================
+	// JWT Claims 이름 (이 클래스에서만 사용)
+	// ================================
+	private static final String CLAIM_USERNAME = "username";
+	private static final String CLAIM_ROLE = "role";
+	private static final String CLAIM_TYPE = "type";
+	private static final String CLAIM_EMAIL = "email";
+	private static final String CLAIM_NAME = "name";
+	private static final String CLAIM_PROFILE_IMAGE_URL = "profileImageUrl";
+	private static final String CLAIM_PROVIDER = "provider";
+	private static final String CLAIM_PROVIDER_ID = "providerId";
 
 	private final SecretKey secretKey;
 	private final Long accessTokenExpiration; // 15분
@@ -65,9 +79,9 @@ public class TokenService {
 	public String createAccessToken(String username, String role) {
 		try {
 			return Jwts.builder()
-				.claim("username", username)
-				.claim("role", role)
-				.claim("type", "access")
+				.claim(CLAIM_USERNAME, username)
+				.claim(CLAIM_ROLE, role)
+				.claim(CLAIM_TYPE, TOKEN_TYPE_ACCESS)
 				.issuedAt(new Date(System.currentTimeMillis()))
 				.expiration(new Date(System.currentTimeMillis() + accessTokenExpiration))
 				.signWith(secretKey)
@@ -82,8 +96,8 @@ public class TokenService {
 	public String createRefreshToken(String username, String deviceInfo, String ipAddress) {
 		try {
 			String tokenValue = Jwts.builder()
-				.claim("username", username)
-				.claim("type", "refresh")
+				.claim(CLAIM_USERNAME, username)
+				.claim(CLAIM_TYPE, TOKEN_TYPE_REFRESH)
 				.issuedAt(new Date(System.currentTimeMillis()))
 				.expiration(new Date(System.currentTimeMillis() + refreshTokenExpiration))
 				.signWith(secretKey)
@@ -114,12 +128,12 @@ public class TokenService {
 		String providerId) {
 		try {
 			return Jwts.builder()
-				.claim("email", email)
-				.claim("name", name)
-				.claim("profileImageUrl", profileImageUrl)
-				.claim("provider", provider)
-				.claim("providerId", providerId)
-				.claim("type", "temp")
+				.claim(CLAIM_EMAIL, email)
+				.claim(CLAIM_NAME, name)
+				.claim(CLAIM_PROFILE_IMAGE_URL, profileImageUrl)
+				.claim(CLAIM_PROVIDER, provider)
+				.claim(CLAIM_PROVIDER_ID, providerId)
+				.claim(CLAIM_TYPE, TOKEN_TYPE_TEMP)
 				.issuedAt(new Date(System.currentTimeMillis()))
 				.expiration(new Date(System.currentTimeMillis() + tempTokenExpiration))
 				.signWith(secretKey)
@@ -179,7 +193,7 @@ public class TokenService {
 				.build()
 				.parseSignedClaims(token)
 				.getPayload()
-				.get("username", String.class);
+				.get(CLAIM_USERNAME, String.class);
 		} catch (ExpiredJwtException e) {
 			log.debug("만료된 JWT 토큰에서 username 추출 시도: {}", e.getMessage());
 			throw new BusinessException(GlobalExceptionMessage.JWT_TOKEN_EXPIRED);
@@ -197,7 +211,7 @@ public class TokenService {
 				.build()
 				.parseSignedClaims(token)
 				.getPayload()
-				.get("role", String.class);
+				.get(CLAIM_ROLE, String.class);
 		} catch (ExpiredJwtException e) {
 			log.debug("만료된 JWT 토큰에서 role 추출 시도: {}", e.getMessage());
 			throw new BusinessException(GlobalExceptionMessage.JWT_TOKEN_EXPIRED);
@@ -215,7 +229,7 @@ public class TokenService {
 				.build()
 				.parseSignedClaims(token)
 				.getPayload()
-				.get("type", String.class);
+				.get(CLAIM_TYPE, String.class);
 		} catch (JwtException e) {
 			log.error("JWT 타입 추출 실패: {}", e.getMessage());
 			throw new BusinessException(GlobalExceptionMessage.JWT_PARSING_FAILED);
@@ -231,17 +245,17 @@ public class TokenService {
 				.parseSignedClaims(tempToken)
 				.getPayload();
 
-			String type = claims.get("type", String.class);
-			if (!"temp".equals(type)) {
+			String type = claims.get(CLAIM_TYPE, String.class);
+			if (!TOKEN_TYPE_TEMP.equals(type)) {
 				throw new BusinessException(GlobalExceptionMessage.JWT_VALIDATION_FAILED);
 			}
 
 			return TempTokenInfoDto.builder()
-				.email(claims.get("email", String.class))
-				.name(claims.get("name", String.class))
-				.profileImageUrl(claims.get("profileImageUrl", String.class))
-				.provider(claims.get("provider", String.class))
-				.providerId(claims.get("providerId", String.class))
+				.email(claims.get(CLAIM_EMAIL, String.class))
+				.name(claims.get(CLAIM_NAME, String.class))
+				.profileImageUrl(claims.get(CLAIM_PROFILE_IMAGE_URL, String.class))
+				.provider(claims.get(CLAIM_PROVIDER, String.class))
+				.providerId(claims.get(CLAIM_PROVIDER_ID, String.class))
 				.build();
 		} catch (ExpiredJwtException e) {
 			log.debug("만료된 임시 토큰: {}", e.getMessage());
@@ -259,7 +273,7 @@ public class TokenService {
 		}
 
 		String type = getTokenType(refreshToken);
-		if (!"refresh".equals(type)) {
+		if (!TOKEN_TYPE_REFRESH.equals(type)) {
 			throw new BusinessException(GlobalExceptionMessage.JWT_VALIDATION_FAILED);
 		}
 

@@ -7,6 +7,8 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.stereotype.Component;
 
+import com.example.green.domain.auth.utils.WebUtils;
+
 import com.example.green.domain.auth.service.TokenService;
 
 import jakarta.servlet.ServletException;
@@ -34,7 +36,15 @@ public class OAuth2FailureHandler extends SimpleUrlAuthenticationFailureHandler 
 
 		log.info("OAuth2 인증 실패: {}", exception.getMessage());
 
-		String redirectUrl = frontendBaseUrl + "/login?error=auth_failed";
+		// 환경별 리다이렉트 분기
+		String redirectUrl;
+		if (WebUtils.isLocalDevelopment(frontendBaseUrl)) {
+			// 개발 환경: 백엔드 테스트 페이지
+			redirectUrl = "/oauth-test.html?error=auth_failed";
+		} else {
+			// 프로덕션 환경: 실제 프론트엔드
+			redirectUrl = frontendBaseUrl + "/login?error=auth_failed";
+		}
 
 		response.sendRedirect(redirectUrl);
 	}

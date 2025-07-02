@@ -1,5 +1,7 @@
 package com.example.green.domain.auth.controller;
 
+import static com.example.green.domain.auth.constants.AuthConstants.*;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -9,6 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.green.domain.auth.dto.SignupRequestDto;
 import com.example.green.domain.auth.dto.TempTokenInfoDto;
 import com.example.green.domain.auth.dto.TokenResponseDto;
+import com.example.green.domain.auth.model.vo.AccessToken;
+import com.example.green.domain.auth.model.vo.TempToken;
 import com.example.green.domain.auth.service.AuthService;
 import com.example.green.domain.auth.service.TokenService;
 import com.example.green.domain.auth.utils.WebUtils;
@@ -38,7 +42,9 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class AuthController {
 
-	private static final String COOKIE_NAME = "RefreshToken";
+	// ================================
+	// 쿠키 관련 (이 클래스에서만 사용)
+	// ================================
 	private static final int REFRESH_TOKEN_MAX_AGE = 7 * 24 * 60 * 60; // 7일
 
 	private final AuthService authService;
@@ -102,30 +108,40 @@ public class AuthController {
 	) {
 		log.info("[SIGNUP] tempToken={}, nickname={}", request.tempToken(), request.nickname());
 
-		// 1. 임시 토큰에서 사용자 정보 추출
-		TempTokenInfoDto tempInfo = tokenService.extractTempTokenInfo(request.tempToken());
+		// 1. TempToken VO로 감싸서 타입 안전성 확보
+		TempToken tempToken = TempToken.from(request.tempToken(), tokenService);
 
-		// 2. 회원가입 로직 실행
+		// 2. VO 메서드로 안전하게 정보 추출 (내부에서 유효성 검증 수행)
+		TempTokenInfoDto tempInfo = tempToken.extractUserInfo();
+
+		// 3. 회원가입 로직 실행
 		String username = authService.signup(tempInfo, request.nickname(), request.profileImageUrl());
 
-		// 3. 토큰 생성
-		String accessToken = tokenService.createAccessToken(username, "ROLE_USER");
-		String refreshToken = tokenService.createRefreshToken(
+		// 4. AccessToken VO 생성
+		String accessTokenString = tokenService.createAccessToken(username, ROLE_USER);
+		AccessToken accessToken = AccessToken.from(accessTokenString, tokenService);
+
+		// 5. RefreshToken 생성 (RefreshToken은 이미 엔티티로 잘 구현되어 있어서 String 유지)
+		String refreshTokenString = tokenService.createRefreshToken(
 			username,
 			WebUtils.extractDeviceInfo(httpRequest),
 			WebUtils.extractClientIp(httpRequest)
 		);
 
-		// 4. RefreshToken 쿠키 설정
+		// 6. RefreshToken 쿠키 설정
 		Cookie cookie = WebUtils.createRefreshTokenCookie(
-			refreshToken,
+			refreshTokenString,
 			WebUtils.isSecureRequest(httpRequest),
 			REFRESH_TOKEN_MAX_AGE
 		);
 		response.addCookie(cookie);
 
 		log.info("[SIGNUP] completed for username={}", username);
-		return ResponseEntity.ok(new TokenResponseDto(accessToken, username, tempInfo.getName()));
+		return ResponseEntity.ok(new TokenResponseDto(
+			accessToken.getValue(),    // VO에서 원본 문자열 추출
+			username,
+			tempToken.getName()        // VO 편의 메서드 활용
+		));
 	}
 
 	@PublicApi
@@ -179,17 +195,25 @@ public class AuthController {
 	})
 	@PostMapping("/refresh")
 	public ResponseEntity<TokenResponseDto> refreshToken(HttpServletRequest request) {
-		String refreshToken = WebUtils.extractCookieValue(request, COOKIE_NAME);
-		if (refreshToken == null) {
+		String refreshTokenString = WebUtils.extractCookieValue(request, REFRESH_TOKEN_COOKIE_NAME);
+		if (refreshTokenString == null) {
 			log.warn("[REFRESH] Missing RefreshToken cookie");
 			return ResponseEntity.badRequest().build();
 		}
 
-		String username = tokenService.getUsername(refreshToken);
-		String newAccessToken = tokenService.refreshAccessToken(refreshToken, "ROLE_USER"); // TODO: 실사용 시 권한 조회
+		// RefreshToken을 통해 새 AccessToken 생성
+		String username = tokenService.getUsername(refreshTokenString);
+		String newAccessTokenString = tokenService.refreshAccessToken(refreshTokenString, ROLE_USER);
+
+		// 새 AccessToken을 VO로 감싸기 (타입 안전성)
+		AccessToken newAccessToken = AccessToken.from(newAccessTokenString, tokenService);
 
 		log.info("[REFRESH] issued new AccessToken for username={}", username);
-		return ResponseEntity.ok(new TokenResponseDto(newAccessToken, username, null));
+		return ResponseEntity.ok(new TokenResponseDto(
+			newAccessToken.getValue(),  // VO에서 원본 문자열 추출
+			username,
+			null
+		));
 	}
 
 	@PublicApi
@@ -199,7 +223,7 @@ public class AuthController {
 	)
 	@PostMapping("/logout")
 	public ResponseEntity<Void> logout(HttpServletRequest request, HttpServletResponse response) {
-		String refreshToken = WebUtils.extractCookieValue(request, COOKIE_NAME);
+		String refreshToken = WebUtils.extractCookieValue(request, REFRESH_TOKEN_COOKIE_NAME);
 		if (refreshToken != null) {
 			tokenService.revokeRefreshToken(refreshToken);
 		}
@@ -215,7 +239,7 @@ public class AuthController {
 	)
 	@PostMapping("/logout-all")
 	public ResponseEntity<Void> logoutAll(HttpServletRequest request, HttpServletResponse response) {
-		String refreshToken = WebUtils.extractCookieValue(request, COOKIE_NAME);
+		String refreshToken = WebUtils.extractCookieValue(request, REFRESH_TOKEN_COOKIE_NAME);
 		if (refreshToken != null) {
 			String username = tokenService.getUsername(refreshToken);
 			tokenService.revokeAllRefreshTokens(username);

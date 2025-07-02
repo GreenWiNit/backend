@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.example.green.domain.auth.entity.RefreshToken;
+import com.example.green.domain.auth.model.entity.RefreshToken;
 import com.example.green.domain.member.entity.Member;
 
 public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long> {
