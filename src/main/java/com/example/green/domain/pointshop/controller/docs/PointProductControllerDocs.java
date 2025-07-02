@@ -43,4 +43,12 @@ public interface PointProductControllerDocs {
 		content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
 	)
 	NoContent updatePointProduct(PointProductUpdateDto dto, Long pointProductId);
+
+	@Operation(summary = "포인트 상품 삭제", description = "포인트 상품을 삭제합니다.")
+	@ApiResponse(responseCode = "200", description = "포인트 상품 삭제에 성공했습니다.")
+	@ApiResponse(
+		responseCode = "404", description = "포인트 상품을 찾을 수 없습니다.",
+		content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+	)
+	NoContent deletePointProduct(Long pointProductId);
 }

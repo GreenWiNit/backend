@@ -102,6 +102,19 @@ class PointProductServiceTest {
 		verify(fileManager).confirmUsingImage(command.media().getThumbnailUrl());
 	}
 
+	@Test
+	void 포인트_상품을_삭제한다() {
+		// given
+		PointProduct mockPointProduct = mock(PointProduct.class);
+		when(pointProductDomainService.getPointProduct(anyLong())).thenReturn(mockPointProduct);
+
+		// when
+		pointProductService.delete(1L);
+
+		// then
+		verify(mockPointProduct).markDeleted();
+	}
+
 	private PointProductUpdateCommand getUpdateCommand() {
 		return new PointProductUpdateCommand(
 			new Code("PRD-AA-001"),
