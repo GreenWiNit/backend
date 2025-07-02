@@ -3,6 +3,7 @@ package com.example.green.domain.auth.controller;
 import static com.example.green.domain.auth.constants.AuthConstants.*;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,7 +17,9 @@ import com.example.green.domain.auth.model.vo.TempToken;
 import com.example.green.domain.auth.service.AuthService;
 import com.example.green.domain.auth.service.TokenService;
 import com.example.green.domain.auth.utils.WebUtils;
+import com.example.green.global.annotation.AuthenticatedApi;
 import com.example.green.global.annotation.PublicApi;
+import com.example.green.global.security.PrincipalDetails;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -198,36 +201,40 @@ public class AuthController {
 		));
 	}
 
-	@PublicApi
+	@AuthenticatedApi(reason = "로그아웃은 로그인한 사용자만 가능합니다")
 	@Operation(
 		summary = "로그아웃",
 		description = "현재 디바이스에서 로그아웃합니다. RefreshToken을 DB에서 무효화하고 쿠키를 삭제합니다."
 	)
 	@PostMapping("/logout")
-	public ResponseEntity<Void> logout(HttpServletRequest request, HttpServletResponse response) {
+	public ResponseEntity<Void> logout(
+		HttpServletRequest request,
+		HttpServletResponse response,
+		@AuthenticationPrincipal PrincipalDetails currentUser
+	) {
 		String refreshToken = WebUtils.extractCookieValue(request, REFRESH_TOKEN_COOKIE_NAME);
 		if (refreshToken != null) {
 			tokenService.revokeRefreshToken(refreshToken);
+			log.info("[LOGOUT] User {} logged out from current device", currentUser.getUsername());
 		}
 		WebUtils.removeRefreshTokenCookie(response);
-		log.info("[LOGOUT] current device logout completed");
 		return ResponseEntity.ok().build();
 	}
 
-	@PublicApi
+	@AuthenticatedApi(reason = "모든 디바이스 로그아웃은 로그인한 사용자만 가능합니다")
 	@Operation(
 		summary = "모든 디바이스 로그아웃",
 		description = "해당 사용자의 모든 디바이스에서 로그아웃합니다. DB에 저장된 모든 RefreshToken을 무효화합니다."
 	)
 	@PostMapping("/logout-all")
-	public ResponseEntity<Void> logoutAll(HttpServletRequest request, HttpServletResponse response) {
-		String refreshToken = WebUtils.extractCookieValue(request, REFRESH_TOKEN_COOKIE_NAME);
-		if (refreshToken != null) {
-			String username = tokenService.getUsername(refreshToken);
-			tokenService.revokeAllRefreshTokens(username);
-		}
+	public ResponseEntity<Void> logoutAll(
+		HttpServletRequest request,
+		HttpServletResponse response,
+		@AuthenticationPrincipal PrincipalDetails currentUser
+	) {
+		tokenService.revokeAllRefreshTokens(currentUser.getUsername());
 		WebUtils.removeRefreshTokenCookie(response);
-		log.info("[LOGOUT-ALL] all devices logout completed");
+		log.info("[LOGOUT-ALL] User {} logged out from all devices", currentUser.getUsername());
 		return ResponseEntity.ok().build();
 	}
 

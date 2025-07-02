@@ -8,12 +8,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.example.green.domain.auth.dto.CustomOAuth2UserDto;
-import com.example.green.domain.auth.dto.UserDto;
 import com.example.green.domain.auth.model.vo.AccessToken;
 import com.example.green.domain.auth.service.TokenService;
 import com.example.green.global.error.exception.BusinessException;
 import com.example.green.global.error.exception.GlobalExceptionMessage;
+import com.example.green.global.security.PrincipalDetails;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -64,18 +63,16 @@ public class JwtFilter extends OncePerRequestFilter {
 			String username = accessToken.getUsername();
 			String role = accessToken.getRole();
 
-			UserDto userDto = UserDto.forExistingUser(role, username, username);
-			CustomOAuth2UserDto customOAuth2User = new CustomOAuth2UserDto(userDto);
+			PrincipalDetails principal = PrincipalDetails.fromJWT(username, role);
 
 			Authentication authToken = new UsernamePasswordAuthenticationToken(
-				customOAuth2User, null, customOAuth2User.getAuthorities());
+				principal, null, principal.getAuthorities());
 
 			SecurityContextHolder.getContext().setAuthentication(authToken);
 
 			log.debug("JWT authentication completed for user: {}", username);
 
 		} catch (BusinessException e) {
-			// JWT 관련 예외 처리 (VO 내부에서도 발생 가능)
 			if (e.getExceptionMessage() == GlobalExceptionMessage.JWT_TOKEN_EXPIRED) {
 				handleExpiredToken(response);
 			} else {
@@ -115,3 +112,4 @@ public class JwtFilter extends OncePerRequestFilter {
 		log.debug("Invalid AccessToken - 401 Unauthorized response sent");
 	}
 }
+

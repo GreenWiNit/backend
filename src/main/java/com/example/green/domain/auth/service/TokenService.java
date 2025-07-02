@@ -222,6 +222,8 @@ public class TokenService {
 		}
 	}
 
+
+
 	public String getTokenType(String token) {
 		try {
 			return Jwts.parser()
@@ -296,6 +298,8 @@ public class TokenService {
 	/**
 	 * 락 점유 시간 최소화: 핵심 로직만 비관적 락으로 보호
 	 * 정리 작업은 트랜잭션 커밋 후 이벤트로 처리
+	 *
+	 * TODO: 향후 소프트 딜리트 방식으로 개선 예정
 	 */
 	private void cleanupOldTokens(Member member) {
 		List<RefreshToken> tokens = refreshTokenRepository.findAllByMemberForCleanupWithLock(member);

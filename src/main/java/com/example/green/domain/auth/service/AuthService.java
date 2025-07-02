@@ -42,7 +42,7 @@ public class AuthService {
 
 		try {
 			// 새로운 멤버 생성
-			Member member = Member.createOAuth2Member(
+			Member member = Member.create(
 				username,
 				tempTokenInfoDto.getName(),
 				tempTokenInfoDto.getEmail()
