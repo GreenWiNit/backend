@@ -22,7 +22,9 @@ public enum PointProductExceptionMessage implements ExceptionMessage {
 	INVALID_PRODUCT_DESCRIPTION(BAD_REQUEST, "상품 설명은 최대 100글자로 구성되어야 합니다."),
 	OUT_OF_PRODUCT_STOCK(BAD_REQUEST, "상품 재고가 부족합니다."),
 	INVALID_SEARCH_KEYWORD(BAD_REQUEST, "상품 검색 내용은 최소 2글자여야 합니다.."),
-	EXISTS_PRODUCT_CODE(BAD_REQUEST, "중복된 상품 코드가 존재합니다.");
+	EXISTS_PRODUCT_CODE(BAD_REQUEST, "중복된 상품 코드가 존재합니다."),
+	NOT_FOUND_POINT_PRODUCT(NOT_FOUND, "포인트 상품을 찾을 수 없습니다."),
+	DUPLICATE_POINT_PRODUCT_CODE(CONFLICT, "중복된 포인트 상품 코드가 존재합니다.");
 
 	public static final String REQUIRED_BASIC_INFO = "상품 기본 정보가 null 값 입니다. 파라미터를 확인해주세요.";
 	public static final String REQUIRED_CODE = "상품 코드 정보가 null 값 입니다. 파라미터를 확인해주세요.";

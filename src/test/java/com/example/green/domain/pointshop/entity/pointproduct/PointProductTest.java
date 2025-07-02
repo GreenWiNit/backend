@@ -79,6 +79,7 @@ class PointProductTest {
 
 		// then
 		assertThat(pointProduct.getMedia()).isEqualTo(newMedia);
+		assertThat(pointProduct.getThumbnailUrl()).isEqualTo(newThumbnail);
 	}
 
 	@Test
@@ -183,6 +184,27 @@ class PointProductTest {
 
 		// then
 		assertThat(pointProduct.getDisplayStatus()).isEqualTo(DisplayStatus.DISPLAY);
+	}
+
+	@ParameterizedTest
+	@MethodSource("newImageTestCases")
+	void 새로운_이미지_정보인지_알_수_있다(Media newMeida, boolean expected) {
+		// given
+		media = new Media("https://example1.com/image.jpg");
+		pointProduct = PointProduct.create(basicInfo, media, price, stock);
+
+		// when
+		boolean result = pointProduct.isNewImage(newMeida);
+
+		// then
+		assertThat(result).isEqualTo(expected);
+	}
+
+	public static Stream<Arguments> newImageTestCases() {
+		return Stream.of(
+			Arguments.of(new Media("https://example1.com/image.jpg"), false),
+			Arguments.of(new Media("https://example2.com/image.jpg"), true)
+		);
 	}
 
 	static Stream<Arguments> invalidPointProductTestCases() {
