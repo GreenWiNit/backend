@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+import com.example.green.global.excel.exception.ExcelExceptionMessage;
 import com.example.integration.common.ExcelDownloadTestBase;
 
 public class ExcelDownloaderIntTest extends ExcelDownloadTestBase<TestDto> {
@@ -44,5 +45,16 @@ public class ExcelDownloaderIntTest extends ExcelDownloadTestBase<TestDto> {
 			.isEqualTo("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
 		assertThat(mockResponse.getHeader("Content-Disposition"))
 			.isEqualTo("attachment; filename=\"" + fileName + ".xlsx\"");
+	}
+
+	@Test
+	void 빈_데이터로_엑셀_다운로드시_예외_발생() {
+		// given
+		MockHttpServletResponse mockResponse = new MockHttpServletResponse();
+
+		// when & then
+		assertThatThrownBy(() -> excelDownloader.downloadAsStream(List.of(), mockResponse))
+			.isInstanceOf(Exception.class)
+			.hasFieldOrPropertyWithValue("exceptionMessage", ExcelExceptionMessage.EMPTY_DATA);
 	}
 }
