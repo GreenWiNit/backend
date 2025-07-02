@@ -36,10 +36,4 @@ public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long
 	@Modifying
 	@Query("DELETE FROM RefreshToken rt WHERE rt.expiresAt < :now OR rt.isRevoked = true")
 	void deleteExpiredAndRevokedTokens(@Param("now") LocalDateTime now);
-
-	// 사용자의 활성 세션 수 조회
-	@Query("SELECT COUNT(rt) FROM RefreshToken rt WHERE rt.member = :member AND rt.isRevoked = false AND rt.expiresAt > :now")
-	long countActiveSessionsByMember(@Param("member") Member member, @Param("now") LocalDateTime now);
-
-	;
 }

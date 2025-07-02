@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.green.domain.auth.dto.TempTokenInfoDto;
 import com.example.green.domain.auth.entity.RefreshToken;
 import com.example.green.domain.auth.repository.RefreshTokenRepository;
 import com.example.green.domain.member.entity.Member;
@@ -37,7 +38,7 @@ public class TokenService {
 	private final Long accessTokenExpiration; // 15분
 	private final Long refreshTokenExpiration; // 7일
 	private final Long tempTokenExpiration; // 10분
-	
+
 	private final RefreshTokenRepository refreshTokenRepository;
 	private final MemberRepository memberRepository;
 
@@ -109,12 +110,15 @@ public class TokenService {
 	}
 
 	// 임시 토큰 생성 (신규 사용자용)
-	public String createTemporaryToken(String email, String name, String profileImageUrl) {
+	public String createTemporaryToken(String email, String name, String profileImageUrl, String provider,
+		String providerId) {
 		try {
 			return Jwts.builder()
 				.claim("email", email)
 				.claim("name", name)
 				.claim("profileImageUrl", profileImageUrl)
+				.claim("provider", provider)
+				.claim("providerId", providerId)
 				.claim("type", "temp")
 				.issuedAt(new Date(System.currentTimeMillis()))
 				.expiration(new Date(System.currentTimeMillis() + tempTokenExpiration))
@@ -219,7 +223,7 @@ public class TokenService {
 	}
 
 	// 임시 토큰에서 사용자 정보 추출
-	public TempTokenInfo extractTempTokenInfo(String tempToken) {
+	public TempTokenInfoDto extractTempTokenInfo(String tempToken) {
 		try {
 			Claims claims = Jwts.parser()
 				.verifyWith(secretKey)
@@ -232,10 +236,12 @@ public class TokenService {
 				throw new BusinessException(GlobalExceptionMessage.JWT_VALIDATION_FAILED);
 			}
 
-			return TempTokenInfo.builder()
+			return TempTokenInfoDto.builder()
 				.email(claims.get("email", String.class))
 				.name(claims.get("name", String.class))
 				.profileImageUrl(claims.get("profileImageUrl", String.class))
+				.provider(claims.get("provider", String.class))
+				.providerId(claims.get("providerId", String.class))
 				.build();
 		} catch (ExpiredJwtException e) {
 			log.debug("만료된 임시 토큰: {}", e.getMessage());
@@ -272,41 +278,15 @@ public class TokenService {
 	public void revokeAllRefreshTokens(String username) {
 		Member member = memberRepository.findOptionalByUsername(username)
 			.orElseThrow(() -> new BusinessException(MemberExceptionMessage.MEMBER_NOT_FOUND));
-		
+
 		refreshTokenRepository.revokeAllByMember(member);
 		log.info("사용자의 모든 RefreshToken 무효화 완료: {}", username);
-	}
-
-	// 토큰 만료 여부 확인
-	public Boolean isExpired(String token) {
-		try {
-			return Jwts.parser()
-				.verifyWith(secretKey)
-				.build()
-				.parseSignedClaims(token)
-				.getPayload()
-				.getExpiration()
-				.before(new Date());
-		} catch (ExpiredJwtException e) {
-			return true; // 이미 만료된 토큰
-		} catch (JwtException e) {
-			log.error("JWT 만료 검증 실패: {}", e.getMessage());
-			throw new BusinessException(GlobalExceptionMessage.JWT_VALIDATION_FAILED);
-		}
-	}
-
-	// 사용자의 활성 세션 수 조회
-	public long getActiveSessionCount(String username) {
-		Member member = memberRepository.findOptionalByUsername(username)
-			.orElseThrow(() -> new BusinessException(MemberExceptionMessage.MEMBER_NOT_FOUND));
-		
-		return refreshTokenRepository.countActiveSessionsByMember(member, LocalDateTime.now());
 	}
 
 	// 오래된 토큰 정리 (한 사용자당 최대 5개 세션 유지)
 	private void cleanupOldTokens(Member member) {
 		List<RefreshToken> tokens = refreshTokenRepository.findAllByMemberAndNotRevoked(member);
-		
+
 		// 최대 세션 수 제한 (예: 5개)
 		int maxSessions = 5;
 		if (tokens.size() >= maxSessions) {
@@ -320,50 +300,4 @@ public class TokenService {
 		// 만료된 토큰 삭제
 		refreshTokenRepository.deleteExpiredAndRevokedTokensByMember(member, LocalDateTime.now());
 	}
-
-	// 임시 토큰 정보를 담는 내부 클래스
-	public static class TempTokenInfo {
-		private final String email;
-		private final String name;
-		private final String profileImageUrl;
-
-		private TempTokenInfo(String email, String name, String profileImageUrl) {
-			this.email = email;
-			this.name = name;
-			this.profileImageUrl = profileImageUrl;
-		}
-
-		public static TempTokenInfoBuilder builder() {
-			return new TempTokenInfoBuilder();
-		}
-
-		public String getEmail() { return email; }
-		public String getName() { return name; }
-		public String getProfileImageUrl() { return profileImageUrl; }
-
-		public static class TempTokenInfoBuilder {
-			private String email;
-			private String name;
-			private String profileImageUrl;
-
-			public TempTokenInfoBuilder email(String email) {
-				this.email = email;
-				return this;
-			}
-
-			public TempTokenInfoBuilder name(String name) {
-				this.name = name;
-				return this;
-			}
-
-			public TempTokenInfoBuilder profileImageUrl(String profileImageUrl) {
-				this.profileImageUrl = profileImageUrl;
-				return this;
-			}
-
-			public TempTokenInfo build() {
-				return new TempTokenInfo(email, name, profileImageUrl);
-			}
-		}
-	}
-} 
+}
