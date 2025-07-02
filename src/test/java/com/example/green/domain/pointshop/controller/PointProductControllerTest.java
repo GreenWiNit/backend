@@ -51,4 +51,14 @@ class PointProductControllerTest extends BaseControllerUnitTest {
 		assertThat(response.message()).isEqualTo(POINT_PRODUCT_UPDATE_SUCCESS.getMessage());
 		verify(pointProductService).update(any(PointProductUpdateCommand.class), anyLong());
 	}
+
+	@Test
+	void 포인트_상품_삭제_요청에_성공한다() {
+		// given
+		// when
+		NoContent response = PointProductRequest.delete(1L);
+
+		// then
+		assertThat(response.message()).isEqualTo(POINT_PRODUCT_DELETE_SUCCESS.getMessage());
+	}
 }

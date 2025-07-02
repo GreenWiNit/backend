@@ -65,4 +65,15 @@ public class PointProductRequest {
 			.then().log().all()
 			.status(HttpStatus.OK);
 	}
+
+	public static NoContent delete(long id) {
+		return RestAssuredMockMvc
+			.given().log().all()
+			.contentType(MediaType.APPLICATION_JSON)
+			.when().delete("/api/point-products/" + id)
+			.then().log().all()
+			.status(HttpStatus.OK)
+			.extract().as(new TypeRef<>() {
+			});
+	}
 }

@@ -62,4 +62,9 @@ public class PointProductService {
 			fileManager.confirmUsingImage(pointProduct.getThumbnailUrl());
 		}
 	}
+
+	public void delete(Long pointProductId) {
+		PointProduct pointProduct = pointProductDomainService.getPointProduct(pointProductId);
+		pointProduct.markDeleted();
+	}
 }

@@ -5,6 +5,7 @@ import static com.example.green.domain.pointshop.controller.message.PointProduct
 import java.util.List;
 
 import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -94,5 +95,11 @@ public class PointProductAdminController implements PointProductControllerDocs {
 
 		pointProductService.update(command, pointProductId);
 		return NoContent.ok(POINT_PRODUCT_UPDATE_SUCCESS);
+	}
+
+	@DeleteMapping("/{pointProductId}")
+	public NoContent deletePointProduct(@PathVariable Long pointProductId) {
+		pointProductService.delete(pointProductId);
+		return NoContent.ok(POINT_PRODUCT_DELETE_SUCCESS);
 	}
 }
