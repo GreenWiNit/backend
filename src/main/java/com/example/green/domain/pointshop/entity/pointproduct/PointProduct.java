@@ -3,8 +3,6 @@ package com.example.green.domain.pointshop.entity.pointproduct;
 import static com.example.green.domain.pointshop.exception.PointProductExceptionMessage.*;
 import static com.example.green.global.utils.EntityValidator.*;
 
-import org.hibernate.annotations.DynamicUpdate;
-
 import com.example.green.domain.common.BaseEntity;
 import com.example.green.domain.pointshop.entity.pointproduct.vo.BasicInfo;
 import com.example.green.domain.pointshop.entity.pointproduct.vo.DisplayStatus;
@@ -41,7 +39,6 @@ import lombok.extern.slf4j.Slf4j;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
-@DynamicUpdate
 @Slf4j
 public class PointProduct extends BaseEntity {
 
@@ -127,5 +124,13 @@ public class PointProduct extends BaseEntity {
 
 	public void hideDisplay() {
 		this.displayStatus = DisplayStatus.HIDDEN;
+	}
+
+	public boolean isNewImage(Media media) {
+		return !this.media.equals(media);
+	}
+
+	public String getThumbnailUrl() {
+		return this.media.getThumbnailUrl();
 	}
 }

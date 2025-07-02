@@ -6,4 +6,6 @@ import com.example.green.domain.pointshop.entity.pointproduct.PointProduct;
 
 public interface PointProductRepository extends JpaRepository<PointProduct, Long> {
 	boolean existsByBasicInfoCode(String productCode);
+
+	boolean existsByBasicInfoCodeAndIdNot(String code, Long id);
 }
