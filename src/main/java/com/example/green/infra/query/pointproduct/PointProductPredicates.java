@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import org.springframework.util.StringUtils;
 
+import com.example.green.domain.pointshop.controller.dto.PointProductExcelCondition;
 import com.example.green.domain.pointshop.controller.dto.PointProductSearchCondition;
 import com.example.green.domain.pointshop.entity.pointproduct.QPointProduct;
 import com.example.green.domain.pointshop.entity.pointproduct.vo.SellingStatus;
@@ -21,6 +22,13 @@ public class PointProductPredicates {
 	private static final QPointProduct qPointProduct = QPointProduct.pointProduct;
 
 	public static BooleanExpression fromCondition(PointProductSearchCondition condition) {
+		return combineConditions(
+			filterByStatus(condition.status()),
+			filterByKeyword(condition.keyword())
+		);
+	}
+
+	public static BooleanExpression fromCondition(PointProductExcelCondition condition) {
 		return combineConditions(
 			filterByStatus(condition.status()),
 			filterByKeyword(condition.keyword())
