@@ -1,5 +1,6 @@
 package com.example.green.domain.pointshop.service;
 
+import static com.example.green.domain.pointshop.exception.PointProductExceptionMessage.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -16,6 +17,7 @@ import com.example.green.domain.pointshop.entity.pointproduct.vo.BasicInfo;
 import com.example.green.domain.pointshop.entity.pointproduct.vo.Media;
 import com.example.green.domain.pointshop.entity.pointproduct.vo.Price;
 import com.example.green.domain.pointshop.entity.pointproduct.vo.Stock;
+import com.example.green.domain.pointshop.exception.PointProductException;
 import com.example.green.domain.pointshop.repository.PointProductRepository;
 import com.example.green.domain.pointshop.service.command.PointProductCreateCommand;
 
@@ -33,6 +35,7 @@ class PointProductServiceTest {
 		// given
 		PointProductCreateCommand command = getCommand();
 		PointProduct mockEntity = mock(PointProduct.class);
+		when(pointProductRepository.existsByBasicInfoCode(anyString())).thenReturn(false);
 		when(mockEntity.getId()).thenReturn(1L);
 		when(pointProductRepository.save(any(PointProduct.class))).thenReturn(mockEntity);
 
@@ -41,6 +44,18 @@ class PointProductServiceTest {
 
 		// then
 		assertThat(result).isEqualTo(1L);
+	}
+
+	@Test
+	void 포인트_상품_생성시_중복된_코드가_존재하면_예외가_발생한다() {
+		// given
+		PointProductCreateCommand command = getCommand();
+		when(pointProductRepository.existsByBasicInfoCode(anyString())).thenReturn(true);
+
+		// when & then
+		assertThatThrownBy(() -> pointProductService.create(command))
+			.isInstanceOf(PointProductException.class)
+			.hasFieldOrPropertyWithValue("exceptionMessage", EXISTS_PRODUCT_CODE);
 	}
 
 	private PointProductCreateCommand getCommand() {
