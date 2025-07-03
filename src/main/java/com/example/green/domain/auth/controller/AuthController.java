@@ -17,6 +17,7 @@ import com.example.green.domain.auth.model.vo.TempToken;
 import com.example.green.domain.auth.service.AuthService;
 import com.example.green.domain.auth.service.TokenService;
 import com.example.green.domain.auth.utils.WebUtils;
+import com.example.green.domain.member.service.MemberService;
 import com.example.green.global.annotation.AuthenticatedApi;
 import com.example.green.global.annotation.PublicApi;
 import com.example.green.global.security.PrincipalDetails;
@@ -49,6 +50,7 @@ public class AuthController {
 
 	private final AuthService authService;
 	private final TokenService tokenService;
+	private final MemberService memberService;
 
 	@PublicApi
 	@Operation(
@@ -107,7 +109,16 @@ public class AuthController {
 
 		TempToken tempToken = TempToken.from(request.tempToken(), tokenService);
 		TempTokenInfoDto tempInfo = tempToken.extractUserInfo();
-		String username = authService.signup(tempInfo, request.nickname(), request.profileImageUrl());
+		
+		// Member 도메인에서 OAuth2 회원가입 처리
+		String username = memberService.signupFromOAuth2(
+			tempInfo.getProvider(),
+			tempInfo.getProviderId(),
+			tempInfo.getName(),
+			tempInfo.getEmail(),
+			request.nickname(),
+			request.profileImageUrl()
+		);
 
 		// RefreshToken 먼저 생성 (일관성 유지)
 		String refreshTokenString = tokenService.createRefreshToken(
