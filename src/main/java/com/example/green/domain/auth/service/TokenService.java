@@ -6,6 +6,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -18,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.green.domain.auth.dto.TempTokenInfoDto;
 import com.example.green.domain.auth.model.entity.RefreshToken;
 import com.example.green.domain.auth.repository.RefreshTokenRepository;
+import com.example.green.domain.member.entity.Member;
+import com.example.green.domain.member.exception.MemberExceptionMessage;
 import com.example.green.domain.member.service.MemberService;
 import com.example.green.global.error.exception.BusinessException;
 import com.example.green.global.error.exception.GlobalExceptionMessage;
@@ -131,10 +134,11 @@ public class TokenService {
 				.compact();
 
 			// 사용자 조회 (RefreshToken 엔티티 생성에 필요)
-			var member = memberService.findByUsername(username);
-			if (member == null) {
-				throw new BusinessException(GlobalExceptionMessage.JWT_CREATION_FAILED);
-			}
+			Member member = memberService.findByUsername(username)
+				.orElseThrow(() -> {
+					log.error("RefreshToken 생성 실패: 사용자를 찾을 수 없음 - {}", username);
+					return new BusinessException(MemberExceptionMessage.MEMBER_NOT_FOUND);
+				});
 
 			// 기존 토큰 정리 (선택적: 한 사용자당 최대 토큰 수 제한)
 			cleanupOldTokens(username);
@@ -383,11 +387,12 @@ public class TokenService {
 	 * TODO: 향후 소프트 딜리트 방식으로 개선 예정
 	 */
 	private void cleanupOldTokens(String username) {
-		var member = memberService.findByUsername(username);
-		if (member == null) {
+		Optional<Member> memberOpt = memberService.findByUsername(username);
+		if (memberOpt.isEmpty()) {
 			log.warn("토큰 정리 실패: 사용자를 찾을 수 없음 - {}", username);
 			return;
 		}
+		Member member = memberOpt.get();
 
 		List<RefreshToken> tokens = refreshTokenRepository.findAllByMemberForCleanupWithLock(member);
 
@@ -431,10 +436,6 @@ public class TokenService {
 		public TokenCleanupEvent(Long memberId, String memberUsername) {
 			this.memberId = memberId;
 			this.memberUsername = memberUsername;
-		}
-
-		public Long getMemberId() {
-			return memberId;
 		}
 
 		public String getMemberUsername() {
