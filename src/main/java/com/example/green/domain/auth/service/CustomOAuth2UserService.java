@@ -1,8 +1,5 @@
 package com.example.green.domain.auth.service;
 
-import org.springframework.orm.ObjectOptimisticLockingFailureException;
-import org.springframework.retry.annotation.Backoff;
-import org.springframework.retry.annotation.Retryable;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -15,20 +12,18 @@ import com.example.green.domain.auth.dto.OAuth2ResponseDto;
 import com.example.green.domain.auth.dto.OAuth2UserInfoDto;
 import com.example.green.domain.auth.dto.UserDto;
 import com.example.green.domain.auth.enums.OAuth2Provider;
-import com.example.green.domain.member.entity.Member;
-import com.example.green.domain.member.repository.MemberRepository;
+import com.example.green.domain.member.service.MemberService;
 
-import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true) // 기본적으로 읽기 전용 트랜잭션
+@Transactional(readOnly = true)
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
-	private final MemberRepository memberRepository;
+	private final MemberService memberService;
 
 	@Override
 	@Transactional // OAuth2 사용자 로딩 시 쓰기 트랜잭션 필요
@@ -50,43 +45,32 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 			oAuth2Response.getProviderId()
 		);
 
-		Member existData = memberRepository.findByUsername(username);
+		boolean isExistingUser = memberService.existsByUsername(username);
 
-		if (existData == null) {
+		if (!isExistingUser) {
 			log.info("신규 사용자 발견: {}", username);
 			UserDto userDto = UserDto.forNewUser(oauth2UserInfoDto);
 			return new CustomOAuth2UserDto(userDto);
 		} else {
-			// 낙관적 락 + 재시도로 동시성 처리
-			return updateExistingUserWithRetry(existData, oAuth2Response);
+			// 기존 사용자 정보 업데이트 (Member 도메인에 위임)
+			return updateExistingUser(username, oAuth2Response);
 		}
 	}
 
-	@Retryable(
-		retryFor = {OptimisticLockException.class, ObjectOptimisticLockingFailureException.class},
-		maxAttempts = 3,
-		backoff = @Backoff(delay = 100, multiplier = 2.0, random = true)
-	)
 	@Transactional // 별도 트랜잭션으로 재시도
-	public CustomOAuth2UserDto updateExistingUserWithRetry(Member member, OAuth2ResponseDto oAuth2Response) {
-		log.info("기존 사용자 로그인 (낙관적 락 + 재시도): {}", member.getUsername());
+	public CustomOAuth2UserDto updateExistingUser(String username, OAuth2ResponseDto oAuth2Response) {
+		log.info("기존 사용자 로그인: {}", username);
 
-		// 최신 데이터 재조회 (재시도 시 필요)
-		Member latestMember = memberRepository.findByUsername(member.getUsername());
-		if (latestMember == null) {
-			throw new OAuth2AuthenticationException("사용자를 찾을 수 없습니다: " + member.getUsername());
-		}
-
-		//낙관적 락: @Version 체크로 동시성 보장, 실패 시 @Retry가 재시도
-		latestMember.updateOAuth2Info(oAuth2Response.getName(), oAuth2Response.getEmail());
+		// Member 도메인 서비스에 위임하여 OAuth2 정보 업데이트
+		memberService.updateOAuth2Info(username, oAuth2Response.getName(), oAuth2Response.getEmail());
 
 		UserDto userDto = UserDto.forExistingUser(
-			"ROLE_" + latestMember.getRole().name(),
+			"ROLE_USER",
 			oAuth2Response.getName(),
-			latestMember.getUsername()
+			username
 		);
 
-		log.debug("OAuth2 사용자 정보 업데이트 완료 (낙관적 락 + 재시도): {}", member.getUsername());
+		log.debug("OAuth2 사용자 정보 업데이트 완료: {}", username);
 		return new CustomOAuth2UserDto(userDto);
 	}
 }

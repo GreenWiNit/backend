@@ -18,9 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.green.domain.auth.dto.TempTokenInfoDto;
 import com.example.green.domain.auth.model.entity.RefreshToken;
 import com.example.green.domain.auth.repository.RefreshTokenRepository;
-import com.example.green.domain.member.entity.Member;
-import com.example.green.domain.member.exception.MemberExceptionMessage;
-import com.example.green.domain.member.repository.MemberRepository;
+import com.example.green.domain.member.service.MemberService;
 import com.example.green.global.error.exception.BusinessException;
 import com.example.green.global.error.exception.GlobalExceptionMessage;
 
@@ -59,7 +57,7 @@ public class TokenService {
 	private final Long tempTokenExpiration; // 10분
 
 	private final RefreshTokenRepository refreshTokenRepository;
-	private final MemberRepository memberRepository;
+	private final MemberService memberService;
 	private final ApplicationEventPublisher eventPublisher;
 
 	public TokenService(
@@ -68,7 +66,7 @@ public class TokenService {
 		@Value("${jwt.refresh-expiration:604800000}") Long refreshTokenExpiration,
 		@Value("${jwt.temp-expiration:600000}") Long tempTokenExpiration,
 		RefreshTokenRepository refreshTokenRepository,
-		MemberRepository memberRepository,
+		MemberService memberService,
 		ApplicationEventPublisher eventPublisher) {
 
 		this.secretKey = new SecretKeySpec(
@@ -79,21 +77,23 @@ public class TokenService {
 		this.refreshTokenExpiration = refreshTokenExpiration;
 		this.tempTokenExpiration = tempTokenExpiration;
 		this.refreshTokenRepository = refreshTokenRepository;
-		this.memberRepository = memberRepository;
+		this.memberService = memberService;
 		this.eventPublisher = eventPublisher;
 	}
 
 	public String createAccessToken(String username, String role) {
 		try {
-			// 사용자 조회해서 tokenVersion 가져오기
-			Member member = memberRepository.findOptionalByUsername(username)
-				.orElseThrow(() -> new BusinessException(MemberExceptionMessage.MEMBER_NOT_FOUND));
-			
+			// Member 도메인 서비스를 통해 tokenVersion 조회
+			Long tokenVersion = memberService.getTokenVersion(username);
+			if (tokenVersion == null) {
+				throw new BusinessException(GlobalExceptionMessage.JWT_CREATION_FAILED);
+			}
+
 			return Jwts.builder()
 				.claim(CLAIM_USERNAME, username)
 				.claim(CLAIM_ROLE, role)
 				.claim(CLAIM_TYPE, TOKEN_TYPE_ACCESS)
-				.claim(CLAIM_TOKEN_VERSION, member.getTokenVersion())
+				.claim(CLAIM_TOKEN_VERSION, tokenVersion)
 				.issuedAt(new Date(System.currentTimeMillis()))
 				.expiration(new Date(System.currentTimeMillis() + accessTokenExpiration))
 				.signWith(secretKey)
@@ -114,12 +114,14 @@ public class TokenService {
 				.signWith(secretKey)
 				.compact();
 
-			// 사용자 조회
-			Member member = memberRepository.findOptionalByUsername(username)
-				.orElseThrow(() -> new BusinessException(MemberExceptionMessage.MEMBER_NOT_FOUND));
+			// 사용자 조회 (RefreshToken 엔티티 생성에 필요)
+			var member = memberService.findByUsername(username);
+			if (member == null) {
+				throw new BusinessException(GlobalExceptionMessage.JWT_CREATION_FAILED);
+			}
 
 			// 기존 토큰 정리 (선택적: 한 사용자당 최대 토큰 수 제한)
-			cleanupOldTokens(member);
+			cleanupOldTokens(username);
 
 			// DB에 RefreshToken 저장
 			LocalDateTime expiresAt = LocalDateTime.now().plusSeconds(refreshTokenExpiration / 1000);
@@ -228,8 +230,6 @@ public class TokenService {
 		}
 	}
 
-
-
 	public String getTokenType(String token) {
 		try {
 			return Jwts.parser()
@@ -282,20 +282,19 @@ public class TokenService {
 			String username = getUsername(accessToken);
 			Long tokenVersion = getTokenVersion(accessToken);
 
-			// 4. DB에서 현재 tokenVersion 조회
-			Member member = memberRepository.findOptionalByUsername(username)
-				.orElse(null);
+			// 4. MemberService를 통해 현재 tokenVersion 조회
+			Long currentTokenVersion = memberService.getTokenVersion(username);
 
-			if (member == null) {
+			if (currentTokenVersion == null) {
 				log.debug("사용자를 찾을 수 없음: {}", username);
 				return false;
 			}
 
 			// 5. tokenVersion 비교
-			boolean isValidVersion = member.getTokenVersion().equals(tokenVersion);
+			boolean isValidVersion = currentTokenVersion.equals(tokenVersion);
 			if (!isValidVersion) {
-				log.debug("토큰 버전 불일치 - DB: {}, Token: {} (사용자: {})", 
-					member.getTokenVersion(), tokenVersion, username);
+				log.debug("토큰 버전 불일치 - DB: {}, Token: {} (사용자: {})",
+					currentTokenVersion, tokenVersion, username);
 			}
 
 			return isValidVersion;
@@ -356,8 +355,10 @@ public class TokenService {
 	}
 
 	public void revokeAllRefreshTokens(String username) {
-		Member member = memberRepository.findOptionalByUsername(username)
-			.orElseThrow(() -> new BusinessException(MemberExceptionMessage.MEMBER_NOT_FOUND));
+		var member = memberService.findByUsername(username);
+		if (member == null) {
+			throw new BusinessException(GlobalExceptionMessage.JWT_VALIDATION_FAILED);
+		}
 
 		refreshTokenRepository.revokeAllByMember(member);
 		log.info("사용자의 모든 RefreshToken 무효화 완료: {}", username);
@@ -369,7 +370,13 @@ public class TokenService {
 	 *
 	 * TODO: 향후 소프트 딜리트 방식으로 개선 예정
 	 */
-	private void cleanupOldTokens(Member member) {
+	private void cleanupOldTokens(String username) {
+		var member = memberService.findByUsername(username);
+		if (member == null) {
+			log.warn("토큰 정리 실패: 사용자를 찾을 수 없음 - {}", username);
+			return;
+		}
+
 		List<RefreshToken> tokens = refreshTokenRepository.findAllByMemberForCleanupWithLock(member);
 
 		int maxSessions = 1; // 1대 디바이스만 허용
@@ -380,16 +387,15 @@ public class TokenService {
 		// 새 로그인 시 기존 모든 토큰 무효화 (1대 디바이스 제한)
 		int tokensToRevokeCount = tokens.size();
 		tokens.forEach(RefreshToken::revoke); // 모든 기존 RefreshToken 무효화
-		
-		// 기존 디바이스의 AccessToken도 즉시 무효화 (tokenVersion 증가)
-		member.logout();
-		memberRepository.save(member);
-		
-		// 이벤트 발행: 트랜잭션 커밋 후 정리 작업 예약
-		eventPublisher.publishEvent(new TokenCleanupEvent(member.getId(), member.getUsername()));
 
-		log.info("1대 디바이스 제한 - 기존 모든 토큰 무효화: {} (RefreshToken: {}개, AccessToken: tokenVersion 증가)", 
-			member.getUsername(), tokensToRevokeCount);
+		// 기존 디바이스의 AccessToken도 즉시 무효화 (MemberService 위임)
+		Long newTokenVersion = memberService.incrementTokenVersion(username);
+
+		// 이벤트 발행: 트랜잭션 커밋 후 정리 작업 예약
+		eventPublisher.publishEvent(new TokenCleanupEvent(member.getId(), username));
+
+		log.info("1대 디바이스 제한 - 기존 모든 토큰 무효화: {} (RefreshToken: {}개, AccessToken: tokenVersion: {})",
+			username, tokensToRevokeCount, newTokenVersion);
 	}
 
 	// 토큰 정리 이벤트
