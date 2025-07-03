@@ -7,9 +7,8 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.stereotype.Component;
 
-import com.example.green.domain.auth.utils.WebUtils;
-
 import com.example.green.domain.auth.service.TokenService;
+import com.example.green.domain.auth.utils.WebUtils;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -49,4 +48,4 @@ public class OAuth2FailureHandler extends SimpleUrlAuthenticationFailureHandler 
 		response.sendRedirect(redirectUrl);
 	}
 }
- 
+

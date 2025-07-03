@@ -379,14 +379,16 @@ public class TokenService {
 
 		List<RefreshToken> tokens = refreshTokenRepository.findAllByMemberForCleanupWithLock(member);
 
-		int maxSessions = 1; // 1대 디바이스만 허용
+		int maxSessions = 3; // 3대 디바이스 허용
 		if (tokens.size() < maxSessions) {
 			return; // 무효화할 토큰 없음
 		}
 
-		// 새 로그인 시 기존 모든 토큰 무효화 (1대 디바이스 제한)
-		int tokensToRevokeCount = tokens.size();
-		tokens.forEach(RefreshToken::revoke); // 모든 기존 RefreshToken 무효화
+		// 새 로그인 시 오래된 토큰 무효화 (3대 디바이스 제한)
+		int tokensToRevokeCount = tokens.size() - maxSessions + 1;
+		tokens.stream()
+			.limit(tokensToRevokeCount)
+			.forEach(RefreshToken::revoke); // 오래된 RefreshToken 무효화
 
 		// 기존 디바이스의 AccessToken도 즉시 무효화 (MemberService 위임)
 		Long newTokenVersion = memberService.incrementTokenVersion(username);
