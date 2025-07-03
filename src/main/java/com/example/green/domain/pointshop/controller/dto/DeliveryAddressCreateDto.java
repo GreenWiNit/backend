@@ -9,7 +9,7 @@ public record DeliveryAddressCreateDto(
 	@Schema(description = "배송 수령자 이름", example = "홍길동")
 	String recipientName,
 	@NotBlank(message = "수령자 전화번호는 필수 정보 입니다.")
-	@Schema(description = "배송 수령자 전화번호", example = "어피치 텀블러")
+	@Schema(description = "배송 수령자 전화번호", example = "010-1234-5678")
 	String phoneNumber,
 	@NotBlank(message = "배송지 도로명 주소는 필수 정보입니다.")
 	@Schema(description = "도로명 주소", example = "OO시 OO구 OO로 000")

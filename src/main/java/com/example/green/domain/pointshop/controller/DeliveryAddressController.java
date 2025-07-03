@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.green.domain.pointshop.controller.docs.DeliveryAddressControllerDocs;
 import com.example.green.domain.pointshop.controller.dto.DeliveryAddressCreateDto;
 import com.example.green.domain.pointshop.controller.message.DeliveryAddressResponseMessage;
 import com.example.green.domain.pointshop.entity.delivery.vo.Address;
@@ -21,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/deliveries/address")
-public class DeliveryAddressController {
+public class DeliveryAddressController implements DeliveryAddressControllerDocs {
 
 	private final DeliveryAddressService deliveryAddressService;
 
