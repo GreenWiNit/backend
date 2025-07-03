@@ -24,19 +24,16 @@ public class Recipient {
 	private static final Pattern PHONE_NUMBER_PATTERN = Pattern.compile(PHONE_NUMBER_REGEX);
 
 	@Column(nullable = false)
-	private Long recipientId;
-	@Column(nullable = false)
 	private String recipientName;
 	@Column(nullable = false)
 	private String phoneNumber;
 
-	public static Recipient of(Long recipientId, String recipientName, String phoneNumber) {
-		validateAutoIncrementId(recipientId, "물품 수령자 ID는 필수 값 입니다.");
+	public static Recipient of(String recipientName, String phoneNumber) {
 		validateEmptyString(recipientName, "물품 수령자 이름은 필수 값 입니다.");
 		validateEmptyString(phoneNumber, "물품 수령자 전화 번호는 필수 값 입니다.");
 		if (!PHONE_NUMBER_PATTERN.matcher(phoneNumber).matches()) {
 			throw new DeliveryAddressException(INVALID_PHONE_NUMBER);
 		}
-		return new Recipient(recipientId, recipientName, phoneNumber);
+		return new Recipient(recipientName, phoneNumber);
 	}
 }

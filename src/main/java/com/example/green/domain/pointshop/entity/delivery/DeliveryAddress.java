@@ -28,17 +28,21 @@ public class DeliveryAddress extends TimeBaseEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "delivery_id")
 	private Long id;
+	@Column(nullable = false)
+	private Long recipientId;
 	private Recipient recipient;
 	private Address address;
 
-	private DeliveryAddress(Recipient recipient, Address address) {
+	private DeliveryAddress(Long recipientId, Recipient recipient, Address address) {
+		validateAutoIncrementId(recipientId, "물품 수령자 ID는 필수 값 입니다.");
+		validateNullData(recipient, "물품 수령자 정보는 필수 값 입니다.");
+		validateNullData(address, "물품 수령 주소 정보는 필수 값 입니다.");
+		this.recipientId = recipientId;
 		this.recipient = recipient;
 		this.address = address;
 	}
 
-	public static DeliveryAddress create(Recipient recipient, Address address) {
-		validateNullData(recipient, "물품 수령자 정보는 필수 값 입니다.");
-		validateNullData(address, "물품 수령 주소 정보는 필수 값 입니다.");
-		return new DeliveryAddress(recipient, address);
+	public static DeliveryAddress create(Long recipientId, Recipient recipient, Address address) {
+		return new DeliveryAddress(recipientId, recipient, address);
 	}
 }

@@ -24,7 +24,7 @@ class RecipientTest {
 	void 수령자_전화번호는_유효한_형식이어야_한다(String invalidPhoneNumber) {
 		// given
 		// when & then
-		assertThatThrownBy(() -> Recipient.of(1L, "나", invalidPhoneNumber))
+		assertThatThrownBy(() -> Recipient.of("나", invalidPhoneNumber))
 			.isInstanceOf(DeliveryAddressException.class)
 			.hasFieldOrPropertyWithValue("exceptionMessage", INVALID_PHONE_NUMBER);
 	}
