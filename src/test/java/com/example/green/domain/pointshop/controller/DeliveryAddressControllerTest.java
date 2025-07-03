@@ -12,6 +12,7 @@ import com.example.green.domain.pointshop.controller.dto.DeliveryAddressCreateDt
 import com.example.green.domain.pointshop.controller.request.DeliveryAddressRequest;
 import com.example.green.domain.pointshop.service.DeliveryAddressService;
 import com.example.green.domain.pointshop.service.command.DeliveryAddressCreateCommand;
+import com.example.green.domain.pointshop.service.result.DeliveryResult;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.template.base.BaseControllerUnitTest;
 
@@ -25,7 +26,7 @@ class DeliveryAddressControllerTest extends BaseControllerUnitTest {
 	void 배송지_정보_저장_요청에_성공한다() {
 		// given
 		DeliveryAddressCreateDto createDto = getCreateDto();
-		when(deliveryAddressService.saveForSingleAddress(any(DeliveryAddressCreateCommand.class))).thenReturn(1L);
+		when(deliveryAddressService.saveSingleAddress(any(DeliveryAddressCreateCommand.class))).thenReturn(1L);
 
 		// when
 		ApiTemplate<Long> response = DeliveryAddressRequest.create(createDto);
@@ -33,6 +34,20 @@ class DeliveryAddressControllerTest extends BaseControllerUnitTest {
 		// then
 		assertThat(response.message()).isEqualTo(DELIVERY_ADDRESS_ADD_SUCCESS.getMessage());
 		assertThat(response.result()).isEqualTo(1L);
+	}
+
+	@Test
+	void 베송지_정보를_조회한다() {
+		// given
+		DeliveryResult mockDeliveryResult = new DeliveryResult(1L, "이름", "전화번호", "도로명", "상세주소", "우편번호");
+		when(deliveryAddressService.getDeliveryAddress(anyLong())).thenReturn(mockDeliveryResult);
+
+		// when
+		ApiTemplate<DeliveryResult> response = DeliveryAddressRequest.get();
+
+		// then
+		assertThat(response.message()).isEqualTo(DELIVERY_ADDRESS_GET_SUCCESS.getMessage());
+		assertThat(response.result()).usingRecursiveComparison().isEqualTo(mockDeliveryResult);
 	}
 
 	private static DeliveryAddressCreateDto getCreateDto() {
