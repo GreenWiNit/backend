@@ -17,7 +17,7 @@ public class Pagination {
 	private Pagination(long totalElements, int currentPage, int pageSize) {
 		this.totalElements = Math.max(0, totalElements);
 		this.currentPage = Math.max(1, currentPage);
-		this.pageSize = Math.min(Math.max(1, pageSize), MAX_SIZE);
+		this.pageSize = Math.min(pageSize, MAX_SIZE);
 	}
 
 	public static Pagination of(long totalElements, Integer currentPage, Integer pageSize) {
