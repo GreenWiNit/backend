@@ -21,16 +21,15 @@ public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long
 	@Query("SELECT rt FROM RefreshToken rt WHERE rt.tokenValue = :tokenValue AND rt.isRevoked = false")
 	Optional<RefreshToken> findByTokenValueAndNotRevoked(@Param("tokenValue") String tokenValue);
 
-	// 멤버의 모든 유효한 RefreshToken 조회 (생성 순서로 정렬) - 일반 조회
-	@Query("SELECT rt FROM RefreshToken rt WHERE rt.member = :member AND rt.isRevoked = false ORDER BY rt.id ASC")
-	List<RefreshToken> findAllByMemberAndNotRevoked(@Param("member") Member member);
-
 	// username으로 모든 유효한 RefreshToken 조회 (Auth 서비스용)
-	@Query("SELECT rt FROM RefreshToken rt WHERE rt.member.username = :username AND rt.isRevoked = false ORDER BY rt.id ASC")
+	@Query("SELECT rt FROM RefreshToken rt " + "WHERE rt.member.username = :username AND rt.isRevoked = false "
+		   + "ORDER BY rt.id ASC")
 	List<RefreshToken> findAllByUsernameAndNotRevoked(@Param("username") String username);
 
 	// username으로 가장 최신 RefreshToken 조회 (로그아웃용)
-	@Query("SELECT rt FROM RefreshToken rt WHERE rt.member.username = :username AND rt.isRevoked = false ORDER BY rt.tokenVersion DESC, rt.id DESC")
+	@Query("SELECT rt FROM RefreshToken rt "
+		   + "WHERE rt.member.username = :username AND rt.isRevoked = false "
+		   + "ORDER BY rt.tokenVersion DESC, rt.id DESC")
 	Optional<RefreshToken> findLatestByUsernameAndNotRevoked(@Param("username") String username);
 
 	// 토큰 정리 전용: 비관적 락으로 복합 로직의 원자성 보장
@@ -40,12 +39,16 @@ public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long
 
 	// 사용자의 모든 RefreshToken 무효화 (username 기반)
 	@Modifying
-	@Query("UPDATE RefreshToken rt SET rt.isRevoked = true WHERE rt.member.username = :username AND rt.isRevoked = false")
+	@Query(
+		"UPDATE RefreshToken rt " + "SET rt.isRevoked = true "
+		+ "WHERE rt.member.username = :username AND rt.isRevoked = false"
+	)
 	void revokeAllByUsername(@Param("username") String username);
 
 	// 특정 사용자의 만료된 토큰 삭제 (username 기반)
 	@Modifying
-	@Query("DELETE FROM RefreshToken rt WHERE rt.member.username = :username AND (rt.expiresAt < :now OR rt.isRevoked = true)")
+	@Query("DELETE FROM RefreshToken rt " + "WHERE rt.member.username = :username "
+		   + "AND (rt.expiresAt < :now OR rt.isRevoked = true)")
 	void deleteExpiredAndRevokedTokensByUsername(@Param("username") String username, @Param("now") LocalDateTime now);
 
 	// 만료된 토큰 일괄 삭제 (스케줄러용)
