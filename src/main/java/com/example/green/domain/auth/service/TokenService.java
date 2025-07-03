@@ -81,10 +81,26 @@ public class TokenService {
 		this.eventPublisher = eventPublisher;
 	}
 
+	/**
+	 * 사용자의 최신 tokenVersion 조회 (RefreshToken 기반)
+	 * MemberService 의존성 제거를 위해 Auth 도메인 내에서 해결
+	 */
+	private Long getCurrentTokenVersion(String username) {
+		List<RefreshToken> tokens = refreshTokenRepository.findAllByUsernameAndNotRevoked(username);
+		if (tokens.isEmpty()) {
+			return 1L; // 기본값
+		}
+		// 가장 최신 tokenVersion 반환
+		return tokens.stream()
+			.mapToLong(RefreshToken::getTokenVersion)
+			.max()
+			.orElse(1L);
+	}
+
 	public String createAccessToken(String username, String role) {
 		try {
-			// Member 도메인 서비스를 통해 tokenVersion 조회
-			Long tokenVersion = memberService.getTokenVersion(username);
+			// RefreshToken에서 최신 tokenVersion 조회 (Auth 도메인 독립성)
+			Long tokenVersion = getCurrentTokenVersion(username);
 			if (tokenVersion == null) {
 				throw new BusinessException(GlobalExceptionMessage.JWT_CREATION_FAILED);
 			}
@@ -282,11 +298,11 @@ public class TokenService {
 			String username = getUsername(accessToken);
 			Long tokenVersion = getTokenVersion(accessToken);
 
-			// 4. MemberService를 통해 현재 tokenVersion 조회
-			Long currentTokenVersion = memberService.getTokenVersion(username);
+			// 4. RefreshToken에서 현재 tokenVersion 조회 (Auth 도메인 독립성)
+			Long currentTokenVersion = getCurrentTokenVersion(username);
 
 			if (currentTokenVersion == null) {
-				log.debug("사용자를 찾을 수 없음: {}", username);
+				log.debug("사용자의 토큰을 찾을 수 없음: {}", username);
 				return false;
 			}
 
@@ -355,12 +371,8 @@ public class TokenService {
 	}
 
 	public void revokeAllRefreshTokens(String username) {
-		var member = memberService.findByUsername(username);
-		if (member == null) {
-			throw new BusinessException(GlobalExceptionMessage.JWT_VALIDATION_FAILED);
-		}
-
-		refreshTokenRepository.revokeAllByMember(member);
+		// Auth 도메인 독립성: username으로 직접 무효화
+		refreshTokenRepository.revokeAllByUsername(username);
 		log.info("사용자의 모든 RefreshToken 무효화 완료: {}", username);
 	}
 
@@ -386,18 +398,29 @@ public class TokenService {
 
 		// 새 로그인 시 오래된 토큰 무효화 (3대 디바이스 제한)
 		int tokensToRevokeCount = tokens.size() - maxSessions + 1;
+		// 1. 오래된 RefreshToken 무효화
 		tokens.stream()
 			.limit(tokensToRevokeCount)
-			.forEach(RefreshToken::revoke); // 오래된 RefreshToken 무효화
+			.forEach(RefreshToken::revoke);
 
-		// 기존 디바이스의 AccessToken도 즉시 무효화 (MemberService 위임)
-		Long newTokenVersion = memberService.incrementTokenVersion(username);
+		// 2. 남은 유효한 토큰들의 tokenVersion 증가 -> 기존 AccessToken 무효화
+		Long maxTokenVersion = null;
+		List<RefreshToken> remainingTokens = tokens.stream()
+			.skip(tokensToRevokeCount)
+			.toList();
+		for (RefreshToken token : remainingTokens) {
+			Long newTokenVersion = token.logout(); // tokenVersion++
+			maxTokenVersion = newTokenVersion;
+		}
+
+		// 3. 변경된 토큰들 저장
+		refreshTokenRepository.saveAll(remainingTokens);
 
 		// 이벤트 발행: 트랜잭션 커밋 후 정리 작업 예약
-		eventPublisher.publishEvent(new TokenCleanupEvent(member.getId(), username));
+		eventPublisher.publishEvent(new TokenCleanupEvent(null, username)); // memberId 불필요 (Auth 도메인 독립성)
 
-		log.info("1대 디바이스 제한 - 기존 모든 토큰 무효화: {} (RefreshToken: {}개, AccessToken: tokenVersion: {})",
-			username, tokensToRevokeCount, newTokenVersion);
+		log.info("3대 디바이스 제한 - 토큰 무효화 완료: {} (RefreshToken: {}개 revoke, AccessToken: tokenVersion {}로 무효화)",
+			username, tokensToRevokeCount, maxTokenVersion);
 	}
 
 	// 토큰 정리 이벤트

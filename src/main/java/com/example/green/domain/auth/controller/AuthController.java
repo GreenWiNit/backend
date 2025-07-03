@@ -17,12 +17,12 @@ import com.example.green.domain.auth.model.vo.TempToken;
 import com.example.green.domain.auth.service.AuthService;
 import com.example.green.domain.auth.service.TokenService;
 import com.example.green.domain.auth.utils.WebUtils;
-import com.example.green.domain.member.service.MemberService;
 import com.example.green.global.annotation.AuthenticatedApi;
 import com.example.green.global.annotation.PublicApi;
 import com.example.green.global.security.PrincipalDetails;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -37,6 +37,7 @@ import lombok.extern.slf4j.Slf4j;
 
 /**
  * 인증 관련 API 컨트롤러
+ * Auth 도메인 서비스(AuthService)를 통해서만 비즈니스 로직 처리
  */
 @Tag(name = "인증 API", description = "OAuth2 로그인, 회원가입, 토큰 관리 등 인증 관련 API")
 @Slf4j
@@ -49,11 +50,12 @@ public class AuthController {
 
 	private final AuthService authService;
 	private final TokenService tokenService;
-	private final MemberService memberService;
 
 	@PublicApi
-	@Operation(summary = "회원가입", description = "OAuth2 로그인 후 신규 사용자의 회원가입을 처리합니다. "
-		+ "임시 토큰에서 Google 계정 정보를 추출하고, 추가 정보를 받아 회원 등록을 완료합니다.")
+	@Operation(
+		summary = "회원가입",
+		description = "OAuth2 로그인 후 신규 사용자의 회원가입을 처리합니다. " + "임시 토큰에서 Google 계정 정보를 추출하고, 추가 정보를 받아 회원 등록을 완료합니다."
+	)
 	@ApiResponses(value = {
 		@ApiResponse(
 			responseCode = "200",
@@ -61,54 +63,80 @@ public class AuthController {
 			content = @Content(
 				mediaType = "application/json",
 				schema = @Schema(implementation = TokenResponseDto.class),
-				examples = @ExampleObject(
-					value = """
-						{"accessToken": "eyJhbGciOiJIUzI1NiJ9...",
-						"username": "google_123456789",
-						"userName": "홍길동"
-						}
-						"""))),
+				examples = @ExampleObject(value = """
+					{
+					"accessToken": "eyJhbGciOiJIUzI1NiJ9...",
+					"username": "google_123456789",
+					"userName": "홍길동"}
+					"""))),
 		@ApiResponse(
 			responseCode = "400",
 			description = "잘못된 요청 (임시 토큰 만료, 필수 필드 누락 등)",
 			content = @Content(
 				mediaType = "application/json",
-				examples = @ExampleObject(
-					value = """
-						{
-						"error": "INVALID_REQUEST",
-						"message": "임시 토큰이 만료되었습니다."
-						}
-						""")))})
+				examples = @ExampleObject(value = """
+					{
+					"error": "INVALID_REQUEST",
+					"message": "임시 토큰이 만료되었습니다."
+					}
+					""")))
+	})
 	@PostMapping("/signup")
-	public ResponseEntity<TokenResponseDto> signup(@RequestBody SignupRequestDto request,
-		HttpServletRequest httpRequest, HttpServletResponse response) {
-		log.info("[SIGNUP] tempToken={}, nickname={} ", request.tempToken(), request.nickname());
+	public ResponseEntity<TokenResponseDto> signup(
+		@Parameter(
+			description = "회원가입 요청 정보 (임시 토큰, 닉네임, 프로필 이미지 URL)",
+			required = true,
+			content = @Content(
+				schema = @Schema(implementation = SignupRequestDto.class),
+				examples = @ExampleObject(value = """
+					{
+							"tempToken": "eyJhbGciOiJIUzI1NiJ9...",
+							"nickname": "홍길동",
+							"profileImageUrl": "https://example.com/profile.jpg"
+							}
+					""")
+			)
+		)
+		@RequestBody SignupRequestDto request,
+		HttpServletRequest httpRequest,
+		HttpServletResponse response
+	) {
+		log.info("[SIGNUP] tempToken={}, nickname={}", request.tempToken(), request.nickname());
 
 		TempToken tempToken = TempToken.from(request.tempToken(), tokenService);
 		TempTokenInfoDto tempInfo = tempToken.extractUserInfo();
 
-		String username = memberService.signupFromOAuth2(tempInfo.getProvider(), tempInfo.getProviderId(),
-			tempInfo.getName(), tempInfo.getEmail(), request.nickname(), request.profileImageUrl());
+		// Auth 도메인 서비스를 통해 회원가입 처리
+		String username = authService.signup(tempInfo, request.nickname(), request.profileImageUrl());
 
-		// RefreshToken 생성 및 쿠키 설정
-		String refreshTokenString = tokenService.createRefreshToken(username, WebUtils.extractDeviceInfo(httpRequest),
-			WebUtils.extractClientIp(httpRequest));
-		Cookie cookie = WebUtils.createRefreshTokenCookie(refreshTokenString, WebUtils.isSecureRequest(httpRequest),
-			REFRESH_TOKEN_MAX_AGE);
+		// RefreshToken 먼저 생성 (일관성 유지)
+		String refreshTokenString = tokenService.createRefreshToken(
+			username,
+			WebUtils.extractDeviceInfo(httpRequest),
+			WebUtils.extractClientIp(httpRequest)
+		);
+		Cookie cookie = WebUtils.createRefreshTokenCookie(
+			refreshTokenString,
+			WebUtils.isSecureRequest(httpRequest),
+			REFRESH_TOKEN_MAX_AGE
+		);
 		response.addCookie(cookie);
 
-		// AccessToken 생성
+		// AccessToken 나중 생성
 		String accessTokenString = tokenService.createAccessToken(username, ROLE_USER);
 		AccessToken accessToken = AccessToken.from(accessTokenString, tokenService);
 
-		log.info("[SIGNUP] completed for username={} ", username);
-		return ResponseEntity.ok(new TokenResponseDto(accessToken.getValue(), username, tempToken.getName()));
+		log.info("[SIGNUP] completed for username={}", username);
+		return ResponseEntity.ok(new TokenResponseDto(
+			accessToken.getValue(),
+			username,
+			tempToken.getName()
+		));
 	}
 
 	@PublicApi
-	@Operation(summary = "AccessToken 갱신", description = "RefreshToken(쿠키)을 사용하여 만료된 AccessToken을 "
-		+ "새로 발급받습니다. RefreshToken은 HTTP-Only 쿠키로 자동 전송됩니다.")
+	@Operation(summary = "AccessToken 갱신",
+		description = "RefreshToken(쿠키)을 사용하여 만료된 AccessToken을 " + "새로 발급받습니다. RefreshToken은 HTTP-Only 쿠키로 자동 전송됩니다.")
 	@ApiResponses(value = {
 		@ApiResponse(
 			responseCode = "200",
@@ -125,8 +153,7 @@ public class AuthController {
 						}
 						"""
 				)
-			)
-		),
+			)),
 		@ApiResponse(
 			responseCode = "400",
 			description = "RefreshToken이 없거나 유효하지 않음",
