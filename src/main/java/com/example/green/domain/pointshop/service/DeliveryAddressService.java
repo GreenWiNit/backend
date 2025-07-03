@@ -9,6 +9,7 @@ import com.example.green.domain.pointshop.entity.delivery.DeliveryAddress;
 import com.example.green.domain.pointshop.exception.deliveryaddress.DeliveryAddressException;
 import com.example.green.domain.pointshop.repository.DeliveryAddressRepository;
 import com.example.green.domain.pointshop.service.command.DeliveryAddressCreateCommand;
+import com.example.green.domain.pointshop.service.result.DeliveryResult;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,7 +20,8 @@ public class DeliveryAddressService {
 	private final DeliveryAddressRepository deliveryAddressRepository;
 
 	@Transactional
-	public Long saveForSingleAddress(DeliveryAddressCreateCommand command) {
+	public Long saveSingleAddress(DeliveryAddressCreateCommand command) {
+		// todo: 전화번호 인증 확인하기
 		validateExistsDeliveryAddress(command.recipientId());
 		DeliveryAddress deliveryAddress = DeliveryAddress.create(
 			command.recipientId(),
@@ -35,5 +37,15 @@ public class DeliveryAddressService {
 		if (deliveryAddressRepository.existsByRecipientId(recipientId)) {
 			throw new DeliveryAddressException(DELIVERY_ADDRESS_ALREADY_EXISTS);
 		}
+	}
+
+	public DeliveryResult getDeliveryAddress(Long recipientId) {
+		return deliveryAddressRepository.findByRecipientId(recipientId)
+			.map(deliveryAddress -> DeliveryResult.of(
+				deliveryAddress.getRecipientId(),
+				deliveryAddress.getRecipient(),
+				deliveryAddress.getAddress())
+			)
+			.orElseThrow(() -> new DeliveryAddressException(NOT_FOUND_DELIVERY_ADDRESS));
 	}
 }
