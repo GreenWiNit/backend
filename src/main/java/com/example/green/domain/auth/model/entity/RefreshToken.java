@@ -27,6 +27,8 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 public class RefreshToken extends BaseEntity {
 
+	private static final Long LOGOUT_ALL_DEVICES_VERSION_INCREMENT = 1000L;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "REFRESH_TOKEN_ID")
@@ -93,7 +95,7 @@ public class RefreshToken extends BaseEntity {
 
 	// 모든 디바이스 로그아웃: tokenVersion을 크게 증가시켜 모든 AccessToken 무효화
 	public Long logoutAllDevices() {
-		this.tokenVersion += 1000L; // 충분히 큰 값으로 증가시켜 모든 기존 토큰 무효화
+		this.tokenVersion += LOGOUT_ALL_DEVICES_VERSION_INCREMENT; // 충분히 큰 값으로 증가시켜 모든 기존 토큰 무효화 시킴.
 		return this.tokenVersion;
 	}
 }
