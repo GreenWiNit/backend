@@ -115,6 +115,32 @@ class PointProductServiceTest {
 		verify(mockPointProduct).markDeleted();
 	}
 
+	@Test
+	void 포인트_상품을_전시한다() {
+		// given
+		PointProduct mockPointProduct = mock(PointProduct.class);
+		when(pointProductDomainService.getPointProduct(anyLong())).thenReturn(mockPointProduct);
+
+		// when
+		pointProductService.showDisplay(1L);
+
+		// then
+		verify(mockPointProduct).showDisplay();
+	}
+
+	@Test
+	void 포인트_상품을_미전시_처리한다() {
+		// given
+		PointProduct mockPointProduct = mock(PointProduct.class);
+		when(pointProductDomainService.getPointProduct(anyLong())).thenReturn(mockPointProduct);
+
+		// when
+		pointProductService.hideDisplay(1L);
+
+		// then
+		verify(mockPointProduct).hideDisplay();
+	}
+
 	private PointProductUpdateCommand getUpdateCommand() {
 		return new PointProductUpdateCommand(
 			new Code("PRD-AA-001"),
