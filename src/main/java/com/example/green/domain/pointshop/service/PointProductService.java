@@ -67,4 +67,14 @@ public class PointProductService {
 		PointProduct pointProduct = pointProductDomainService.getPointProduct(pointProductId);
 		pointProduct.markDeleted();
 	}
+
+	public void showDisplay(Long pointProductId) {
+		PointProduct pointProduct = pointProductDomainService.getPointProduct(pointProductId);
+		pointProduct.showDisplay();
+	}
+
+	public void hideDisplay(Long pointProductId) {
+		PointProduct pointProduct = pointProductDomainService.getPointProduct(pointProductId);
+		pointProduct.hideDisplay();
+	}
 }

@@ -51,4 +51,20 @@ public interface PointProductControllerDocs {
 		content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
 	)
 	NoContent deletePointProduct(Long pointProductId);
+
+	@Operation(summary = "포인트 상품 전시", description = "포인트 상품을 전시합니다.")
+	@ApiResponse(responseCode = "200", description = "포인트 상품이 전시 상태가 됐습니다.")
+	@ApiResponse(
+		responseCode = "404", description = "포인트 상품을 찾을 수 없습니다.",
+		content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+	)
+	NoContent showDisplay(Long pointProductId);
+
+	@Operation(summary = "포인트 상품 미전시", description = "포인트 상품을 미전시 처리합니다.")
+	@ApiResponse(responseCode = "200", description = "포인트 상품이 미전시 상태가 됐습니다.")
+	@ApiResponse(
+		responseCode = "404", description = "포인트 상품을 찾을 수 없습니다.",
+		content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+	)
+	NoContent hideDisplay(Long pointProductId);
 }

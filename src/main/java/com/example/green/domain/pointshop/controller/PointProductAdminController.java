@@ -8,6 +8,7 @@ import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -34,11 +35,13 @@ import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.NoContent;
 import com.example.green.global.api.page.PageTemplate;
 import com.example.green.global.excel.core.ExcelDownloader;
+import com.example.green.global.security.annotation.AdminApi;
 
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+@AdminApi
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/point-products")
@@ -101,5 +104,17 @@ public class PointProductAdminController implements PointProductControllerDocs {
 	public NoContent deletePointProduct(@PathVariable Long pointProductId) {
 		pointProductService.delete(pointProductId);
 		return NoContent.ok(POINT_PRODUCT_DELETE_SUCCESS);
+	}
+
+	@PatchMapping("/{pointProductId}/show")
+	public NoContent showDisplay(@PathVariable Long pointProductId) {
+		pointProductService.showDisplay(pointProductId);
+		return NoContent.ok(DISPLAY_SHOW_SUCCESS);
+	}
+
+	@PatchMapping("/{pointProductId}/hide")
+	public NoContent hideDisplay(@PathVariable Long pointProductId) {
+		pointProductService.hideDisplay(pointProductId);
+		return NoContent.ok(DISPLAY_HIDE_SUCCESS);
 	}
 }
