@@ -23,13 +23,13 @@ public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long
 
 	// username으로 모든 유효한 RefreshToken 조회 (Auth 서비스용)
 	@Query("SELECT rt FROM RefreshToken rt " + "WHERE rt.member.username = :username AND rt.isRevoked = false "
-		   + "ORDER BY rt.id ASC")
+		+ "ORDER BY rt.id ASC")
 	List<RefreshToken> findAllByUsernameAndNotRevoked(@Param("username") String username);
 
 	// username으로 가장 최신 RefreshToken 조회 (로그아웃용)
 	@Query("SELECT rt FROM RefreshToken rt "
-		   + "WHERE rt.member.username = :username AND rt.isRevoked = false "
-		   + "ORDER BY rt.tokenVersion DESC, rt.id DESC")
+		+ "WHERE rt.member.username = :username AND rt.isRevoked = false "
+		+ "ORDER BY rt.tokenVersion DESC, rt.id DESC")
 	Optional<RefreshToken> findLatestByUsernameAndNotRevoked(@Param("username") String username);
 
 	// 토큰 정리 전용: 비관적 락으로 복합 로직의 원자성 보장
@@ -48,7 +48,7 @@ public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long
 	// 특정 사용자의 만료된 토큰 삭제 (username 기반)
 	@Modifying
 	@Query("DELETE FROM RefreshToken rt " + "WHERE rt.member.username = :username "
-		   + "AND (rt.expiresAt < :now OR rt.isRevoked = true)")
+		+ "AND (rt.expiresAt < :now OR rt.isRevoked = true)")
 	void deleteExpiredAndRevokedTokensByUsername(@Param("username") String username, @Param("now") LocalDateTime now);
 
 	// 만료된 토큰 일괄 삭제 (스케줄러용)
