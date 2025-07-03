@@ -1,7 +1,5 @@
 package com.example.green.domain.auth.model.vo;
 
-import static com.example.green.domain.auth.constants.AuthConstants.*;
-
 import com.example.green.domain.auth.service.TokenService;
 import com.example.green.global.error.exception.BusinessException;
 import com.example.green.global.error.exception.GlobalExceptionMessage;

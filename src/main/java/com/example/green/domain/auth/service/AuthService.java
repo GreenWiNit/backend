@@ -3,7 +3,6 @@ package com.example.green.domain.auth.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.green.domain.auth.dto.TempTokenInfoDto;
 import com.example.green.domain.member.service.MemberService;
 
 import lombok.RequiredArgsConstructor;
@@ -21,8 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 public class AuthService {
 
 	private final MemberService memberService;
-
-
 
 	/**
 	 * 단일 디바이스 로그아웃 (Member 도메인에 위임)
