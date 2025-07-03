@@ -3,7 +3,6 @@ package com.example.green.domain.info.service;
 import com.example.green.domain.info.dto.InfoRequest;
 import com.example.green.domain.info.dto.admin.InfoDetailResponseByAdmin;
 import com.example.green.domain.info.dto.admin.InfoSearchListResponseByAdmin;
-import com.example.green.domain.info.dto.admin.InfoSearchResponseByAdmin;
 import com.example.green.domain.info.dto.user.InfoDetailResponseByUser;
 import com.example.green.domain.info.dto.user.InfoSearchListResponseByUser;
 
@@ -16,7 +15,7 @@ public interface InfoService {
 	/**
 	 * 관리자 Info 상세 페이지 조회
 	 */
-	InfoSearchResponseByAdmin getInfoDetailForAdmin(String id);
+	InfoDetailResponseByAdmin getInfoDetailForAdmin(String infoId);
 
 	/**
 	 * 관리자 Info 등록
@@ -26,7 +25,7 @@ public interface InfoService {
 	/**
 	 * 관리자 Info 수정
 	 */
-	InfoDetailResponseByAdmin updateInfo(String id, InfoRequest updateRequest);
+	InfoDetailResponseByAdmin updateInfo(String infoId, InfoRequest updateRequest);
 
 	/**
 	 * 관리자 Info 삭제
