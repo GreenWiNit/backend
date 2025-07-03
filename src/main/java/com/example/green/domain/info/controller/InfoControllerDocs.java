@@ -7,7 +7,6 @@ import com.example.green.domain.info.dto.user.InfoDetailResponseByUser;
 import com.example.green.domain.info.dto.user.InfoSearchListResponseByUser;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.NoContent;
-import com.example.green.global.docs.ApiError400;
 import com.example.green.global.docs.ApiErrorStandard;
 import com.example.green.global.error.dto.DetailedExceptionResponse;
 
@@ -100,8 +99,61 @@ public interface InfoControllerDocs {
 
 	@Operation(summary = "관리자 Info 수정", description = "관리자가 정보공유 ID로 게시글을 수정합니다.")
 	@ApiErrorStandard
-	@ApiError400
-	@ApiResponse(responseCode = "200", description = "관리자 게시글 수정 성공", useReturnTypeSchema = true)
+	@ApiResponses({
+		@ApiResponse(
+			responseCode = "200",
+			description = "관리자 게시글 수정 성공",
+			useReturnTypeSchema = true
+		),
+		@ApiResponse(
+			responseCode = "400",
+			description = "잘못된 요청 – 유효성 검증 실패 (에러는 배열로 반환 - 가장 처음 것이 우선순위)",
+			content = @Content(
+				mediaType = "application/json",
+				schema = @Schema(implementation = DetailedExceptionResponse.class),
+				examples = @ExampleObject(
+					name = "ValidationError",
+					summary = "요청 유효성 검증 실패 예시",
+					value = """
+						{
+						  "success": false,
+						  "message": "요청 데이터에 유효성 검증 오류가 있습니다.",
+						  "errors": [
+							{
+							  "field": "title",
+							  "message": "제목을 입력해주세요."
+							},
+							{
+							  "field": "title",
+							  "message": "제목은 최소 1자 이상, 최대 30자 이하까지 등록할 수 있습니다."
+							},
+							{
+							  "field": "content",
+							  "message": "내용을 입력해주세요."
+							},
+							{
+							  "field": "content",
+							  "message": "내용은 최소 10자 이상, 최대 1000자 이하까지 등록할 수 있습니다."
+							},
+							{
+							  "field": "infoCategory",
+							  "message": "카테고리가 선택되지 않았습니다."
+							},
+							{
+							  "field": "imageUrl",
+							  "message": "이미지가 첨부되지 않았습니다."
+							},
+							{
+							  "field": "isDisplay",
+							  "reason": "전시여부를 선택해주세요."
+							}
+						  ]
+						}
+						"""
+				)
+			)
+		),
+	})
 	ApiTemplate<InfoDetailResponseByAdmin> updateInfo(
 		@Parameter(name = "infoId", description = "수정할 게시글의 ID",
 			in = ParameterIn.PATH, required = true, example = "P000001") String infoId,
