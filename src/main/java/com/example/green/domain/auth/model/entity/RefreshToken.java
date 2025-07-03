@@ -51,6 +51,9 @@ public class RefreshToken extends BaseEntity {
 	@Column(name = "IS_REVOKED", nullable = false)
 	private Boolean isRevoked = false;
 
+	@Column(name = "TOKEN_VERSION", nullable = false)
+	private Long tokenVersion = 1L; // AccessToken 무효화를 위한 토큰 버전
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "MEMBER_ID", nullable = false)
 	private Member member;
@@ -64,6 +67,7 @@ public class RefreshToken extends BaseEntity {
 		refreshToken.deviceInfo = deviceInfo;
 		refreshToken.ipAddress = ipAddress;
 		refreshToken.isRevoked = false;
+		refreshToken.tokenVersion = 1L;
 		return refreshToken;
 	}
 
@@ -79,5 +83,17 @@ public class RefreshToken extends BaseEntity {
 	// 만료 여부 확인
 	public boolean isExpired() {
 		return expiresAt.isBefore(LocalDateTime.now());
+	}
+
+	// 단일 디바이스 로그아웃: 현재 RefreshToken의 tokenVersion 증가
+	public Long logout() {
+		this.tokenVersion++;
+		return this.tokenVersion;
+	}
+
+	// 모든 디바이스 로그아웃: tokenVersion을 크게 증가시켜 모든 AccessToken 무효화
+	public Long logoutAllDevices() {
+		this.tokenVersion += 1000L; // 충분히 큰 값으로 증가시켜 모든 기존 토큰 무효화
+		return this.tokenVersion;
 	}
 }
