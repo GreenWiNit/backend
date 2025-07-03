@@ -13,10 +13,10 @@ class DeliveryAddressTest {
 	void 배송지_주소를_생성한다() {
 		// given
 		Address address = Address.of("부산광역시 남구 유엔평화로 29번길 54", "307호", "48503");
-		Recipient recipient = Recipient.of(1L, "김지환", "010-7553-6092");
+		Recipient recipient = Recipient.of("김지환", "010-7553-6092");
 
 		// when
-		DeliveryAddress deliveryAddress = DeliveryAddress.create(recipient, address);
+		DeliveryAddress deliveryAddress = DeliveryAddress.create(1L, recipient, address);
 
 		// then
 		assertThat(deliveryAddress.getRecipient()).isEqualTo(recipient);
