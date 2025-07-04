@@ -109,7 +109,7 @@ public class AuthController {
 		// Auth 도메인 서비스를 통해 회원가입 처리
 		String username = authService.signup(tempInfo, request.nickname(), request.profileImageUrl());
 
-		// RefreshToken 먼저 생성 (일관성 유지)
+		// RefreshToken 먼저 생성
 		String refreshTokenString = tokenService.createRefreshToken(
 			username,
 			WebUtils.extractDeviceInfo(httpRequest),
