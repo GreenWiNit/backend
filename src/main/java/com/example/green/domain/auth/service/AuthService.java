@@ -33,7 +33,7 @@ public class AuthService {
 	private final RefreshTokenRepository refreshTokenRepository;
 
 	/**
-	 * OAuth2 회원가입 처리 (Auth 도메인의 핵심 책임)
+	 * OAuth2 회원가입 처리
 	 * TempToken에서 추출한 정보와 사용자 입력 정보를 결합하여 회원가입 처리
 	 */
 	public String signup(TempTokenInfoDto tempInfo, String nickname, String profileImageUrl) {
@@ -55,7 +55,7 @@ public class AuthService {
 	}
 
 	/**
-	 * 단일 디바이스 로그아웃 (Auth 도메인에서 직접 관리)
+	 * 단일 디바이스 로그아웃
 	 */
 	@Retryable(
 		retryFor = {OptimisticLockException.class, ObjectOptimisticLockingFailureException.class},
@@ -76,7 +76,7 @@ public class AuthService {
 	}
 
 	/**
-	 * 모든 디바이스 로그아웃 (Auth 도메인에서 직접 관리)
+	 * 모든 디바이스 로그아웃
 	 */
 	@Retryable(
 		retryFor = {OptimisticLockException.class, ObjectOptimisticLockingFailureException.class},
