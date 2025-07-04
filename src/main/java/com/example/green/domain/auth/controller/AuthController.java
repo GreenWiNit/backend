@@ -17,9 +17,9 @@ import com.example.green.domain.auth.model.vo.TempToken;
 import com.example.green.domain.auth.service.AuthService;
 import com.example.green.domain.auth.service.TokenService;
 import com.example.green.domain.auth.utils.WebUtils;
-import com.example.green.global.annotation.AuthenticatedApi;
-import com.example.green.global.annotation.PublicApi;
 import com.example.green.global.security.PrincipalDetails;
+import com.example.green.global.security.annotation.AuthenticatedApi;
+import com.example.green.global.security.annotation.PublicApi;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

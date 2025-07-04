@@ -17,11 +17,11 @@ import com.example.green.domain.example.api.ExamplePostResponseMessage;
 import com.example.green.domain.example.dto.PostListResponse;
 import com.example.green.domain.example.dto.PostRequest;
 import com.example.green.domain.example.dto.PostResponse;
-import com.example.green.global.annotation.AdminApi;
-import com.example.green.global.annotation.AuthenticatedApi;
-import com.example.green.global.annotation.PublicApi;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.NoContent;
+import com.example.green.global.security.annotation.AdminApi;
+import com.example.green.global.security.annotation.AuthenticatedApi;
+import com.example.green.global.security.annotation.PublicApi;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
