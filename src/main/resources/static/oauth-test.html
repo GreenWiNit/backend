@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google OAuth2 + JWT AccessToken/RefreshToken 테스트</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #fafafa;
+        }
+        button {
+            background-color: #4285f4;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+        button:hover {
+            background-color: #357ae8;
+        }
+        .success {
+            color: #28a745;
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .error {
+            color: #dc3545;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .info {
+            color: #0c5460;
+            background-color: #d1ecf1;
+            border: 1px solid #bee5eb;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .warning {
+            color: #856404;
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        pre {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 10px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .status {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .token-display {
+            word-break: break-all;
+            font-family: monospace;
+            font-size: 12px;
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #e9ecef;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 OAuth2 + JWT AccessToken/RefreshToken 테스트</h1>
+        
+        <!-- 로그인 상태 -->
+        <div class="section">
+            <h2>📊 토큰 상태</h2>
+            <div id="tokenStatus" class="status">토큰 상태를 확인 중...</div>
+            <button onclick="checkTokenStatus()">상태 새로고침</button>
+            <button onclick="refreshAccessToken()">AccessToken 갱신</button>
+            <button onclick="logout()">로그아웃</button>
+            <button onclick="logoutAll()">모든 디바이스 로그아웃</button>
+        </div>
+
+        <!-- OAuth2 로그인 -->
+        <div class="section">
+            <h2>🔑 OAuth2 로그인</h2>
+            <div class="info">
+                구글 계정으로 로그인하면:<br>
+                • 기존 사용자: AccessToken(15분, 헤더용) + RefreshToken(7일, 쿠키+DB저장)<br>
+                • 신규 사용자: 임시토큰(10분) → 회원가입 페이지<br>
+                • AccessToken 만료 시: RefreshToken으로 자동 갱신 가능
+            </div>
+            <button onclick="loginWithGoogle()">Google로 로그인</button>
+        </div>
+
+        <!-- 토큰 정보 -->
+        <div class="section">
+            <h2>🎟️ 토큰 정보</h2>
+            <div class="info">
+                • AccessToken: Authorization Bearer 헤더에 사용<br>
+                • RefreshToken: HTTP-Only 쿠키로 자동 관리 (보안상 표시되지 않음)
+            </div>
+            <button onclick="showTokens()">토큰 확인</button>
+            <div id="tokenInfo"></div>
+        </div>
+
+        <!-- API 테스트 -->
+        <div class="section">
+            <h2>🧪 API 테스트</h2>
+            
+            <h3>@PublicApi - 인증 없이 접근 가능</h3>
+            <button onclick="testPublicApi()">게시글 조회 (GET /api/posts/1)</button>
+            <div id="publicApiResult"></div>
+
+            <h3>@AuthenticatedApi - AccessToken 필요</h3>
+            <button onclick="testAuthenticatedApi()">게시글 작성 (POST /api/posts)</button>
+            <div id="authApiResult"></div>
+
+            <h3>@AdminApi - 관리자 권한 필요</h3>
+            <button onclick="testAdminApi()">게시글 삭제 (DELETE /api/posts/1)</button>
+            <div id="adminApiResult"></div>
+        </div>
+
+        <!-- Auth API 테스트 -->
+        <div class="section">
+            <h2>🔧 Auth API 테스트</h2>
+            <button onclick="testRefreshApi()">토큰 갱신 API</button>
+            <button onclick="testLogoutApi()">로그아웃 API</button>
+            <div id="authApiTestResult"></div>
+        </div>
+
+        <!-- 결과 로그 -->
+        <div class="section">
+            <h2>📋 실행 로그</h2>
+            <button onclick="clearLogs()">로그 지우기</button>
+            <pre id="logArea"></pre>
+        </div>
+    </div>
+
+    <script>
+        let currentAccessToken = null;
+
+        // 로그 함수
+        function log(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            const logArea = document.getElementById('logArea');
+            logArea.textContent += `[${timestamp}] ${message}\n`;
+            logArea.scrollTop = logArea.scrollHeight;
+        }
+
+        function clearLogs() {
+            document.getElementById('logArea').textContent = '';
+        }
+
+        // 쿠키 유틸리티
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+            return null;
+        }
+
+        // URL에서 AccessToken 추출
+        function getAccessTokenFromUrl() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('accessToken');
+        }
+
+        // 토큰 상태 확인
+        function checkTokenStatus() {
+            const refreshToken = getCookie('RefreshToken');
+            const accessToken = currentAccessToken || getAccessTokenFromUrl();
+            const statusDiv = document.getElementById('tokenStatus');
+            
+            let status = '';
+            
+            if (accessToken) {
+                status += '<div class="success">✅ AccessToken 보유 (15분 유효)</div>';
+                currentAccessToken = accessToken;
+                log('AccessToken 발견');
+            } else {
+                status += '<div class="error">❌ AccessToken 없음</div>';
+            }
+            
+            if (refreshToken) {
+                status += '<div class="success">✅ RefreshToken 보유 (7일 유효, DB저장)</div>';
+                log('RefreshToken 발견 (쿠키)');
+            } else {
+                status += '<div class="error">❌ RefreshToken 없음</div>';
+            }
+            
+            statusDiv.innerHTML = status;
+        }
+
+        // 토큰 정보 표시
+        function showTokens() {
+            const tokenDiv = document.getElementById('tokenInfo');
+            const refreshToken = getCookie('RefreshToken');
+            const accessToken = currentAccessToken || getAccessTokenFromUrl();
+            
+            let html = '<h4>현재 토큰 정보:</h4>';
+            
+            if (accessToken) {
+                html += '<h5>AccessToken (Bearer 헤더용):</h5>';
+                html += `<div class="token-display">${accessToken}</div>`;
+            }
+            
+            if (refreshToken) {
+                html += '<h5>RefreshToken (HTTP-Only 쿠키):</h5>';
+                html += `<div class="token-display">${refreshToken}</div>`;
+            }
+            
+            if (!accessToken && !refreshToken) {
+                html += '<div class="info">토큰이 없습니다. 먼저 로그인하세요.</div>';
+            }
+            
+            tokenDiv.innerHTML = html;
+            log('토큰 정보 조회 완료');
+        }
+
+        // AccessToken 갱신
+        async function refreshAccessToken() {
+            try {
+                log('AccessToken 갱신 시도...');
+                const response = await fetch('/api/auth/refresh', {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    currentAccessToken = data.accessToken;
+                    log('✅ AccessToken 갱신 성공');
+                    checkTokenStatus();
+                } else {
+                    log(`❌ AccessToken 갱신 실패: ${response.status}`);
+                }
+            } catch (error) {
+                log(`❌ AccessToken 갱신 오류: ${error.message}`);
+            }
+        }
+
+
+
+        // Google 로그인
+        function loginWithGoogle() {
+            log('Google OAuth2 로그인 시작...');
+            window.location.href = '/oauth2/authorization/google';
+        }
+
+        // 로그아웃
+        async function logout() {
+            try {
+                log('로그아웃 시도...');
+                
+                const headers = {};
+                
+                // AccessToken이 있으면 Authorization 헤더 추가
+                if (currentAccessToken) {
+                    headers['Authorization'] = `Bearer ${currentAccessToken}`;
+                    log('Authorization 헤더 추가됨');
+                }
+                
+                const response = await fetch('/api/auth/logout', {
+                    method: 'POST',
+                    headers: headers,
+                    credentials: 'include'
+                });
+                
+                if (response.ok) {
+                    // 로그아웃 성공 시 클라이언트에서 AccessToken 즉시 삭제
+                    currentAccessToken = null;
+                    
+                    // URL에서도 accessToken 파라미터 제거
+                    const url = new URL(window.location);
+                    url.searchParams.delete('accessToken');
+                    url.searchParams.delete('userName');
+                    url.searchParams.delete('success');
+                    window.history.replaceState({}, document.title, url.pathname);
+                    
+                    log('✅ 로그아웃 완료 - RefreshToken DB 무효화 + AccessToken 클라이언트 삭제');
+                    checkTokenStatus();
+                } else if (response.status === 401) {
+                    log(`⚠️ 로그아웃 실패: AccessToken 없음 또는 만료 (${response.status})`);
+                } else {
+                    log(`❌ 로그아웃 실패: ${response.status}`);
+                }
+            } catch (error) {
+                log(`❌ 로그아웃 오류: ${error.message}`);
+            }
+        }
+
+        // 모든 디바이스 로그아웃
+        async function logoutAll() {
+            try {
+                log('모든 디바이스 로그아웃 시도...');
+                
+                const headers = {};
+                
+                // AccessToken이 있으면 Authorization 헤더 추가
+                if (currentAccessToken) {
+                    headers['Authorization'] = `Bearer ${currentAccessToken}`;
+                    log('Authorization 헤더 추가됨');
+                }
+                
+                const response = await fetch('/api/auth/logout-all', {
+                    method: 'POST',
+                    headers: headers,
+                    credentials: 'include'
+                });
+                
+                if (response.ok) {
+                    // 로그아웃 성공 시 클라이언트에서 AccessToken 즉시 삭제
+                    currentAccessToken = null;
+                    
+                    // URL에서도 accessToken 파라미터 제거
+                    const url = new URL(window.location);
+                    url.searchParams.delete('accessToken');
+                    url.searchParams.delete('userName');
+                    url.searchParams.delete('success');
+                    window.history.replaceState({}, document.title, url.pathname);
+                    
+                    log('✅ 모든 디바이스 로그아웃 완료 - 모든 RefreshToken DB 무효화 + AccessToken 클라이언트 삭제');
+                    checkTokenStatus();
+                } else if (response.status === 401) {
+                    log(`⚠️ 모든 디바이스 로그아웃 실패: AccessToken 없음 또는 만료 (${response.status})`);
+                } else {
+                    log(`❌ 모든 디바이스 로그아웃 실패: ${response.status}`);
+                }
+            } catch (error) {
+                log(`❌ 모든 디바이스 로그아웃 오류: ${error.message}`);
+            }
+        }
+
+        // API 테스트 함수들 (Authorization 헤더 사용)
+        async function testPublicApi() {
+            try {
+                log('Public API 테스트 시작 (GET /api/posts/1)');
+                const response = await fetch('/api/posts/1', {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                
+                const resultDiv = document.getElementById('publicApiResult');
+                if (response.ok) {
+                    const data = await response.json();
+                    resultDiv.innerHTML = `<div class="success">✅ 성공 (${response.status})</div><pre>${JSON.stringify(data, null, 2)}</pre>`;
+                    log(`Public API 성공: ${response.status}`);
+                } else {
+                    resultDiv.innerHTML = `<div class="error">❌ 실패 (${response.status})</div>`;
+                    log(`Public API 실패: ${response.status}`);
+                }
+            } catch (error) {
+                log(`Public API 오류: ${error.message}`);
+            }
+        }
+
+        async function testAuthenticatedApi() {
+            try {
+                log('Authenticated API 테스트 시작 (POST /api/posts)');
+                
+                const headers = {
+                    'Content-Type': 'application/json',
+                };
+                
+                // AccessToken이 있으면 Authorization 헤더 추가
+                if (currentAccessToken) {
+                    headers['Authorization'] = `Bearer ${currentAccessToken}`;
+                    log('Authorization 헤더 추가됨');
+                }
+                
+                const response = await fetch('/api/posts', {
+                    method: 'POST',
+                    headers: headers,
+                    credentials: 'include',
+                    body: JSON.stringify({
+                        title: "테스트 제목",
+                        content: "AccessToken을 사용한 인증 테스트 게시글입니다. 최소 길이 요구사항을 만족시키기 위해 충분한 내용을 포함하고 있습니다.",
+                        challengeId: 1
+                    })
+                });
+                
+                const resultDiv = document.getElementById('authApiResult');
+                if (response.ok) {
+                    const data = await response.json();
+                    resultDiv.innerHTML = `<div class="success">✅ 성공 (${response.status})</div><pre>${JSON.stringify(data, null, 2)}</pre>`;
+                    log(`Authenticated API 성공: ${response.status}`);
+                } else if (response.status === 401) {
+                    resultDiv.innerHTML = `<div class="warning">⚠️ 인증 필요 (${response.status}) - AccessToken 만료 또는 없음</div>`;
+                    log(`Authenticated API: AccessToken 필요 또는 만료`);
+                } else {
+                    resultDiv.innerHTML = `<div class="error">❌ 실패 (${response.status})</div>`;
+                    log(`Authenticated API 실패: ${response.status}`);
+                }
+            } catch (error) {
+                log(`Authenticated API 오류: ${error.message}`);
+            }
+        }
+
+        async function testAdminApi() {
+            try {
+                log('Admin API 테스트 시작 (DELETE /api/posts/1)');
+                
+                const headers = {};
+                
+                // AccessToken이 있으면 Authorization 헤더 추가
+                if (currentAccessToken) {
+                    headers['Authorization'] = `Bearer ${currentAccessToken}`;
+                    log('Authorization 헤더 추가됨');
+                }
+                
+                const response = await fetch('/api/posts/1', {
+                    method: 'DELETE',
+                    headers: headers,
+                    credentials: 'include'
+                });
+                
+                const resultDiv = document.getElementById('adminApiResult');
+                if (response.ok) {
+                    const data = await response.json();
+                    resultDiv.innerHTML = `<div class="success">✅ 성공 (${response.status})</div><pre>${JSON.stringify(data, null, 2)}</pre>`;
+                    log(`Admin API 성공: ${response.status}`);
+                } else if (response.status === 403) {
+                    resultDiv.innerHTML = `<div class="error">❌ 권한 없음 (${response.status}) - 관리자 권한 필요</div>`;
+                    log(`Admin API: 관리자 권한 필요`);
+                } else if (response.status === 401) {
+                    resultDiv.innerHTML = `<div class="warning">⚠️ 인증 필요 (${response.status}) - AccessToken 만료 또는 없음</div>`;
+                    log(`Admin API: AccessToken 필요 또는 만료`);
+                } else {
+                    resultDiv.innerHTML = `<div class="error">❌ 실패 (${response.status})</div>`;
+                    log(`Admin API 실패: ${response.status}`);
+                }
+            } catch (error) {
+                log(`Admin API 오류: ${error.message}`);
+            }
+        }
+
+        // Auth API 테스트
+        async function testRefreshApi() {
+            await refreshAccessToken();
+        }
+
+        async function testLogoutApi() {
+            await logout();
+        }
+
+        // 페이지 로드 시 상태 확인
+        window.onload = function() {
+            log('OAuth2 + JWT AccessToken/RefreshToken 테스트 페이지 로드됨');
+            
+            // URL에서 파라미터 확인
+            const urlParams = new URLSearchParams(window.location.search);
+            const accessToken = urlParams.get('accessToken');
+            const userName = urlParams.get('userName');
+            const error = urlParams.get('error');
+            const reason = urlParams.get('reason');
+            
+            if (error === 'oauth_failed') {
+                log(`❌ OAuth2 로그인 실패: ${reason || '알 수 없는 오류'}`);
+                showMessage(`OAuth2 로그인 실패: ${reason || '알 수 없는 오류'}`, 'error');
+            } else if (urlParams.get('success') === 'true' && accessToken) {
+                currentAccessToken = accessToken;
+                log(`🎉 OAuth2 로그인 성공! 사용자: ${userName || '알 수 없음'}`);
+                log('AccessToken과 RefreshToken이 발급되었습니다.');
+            }
+            
+            checkTokenStatus();
+        };
+
+        // 메시지 표시 함수
+        function showMessage(message, type = 'info') {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = type;
+            messageDiv.innerHTML = message;
+            
+            // 기존 메시지가 있으면 제거
+            const existingMessage = document.querySelector('.section .error, .section .success, .section .info');
+            if (existingMessage) {
+                existingMessage.remove();
+            }
+            
+            // 첫 번째 section에 메시지 추가
+            const firstSection = document.querySelector('.section');
+            firstSection.insertBefore(messageDiv, firstSection.firstChild.nextSibling);
+            
+            // 5초 후 자동 제거
+            setTimeout(() => {
+                if (messageDiv.parentNode) {
+                    messageDiv.remove();
+                }
+            }, 5000);
+        }
+    </script>
+</body>
+</html> 

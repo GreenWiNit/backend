@@ -3,7 +3,6 @@ package com.example.green.domain.example.controller;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.springframework.context.annotation.Profile;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,16 +17,15 @@ import com.example.green.domain.example.api.ExamplePostResponseMessage;
 import com.example.green.domain.example.dto.PostListResponse;
 import com.example.green.domain.example.dto.PostRequest;
 import com.example.green.domain.example.dto.PostResponse;
+import com.example.green.global.annotation.AdminApi;
+import com.example.green.global.annotation.AuthenticatedApi;
+import com.example.green.global.annotation.PublicApi;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.NoContent;
-import com.example.green.global.security.annotation.AdminApi;
-import com.example.green.global.security.annotation.AuthenticatedApi;
-import com.example.green.global.security.annotation.PublicApi;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
-@Profile("test")
 @RestController
 @RequestMapping("/api/posts")
 @RequiredArgsConstructor

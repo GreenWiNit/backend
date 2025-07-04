@@ -1,7 +1,4 @@
 spring:
-  profiles:
-    active: test
-    default: test
   cloud:
     aws:
       credentials:

@@ -133,7 +133,7 @@ public class TokenService {
 				.signWith(secretKey)
 				.compact();
 
-			// 사용자 조회
+			// 사용자 조회 (RefreshToken 엔티티 생성에 필요)
 			Member member = memberService.findByUsername(username)
 				.orElseThrow(() -> {
 					log.error("RefreshToken 생성 실패: 사용자를 찾을 수 없음 - {}", username);
@@ -197,7 +197,7 @@ public class TokenService {
 		return false;
 	}
 
-	// RefreshToken 검증
+	// RefreshToken 검증 (DB 조회 포함)
 	public boolean validateRefreshToken(String tokenValue) {
 		try {
 			// 먼저 JWT 형식 검증
@@ -302,7 +302,7 @@ public class TokenService {
 			String username = getUsername(accessToken);
 			Long tokenVersion = getTokenVersion(accessToken);
 
-			// 4. RefreshToken에서 현재 tokenVersion 조회
+			// 4. RefreshToken에서 현재 tokenVersion 조회 (Auth 도메인 독립성)
 			Long currentTokenVersion = getCurrentTokenVersion(username);
 
 			if (currentTokenVersion == null) {
