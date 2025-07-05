@@ -11,4 +11,6 @@ public interface DeliveryAddressRepository extends JpaRepository<DeliveryAddress
 	boolean existsByRecipientId(Long recipientId);
 
 	Optional<DeliveryAddress> findByRecipientId(Long recipientId);
+
+	boolean existsByIdAndRecipientId(Long deliveryAddressId, Long recipientId);
 }

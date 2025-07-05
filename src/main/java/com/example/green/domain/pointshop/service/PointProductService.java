@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.green.domain.common.service.FileManager;
+import com.example.green.domain.pointshop.entity.order.vo.ItemSnapshot;
 import com.example.green.domain.pointshop.entity.pointproduct.PointProduct;
 import com.example.green.domain.pointshop.entity.pointproduct.vo.Code;
 import com.example.green.domain.pointshop.exception.PointProductException;
@@ -64,17 +65,28 @@ public class PointProductService {
 	}
 
 	public void delete(Long pointProductId) {
-		PointProduct pointProduct = pointProductDomainService.getPointProduct(pointProductId);
-		pointProduct.markDeleted();
+		pointProductDomainService.getPointProduct(pointProductId).markDeleted();
 	}
 
 	public void showDisplay(Long pointProductId) {
-		PointProduct pointProduct = pointProductDomainService.getPointProduct(pointProductId);
-		pointProduct.showDisplay();
+		pointProductDomainService.getPointProduct(pointProductId).showDisplay();
 	}
 
 	public void hideDisplay(Long pointProductId) {
+		pointProductDomainService.getPointProduct(pointProductId).hideDisplay();
+	}
+
+	public ItemSnapshot getItemSnapshot(Long pointProductId) {
 		PointProduct pointProduct = pointProductDomainService.getPointProduct(pointProductId);
-		pointProduct.hideDisplay();
+		return new ItemSnapshot(
+			pointProduct.getId(),
+			pointProduct.getBasicInfo().getName(),
+			pointProduct.getCode().getCode(),
+			pointProduct.getPrice().getPrice()
+		);
+	}
+
+	public void decreaseSingleItemStock(Long pointProductId, int amount) {
+		pointProductDomainService.getPointProduct(pointProductId).decreaseStock(amount);
 	}
 }

@@ -43,7 +43,7 @@ public class DeliveryAddressController implements DeliveryAddressControllerDocs 
 	@GetMapping
 	public ApiTemplate<DeliveryResult> getDeliveryAddress() {
 		// todo: security 추가 시 recipientId Resolver 로 받기
-		DeliveryResult result = deliveryAddressService.getDeliveryAddress(1L);
+		DeliveryResult result = deliveryAddressService.getDeliveryAddressByRecipient(1L);
 		return ApiTemplate.ok(DeliveryAddressResponseMessage.DELIVERY_ADDRESS_GET_SUCCESS, result);
 	}
 }

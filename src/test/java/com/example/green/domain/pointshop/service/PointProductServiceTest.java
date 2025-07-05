@@ -13,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.example.green.domain.common.service.FileManager;
+import com.example.green.domain.pointshop.entity.order.vo.ItemSnapshot;
 import com.example.green.domain.pointshop.entity.pointproduct.PointProduct;
 import com.example.green.domain.pointshop.entity.pointproduct.vo.BasicInfo;
 import com.example.green.domain.pointshop.entity.pointproduct.vo.Code;
@@ -140,6 +141,45 @@ class PointProductServiceTest {
 
 		// then
 		verify(mockPointProduct).hideDisplay();
+	}
+
+	@Test
+	void 포인트_상품_ID로_스냅샷을_가져올_수_있다() {
+		// given
+		PointProduct mockPointProduct = mock(PointProduct.class);
+		BasicInfo mockBasicInfo = mock(BasicInfo.class);
+		Price mockPrice = mock(Price.class);
+		Code mockCode = mock(Code.class);
+		when(mockBasicInfo.getName()).thenReturn("name");
+		when(mockPrice.getPrice()).thenReturn(new BigDecimal("100"));
+		when(mockCode.getCode()).thenReturn("code");
+		when(pointProductDomainService.getPointProduct(anyLong())).thenReturn(mockPointProduct);
+		when(mockPointProduct.getId()).thenReturn(1L);
+		when(mockPointProduct.getBasicInfo()).thenReturn(mockBasicInfo);
+		when(mockPointProduct.getCode()).thenReturn(mockCode);
+		when(mockPointProduct.getPrice()).thenReturn(mockPrice);
+
+		// when
+		ItemSnapshot itemSnapshot = pointProductService.getItemSnapshot(1L);
+
+		// then
+		assertThat(itemSnapshot.getItemCode()).isEqualTo("code");
+		assertThat(itemSnapshot.getItemName()).isEqualTo("name");
+		assertThat(itemSnapshot.getItemId()).isEqualTo(1L);
+		assertThat(itemSnapshot.getUnitPrice()).isEqualTo(new BigDecimal("100"));
+	}
+
+	@Test
+	void 포인트_상품_아이디와_수량으로_재고를_감소한다() {
+		// given
+		PointProduct mockPointProduct = mock(PointProduct.class);
+		when(pointProductDomainService.getPointProduct(anyLong())).thenReturn(mockPointProduct);
+
+		// when
+		pointProductService.decreaseSingleItemStock(1L, 10);
+
+		// then
+		verify(mockPointProduct).decreaseStock(10);
 	}
 
 	private PointProductUpdateCommand getUpdateCommand() {

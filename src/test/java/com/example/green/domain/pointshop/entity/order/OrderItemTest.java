@@ -14,7 +14,7 @@ import com.example.green.global.error.exception.BusinessException;
 
 class OrderItemTest {
 
-	ItemSnapshot itemSnapshot = new ItemSnapshot(1L, "ItemCOde", BigDecimal.valueOf(500));
+	ItemSnapshot itemSnapshot = new ItemSnapshot(1L, "ItemName", "ItemCOde", BigDecimal.valueOf(500));
 
 	@Test
 	void 아이템을_수량에_맞게_주문한다() {
