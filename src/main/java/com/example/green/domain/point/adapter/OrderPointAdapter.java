@@ -19,7 +19,7 @@ public class OrderPointAdapter implements PointSpendClient {
 
 	@Override
 	public void spendPoints(PointSpendRequest dto) {
-		PointSource pointSource = PointSource.ofTarget(dto.targetId(), dto.reason(), TargetType.ORDER);
+		PointSource pointSource = PointSource.ofTarget(dto.targetId(), dto.reason(), TargetType.EXCHANGE);
 		PointAmount amount = PointAmount.of(dto.amount());
 		pointTransactionService.spendPoints(dto.memberId(), amount, pointSource);
 	}

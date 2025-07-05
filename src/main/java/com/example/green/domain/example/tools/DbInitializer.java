@@ -12,11 +12,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.green.domain.common.BaseEntity;
+import com.example.green.domain.point.entity.PointTransaction;
+import com.example.green.domain.point.entity.vo.PointAmount;
+import com.example.green.domain.point.entity.vo.PointSource;
+import com.example.green.domain.point.entity.vo.TargetType;
+import com.example.green.domain.point.repository.PointTransactionRepository;
 import com.example.green.domain.pointshop.entity.pointproduct.PointProduct;
 import com.example.green.domain.pointshop.entity.pointproduct.vo.BasicInfo;
 import com.example.green.domain.pointshop.entity.pointproduct.vo.Code;
@@ -30,6 +36,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
+@Transactional
 @Hidden
 public class DbInitializer {
 
@@ -37,6 +44,7 @@ public class DbInitializer {
 	private static final LocalDateTime baseTime = LocalDateTime.now();
 	private static final Map<String, Integer> lastIds = new HashMap<>();
 	private final PointProductRepository pointProductRepository;
+	private final PointTransactionRepository pointTransactionRepository;
 
 	@GetMapping("/api/tools/init-db-point-products")
 	public void initialize() {
@@ -71,6 +79,58 @@ public class DbInitializer {
 				pointProducts.clear();
 			}
 		}
+	}
+
+	static String[] targets = {
+		"달리기 챌린지", "눈물 나는 챌린지", "기쁜 챌린지", "짜증나는 챌린지", "웃긴 상품", "가짜 상품", "꽝 상품", "랜덤 상품", "1억 상품"
+	};
+
+	@GetMapping("/api/tools/init-db-point-transaction")
+	public void initPointTransaction() {
+		List<PointTransaction> pointTransactions = new ArrayList<>();
+		PointAmount currentBalance = PointAmount.of(BigDecimal.ZERO);
+
+		for (int i = 0; i < 100; i++) {
+			String target = targets[random.nextInt(targets.length)];
+			boolean isChallenge = target.contains("챌린지");
+
+			PointSource pointSource;
+			PointAmount amount;
+			PointTransaction transaction;
+
+			if (isChallenge) {
+				String detail = target + " 적립";
+				pointSource = PointSource.ofTarget(random.nextLong(1, 100), detail, TargetType.CHALLENGE);
+				int amountPrice = 1000 + random.nextInt(4000);
+				amount = PointAmount.of(BigDecimal.valueOf(amountPrice));
+
+				PointAmount previousBalance = currentBalance;
+				currentBalance = currentBalance.add(amount);
+				transaction = PointTransaction.earn(1L, pointSource, amount, previousBalance);
+			} else {
+				String detail = target + " 교환";
+				pointSource = PointSource.ofTarget(random.nextLong(1, 100), detail, TargetType.EXCHANGE);
+
+				int amountPrice = 1000 + random.nextInt(4000);
+				amount = PointAmount.of(BigDecimal.valueOf(amountPrice));
+
+				if (currentBalance.canSpend(amount)) {
+					PointAmount previousBalance = currentBalance;
+					currentBalance = currentBalance.subtract(amount);
+					transaction = PointTransaction.spend(1L, pointSource, amount, previousBalance);
+				} else {
+					String earnDetail = "보너스 적립";
+					PointSource earnSource = PointSource.ofEvent(earnDetail);
+					PointAmount earnAmount = PointAmount.of(BigDecimal.valueOf(10000));
+
+					PointAmount previousBalance = currentBalance;
+					currentBalance = currentBalance.add(earnAmount);
+					transaction = PointTransaction.earn(1L, earnSource, earnAmount, previousBalance);
+				}
+			}
+			pointTransactions.add(transaction);
+		}
+		pointTransactionRepository.saveAll(pointTransactions);
 	}
 
 	private static PointProduct createRandomProduct(String code, String name, int day) {
