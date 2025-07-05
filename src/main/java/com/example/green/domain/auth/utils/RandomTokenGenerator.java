@@ -1,9 +1,12 @@
-package com.example.green.domain.auth.entity.verification.generator;
+package com.example.green.domain.auth.utils;
 
 import java.util.Random;
 
+import org.springframework.stereotype.Component;
+
 import com.example.green.domain.auth.entity.verification.TokenGenerator;
 
+@Component
 public class RandomTokenGenerator implements TokenGenerator {
 
 	private static final String TOKEN_DATASOURCE = "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";

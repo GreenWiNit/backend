@@ -1,4 +1,4 @@
-package com.example.green.domain.auth.entity.verification.generator;
+package com.example.green.domain.auth.utils;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
