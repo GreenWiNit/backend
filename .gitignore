@@ -230,5 +230,5 @@ gradle-app.setting
 /bin/
 
 src/main/resources/application-local.yml
-
+src/main/resources/application.properties
 /bin/
