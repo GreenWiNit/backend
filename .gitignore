@@ -230,3 +230,5 @@ gradle-app.setting
 /bin/
 
 src/main/resources/application-local.yml
+
+/bin/
