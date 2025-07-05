@@ -36,7 +36,7 @@ class OrderControllerTest extends BaseControllerUnitTest {
 			.given().log().all()
 			.contentType(MediaType.APPLICATION_JSON)
 			.body(dto)
-			.when().post("/api/orders")
+			.when().post("/api/orders/point-products/single")
 			.then().log().all()
 			.status(HttpStatus.OK)
 			.extract().as(new TypeRef<>() {

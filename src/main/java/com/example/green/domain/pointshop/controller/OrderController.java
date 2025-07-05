@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.green.domain.pointshop.controller.docs.OrderControllerDocs;
 import com.example.green.domain.pointshop.controller.dto.SingleOrderRequest;
 import com.example.green.domain.pointshop.service.OrderService;
 import com.example.green.domain.pointshop.service.command.SingleOrderCommand;
@@ -17,12 +18,12 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/orders")
-public class OrderController {
+public class OrderController implements OrderControllerDocs {
 
 	private final OrderService orderService;
 
-	@PostMapping
-	public ApiTemplate<Long> exchangePointProduct(@RequestBody SingleOrderRequest dto) {
+	@PostMapping("/point-products/single")
+	public ApiTemplate<Long> exchangeSinglePointProduct(@RequestBody SingleOrderRequest dto) {
 		// todo: security 추가 시 사용자 ID, 사용자 코드 추출
 		SingleOrderCommand command = SingleOrderCommand.of(1L, "memberCode", dto);
 		Long result = orderService.orderSingleItem(command);
