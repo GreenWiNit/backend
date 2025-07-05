@@ -44,7 +44,7 @@ import lombok.RequiredArgsConstructor;
 @AdminApi
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/point-products")
+@RequestMapping("/api/admin/point-products")
 public class PointProductAdminController implements PointProductControllerDocs {
 
 	private final PointProductService pointProductService;

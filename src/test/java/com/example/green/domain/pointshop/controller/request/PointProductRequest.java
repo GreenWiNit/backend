@@ -20,7 +20,7 @@ public class PointProductRequest {
 			.given().log().all()
 			.contentType(MediaType.APPLICATION_JSON)
 			.body(dto)
-			.when().post("/api/point-products")
+			.when().post("/api/admin/point-products")
 			.then().log().all()
 			.status(HttpStatus.OK)
 			.extract().as(new TypeRef<>() {
@@ -31,7 +31,7 @@ public class PointProductRequest {
 		return RestAssuredMockMvc
 			.given().log().all()
 			.contentType(MediaType.APPLICATION_JSON)
-			.when().get("/api/point-products")
+			.when().get("/api/admin/point-products")
 			.then().log().all()
 			.status(HttpStatus.OK)
 			.extract().as(new TypeRef<>() {
@@ -43,7 +43,7 @@ public class PointProductRequest {
 			.given().log().all()
 			.contentType(MediaType.APPLICATION_JSON)
 			.body(dto)
-			.when().put("/api/point-products/1")
+			.when().put("/api/admin/point-products/1")
 			.then().log().all()
 			.status(HttpStatus.OK)
 			.extract().as(new TypeRef<>() {
@@ -54,7 +54,7 @@ public class PointProductRequest {
 		RestAssuredMockMvc
 			.given().log().all()
 			.contentType(MediaType.APPLICATION_JSON)
-			.when().get("/api/point-products/excel")
+			.when().get("/api/admin/point-products/excel")
 			.then().log().all()
 			.status(HttpStatus.OK);
 	}
@@ -63,7 +63,7 @@ public class PointProductRequest {
 		return RestAssuredMockMvc
 			.given().log().all()
 			.contentType(MediaType.APPLICATION_JSON)
-			.when().delete("/api/point-products/" + id)
+			.when().delete("/api/admin/point-products/" + id)
 			.then().log().all()
 			.status(HttpStatus.OK)
 			.extract().as(new TypeRef<>() {
@@ -74,7 +74,7 @@ public class PointProductRequest {
 		return RestAssuredMockMvc
 			.given().log().all()
 			.contentType(MediaType.APPLICATION_JSON)
-			.when().patch("/api/point-products/" + id + "/show")
+			.when().patch("/api/admin/point-products/" + id + "/show")
 			.then().log().all()
 			.status(HttpStatus.OK)
 			.extract().as(new TypeRef<>() {
@@ -85,7 +85,7 @@ public class PointProductRequest {
 		return RestAssuredMockMvc
 			.given().log().all()
 			.contentType(MediaType.APPLICATION_JSON)
-			.when().patch("/api/point-products/" + id + "/hide")
+			.when().patch("/api/admin/point-products/" + id + "/hide")
 			.then().log().all()
 			.status(HttpStatus.OK)
 			.extract().as(new TypeRef<>() {
