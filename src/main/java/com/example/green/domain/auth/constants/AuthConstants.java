@@ -10,7 +10,7 @@ public final class AuthConstants {
 	public static final String TOKEN_TYPE_REFRESH = "refresh";
 	public static final String TOKEN_TYPE_TEMP = "temp";
 	// 공통 쿠키 이름
-	public static final String REFRESH_TOKEN_COOKIE_NAME = "RefreshToken";
+	public static final String REFRESH_TOKEN_COOKIE_NAME = "TokenManager";
 	// 공통 Role
 	public static final String ROLE_USER = "ROLE_USER";
 

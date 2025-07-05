@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.green.domain.auth.dto.TempTokenInfoDto;
-import com.example.green.domain.auth.model.entity.RefreshToken;
+import com.example.green.domain.auth.model.entity.TokenManager;
 import com.example.green.domain.auth.repository.RefreshTokenRepository;
 import com.example.green.domain.member.entity.Member;
 import com.example.green.domain.member.exception.MemberExceptionMessage;
@@ -85,17 +85,17 @@ public class TokenService {
 	}
 
 	/**
-	 * 사용자의 최신 tokenVersion 조회 (RefreshToken 기반)
+	 * 사용자의 최신 tokenVersion 조회 (TokenManager 기반)
 	 * MemberService 의존성 제거를 위해 Auth 도메인 내에서 해결
 	 */
 	private Long getCurrentTokenVersion(String username) {
-		List<RefreshToken> tokens = refreshTokenRepository.findAllByUsernameAndNotRevoked(username);
+		List<TokenManager> tokens = refreshTokenRepository.findAllByUsernameAndNotRevoked(username);
 		if (tokens.isEmpty()) {
 			return 1L; // 기본값
 		}
 		// 가장 최신 tokenVersion 반환
 		return tokens.stream()
-			.mapToLong(RefreshToken::getTokenVersion)
+			.mapToLong(TokenManager::getTokenVersion)
 			.max()
 			.orElse(1L);
 	}
@@ -133,25 +133,25 @@ public class TokenService {
 				.signWith(secretKey)
 				.compact();
 
-			// 사용자 조회 (RefreshToken 엔티티 생성에 필요)
+			// 사용자 조회 (TokenManager 엔티티 생성에 필요)
 			Member member = memberService.findByUsername(username)
 				.orElseThrow(() -> {
-					log.error("RefreshToken 생성 실패: 사용자를 찾을 수 없음 - {}", username);
+					log.error("TokenManager 생성 실패: 사용자를 찾을 수 없음 - {}", username);
 					return new BusinessException(MemberExceptionMessage.MEMBER_NOT_FOUND);
 				});
 
 			// 기존 토큰 정리 (선택적: 한 사용자당 최대 토큰 수 제한)
 			cleanupOldTokens(username);
 
-			// DB에 RefreshToken 저장
+			// DB에 TokenManager 저장
 			LocalDateTime expiresAt = LocalDateTime.now().plusSeconds(refreshTokenExpiration / 1000);
-			RefreshToken refreshToken = RefreshToken.create(tokenValue, expiresAt, member, deviceInfo, ipAddress);
-			refreshTokenRepository.save(refreshToken);
+			TokenManager tokenManager = TokenManager.create(tokenValue, expiresAt, member, deviceInfo, ipAddress);
+			refreshTokenRepository.save(tokenManager);
 
-			log.info("RefreshToken 생성 및 DB 저장 완료: {} (IP: {})", username, ipAddress);
+			log.info("TokenManager 생성 및 DB 저장 완료: {} (IP: {})", username, ipAddress);
 			return tokenValue;
 		} catch (Exception e) {
-			log.error("RefreshToken 생성 실패: {}", e.getMessage());
+			log.error("TokenManager 생성 실패: {}", e.getMessage());
 			throw new BusinessException(GlobalExceptionMessage.JWT_CREATION_FAILED);
 		}
 	}
@@ -197,7 +197,7 @@ public class TokenService {
 		return false;
 	}
 
-	// RefreshToken 검증 (DB 조회 포함)
+	// TokenManager 검증 (DB 조회 포함)
 	public boolean validateRefreshToken(String tokenValue) {
 		try {
 			// 먼저 JWT 형식 검증
@@ -206,12 +206,12 @@ public class TokenService {
 			}
 
 			// DB에서 토큰 조회 및 검증
-			RefreshToken refreshToken = refreshTokenRepository.findByTokenValueAndNotRevoked(tokenValue)
+			TokenManager tokenManager = refreshTokenRepository.findByTokenValueAndNotRevoked(tokenValue)
 				.orElse(null);
 
-			return refreshToken != null && refreshToken.isValid();
+			return tokenManager != null && tokenManager.isValid();
 		} catch (Exception e) {
-			log.error("RefreshToken 검증 실패: {}", e.getMessage());
+			log.error("TokenManager 검증 실패: {}", e.getMessage());
 			return false;
 		}
 	}
@@ -365,28 +365,28 @@ public class TokenService {
 		}
 
 		String username = getUsername(refreshToken);
-		
+
 		// 최근 접속 정보 업데이트
 		refreshTokenRepository.findByTokenValueAndNotRevoked(refreshToken)
 			.ifPresent(token -> {
 				token.updateLastUsedInfo(currentIpAddress);
 				refreshTokenRepository.save(token);
-				log.debug("RefreshToken 최근 접속 정보 업데이트: {} (IP: {})", username, currentIpAddress);
+				log.debug("TokenManager 최근 접속 정보 업데이트: {} (IP: {})", username, currentIpAddress);
 			});
-		
+
 		return createAccessToken(username, role);
 	}
 
 	public void revokeRefreshToken(String tokenValue) {
 		refreshTokenRepository.findByTokenValueAndNotRevoked(tokenValue)
-			.ifPresent(RefreshToken::revoke);
-		log.info("RefreshToken 무효화 완료: {}", tokenValue.substring(0, 20) + "...");
+			.ifPresent(TokenManager::revoke);
+		log.info("TokenManager 무효화 완료: {}", tokenValue.substring(0, 20) + "...");
 	}
 
 	public void revokeAllRefreshTokens(String username) {
 		// Auth 도메인 독립성: username으로 직접 무효화
 		refreshTokenRepository.revokeAllByUsername(username);
-		log.info("사용자의 모든 RefreshToken 무효화 완료: {}", username);
+		log.info("사용자의 모든 TokenManager 무효화 완료: {}", username);
 	}
 
 	/**
@@ -403,7 +403,7 @@ public class TokenService {
 		}
 		Member member = memberOpt.get();
 
-		List<RefreshToken> tokens = refreshTokenRepository.findAllByMemberForCleanupWithLock(member);
+		List<TokenManager> tokens = refreshTokenRepository.findAllByMemberForCleanupWithLock(member);
 
 		int maxSessions = 3; // 3대 디바이스 허용
 		if (tokens.size() < maxSessions) {
@@ -412,17 +412,17 @@ public class TokenService {
 
 		// 새 로그인 시 오래된 토큰 무효화 (3대 디바이스 제한)
 		int tokensToRevokeCount = tokens.size() - maxSessions + 1;
-		// 1. 오래된 RefreshToken 무효화
+		// 1. 오래된 TokenManager 무효화
 		tokens.stream()
 			.limit(tokensToRevokeCount)
-			.forEach(RefreshToken::revoke);
+			.forEach(TokenManager::revoke);
 
 		// 2. 남은 유효한 토큰들의 tokenVersion 증가 -> 기존 AccessToken 무효화
 		Long maxTokenVersion = null;
-		List<RefreshToken> remainingTokens = tokens.stream()
+		List<TokenManager> remainingTokens = tokens.stream()
 			.skip(tokensToRevokeCount)
 			.toList();
-		for (RefreshToken token : remainingTokens) {
+		for (TokenManager token : remainingTokens) {
 			Long newTokenVersion = token.logout(); // tokenVersion++
 			maxTokenVersion = newTokenVersion;
 		}
@@ -433,7 +433,7 @@ public class TokenService {
 		// 이벤트 발행: 트랜잭션 커밋 후 정리 작업 예약
 		eventPublisher.publishEvent(new TokenCleanupEvent(null, username)); // memberId 불필요 (Auth 도메인 독립성)
 
-		log.info("3대 디바이스 제한 - 토큰 무효화 완료: {} (RefreshToken: {}개 revoke, AccessToken: tokenVersion {}로 무효화)",
+		log.info("3대 디바이스 제한 - 토큰 무효화 완료: {} (TokenManager: {}개 revoke, AccessToken: tokenVersion {}로 무효화)",
 			username, tokensToRevokeCount, maxTokenVersion);
 	}
 

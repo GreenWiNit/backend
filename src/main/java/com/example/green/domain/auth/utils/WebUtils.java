@@ -57,7 +57,7 @@ public class WebUtils {
 	}
 
 	/**
-	 * RefreshToken 쿠키 삭제 (Max-Age=0)
+	 * TokenManager 쿠키 삭제 (Max-Age=0)
 	 */
 	public static void removeRefreshTokenCookie(HttpServletResponse response) {
 		Cookie cookie = new Cookie(REFRESH_TOKEN_COOKIE_NAME, "");

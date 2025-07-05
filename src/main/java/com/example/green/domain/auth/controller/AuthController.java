@@ -109,7 +109,7 @@ public class AuthController {
 		// Auth 도메인 서비스를 통해 회원가입 처리
 		String username = authService.signup(tempInfo, request.nickname(), request.profileImageUrl());
 
-		// RefreshToken 먼저 생성
+		// TokenManager 먼저 생성
 		String refreshTokenString = tokenService.createRefreshToken(
 			username,
 			WebUtils.extractDeviceInfo(httpRequest),
@@ -136,7 +136,7 @@ public class AuthController {
 
 	@PublicApi
 	@Operation(summary = "AccessToken 갱신",
-		description = "RefreshToken(쿠키)을 사용하여 만료된 AccessToken을 " + "새로 발급받습니다. RefreshToken은 HTTP-Only 쿠키로 자동 전송됩니다.")
+		description = "TokenManager(쿠키)을 사용하여 만료된 AccessToken을 " + "새로 발급받습니다. RefreshToken은 HTTP-Only 쿠키로 자동 전송됩니다.")
 	@ApiResponses(value = {
 		@ApiResponse(
 			responseCode = "200",
@@ -170,7 +170,7 @@ public class AuthController {
 			)),
 		@ApiResponse(
 			responseCode = "401",
-			description = "RefreshToken 만료 또는 무효화됨",
+			description = "TokenManager 만료 또는 무효화됨",
 			content = @Content(
 				mediaType = "application/json",
 				examples = @ExampleObject(
@@ -187,7 +187,7 @@ public class AuthController {
 	public ResponseEntity<TokenResponseDto> refreshToken(HttpServletRequest request) {
 		String refreshTokenString = WebUtils.extractCookieValue(request, REFRESH_TOKEN_COOKIE_NAME);
 		if (refreshTokenString == null) {
-			log.warn("[REFRESH] Missing RefreshToken cookie");
+			log.warn("[REFRESH] Missing TokenManager cookie");
 			return ResponseEntity.badRequest().build();
 		}
 

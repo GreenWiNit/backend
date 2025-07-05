@@ -90,13 +90,13 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 		response.sendRedirect(redirectUrl);
 	}
 
-	// 기존 사용자 처리 - AccessToken/RefreshToken 발급
+	// 기존 사용자 처리 - AccessToken/TokenManager 발급
 	private void handleExistingUser(CustomOAuth2UserDto user, String role, HttpServletResponse response)
 		throws IOException {
 
 		String username = user.getUsername();
 
-		// RefreshToken 먼저 생성 (기존 토큰 정리 + tokenVersion 증가)
+		// TokenManager 먼저 생성 (기존 토큰 정리 + tokenVersion 증가)
 		String refreshTokenString = tokenService.createRefreshToken(
 			username,
 			"Web Browser", // 디바이스 정보 (추후 User-Agent에서 추출 가능)
@@ -124,14 +124,14 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 		if (WebUtils.isLocalDevelopment(frontendBaseUrl)) {
 			// 개발 환경: 백엔드 테스트 페이지
 			redirectUrl = "/oauth-test.html?success=true&accessToken=" + encodedAccessToken
-				+ "&userName=" + encodedUserInfo;
+						  + "&userName=" + encodedUserInfo;
 		} else {
 			// 프로덕션 환경: 실제 프론트엔드
 			redirectUrl = frontendBaseUrl + "/login/success?accessToken=" + encodedAccessToken
-				+ "&userName=" + encodedUserInfo;
+						  + "&userName=" + encodedUserInfo;
 		}
 
-		log.info("기존 사용자 로그인 성공, AccessToken/RefreshToken 발급 완료: {}", username);
+		log.info("기존 사용자 로그인 성공, AccessToken/TokenManager 발급 완료: {}", username);
 		response.sendRedirect(redirectUrl);
 	}
 

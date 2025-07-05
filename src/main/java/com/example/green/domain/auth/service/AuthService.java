@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.green.domain.auth.dto.TempTokenInfoDto;
-import com.example.green.domain.auth.model.entity.RefreshToken;
+import com.example.green.domain.auth.model.entity.TokenManager;
 import com.example.green.domain.auth.repository.RefreshTokenRepository;
 import com.example.green.domain.member.service.MemberService;
 
@@ -63,9 +63,9 @@ public class AuthService {
 		backoff = @Backoff(delay = 50, multiplier = 2.0, random = true)
 	)
 	public void logout(String username) {
-		Optional<RefreshToken> latestToken = refreshTokenRepository.findLatestByUsernameAndNotRevoked(username);
+		Optional<TokenManager> latestToken = refreshTokenRepository.findLatestByUsernameAndNotRevoked(username);
 		if (latestToken.isPresent()) {
-			RefreshToken token = latestToken.get();
+			TokenManager token = latestToken.get();
 			Long newTokenVersion = token.logout(); // tokenVersion++
 			refreshTokenRepository.save(token);
 			log.info("[AUTH] 로그아웃 완료 - AccessToken 무효화: {} (tokenVersion: {})",
@@ -84,11 +84,11 @@ public class AuthService {
 		backoff = @Backoff(delay = 50, multiplier = 2.0, random = true)
 	)
 	public void logoutAllDevices(String username) {
-		List<RefreshToken> allTokens = refreshTokenRepository.findAllByUsernameAndNotRevoked(username);
+		List<TokenManager> allTokens = refreshTokenRepository.findAllByUsernameAndNotRevoked(username);
 		if (!allTokens.isEmpty()) {
 			// 모든 유효한 RefreshToken의 tokenVersion을 크게 증가
 			Long maxTokenVersion = null;
-			for (RefreshToken token : allTokens) {
+			for (TokenManager token : allTokens) {
 				Long newTokenVersion = token.logoutAllDevices(); // tokenVersion += 1000
 				maxTokenVersion = newTokenVersion;
 			}

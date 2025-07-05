@@ -25,7 +25,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
-public class RefreshToken extends BaseEntity {
+public class TokenManager extends BaseEntity {
 
 	private static final Long LOGOUT_ALL_DEVICES_VERSION_INCREMENT = 1000L;
 
@@ -63,18 +63,18 @@ public class RefreshToken extends BaseEntity {
 	@JoinColumn(name = "MEMBER_ID", nullable = false)
 	private Member member;
 
-	public static RefreshToken create(String tokenValue, LocalDateTime expiresAt, Member member,
+	public static TokenManager create(String tokenValue, LocalDateTime expiresAt, Member member,
 		String deviceInfo, String ipAddress) {
-		RefreshToken refreshToken = new RefreshToken();
-		refreshToken.tokenValue = tokenValue;
-		refreshToken.expiresAt = expiresAt;
-		refreshToken.member = member;
-		refreshToken.deviceInfo = deviceInfo;
-		refreshToken.ipAddress = ipAddress;
-		refreshToken.lastUsedAt = LocalDateTime.now();
-		refreshToken.isRevoked = false;
-		refreshToken.tokenVersion = 1L;
-		return refreshToken;
+		TokenManager tokenManager = new TokenManager();
+		tokenManager.tokenValue = tokenValue;
+		tokenManager.expiresAt = expiresAt;
+		tokenManager.member = member;
+		tokenManager.deviceInfo = deviceInfo;
+		tokenManager.ipAddress = ipAddress;
+		tokenManager.lastUsedAt = LocalDateTime.now();
+		tokenManager.isRevoked = false;
+		tokenManager.tokenVersion = 1L;
+		return tokenManager;
 	}
 
 	public void revoke() {
