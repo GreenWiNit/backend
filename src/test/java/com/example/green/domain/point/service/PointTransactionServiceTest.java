@@ -66,4 +66,29 @@ class PointTransactionServiceTest {
 			.isInstanceOf(PointException.class)
 			.hasFieldOrPropertyWithValue("exceptionMessage", PointExceptionMessage.NOT_ENOUGH_POINT);
 	}
+
+	@Test
+	void 포인트_적립_시_기존_포인트에_추가_지급한다() {
+		// given
+		PointAmount mock = mock(PointAmount.class);
+		when(pointTransactionRepository.findLatestBalance(anyLong())).thenReturn(Optional.of(mock));
+
+		// when
+		pointTransactionService.earnPoints(1L, PointAmount.of(BigDecimal.valueOf(1000)), mock(PointSource.class));
+
+		// then
+		verify(pointTransactionRepository).save(any(PointTransaction.class));
+	}
+
+	@Test
+	void 포인트_적립_시_기존_포인트가_없어도_지급이_된다() {
+		// given
+		when(pointTransactionRepository.findLatestBalance(anyLong())).thenReturn(Optional.empty());
+
+		// when
+		pointTransactionService.earnPoints(1L, PointAmount.of(BigDecimal.valueOf(1000)), mock(PointSource.class));
+
+		// then
+		verify(pointTransactionRepository).save(any(PointTransaction.class));
+	}
 }
