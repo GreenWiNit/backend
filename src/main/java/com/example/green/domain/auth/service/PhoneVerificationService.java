@@ -25,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 public class PhoneVerificationService {
 
 	private final PhoneVerificationRepository phoneVerificationRepository;
+	private final PhoneVerificationEmail phoneVerificationEmail;
 	private final TokenGenerator tokenGenerator;
 	private final Clock clock;
 
@@ -36,17 +37,19 @@ public class PhoneVerificationService {
 		PhoneVerification phoneVerification = PhoneVerification.of(phoneNumber, tokenGenerator, now);
 		phoneVerificationRepository.save(phoneVerification);
 
-		return new PhoneVerificationResult(phoneVerification.getToken(), "email");
+		String serverEmail = phoneVerificationEmail.getServerEmail();
+		return new PhoneVerificationResult(phoneVerification.getToken(), serverEmail);
 	}
 
+	// todo: 통합 테스트
 	public void verify(PhoneNumber phoneNumber) {
-		phoneVerificationRepository.findByPhoneNumberAndStatus(phoneNumber, PENDING)
-			.ifPresentOrElse(phoneVerification -> {
-				phoneVerification.verifyExpiration(LocalDateTime.now(clock));
-				phoneVerification.verifyToken("token");
-			}, () -> {
-				throw new AuthException(PhoneExceptionMessage.REQUIRES_VERIFY_REQUEST);
-			});
+		PhoneVerification phoneVerification =
+			phoneVerificationRepository.findByPhoneNumberAndStatus(phoneNumber, PENDING)
+				.orElseThrow(() -> new AuthException(PhoneExceptionMessage.REQUIRES_VERIFY_REQUEST));
+		String token = phoneVerificationEmail.extractTokenByPhoneNumber(phoneNumber, phoneVerification.getCreatedAt())
+			.orElseThrow(() -> new AuthException(PhoneExceptionMessage.NOT_FOUND_TOKEN));
+
+		phoneVerification.verifyExpiration(LocalDateTime.now(clock));
+		phoneVerification.verifyToken(token);
 	}
 }
-

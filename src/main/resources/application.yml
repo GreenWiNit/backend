@@ -1,4 +1,7 @@
 spring:
+  profiles:
+    active: default
+    include: mail
   cloud:
     aws:
       credentials:

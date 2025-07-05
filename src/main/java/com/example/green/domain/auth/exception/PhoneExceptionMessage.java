@@ -18,7 +18,7 @@ public enum PhoneExceptionMessage implements ExceptionMessage {
 	TOKEN_MISMATCH(UNAUTHORIZED, "전화번호 인증에 실패했습니다."),
 	VERIFICATION_EXPIRED(UNAUTHORIZED, "전화번호 인증 유효 시간이 초과했습니다."),
 	REQUIRES_VERIFY_REQUEST(BAD_REQUEST, "요청된 전화번호 인증이 없습니다."),
-	;
+	NOT_FOUND_TOKEN(NOT_FOUND, "요청된 전화번호로 전송된 토큰 정보가 업습니다.");
 
 	public static final String REQUIRES_PHONE_NUMBER = "전화번호는 필수 정보 입니다.";
 

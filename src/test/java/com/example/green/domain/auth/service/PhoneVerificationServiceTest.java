@@ -33,6 +33,8 @@ class PhoneVerificationServiceTest {
 	private TokenGenerator tokenGenerator;
 	@Mock
 	private Clock clock;
+	@Mock
+	private PhoneVerificationEmail phoneVerificationEmail;
 	@InjectMocks
 	private PhoneVerificationService phoneVerificationService;
 
@@ -42,6 +44,7 @@ class PhoneVerificationServiceTest {
 		when(clock.getZone()).thenReturn(ZoneId.systemDefault());
 		when(clock.instant()).thenReturn(Instant.parse("2025-07-05T10:00:00Z"));
 		when(tokenGenerator.generate(anyInt())).thenReturn("token");
+		when(phoneVerificationEmail.getServerEmail()).thenReturn("email");
 
 		PhoneVerification presentedEntity = mock(PhoneVerification.class);
 		when(phoneVerificationRepository.findByPhoneNumberAndStatus(any(PhoneNumber.class), eq(PENDING)))
@@ -63,6 +66,7 @@ class PhoneVerificationServiceTest {
 		when(clock.getZone()).thenReturn(ZoneId.systemDefault());
 		when(clock.instant()).thenReturn(Instant.parse("2025-07-05T10:00:00Z"));
 		when(tokenGenerator.generate(anyInt())).thenReturn("token");
+		when(phoneVerificationEmail.getServerEmail()).thenReturn("email");
 		when(phoneVerificationRepository.findByPhoneNumberAndStatus(any(PhoneNumber.class), eq(PENDING)))
 			.thenReturn(Optional.empty());
 
@@ -81,8 +85,11 @@ class PhoneVerificationServiceTest {
 		when(clock.getZone()).thenReturn(ZoneId.systemDefault());
 		when(clock.instant()).thenReturn(Instant.parse("2025-07-05T10:00:00Z"));
 		PhoneVerification presentedEntity = mock(PhoneVerification.class);
+		when(presentedEntity.getCreatedAt()).thenReturn(LocalDateTime.now());
 		when(phoneVerificationRepository.findByPhoneNumberAndStatus(any(PhoneNumber.class), eq(PENDING)))
 			.thenReturn(Optional.of(presentedEntity));
+		when(phoneVerificationEmail.extractTokenByPhoneNumber(any(PhoneNumber.class), any(LocalDateTime.class)))
+			.thenReturn(Optional.of("token"));
 
 		// when
 		phoneVerificationService.verify(PhoneNumber.of("010-1234-5678"));
@@ -102,5 +109,21 @@ class PhoneVerificationServiceTest {
 		assertThatThrownBy(() -> phoneVerificationService.verify(PhoneNumber.of("010-1234-5678")))
 			.isInstanceOf(AuthException.class)
 			.hasFieldOrPropertyWithValue("exceptionMessage", REQUIRES_VERIFY_REQUEST);
+	}
+
+	@Test
+	void 주어진_전화번호로_메일에_토큰_정보가_없다면_예외가_발생한다() {
+		// given
+		PhoneVerification presentedEntity = mock(PhoneVerification.class);
+		when(presentedEntity.getCreatedAt()).thenReturn(LocalDateTime.now());
+		when(phoneVerificationRepository.findByPhoneNumberAndStatus(any(PhoneNumber.class), eq(PENDING)))
+			.thenReturn(Optional.of(presentedEntity));
+		when(phoneVerificationEmail.extractTokenByPhoneNumber(any(PhoneNumber.class), any(LocalDateTime.class)))
+			.thenReturn(Optional.empty());
+
+		// when & then
+		assertThatThrownBy(() -> phoneVerificationService.verify(PhoneNumber.of("010-1234-5678")))
+			.isInstanceOf(AuthException.class)
+			.hasFieldOrPropertyWithValue("exceptionMessage", NOT_FOUND_TOKEN);
 	}
 }

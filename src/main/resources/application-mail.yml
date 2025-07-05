@@ -1,11 +1,13 @@
 spring:
   mail:
-    host: imap.gmail.com
-    port: 993
     username: ${RECEIVER_EMAIL_ADDRESS}
     password: ${RECEIVER_EMAIL_PASSWORD}
     properties:
       mail:
         imap:
+          host: imap.gmail.com
+          port: 993
           ssl:
             enable: true
+          connectiontimeout: 10000
+          timeout: 10000
