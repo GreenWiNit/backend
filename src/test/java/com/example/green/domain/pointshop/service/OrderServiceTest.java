@@ -13,12 +13,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.example.green.domain.pointshop.client.PointSpendClient;
+import com.example.green.domain.pointshop.client.dto.PointSpendRequest;
 import com.example.green.domain.pointshop.entity.order.Order;
 import com.example.green.domain.pointshop.entity.order.OrderItem;
 import com.example.green.domain.pointshop.entity.order.vo.DeliveryAddressSnapshot;
 import com.example.green.domain.pointshop.entity.order.vo.ItemSnapshot;
-import com.example.green.domain.pointshop.entity.point.vo.PointAmount;
-import com.example.green.domain.pointshop.entity.point.vo.PointSource;
 import com.example.green.domain.pointshop.repository.OrderRepository;
 import com.example.green.domain.pointshop.service.command.SingleOrderCommand;
 
@@ -26,7 +26,7 @@ import com.example.green.domain.pointshop.service.command.SingleOrderCommand;
 class OrderServiceTest {
 
 	@Mock
-	private PointTransactionService pointTransactionService;
+	private PointSpendClient pointSpendClient;
 	@Mock
 	private PointProductService pointProductService;
 	@Mock
@@ -54,11 +54,10 @@ class OrderServiceTest {
 
 		// then
 		assertThat(orderId).isEqualTo(1L);
-		InOrder inOrder = inOrder(deliveryAddressService, pointProductService, orderRepository,
-			pointTransactionService);
+		InOrder inOrder = inOrder(deliveryAddressService, pointProductService, orderRepository, pointSpendClient);
 		inOrder.verify(deliveryAddressService).validateAddressOwnership(1L, 1L);
 		inOrder.verify(pointProductService).decreaseSingleItemStock(1L, 2);
-		inOrder.verify(pointTransactionService).spendPoints(anyLong(), any(PointAmount.class), any(PointSource.class));
+		inOrder.verify(pointSpendClient).spendPoints(any(PointSpendRequest.class));
 	}
 
 	private DeliveryAddressSnapshot createDeliverySnapshot() {

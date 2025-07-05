@@ -1,4 +1,4 @@
-package com.example.green.domain.pointshop.entity.point;
+package com.example.green.domain.point.entity;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -6,10 +6,10 @@ import java.math.BigDecimal;
 
 import org.junit.jupiter.api.Test;
 
-import com.example.green.domain.pointshop.entity.point.vo.PointAmount;
-import com.example.green.domain.pointshop.entity.point.vo.PointSource;
-import com.example.green.domain.pointshop.entity.point.vo.TargetType;
-import com.example.green.domain.pointshop.entity.point.vo.TransactionType;
+import com.example.green.domain.point.entity.vo.PointAmount;
+import com.example.green.domain.point.entity.vo.PointSource;
+import com.example.green.domain.point.entity.vo.TargetType;
+import com.example.green.domain.point.entity.vo.TransactionType;
 
 class PointTransactionTest {
 

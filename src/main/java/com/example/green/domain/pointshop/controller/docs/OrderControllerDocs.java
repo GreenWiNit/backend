@@ -20,6 +20,7 @@ public interface OrderControllerDocs {
 		1. 상품 수량은 최소 1개부터 최대 5개까지 선택할 수 있습니다.
 		2. 상품 재고가 부족합니다.
 		3. 사용 가능한 포인트가 부족합니다.
+		4. 적립한 포인트 내역이 없습니다.
 		""",
 		content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
 	)

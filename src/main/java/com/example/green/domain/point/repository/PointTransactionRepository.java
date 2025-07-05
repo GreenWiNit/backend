@@ -1,4 +1,4 @@
-package com.example.green.domain.pointshop.repository;
+package com.example.green.domain.point.repository;
 
 import java.util.Optional;
 
@@ -6,8 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.example.green.domain.pointshop.entity.point.PointTransaction;
-import com.example.green.domain.pointshop.entity.point.vo.PointAmount;
+import com.example.green.domain.point.entity.PointTransaction;
+import com.example.green.domain.point.entity.vo.PointAmount;
 
 public interface PointTransactionRepository extends JpaRepository<PointTransaction, Long> {
 
@@ -15,7 +15,7 @@ public interface PointTransactionRepository extends JpaRepository<PointTransacti
 		SELECT pt.balanceAfter 
 				FROM PointTransaction pt 
 						WHERE pt.memberId = :memberId 
-								ORDER BY pt.createdDate DESC 
+								ORDER BY pt.id DESC 
 										LIMIT 1
 		""")
 	Optional<PointAmount> findLatestBalance(@Param("memberId") Long memberId);
