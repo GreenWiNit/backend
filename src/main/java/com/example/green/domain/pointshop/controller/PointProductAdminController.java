@@ -16,12 +16,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.green.domain.pointshop.controller.docs.PointProductControllerDocs;
+import com.example.green.domain.pointshop.controller.docs.PointProductAdminControllerDocs;
 import com.example.green.domain.pointshop.controller.dto.PointProductCreateDto;
 import com.example.green.domain.pointshop.controller.dto.PointProductExcelCondition;
 import com.example.green.domain.pointshop.controller.dto.PointProductSearchCondition;
 import com.example.green.domain.pointshop.controller.dto.PointProductSearchResponse;
 import com.example.green.domain.pointshop.controller.dto.PointProductUpdateDto;
+import com.example.green.domain.pointshop.controller.message.PointProductResponseMessage;
 import com.example.green.domain.pointshop.controller.query.PointProductQueryRepository;
 import com.example.green.domain.pointshop.entity.pointproduct.vo.BasicInfo;
 import com.example.green.domain.pointshop.entity.pointproduct.vo.Code;
@@ -44,8 +45,8 @@ import lombok.RequiredArgsConstructor;
 @AdminApi
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/point-products")
-public class PointProductAdminController implements PointProductControllerDocs {
+@RequestMapping("/api/admin/point-products")
+public class PointProductAdminController implements PointProductAdminControllerDocs {
 
 	private final PointProductService pointProductService;
 	private final PointProductQueryRepository pointProductQueryRepository;
@@ -70,7 +71,7 @@ public class PointProductAdminController implements PointProductControllerDocs {
 		@ParameterObject @ModelAttribute PointProductSearchCondition condition
 	) {
 		PageTemplate<PointProductSearchResponse> result = pointProductQueryRepository.searchPointProducts(condition);
-		return ApiTemplate.ok(POINT_PRODUCTS_SEARCH_SUCCESS, result);
+		return ApiTemplate.ok(PointProductResponseMessage.POINT_PRODUCTS_INQUIRY_SUCCESS, result);
 	}
 
 	@GetMapping("/excel")

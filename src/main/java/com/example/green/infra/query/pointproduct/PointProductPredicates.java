@@ -8,6 +8,7 @@ import org.springframework.util.StringUtils;
 import com.example.green.domain.pointshop.controller.dto.PointProductExcelCondition;
 import com.example.green.domain.pointshop.controller.dto.PointProductSearchCondition;
 import com.example.green.domain.pointshop.entity.pointproduct.QPointProduct;
+import com.example.green.domain.pointshop.entity.pointproduct.vo.DisplayStatus;
 import com.example.green.domain.pointshop.entity.pointproduct.vo.SellingStatus;
 import com.example.green.domain.pointshop.exception.PointProductException;
 import com.example.green.domain.pointshop.exception.PointProductExceptionMessage;
@@ -33,6 +34,14 @@ public class PointProductPredicates {
 			filterByStatus(condition.status()),
 			filterByKeyword(condition.keyword())
 		);
+	}
+
+	public static BooleanExpression fromCursorCondition(Long cursor) {
+		if (cursor == null) {
+			return null;
+		}
+		return qPointProduct.id.lt(cursor)
+			.and(qPointProduct.displayStatus.eq(DisplayStatus.DISPLAY));
 	}
 
 	public static BooleanExpression filterByStatus(SellingStatus status) {

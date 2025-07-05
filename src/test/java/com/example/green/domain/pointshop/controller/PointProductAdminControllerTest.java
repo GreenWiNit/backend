@@ -15,6 +15,7 @@ import com.example.green.domain.pointshop.controller.dto.PointProductExcelCondit
 import com.example.green.domain.pointshop.controller.dto.PointProductSearchCondition;
 import com.example.green.domain.pointshop.controller.dto.PointProductSearchResponse;
 import com.example.green.domain.pointshop.controller.dto.PointProductUpdateDto;
+import com.example.green.domain.pointshop.controller.message.PointProductResponseMessage;
 import com.example.green.domain.pointshop.controller.query.PointProductQueryRepository;
 import com.example.green.domain.pointshop.controller.request.DtoGenerator;
 import com.example.green.domain.pointshop.controller.request.PointProductRequest;
@@ -65,7 +66,8 @@ class PointProductAdminControllerTest extends BaseControllerUnitTest {
 		// when & then
 		ApiTemplate<PageTemplate<PointProductSearchResponse>> response = PointProductRequest.searchProducts();
 		assertThat(response.result()).usingRecursiveComparison().isEqualTo(mockResult);
-		assertThat(response.message()).isEqualTo(POINT_PRODUCTS_SEARCH_SUCCESS.getMessage());
+		assertThat(response.message()).isEqualTo(
+			PointProductResponseMessage.POINT_PRODUCTS_INQUIRY_SUCCESS.getMessage());
 	}
 
 	@Test
