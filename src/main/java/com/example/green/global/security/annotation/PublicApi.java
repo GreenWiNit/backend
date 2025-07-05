@@ -26,10 +26,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 @PreAuthorize("permitAll()")
 public @interface PublicApi {
 
-    String DEFAULT_REASON = "공개 API";
+	String DEFAULT_REASON = "공개 API";
 
-    /**
-     * API의 공개 사유를 명시 (문서화 목적)
-     */
-    String reason() default DEFAULT_REASON;
+	/**
+	 * API의 공개 사유를 명시 (문서화 목적)
+	 */
+	String reason() default DEFAULT_REASON;
 }

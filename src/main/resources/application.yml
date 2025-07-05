@@ -14,7 +14,7 @@ spring:
   autoconfigure:
     exclude: org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration
   datasource:
-    url: jdbc:${DB_TYPE:mysql}://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:test}?${DB_PARAMS}
+    url: jdbc:${DB_TYPE:mysql}://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:test}?${DB_PARAMS:serverTimezone=UTC&useUnicode=true&characterEncoding=utf8}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
     driver-class-name: ${DB_DRIVER:com.mysql.cj.jdbc.Driver}
@@ -38,6 +38,19 @@ spring:
       max-file-size: ${MAX_FILE_SIZE:10MB}
       max-request-size: ${MAX_REQUEST_SIZE:35MB}
 
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-name: ${OAUTH2_GOOGLE_CLIENT_NAME:google}
+            client-id: ${OAUTH2_GOOGLE_CLIENT_ID}
+            client-secret: ${OAUTH2_GOOGLE_CLIENT_SECRET}
+            redirect-uri: ${OAUTH2_GOOGLE_REDIRECT_URI:http://localhost:8080/login/oauth2/code/google}
+            authorization-grant-type: ${OAUTH2_GOOGLE_GRANT_TYPE:authorization_code}
+            scope: ${OAUTH2_GOOGLE_SCOPE:profile,email}
+
+
 logging:
   level:
     org.springframework: ${LOG_LEVEL_SPRING:INFO}
@@ -59,3 +72,11 @@ app:
   storage:
     bucket: ${STORAGE_BUCKET}
     base-url: ${STORAGE_BASE_URL}
+  frontend:
+    base-url: ${FRONTEND_URL:http://localhost:3000}
+
+jwt:
+  secret: ${JWT_SECRET}
+  access-expiration: ${JWT_ACCESS_EXPIRATION:900000}
+  refresh-expiration: ${JWT_REFRESH_EXPIRATION:604800000}
+  temp-expiration: ${JWT_TEMP_EXPIRATION:600000}
