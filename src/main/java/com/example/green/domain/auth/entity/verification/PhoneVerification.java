@@ -58,13 +58,12 @@ public class PhoneVerification {
 		}
 	}
 
-	public boolean verifyToken(String token) {
+	public void verifyToken(String token) {
 		this.attempt = this.attempt.increaseCount();
-		boolean result = this.token.equals(token);
-		if (result) {
-			this.status = VerificationStatus.VERIFIED;
+		if (!this.token.equals(token)) {
+			throw new AuthException(PhoneExceptionMessage.TOKEN_MISMATCH);
 		}
-		return result;
+		this.status = VerificationStatus.VERIFIED;
 	}
 
 	public void markAsReissue() {

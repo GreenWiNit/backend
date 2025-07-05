@@ -52,40 +52,31 @@ class PhoneVerificationTest {
 	}
 
 	@Test
-	void 인증_정보_생성후_토큰_검증에_성공하면_True를_반환하고_검증_상태로_밥뀐다() {
+	void 인증_정보_생성후_토큰_검증에_성공하면_시도횟수가_증가하고_검증된_상태로_밥뀐다() {
 		// given
 		PhoneVerification phoneVerification = PhoneVerification.of(phoneNumber, tokenGenerator, fixedTime);
+		Attempt increasedAttempt = phoneVerification.getAttempt().increaseCount();
 
 		// when
-		boolean result = phoneVerification.verifyToken(token);
+		phoneVerification.verifyToken(token);
 
 		// then
-		assertThat(result).isTrue();
 		assertThat(phoneVerification.getStatus()).isEqualTo(VerificationStatus.VERIFIED);
+		assertThat(phoneVerification.getAttempt()).isEqualTo(increasedAttempt);
 	}
 
 	@Test
-	void 인증정보_생성후_토큰_검증에_실패하면_False를_반환한다() {
+	void 인증정보_생성후_토큰_검증에_실패해도_시도_횟수는_증가하고_예외를_반환하고_상태_변화는_없다() {
 		// given
 		String invalidToken = "000000";
 		PhoneVerification phoneVerification = PhoneVerification.of(phoneNumber, tokenGenerator, fixedTime);
+		Attempt increasedAttempt = phoneVerification.getAttempt().increaseCount();
 
 		// when & then
-		boolean result = phoneVerification.verifyToken(invalidToken);
-		assertThat(result).isFalse();
-	}
-
-	@Test
-	void 인증정보_생성후_토큰_검증시_검증_시도횟수가_증가한다() {
-		// given
-		PhoneVerification phoneVerification = PhoneVerification.of(phoneNumber, tokenGenerator, fixedTime);
-		Attempt beforeAttempt = phoneVerification.getAttempt();
-		Attempt increasedAttempt = beforeAttempt.increaseCount();
-
-		// when
-		phoneVerification.verifyToken("random");
-
-		// then
+		assertThatThrownBy(() -> phoneVerification.verifyToken(invalidToken))
+			.isInstanceOf(AuthException.class)
+			.hasFieldOrPropertyWithValue("exceptionMessage", PhoneExceptionMessage.TOKEN_MISMATCH);
+		assertThat(phoneVerification.getStatus()).isEqualTo(VerificationStatus.PENDING);
 		assertThat(phoneVerification.getAttempt()).isEqualTo(increasedAttempt);
 	}
 

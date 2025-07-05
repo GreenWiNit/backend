@@ -12,6 +12,7 @@ import com.example.green.domain.auth.entity.verification.vo.PhoneNumber;
 import com.example.green.domain.auth.service.PhoneVerificationService;
 import com.example.green.domain.auth.service.result.PhoneVerificationResult;
 import com.example.green.global.api.ApiTemplate;
+import com.example.green.global.api.NoContent;
 
 import lombok.RequiredArgsConstructor;
 
@@ -27,5 +28,12 @@ public class PhoneVerificationController {
 		PhoneNumber phoneNumber = PhoneNumber.of(dto.phoneNumber());
 		PhoneVerificationResult result = phoneVerificationService.request(phoneNumber);
 		return ApiTemplate.ok(PHONE_VERIFICATION_REQUEST_SUCCESS, result);
+	}
+
+	@PostMapping("/verify")
+	public NoContent verify(@RequestBody PhoneVerificationRequest dto) {
+		PhoneNumber phoneNumber = PhoneNumber.of(dto.phoneNumber());
+		phoneVerificationService.verify(phoneNumber);
+		return NoContent.ok(PHONE_VERIFICATION_SUCCESS);
 	}
 }

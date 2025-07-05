@@ -1,11 +1,13 @@
 package com.example.green.domain.auth.service;
 
 import static com.example.green.domain.auth.entity.verification.vo.VerificationStatus.*;
+import static com.example.green.domain.auth.exception.PhoneExceptionMessage.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.time.Clock;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Optional;
 
@@ -18,6 +20,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.example.green.domain.auth.entity.verification.PhoneVerification;
 import com.example.green.domain.auth.entity.verification.TokenGenerator;
 import com.example.green.domain.auth.entity.verification.vo.PhoneNumber;
+import com.example.green.domain.auth.exception.AuthException;
 import com.example.green.domain.auth.repository.PhoneVerificationRepository;
 import com.example.green.domain.auth.service.result.PhoneVerificationResult;
 
@@ -70,5 +73,34 @@ class PhoneVerificationServiceTest {
 		assertThat(result.serverEmailAddress()).isEqualTo("email");
 		assertThat(result.token()).isEqualTo("token");
 		verify(phoneVerificationRepository).save(any(PhoneVerification.class));
+	}
+
+	@Test
+	void 주어진_전화번호가_인증_요청을_기다리는_상태면_시간_검증과_토큰_검증을_한다() {
+		// given
+		when(clock.getZone()).thenReturn(ZoneId.systemDefault());
+		when(clock.instant()).thenReturn(Instant.parse("2025-07-05T10:00:00Z"));
+		PhoneVerification presentedEntity = mock(PhoneVerification.class);
+		when(phoneVerificationRepository.findByPhoneNumberAndStatus(any(PhoneNumber.class), eq(PENDING)))
+			.thenReturn(Optional.of(presentedEntity));
+
+		// when
+		phoneVerificationService.verify(PhoneNumber.of("010-1234-5678"));
+
+		// then
+		verify(presentedEntity).verifyExpiration(any(LocalDateTime.class));
+		verify(presentedEntity).verifyToken(anyString());
+	}
+
+	@Test
+	void 주어진_전화번호로_인증_요청이_없다면_예외가_발생한다() {
+		// given
+		when(phoneVerificationRepository.findByPhoneNumberAndStatus(any(PhoneNumber.class), eq(PENDING)))
+			.thenReturn(Optional.empty());
+
+		// when & then
+		assertThatThrownBy(() -> phoneVerificationService.verify(PhoneNumber.of("010-1234-5678")))
+			.isInstanceOf(AuthException.class)
+			.hasFieldOrPropertyWithValue("exceptionMessage", REQUIRES_VERIFY_REQUEST);
 	}
 }
