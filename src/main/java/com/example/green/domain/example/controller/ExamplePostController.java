@@ -3,6 +3,7 @@ package com.example.green.domain.example.controller;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.context.annotation.Profile;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,6 +27,7 @@ import com.example.green.global.security.annotation.PublicApi;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+@Profile("test")
 @RestController
 @RequestMapping("/api/posts")
 @RequiredArgsConstructor

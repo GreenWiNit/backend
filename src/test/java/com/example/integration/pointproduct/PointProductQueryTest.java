@@ -24,6 +24,7 @@ import com.example.green.domain.pointshop.controller.dto.PointProductSearchRespo
 import com.example.green.domain.pointshop.controller.query.PointProductQueryRepository;
 import com.example.green.domain.pointshop.entity.pointproduct.PointProduct;
 import com.example.green.domain.pointshop.entity.pointproduct.vo.BasicInfo;
+import com.example.green.domain.pointshop.entity.pointproduct.vo.Code;
 import com.example.green.domain.pointshop.entity.pointproduct.vo.DisplayStatus;
 import com.example.green.domain.pointshop.entity.pointproduct.vo.Media;
 import com.example.green.domain.pointshop.entity.pointproduct.vo.Price;
@@ -176,7 +177,8 @@ class PointProductQueryTest extends ServiceIntegrationTest {
 
 	private void createProductWithCode(String code, String name, SellingStatus status, LocalDateTime time) {
 		PointProduct pointProduct = PointProduct.builder()
-			.basicInfo(new BasicInfo(code, name, "테스트 상품"))
+			.code(new Code(code))
+			.basicInfo(new BasicInfo(name, "테스트 상품"))
 			.media(new Media("https://testMedia.com/image.jpg"))
 			.price(new Price(BigDecimal.valueOf(1000L)))
 			.stock(new Stock(10))

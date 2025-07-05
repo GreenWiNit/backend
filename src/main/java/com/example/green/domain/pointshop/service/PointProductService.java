@@ -5,7 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.green.domain.common.service.FileManager;
 import com.example.green.domain.pointshop.entity.pointproduct.PointProduct;
-import com.example.green.domain.pointshop.entity.pointproduct.vo.BasicInfo;
+import com.example.green.domain.pointshop.entity.pointproduct.vo.Code;
 import com.example.green.domain.pointshop.exception.PointProductException;
 import com.example.green.domain.pointshop.exception.PointProductExceptionMessage;
 import com.example.green.domain.pointshop.repository.PointProductRepository;
@@ -24,7 +24,7 @@ public class PointProductService {
 	private final FileManager fileManager;
 
 	public Long create(PointProductCreateCommand command) {
-		validateProductCode(command.basicInfo());
+		validateProductCode(command.code());
 		PointProduct pointProduct = PointProduct.create(
 			command.code(),
 			command.basicInfo(),
@@ -37,8 +37,8 @@ public class PointProductService {
 		return saved.getId();
 	}
 
-	private void validateProductCode(BasicInfo basicInfo) {
-		if (pointProductRepository.existsByBasicInfoCode(basicInfo.getCode())) {
+	private void validateProductCode(Code code) {
+		if (pointProductRepository.existsByCode(code)) {
 			throw new PointProductException(PointProductExceptionMessage.EXISTS_PRODUCT_CODE);
 		}
 	}

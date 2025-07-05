@@ -2,6 +2,7 @@ package com.example.integration.common;
 
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import com.example.green.GreenApplication;
 import com.example.integration.config.MySqlTestContainerConfig;
@@ -19,5 +20,6 @@ import com.example.integration.config.S3TestContainerConfig;
 	S3TestContainerConfig.class,
 }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
+@ActiveProfiles("test")
 public class ServiceIntegrationTest {
 }

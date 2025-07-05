@@ -14,7 +14,7 @@ public class PointProductProjections {
 	public static QBean<PointProductSearchResponse> toSearchResponse(QPointProduct qPointProduct) {
 		return Projections.fields(
 			PointProductSearchResponse.class,
-			qPointProduct.basicInfo.code.as("code"),
+			qPointProduct.code.code.as("code"),
 			qPointProduct.basicInfo.name.as("name"),
 			qPointProduct.price.price.as("pointPrice"),
 			qPointProduct.stock.stock.as("stockQuantity"),
