@@ -6,7 +6,7 @@ import com.example.green.domain.pointshop.entity.pointproduct.vo.Media;
 import com.example.green.domain.pointshop.entity.pointproduct.vo.Price;
 import com.example.green.domain.pointshop.entity.pointproduct.vo.Stock;
 
-public record PointProductCreateCommand(
+public record PointProductUpdateCommand(
 	Code code,
 	BasicInfo basicInfo,
 	Media media,

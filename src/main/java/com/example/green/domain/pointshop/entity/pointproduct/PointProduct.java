@@ -3,10 +3,9 @@ package com.example.green.domain.pointshop.entity.pointproduct;
 import static com.example.green.domain.pointshop.exception.PointProductExceptionMessage.*;
 import static com.example.green.global.utils.EntityValidator.*;
 
-import org.hibernate.annotations.DynamicUpdate;
-
 import com.example.green.domain.common.BaseEntity;
 import com.example.green.domain.pointshop.entity.pointproduct.vo.BasicInfo;
+import com.example.green.domain.pointshop.entity.pointproduct.vo.Code;
 import com.example.green.domain.pointshop.entity.pointproduct.vo.DisplayStatus;
 import com.example.green.domain.pointshop.entity.pointproduct.vo.Media;
 import com.example.green.domain.pointshop.entity.pointproduct.vo.Price;
@@ -41,7 +40,6 @@ import lombok.extern.slf4j.Slf4j;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
-@DynamicUpdate
 @Slf4j
 public class PointProduct extends BaseEntity {
 
@@ -49,6 +47,7 @@ public class PointProduct extends BaseEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "point_product_id")
 	private Long id;
+	private Code code;
 	@Embedded
 	private BasicInfo basicInfo;
 	@Embedded
@@ -66,19 +65,24 @@ public class PointProduct extends BaseEntity {
 	@Enumerated(EnumType.STRING)
 	private DisplayStatus displayStatus;
 
-	public static PointProduct create(BasicInfo basicInfo, Media media, Price price, Stock stock) {
-		validatePointProduct(basicInfo, media, price, stock);
-		return PointProduct.builder()
-			.basicInfo(basicInfo)
-			.media(media)
-			.price(price)
-			.stock(stock)
-			.sellingStatus(SellingStatus.EXCHANGEABLE)
-			.displayStatus(DisplayStatus.DISPLAY)
-			.build();
+	@Builder
+	public PointProduct(Code code, BasicInfo basicInfo, Media media, Price price, Stock stock) {
+		validatePointProduct(code, basicInfo, media, price, stock);
+		this.code = code;
+		this.basicInfo = basicInfo;
+		this.media = media;
+		this.price = price;
+		this.stock = stock;
+		this.sellingStatus = SellingStatus.EXCHANGEABLE;
+		this.displayStatus = DisplayStatus.DISPLAY;
 	}
 
-	private static void validatePointProduct(BasicInfo basicInfo, Media media, Price price, Stock stock) {
+	public static PointProduct create(Code code, BasicInfo basicInfo, Media media, Price price, Stock stock) {
+		return new PointProduct(code, basicInfo, media, price, stock);
+	}
+
+	private static void validatePointProduct(Code code, BasicInfo basicInfo, Media media, Price price, Stock stock) {
+		validateNullData(code, REQUIRED_CODE);
 		validateNullData(basicInfo, REQUIRED_BASIC_INFO);
 		validateNullData(media, REQUIRED_MEDIA);
 		validateNullData(price, REQUIRED_PRICE);
@@ -86,6 +90,11 @@ public class PointProduct extends BaseEntity {
 		if (stock.isSoldOut()) {
 			throw new PointProductException(PointProductExceptionMessage.INVALID_PRODUCT_STOCK_CREATION);
 		}
+	}
+
+	public void updateCode(Code code) {
+		validateNullData(code, REQUIRED_CODE);
+		this.code = code;
 	}
 
 	public void updateBasicInfo(BasicInfo basicInfo) {
@@ -127,5 +136,13 @@ public class PointProduct extends BaseEntity {
 
 	public void hideDisplay() {
 		this.displayStatus = DisplayStatus.HIDDEN;
+	}
+
+	public boolean isNewImage(Media media) {
+		return !this.media.equals(media);
+	}
+
+	public String getThumbnailUrl() {
+		return this.media.getThumbnailUrl();
 	}
 }
