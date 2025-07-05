@@ -32,7 +32,7 @@ public interface RefreshTokenRepository extends JpaRepository<TokenManager, Long
 		   + "ORDER BY rt.tokenVersion DESC, rt.id DESC")
 	Optional<TokenManager> findLatestByUsernameAndNotRevoked(@Param("username") String username);
 
-	// 토큰 정리 전용: 비관적 락으로 복합 로직의 원자성 보장
+	// 토큰 정리 전용
 	@Lock(LockModeType.PESSIMISTIC_WRITE)
 	@Query("SELECT rt FROM TokenManager rt WHERE rt.member = :member AND rt.isRevoked = false ORDER BY rt.id ASC")
 	List<TokenManager> findAllByMemberForCleanupWithLock(@Param("member") Member member);

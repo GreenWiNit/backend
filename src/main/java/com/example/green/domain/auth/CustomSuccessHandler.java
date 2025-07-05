@@ -32,9 +32,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 	private final TokenService tokenService;
 	private final String frontendBaseUrl;
 
-	public CustomSuccessHandler(
-		TokenService tokenService,
-		@Value("${app.frontend.base-url}") String frontendBaseUrl) {
+	public CustomSuccessHandler(TokenService tokenService, @Value("${app.frontend.base-url}") String frontendBaseUrl) {
 		this.tokenService = tokenService;
 		this.frontendBaseUrl = frontendBaseUrl;
 	}
@@ -64,13 +62,8 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 		OAuth2UserInfoDto oauth2UserInfoDto = user.getUserDto().oauth2UserInfoDto();
 
 		// TempToken VO 생성
-		String tempTokenString = tokenService.createTemporaryToken(
-			oauth2UserInfoDto.email(),
-			oauth2UserInfoDto.name(),
-			oauth2UserInfoDto.profileImageUrl(),
-			oauth2UserInfoDto.provider(),
-			oauth2UserInfoDto.providerId()
-		);
+		String tempTokenString = tokenService.createTemporaryToken(oauth2UserInfoDto.email(), oauth2UserInfoDto.name(),
+			oauth2UserInfoDto.profileImageUrl(), oauth2UserInfoDto.provider(), oauth2UserInfoDto.providerId());
 		TempToken tempToken = TempToken.from(tempTokenString, tokenService);
 
 		// URL 인코딩
@@ -91,15 +84,14 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 	}
 
 	// 기존 사용자 처리 - AccessToken/TokenManager 발급
-	private void handleExistingUser(CustomOAuth2UserDto user, String role, HttpServletResponse response)
-		throws IOException {
+	private void handleExistingUser(CustomOAuth2UserDto user, String role, HttpServletResponse response) throws
+		IOException {
 
 		String username = user.getUsername();
 
 		// TokenManager 먼저 생성 (기존 토큰 정리 + tokenVersion 증가)
-		String refreshTokenString = tokenService.createRefreshToken(
-			username,
-			"Web Browser", // 디바이스 정보 (추후 User-Agent에서 추출 가능)
+		String refreshTokenString = tokenService.createRefreshToken(username, "Web Browser",
+			// 디바이스 정보 (추후 User-Agent에서 추출 가능)
 			"Unknown IP"   // IP 주소 (추후 HttpServletRequest에서 추출 가능)
 		);
 
@@ -108,10 +100,8 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 		AccessToken accessToken = AccessToken.from(accessTokenString, tokenService);
 
 		// RefreshToken을 HTTP-Only 쿠키에 저장
-		Cookie refreshCookie = WebUtils.createRefreshTokenCookie(
-			refreshTokenString,
-			WebUtils.isLocalDevelopment(frontendBaseUrl) ? false : true,
-			7 * 24 * 60 * 60 // 7일
+		Cookie refreshCookie = WebUtils.createRefreshTokenCookie(refreshTokenString,
+			WebUtils.isLocalDevelopment(frontendBaseUrl) ? false : true, 7 * 24 * 60 * 60 // 7일
 		);
 		response.addCookie(refreshCookie);
 
@@ -123,12 +113,12 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 		String redirectUrl;
 		if (WebUtils.isLocalDevelopment(frontendBaseUrl)) {
 			// 개발 환경: 백엔드 테스트 페이지
-			redirectUrl = "/oauth-test.html?success=true&accessToken=" + encodedAccessToken
-						  + "&userName=" + encodedUserInfo;
+			redirectUrl =
+				"/oauth-test.html?success=true&accessToken=" + encodedAccessToken + "&userName=" + encodedUserInfo;
 		} else {
 			// 프로덕션 환경: 실제 프론트엔드
-			redirectUrl = frontendBaseUrl + "/login/success?accessToken=" + encodedAccessToken
-						  + "&userName=" + encodedUserInfo;
+			redirectUrl =
+				frontendBaseUrl + "/login/success?accessToken=" + encodedAccessToken + "&userName=" + encodedUserInfo;
 		}
 
 		log.info("기존 사용자 로그인 성공, AccessToken/TokenManager 발급 완료: {}", username);
