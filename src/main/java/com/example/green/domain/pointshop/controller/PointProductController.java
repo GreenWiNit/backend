@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.green.domain.pointshop.controller.docs.PointProductControllerDocs;
 import com.example.green.domain.pointshop.controller.dto.PointProductDetail;
 import com.example.green.domain.pointshop.controller.dto.PointProductView;
 import com.example.green.domain.pointshop.controller.message.PointProductResponseMessage;
@@ -22,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/point-products")
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class PointProductController {
+public class PointProductController implements PointProductControllerDocs {
 
 	private final PointProductDomainService pointProductDomainService;
 	private final PointProductQueryRepository pointProductQueryRepository;

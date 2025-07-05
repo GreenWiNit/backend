@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.green.domain.pointshop.controller.docs.PointProductControllerDocs;
+import com.example.green.domain.pointshop.controller.docs.PointProductAdminControllerDocs;
 import com.example.green.domain.pointshop.controller.dto.PointProductCreateDto;
 import com.example.green.domain.pointshop.controller.dto.PointProductExcelCondition;
 import com.example.green.domain.pointshop.controller.dto.PointProductSearchCondition;
@@ -46,7 +46,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/admin/point-products")
-public class PointProductAdminController implements PointProductControllerDocs {
+public class PointProductAdminController implements PointProductAdminControllerDocs {
 
 	private final PointProductService pointProductService;
 	private final PointProductQueryRepository pointProductQueryRepository;
