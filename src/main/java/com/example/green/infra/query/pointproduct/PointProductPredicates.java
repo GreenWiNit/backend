@@ -50,7 +50,7 @@ public class PointProductPredicates {
 		String trimmedKeyword = keyword.trim();
 		validateKeywordLength(trimmedKeyword);
 
-		return qPointProduct.basicInfo.code.containsIgnoreCase(trimmedKeyword)
+		return qPointProduct.code.code.containsIgnoreCase(trimmedKeyword)
 			.or(qPointProduct.basicInfo.name.containsIgnoreCase(trimmedKeyword));
 	}
 

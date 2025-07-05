@@ -12,24 +12,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import org.springframework.context.annotation.Profile;
-import org.springframework.stereotype.Component;
 import org.springframework.util.ReflectionUtils;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.example.green.domain.common.BaseEntity;
 import com.example.green.domain.pointshop.entity.pointproduct.PointProduct;
 import com.example.green.domain.pointshop.entity.pointproduct.vo.BasicInfo;
+import com.example.green.domain.pointshop.entity.pointproduct.vo.Code;
 import com.example.green.domain.pointshop.entity.pointproduct.vo.Media;
 import com.example.green.domain.pointshop.entity.pointproduct.vo.Price;
 import com.example.green.domain.pointshop.entity.pointproduct.vo.Stock;
 import com.example.green.domain.pointshop.repository.PointProductRepository;
 
-import jakarta.annotation.PostConstruct;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 
-@Profile(value = {"!prod & !test"})
-@Component
+@RestController
 @RequiredArgsConstructor
+@Hidden
 public class DbInitializer {
 
 	private static final Random random = new Random();
@@ -37,8 +38,9 @@ public class DbInitializer {
 	private static final Map<String, Integer> lastIds = new HashMap<>();
 	private final PointProductRepository pointProductRepository;
 
-	@PostConstruct
+	@GetMapping("/api/tools/init-db-point-products")
 	public void initialize() {
+		pointProductRepository.deleteAll();
 		List<PointProduct> pointProducts = new ArrayList<>();
 		int batchSize = 100;
 		for (int i = 0; i < 1000; i++) {
@@ -73,7 +75,8 @@ public class DbInitializer {
 
 	private static PointProduct createRandomProduct(String code, String name, int day) {
 		return PointProduct.builder()
-			.basicInfo(new BasicInfo(code, name, name + " 상품"))
+			.code(new Code(code))
+			.basicInfo(new BasicInfo(name, name + " 상품"))
 			.media(new Media("https://example.com/images/" + code.toLowerCase() + ".jpg"))
 			.price(new Price(BigDecimal.valueOf((random.nextInt(100) + 1) * 1000)))
 			.stock(new Stock(random.nextInt(51)))

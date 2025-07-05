@@ -42,7 +42,7 @@ class PointProductServiceTest {
 		// given
 		PointProductCreateCommand command = getCreateCommand();
 		PointProduct mockEntity = mock(PointProduct.class);
-		when(pointProductRepository.existsByBasicInfoCode(anyString())).thenReturn(false);
+		when(pointProductRepository.existsByCode(any(Code.class))).thenReturn(false);
 		when(mockEntity.getId()).thenReturn(1L);
 		when(pointProductRepository.save(any(PointProduct.class))).thenReturn(mockEntity);
 
@@ -57,7 +57,7 @@ class PointProductServiceTest {
 	void 포인트_상품_생성시_중복된_코드가_존재하면_예외가_발생한다() {
 		// given
 		PointProductCreateCommand command = getCreateCommand();
-		when(pointProductRepository.existsByBasicInfoCode(anyString())).thenReturn(true);
+		when(pointProductRepository.existsByCode(any(Code.class))).thenReturn(true);
 
 		// when & then
 		assertThatThrownBy(() -> pointProductService.create(command))
@@ -65,6 +65,7 @@ class PointProductServiceTest {
 			.hasFieldOrPropertyWithValue("exceptionMessage", EXISTS_PRODUCT_CODE);
 	}
 
+	@Test
 	void 포인트_상품_수정시_새로운_이미지가_아니면_기본_정보만_변경된다() {
 		// given
 		PointProductUpdateCommand command = getUpdateCommand();
