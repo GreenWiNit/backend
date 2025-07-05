@@ -1,0 +1,14 @@
+package com.example.green.domain.pointshop.controller.message;
+
+import com.example.green.global.api.ResponseMessage;
+
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
+@Getter
+public enum OrderResponseMessage implements ResponseMessage {
+
+	POINT_PRODUCT_EXCHANGE_SUCCESS("단일 상품 주문에 성공했습니다.");
+	private final String message;
+}

@@ -44,7 +44,7 @@ public class Order extends TimeBaseEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "order_id")
 	private Long id;
-	@Column(nullable = false, updatable = false)
+
 	private String orderNumber;
 
 	@Embedded
@@ -65,25 +65,22 @@ public class Order extends TimeBaseEntity {
 	private List<OrderItem> orderItems = new ArrayList<>();
 
 	public static Order create(
-		String orderNumber,
 		DeliveryAddressSnapshot deliveryAddressSnapshot,
 		MemberSnapshot memberSnapshot,
 		List<OrderItem> orderItems
 	) {
-		validateOrder(orderNumber, deliveryAddressSnapshot, memberSnapshot, orderItems);
-		Order order = createOrder(orderNumber, deliveryAddressSnapshot, memberSnapshot);
+		validateOrder(deliveryAddressSnapshot, memberSnapshot, orderItems);
+		Order order = createOrder(deliveryAddressSnapshot, memberSnapshot);
 		orderItems.forEach(order::addOrderItem);
 		order.calculateTotalPrice();
 		return order;
 	}
 
 	private static Order createOrder(
-		String orderNumber,
 		DeliveryAddressSnapshot deliveryAddressSnapshot,
 		MemberSnapshot memberSnapshot
 	) {
 		return Order.builder()
-			.orderNumber(orderNumber)
 			.deliveryAddressSnapshot(deliveryAddressSnapshot)
 			.memberSnapshot(memberSnapshot)
 			.status(OrderDeliveryStatus.PENDING_DELIVERY)
@@ -91,12 +88,10 @@ public class Order extends TimeBaseEntity {
 	}
 
 	private static void validateOrder(
-		String orderNumber,
 		DeliveryAddressSnapshot deliveryAddressSnapshot,
 		MemberSnapshot memberSnapshot,
 		List<OrderItem> orderItems
 	) {
-		EntityValidator.validateEmptyString(orderNumber, "주문 번호는 필수 값 입니다.");
 		EntityValidator.validateNullData(deliveryAddressSnapshot, "상품 주문 시 배송지 정보는 필수 값입니다.");
 		EntityValidator.validateNullData(memberSnapshot, "상품 주문 시 주문자 정보는 필수 값 입니다.");
 		EntityValidator.validateEmptyList(orderItems, "상품 주문시 상품 정보는 1개 이상 필요합니다.");

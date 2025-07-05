@@ -43,4 +43,8 @@ public class PointAmount {
 	public PointAmount subtract(PointAmount spendAmount) {
 		return PointAmount.of(this.amount.subtract(spendAmount.getAmount()));
 	}
+
+	public boolean canSpend(PointAmount spendAmount) {
+		return this.amount.compareTo(spendAmount.getAmount()) >= 0;
+	}
 }

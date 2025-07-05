@@ -40,7 +40,7 @@ class DeliveryAddressControllerTest extends BaseControllerUnitTest {
 	void 베송지_정보를_조회한다() {
 		// given
 		DeliveryResult mockDeliveryResult = new DeliveryResult(1L, "이름", "전화번호", "도로명", "상세주소", "우편번호");
-		when(deliveryAddressService.getDeliveryAddress(anyLong())).thenReturn(mockDeliveryResult);
+		when(deliveryAddressService.getDeliveryAddressByRecipient(anyLong())).thenReturn(mockDeliveryResult);
 
 		// when
 		ApiTemplate<DeliveryResult> response = DeliveryAddressRequest.get();
