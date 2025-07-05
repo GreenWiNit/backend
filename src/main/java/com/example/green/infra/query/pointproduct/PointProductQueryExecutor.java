@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 
 import com.example.green.domain.pointshop.controller.dto.PointProductSearchResponse;
-import com.example.green.domain.pointshop.controller.dto.PointProductsView;
+import com.example.green.domain.pointshop.controller.dto.PointProductView;
 import com.example.green.domain.pointshop.entity.pointproduct.QPointProduct;
 import com.example.green.global.api.page.Pagination;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -48,7 +48,7 @@ public class PointProductQueryExecutor {
 			.fetch();
 	}
 
-	public List<PointProductsView> findProductsByCursor(BooleanExpression expression, int cursorViewSize) {
+	public List<PointProductView> findProductsByCursor(BooleanExpression expression, int cursorViewSize) {
 		return jpaQueryFactory
 			.select(PointProductProjections.toProductsView(qPointProduct))
 			.from(qPointProduct)

@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import com.example.green.domain.pointshop.controller.dto.PointProductExcelCondition;
 import com.example.green.domain.pointshop.controller.dto.PointProductSearchCondition;
 import com.example.green.domain.pointshop.controller.dto.PointProductSearchResponse;
-import com.example.green.domain.pointshop.controller.dto.PointProductsView;
+import com.example.green.domain.pointshop.controller.dto.PointProductView;
 import com.example.green.domain.pointshop.controller.query.PointProductQueryRepository;
 import com.example.green.global.api.page.CursorTemplate;
 import com.example.green.global.api.page.PageTemplate;
@@ -42,9 +42,9 @@ public class PointProductQueryRepositoryImpl implements PointProductQueryReposit
 	}
 
 	@Override
-	public CursorTemplate<Long, PointProductsView> getProductsByCursor(Long cursor) {
+	public CursorTemplate<Long, PointProductView> getProductsByCursor(Long cursor) {
 		BooleanExpression cursorCondition = PointProductPredicates.fromCursorCondition(cursor);
-		List<PointProductsView> productsView =
+		List<PointProductView> productsView =
 			pointProductQueryExecutor.findProductsByCursor(cursorCondition, DEFAULT_CURSOR_VIEW_SIZE);
 
 		if (productsView.isEmpty()) {
@@ -53,7 +53,7 @@ public class PointProductQueryRepositoryImpl implements PointProductQueryReposit
 		return toCursorTemplate(productsView);
 	}
 
-	private static CursorTemplate<Long, PointProductsView> toCursorTemplate(List<PointProductsView> productsView) {
+	private static CursorTemplate<Long, PointProductView> toCursorTemplate(List<PointProductView> productsView) {
 		boolean hasNext = productsView.size() > DEFAULT_CURSOR_VIEW_SIZE;
 		if (hasNext) {
 			productsView = productsView.subList(0, DEFAULT_CURSOR_VIEW_SIZE);

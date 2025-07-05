@@ -1,7 +1,7 @@
 package com.example.green.infra.query.pointproduct;
 
 import com.example.green.domain.pointshop.controller.dto.PointProductSearchResponse;
-import com.example.green.domain.pointshop.controller.dto.PointProductsView;
+import com.example.green.domain.pointshop.controller.dto.PointProductView;
 import com.example.green.domain.pointshop.entity.pointproduct.QPointProduct;
 import com.querydsl.core.types.ConstructorExpression;
 import com.querydsl.core.types.Projections;
@@ -26,9 +26,9 @@ public class PointProductProjections {
 		);
 	}
 
-	public static ConstructorExpression<PointProductsView> toProductsView(QPointProduct qPointProduct) {
+	public static ConstructorExpression<PointProductView> toProductsView(QPointProduct qPointProduct) {
 		return Projections.constructor(
-			PointProductsView.class,
+			PointProductView.class,
 			qPointProduct.id,
 			qPointProduct.basicInfo.name,
 			qPointProduct.media.thumbnailUrl,

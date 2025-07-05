@@ -4,11 +4,11 @@ import java.math.BigDecimal;
 
 import com.example.green.domain.pointshop.entity.pointproduct.vo.SellingStatus;
 
-public record PointProductsView(
-	Long pointProductId,
+public record PointProductView(
+	long pointProductId,
 	String pointProductName,
 	String thumbnailUrl,
-	BigDecimal price,
+	BigDecimal pointPrice,
 	SellingStatus sellingStatus
 ) {
 }
