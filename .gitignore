@@ -227,5 +227,6 @@ gradle-app.setting
 
 # QueryDSL generated classes
 /src/main/generated/**/Q*.java
+/bin/
 
 src/main/resources/application-local.yml
