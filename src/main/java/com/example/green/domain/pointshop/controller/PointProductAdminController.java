@@ -22,6 +22,7 @@ import com.example.green.domain.pointshop.controller.dto.PointProductExcelCondit
 import com.example.green.domain.pointshop.controller.dto.PointProductSearchCondition;
 import com.example.green.domain.pointshop.controller.dto.PointProductSearchResponse;
 import com.example.green.domain.pointshop.controller.dto.PointProductUpdateDto;
+import com.example.green.domain.pointshop.controller.message.PointProductResponseMessage;
 import com.example.green.domain.pointshop.controller.query.PointProductQueryRepository;
 import com.example.green.domain.pointshop.entity.pointproduct.vo.BasicInfo;
 import com.example.green.domain.pointshop.entity.pointproduct.vo.Code;
@@ -70,7 +71,7 @@ public class PointProductAdminController implements PointProductControllerDocs {
 		@ParameterObject @ModelAttribute PointProductSearchCondition condition
 	) {
 		PageTemplate<PointProductSearchResponse> result = pointProductQueryRepository.searchPointProducts(condition);
-		return ApiTemplate.ok(POINT_PRODUCTS_SEARCH_SUCCESS, result);
+		return ApiTemplate.ok(PointProductResponseMessage.POINT_PRODUCTS_INQUIRY_SUCCESS, result);
 	}
 
 	@GetMapping("/excel")
