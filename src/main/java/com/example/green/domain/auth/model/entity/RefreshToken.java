@@ -21,7 +21,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "REFRESH_TOKEN")
+@Table(name = "TOKEN_MANAGER")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
@@ -31,7 +31,7 @@ public class RefreshToken extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "REFRESH_TOKEN_ID")
+	@Column(name = "TOKEN_MANAGER_ID")
 	@EqualsAndHashCode.Include
 	private Long id;
 
@@ -48,7 +48,10 @@ public class RefreshToken extends BaseEntity {
 	private String deviceInfo;
 
 	@Column(name = "IP_ADDRESS", length = 45)
-	private String ipAddress;
+	private String ipAddress; // 최근 접속 IP (토큰 사용 시마다 업데이트)
+
+	@Column(name = "LAST_USED_AT")
+	private LocalDateTime lastUsedAt; // 마지막 사용 시간 (토큰 갱신 시마다 업데이트)
 
 	@Column(name = "IS_REVOKED", nullable = false)
 	private Boolean isRevoked = false;
@@ -68,6 +71,7 @@ public class RefreshToken extends BaseEntity {
 		refreshToken.member = member;
 		refreshToken.deviceInfo = deviceInfo;
 		refreshToken.ipAddress = ipAddress;
+		refreshToken.lastUsedAt = LocalDateTime.now();
 		refreshToken.isRevoked = false;
 		refreshToken.tokenVersion = 1L;
 		return refreshToken;
@@ -75,6 +79,12 @@ public class RefreshToken extends BaseEntity {
 
 	public void revoke() {
 		this.isRevoked = true;
+	}
+
+	// 토큰 사용 시 최근 접속 정보 업데이트
+	public void updateLastUsedInfo(String currentIpAddress) {
+		this.ipAddress = currentIpAddress;
+		this.lastUsedAt = LocalDateTime.now();
 	}
 
 	// 토큰 유효성 검증

@@ -354,7 +354,7 @@ public class TokenService {
 		}
 	}
 
-	public String refreshAccessToken(String refreshToken, String role) {
+	public String refreshAccessToken(String refreshToken, String role, String currentIpAddress) {
 		if (!validateRefreshToken(refreshToken)) {
 			throw new BusinessException(GlobalExceptionMessage.JWT_VALIDATION_FAILED);
 		}
@@ -365,6 +365,15 @@ public class TokenService {
 		}
 
 		String username = getUsername(refreshToken);
+		
+		// 최근 접속 정보 업데이트
+		refreshTokenRepository.findByTokenValueAndNotRevoked(refreshToken)
+			.ifPresent(token -> {
+				token.updateLastUsedInfo(currentIpAddress);
+				refreshTokenRepository.save(token);
+				log.debug("RefreshToken 최근 접속 정보 업데이트: {} (IP: {})", username, currentIpAddress);
+			});
+		
 		return createAccessToken(username, role);
 	}
 

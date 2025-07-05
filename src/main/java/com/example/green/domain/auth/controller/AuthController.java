@@ -192,10 +192,11 @@ public class AuthController {
 		}
 
 		String username = tokenService.getUsername(refreshTokenString);
-		String newAccessTokenString = tokenService.refreshAccessToken(refreshTokenString, ROLE_USER);
+		String currentIpAddress = WebUtils.extractClientIp(request);
+		String newAccessTokenString = tokenService.refreshAccessToken(refreshTokenString, ROLE_USER, currentIpAddress);
 		AccessToken newAccessToken = AccessToken.from(newAccessTokenString, tokenService);
 
-		log.info("[REFRESH] issued new AccessToken for username={} ", username);
+		log.info("[REFRESH] issued new AccessToken for username={} from IP={}", username, currentIpAddress);
 		return ResponseEntity.ok(new TokenResponseDto(newAccessToken.getValue(), username, null));
 	}
 
