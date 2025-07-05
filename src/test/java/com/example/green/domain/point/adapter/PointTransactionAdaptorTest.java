@@ -48,4 +48,14 @@ class PointTransactionAdaptorTest {
 		// then
 		verify(pointTransactionService).earnPoints(anyLong(), any(PointAmount.class), any(PointSource.class));
 	}
+
+	@Test
+	void 멤버_컨텍스트_요청을_처리한다() {
+		// given
+		// when
+		pointTransactionAdaptor.earnPoints(1L, "reason", BigDecimal.ONE);
+
+		// then
+		verify(pointTransactionService).earnPoints(anyLong(), any(PointAmount.class), any(PointSource.class));
+	}
 }
