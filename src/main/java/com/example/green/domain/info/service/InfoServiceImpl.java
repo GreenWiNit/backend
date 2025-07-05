@@ -56,9 +56,9 @@ public class InfoServiceImpl implements InfoService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public InfoSearchResponseByAdmin getInfoDetailForAdmin(String infoId) {
+	public InfoDetailResponseByAdmin getInfoDetailForAdmin(String infoId) {
 		InfoEntity infoEntity = getInfoEntity(infoId);
-		return InfoSearchResponseByAdmin.from(infoEntity);
+		return InfoDetailResponseByAdmin.from(infoEntity);
 	}
 
 	@Override

@@ -28,6 +28,7 @@ import com.example.integration.common.ServiceIntegrationTest;
  * - Repository 단은 별도로 테스트하지 않음 (Hibernate 외부 시스템 사용)
  * - Service 단 단위테스트는 통합테스트로 대체 (응답값 검증 위주)
  */
+// TODO [추후작업필요] ServiceIntegrationTest 상속 삭제 후 BaseIntegrationTest 상속으로 변경
 class InfoServiceIntTest extends ServiceIntegrationTest {
 
 	@Autowired

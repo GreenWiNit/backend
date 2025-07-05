@@ -17,9 +17,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.example.green.domain.info.domain.vo.InfoCategory;
+import com.example.green.domain.info.dto.InfoRequest;
 import com.example.green.domain.info.exception.InfoException;
 import com.example.green.domain.info.utils.PrefixSequenceIdGenerator;
 import com.example.green.global.error.exception.BusinessException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 
 /**
  * 정보(Info) 관련 도메인의 단위 테스트를 진행하는 테스트 클래스
@@ -125,6 +129,34 @@ class InfoEntityTest {
 		assertThat(infoEntity.getTitle()).isEqualTo("updateTitle");
 		assertThat(infoEntity.getContent()).isEqualTo("updateContent");
 		assertThat(infoEntity.getInfoCategory().getDescription()).isEqualTo("기타");
+	}
+
+	/**
+	 * ENUM 타입인 정보 카테고리(InfoCategory) 파싱 테스트
+	 * */
+	@ParameterizedTest
+	@ValueSource(strings = {"CONTENTS", "EVENT", "ETC"})
+	void 정보_카테고리ENUM에_등록된_값이_들어왔을_때_정상적으로_변환된다(String validCode) throws JsonProcessingException {
+		// given
+		ObjectMapper objectMapper = new ObjectMapper();
+		String json = String.format("{\"infoCategory\":\"%s\"}", validCode);
+		InfoRequest req = objectMapper.readValue(json, InfoRequest.class);
+
+		// when & then
+		assertThat(req.infoCategory().toString()).isEqualTo(validCode);
+	}
+
+	@ParameterizedTest
+	@ValueSource(strings = {"", "NOT_EXISTING"})
+	void 정보_카테고리ENUM에_등록되지_않은_값이_들어왔을_때_예외를_던진다(String invalidCode) {
+		// given
+		ObjectMapper objectMapper = new ObjectMapper();
+		String json = String.format("{\"infoCategory\":\"%s\"}", invalidCode);
+
+		// when & then
+		// Jackson이 파싱 중에 InvalidFormatException 던짐
+		assertThatThrownBy(() -> objectMapper.readValue(json, InfoRequest.class))
+			.isInstanceOf(InvalidFormatException.class);
 	}
 
 }

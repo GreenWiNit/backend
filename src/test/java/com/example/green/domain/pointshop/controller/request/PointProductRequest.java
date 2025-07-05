@@ -4,7 +4,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
 import com.example.green.domain.pointshop.controller.dto.PointProductCreateDto;
+import com.example.green.domain.pointshop.controller.dto.PointProductSearchResponse;
+import com.example.green.domain.pointshop.controller.dto.PointProductUpdateDto;
 import com.example.green.global.api.ApiTemplate;
+import com.example.green.global.api.NoContent;
+import com.example.green.global.api.page.PageTemplate;
 
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
@@ -17,6 +21,71 @@ public class PointProductRequest {
 			.contentType(MediaType.APPLICATION_JSON)
 			.body(dto)
 			.when().post("/api/point-products")
+			.then().log().all()
+			.status(HttpStatus.OK)
+			.extract().as(new TypeRef<>() {
+			});
+	}
+
+	public static ApiTemplate<PageTemplate<PointProductSearchResponse>> searchProducts() {
+		return RestAssuredMockMvc
+			.given().log().all()
+			.contentType(MediaType.APPLICATION_JSON)
+			.when().get("/api/point-products")
+			.then().log().all()
+			.status(HttpStatus.OK)
+			.extract().as(new TypeRef<>() {
+			});
+	}
+
+	public static NoContent update(PointProductUpdateDto dto) {
+		return RestAssuredMockMvc
+			.given().log().all()
+			.contentType(MediaType.APPLICATION_JSON)
+			.body(dto)
+			.when().put("/api/point-products/1")
+			.then().log().all()
+			.status(HttpStatus.OK)
+			.extract().as(new TypeRef<>() {
+			});
+	}
+
+	public static void downloadExcel() {
+		RestAssuredMockMvc
+			.given().log().all()
+			.contentType(MediaType.APPLICATION_JSON)
+			.when().get("/api/point-products/excel")
+			.then().log().all()
+			.status(HttpStatus.OK);
+	}
+
+	public static NoContent delete(long id) {
+		return RestAssuredMockMvc
+			.given().log().all()
+			.contentType(MediaType.APPLICATION_JSON)
+			.when().delete("/api/point-products/" + id)
+			.then().log().all()
+			.status(HttpStatus.OK)
+			.extract().as(new TypeRef<>() {
+			});
+	}
+
+	public static NoContent show(long id) {
+		return RestAssuredMockMvc
+			.given().log().all()
+			.contentType(MediaType.APPLICATION_JSON)
+			.when().patch("/api/point-products/" + id + "/show")
+			.then().log().all()
+			.status(HttpStatus.OK)
+			.extract().as(new TypeRef<>() {
+			});
+	}
+
+	public static NoContent hide(long id) {
+		return RestAssuredMockMvc
+			.given().log().all()
+			.contentType(MediaType.APPLICATION_JSON)
+			.when().patch("/api/point-products/" + id + "/hide")
 			.then().log().all()
 			.status(HttpStatus.OK)
 			.extract().as(new TypeRef<>() {
