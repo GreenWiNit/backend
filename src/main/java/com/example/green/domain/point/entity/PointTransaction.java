@@ -1,11 +1,11 @@
-package com.example.green.domain.pointshop.entity.point;
+package com.example.green.domain.point.entity;
 
 import static com.example.green.global.utils.EntityValidator.*;
 
 import com.example.green.domain.common.TimeBaseEntity;
-import com.example.green.domain.pointshop.entity.point.vo.PointAmount;
-import com.example.green.domain.pointshop.entity.point.vo.PointSource;
-import com.example.green.domain.pointshop.entity.point.vo.TransactionType;
+import com.example.green.domain.point.entity.vo.PointAmount;
+import com.example.green.domain.point.entity.vo.PointSource;
+import com.example.green.domain.point.entity.vo.TransactionType;
 
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;

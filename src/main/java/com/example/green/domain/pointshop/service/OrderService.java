@@ -5,14 +5,13 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.green.domain.pointshop.client.PointSpendClient;
+import com.example.green.domain.pointshop.client.dto.PointSpendRequest;
 import com.example.green.domain.pointshop.entity.order.Order;
 import com.example.green.domain.pointshop.entity.order.OrderItem;
 import com.example.green.domain.pointshop.entity.order.vo.DeliveryAddressSnapshot;
 import com.example.green.domain.pointshop.entity.order.vo.ItemSnapshot;
 import com.example.green.domain.pointshop.entity.order.vo.MemberSnapshot;
-import com.example.green.domain.pointshop.entity.point.vo.PointAmount;
-import com.example.green.domain.pointshop.entity.point.vo.PointSource;
-import com.example.green.domain.pointshop.entity.point.vo.TargetType;
 import com.example.green.domain.pointshop.repository.OrderRepository;
 import com.example.green.domain.pointshop.service.command.SingleOrderCommand;
 
@@ -25,7 +24,7 @@ public class OrderService {
 
 	private final PointProductService pointProductService;
 	private final DeliveryAddressService deliveryAddressService;
-	private final PointTransactionService pointTransactionService;
+	private final PointSpendClient pointSpendClient;
 	private final OrderRepository orderRepository;
 
 	// todo: 통합 테스트
@@ -44,9 +43,9 @@ public class OrderService {
 	private void processSideEffect(SingleOrderCommand command, Order savedOrder) {
 		pointProductService.decreaseSingleItemStock(command.orderItemId(), command.quantity());
 		String itemName = savedOrder.getOrderItems().getFirst().getItemSnapshot().getItemName();
-		PointAmount amount = PointAmount.of(savedOrder.getTotalPrice());
-		PointSource pointSource = PointSource.ofTarget(savedOrder.getId(), itemName + " 교환", TargetType.ORDER);
-		pointTransactionService.spendPoints(command.memberId(), amount, pointSource);
+		pointSpendClient.spendPoints(
+			new PointSpendRequest(command.memberId(), savedOrder.getTotalPrice(), savedOrder.getId(), itemName + "교환")
+		);
 	}
 
 	private Order processOrder(

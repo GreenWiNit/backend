@@ -1,15 +1,13 @@
-package com.example.green.domain.pointshop.service;
-
-import java.math.BigDecimal;
+package com.example.green.domain.point.service;
 
 import org.springframework.stereotype.Service;
 
-import com.example.green.domain.pointshop.entity.point.PointTransaction;
-import com.example.green.domain.pointshop.entity.point.vo.PointAmount;
-import com.example.green.domain.pointshop.entity.point.vo.PointSource;
+import com.example.green.domain.point.entity.PointTransaction;
+import com.example.green.domain.point.entity.vo.PointAmount;
+import com.example.green.domain.point.entity.vo.PointSource;
+import com.example.green.domain.point.repository.PointTransactionRepository;
 import com.example.green.domain.pointshop.exception.point.PointException;
 import com.example.green.domain.pointshop.exception.point.PointExceptionMessage;
-import com.example.green.domain.pointshop.repository.PointTransactionRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,10 +19,11 @@ public class PointTransactionService {
 
 	public void spendPoints(Long memberId, PointAmount spendAmount, PointSource pointSource) {
 		PointAmount currentAmount = pointTransactionRepository.findLatestBalance(memberId)
-			.orElseGet(() -> PointAmount.of(BigDecimal.ZERO));
+			.orElseThrow(() -> new PointException(PointExceptionMessage.NO_POINTS_ACCUMULATED));
 		if (!currentAmount.canSpend(spendAmount)) {
 			throw new PointException(PointExceptionMessage.NOT_ENOUGH_POINT);
 		}
+
 		PointTransaction spend = PointTransaction.spend(memberId, pointSource, spendAmount, currentAmount);
 		pointTransactionRepository.save(spend);
 	}

@@ -1,4 +1,4 @@
-package com.example.green.domain.pointshop.entity.point.vo;
+package com.example.green.domain.point.entity.vo;
 
 import static com.example.green.global.utils.EntityValidator.*;
 
