@@ -226,8 +226,5 @@ gradle-app.setting
 **/._.DS_Store
 
 # QueryDSL generated classes
-/src/main/generated/**/Q*.java
-
-src/main/resources/application-local.yml
-src/main/resources/application.properties
-/bin/
+/src/main/generated/
+**/Q*.java

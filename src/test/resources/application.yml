@@ -43,21 +43,6 @@ spring:
       max-file-size: 10MB
       max-request-size: 35MB
 
-  security:
-    oauth2:
-      client:
-        registration:
-          google:
-            client-name: test-google
-            client-id: test-client-id
-            client-secret: test-client-secret
-            redirect-uri: http://localhost:8080/login/oauth2/code/google
-            authorization-grant-type: authorization_code
-            scope: profile,email
-
-jwt:
-  secret: test-jwt-secret-key-for-testing-purpose-only
-
 logging:
   level:
     org.springframework: ${LOG_LEVEL_SPRING:INFO}
@@ -77,5 +62,3 @@ app:
   storage:
     bucket: test-bucket
     base-url: http://localhost:4566
-  frontend:
-    base-url: http://localhost:3000
