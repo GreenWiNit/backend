@@ -9,6 +9,7 @@ import com.example.green.domain.point.controller.query.PointTransactionQueryRepo
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 
+// todo: 통합 테스트 추가
 @Repository
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
