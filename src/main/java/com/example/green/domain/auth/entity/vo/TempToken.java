@@ -1,4 +1,4 @@
-package com.example.green.domain.auth.model.vo;
+package com.example.green.domain.auth.entity.vo;
 
 import static com.example.green.domain.auth.constants.AuthConstants.*;
 

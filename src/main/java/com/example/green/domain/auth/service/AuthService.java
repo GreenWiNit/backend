@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.green.domain.auth.dto.TempTokenInfoDto;
-import com.example.green.domain.auth.model.entity.TokenManager;
+import com.example.green.domain.auth.entity.TokenManager;
 import com.example.green.domain.auth.repository.RefreshTokenRepository;
 import com.example.green.domain.member.service.MemberService;
 

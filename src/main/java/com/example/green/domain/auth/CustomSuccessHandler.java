@@ -14,8 +14,8 @@ import org.springframework.stereotype.Component;
 
 import com.example.green.domain.auth.dto.CustomOAuth2UserDto;
 import com.example.green.domain.auth.dto.OAuth2UserInfoDto;
-import com.example.green.domain.auth.model.vo.AccessToken;
-import com.example.green.domain.auth.model.vo.TempToken;
+import com.example.green.domain.auth.entity.vo.AccessToken;
+import com.example.green.domain.auth.entity.vo.TempToken;
 import com.example.green.domain.auth.service.TokenService;
 import com.example.green.domain.auth.utils.WebUtils;
 

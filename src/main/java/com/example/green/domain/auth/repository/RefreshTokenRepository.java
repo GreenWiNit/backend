@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.example.green.domain.auth.model.entity.TokenManager;
+import com.example.green.domain.auth.entity.TokenManager;
 import com.example.green.domain.member.entity.Member;
 
 import jakarta.persistence.LockModeType;
@@ -23,13 +23,13 @@ public interface RefreshTokenRepository extends JpaRepository<TokenManager, Long
 
 	// username으로 모든 유효한 TokenManager 조회 (Auth 서비스용)
 	@Query("SELECT rt FROM TokenManager rt " + "WHERE rt.member.username = :username AND rt.isRevoked = false "
-		   + "ORDER BY rt.id ASC")
+		+ "ORDER BY rt.id ASC")
 	List<TokenManager> findAllByUsernameAndNotRevoked(@Param("username") String username);
 
 	// username으로 가장 최신 TokenManager 조회 (로그아웃용)
 	@Query("SELECT rt FROM TokenManager rt "
-		   + "WHERE rt.member.username = :username AND rt.isRevoked = false "
-		   + "ORDER BY rt.tokenVersion DESC, rt.id DESC")
+		+ "WHERE rt.member.username = :username AND rt.isRevoked = false "
+		+ "ORDER BY rt.tokenVersion DESC, rt.id DESC")
 	Optional<TokenManager> findLatestByUsernameAndNotRevoked(@Param("username") String username);
 
 	// 토큰 정리 전용
@@ -41,14 +41,14 @@ public interface RefreshTokenRepository extends JpaRepository<TokenManager, Long
 	@Modifying
 	@Query(
 		"UPDATE TokenManager rt " + "SET rt.isRevoked = true "
-		+ "WHERE rt.member.username = :username AND rt.isRevoked = false"
+			+ "WHERE rt.member.username = :username AND rt.isRevoked = false"
 	)
 	void revokeAllByUsername(@Param("username") String username);
 
 	// 특정 사용자의 만료된 토큰 삭제 (username 기반)
 	@Modifying
 	@Query("DELETE FROM TokenManager rt " + "WHERE rt.member.username = :username "
-		   + "AND (rt.expiresAt < :now OR rt.isRevoked = true)")
+		+ "AND (rt.expiresAt < :now OR rt.isRevoked = true)")
 	void deleteExpiredAndRevokedTokensByUsername(@Param("username") String username, @Param("now") LocalDateTime now);
 
 	// 만료된 토큰 일괄 삭제 (스케줄러용)

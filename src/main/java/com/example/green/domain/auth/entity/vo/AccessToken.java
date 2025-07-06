@@ -1,4 +1,4 @@
-package com.example.green.domain.auth.model.vo;
+package com.example.green.domain.auth.entity.vo;
 
 import com.example.green.domain.auth.service.TokenService;
 import com.example.green.global.error.exception.BusinessException;
