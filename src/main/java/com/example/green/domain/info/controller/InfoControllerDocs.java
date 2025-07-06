@@ -9,6 +9,7 @@ import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.NoContent;
 import com.example.green.global.docs.ApiErrorStandard;
 import com.example.green.global.error.dto.DetailedExceptionResponse;
+import com.example.green.global.error.dto.ExceptionResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -19,6 +20,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Tag(name = "정보공유 API", description = "정보공유 생성, 조회, 수정, 삭제 API")
 public interface InfoControllerDocs {
@@ -71,22 +73,6 @@ public interface InfoControllerDocs {
 							{
 							  "field": "content",
 							  "message": "내용을 입력해주세요."
-							},
-							{
-							  "field": "content",
-							  "message": "내용은 최소 10자 이상, 최대 1000자 이하까지 등록할 수 있습니다."
-							},
-							{
-							  "field": "infoCategory",
-							  "message": "카테고리가 선택되지 않았습니다."
-							},
-							{
-							  "field": "imageUrl",
-							  "message": "이미지가 첨부되지 않았습니다."
-							},
-							{
-							  "field": "isDisplay",
-							  "reason": "전시여부를 선택해주세요."
 							}
 						  ]
 						}
@@ -126,26 +112,6 @@ public interface InfoControllerDocs {
 							{
 							  "field": "title",
 							  "message": "제목은 최소 1자 이상, 최대 30자 이하까지 등록할 수 있습니다."
-							},
-							{
-							  "field": "content",
-							  "message": "내용을 입력해주세요."
-							},
-							{
-							  "field": "content",
-							  "message": "내용은 최소 10자 이상, 최대 1000자 이하까지 등록할 수 있습니다."
-							},
-							{
-							  "field": "infoCategory",
-							  "message": "카테고리가 선택되지 않았습니다."
-							},
-							{
-							  "field": "imageUrl",
-							  "message": "이미지가 첨부되지 않았습니다."
-							},
-							{
-							  "field": "isDisplay",
-							  "reason": "전시여부를 선택해주세요."
 							}
 						  ]
 						}
@@ -167,6 +133,20 @@ public interface InfoControllerDocs {
 		@Parameter(name = "infoId", description = "삭제할 게시글의 ID",
 			in = ParameterIn.PATH, required = true, example = "P000001") String infoId
 	);
+
+	@Operation(summary = "관리자 Info 엑셀 다운로드", description = "관리자가 정보공유 조회 목록을 엑셀로 다운로드 합니다. (조회 페이지 목록이기 때문에 페이지 변수 필)")
+	@ApiResponse(responseCode = "200", description = "관리자 엑셀 다운로드용 정보공유 목록 조회 성공", useReturnTypeSchema = true)
+	@ApiResponse(
+		responseCode = "500", description = """
+		1. 엑셀 파일 생성에 실패했습니다.
+		2. 엑셀로 추출하려는 데이터가 비어있습니다.
+		""",
+		content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+	)
+	void getInfosForExcel(
+		@Parameter(name = "page", description = "조회할 페이지 번호 (0부터 시작)", example = "0", required = true) Integer page,
+		@Parameter(name = "size", description = "페이지당 게시글 수 (20개로)", example = "20", required = true) Integer size,
+		HttpServletResponse response);
 
 	@Operation(summary = "일반 사용자 Info 전체 조회 (페이징 없음)", description = "일반 사용자가 페이징 없이 정보공유 목록을 조회합니다.")
 	@ApiErrorStandard
