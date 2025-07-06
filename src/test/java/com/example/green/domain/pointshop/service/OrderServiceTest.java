@@ -39,7 +39,7 @@ class OrderServiceTest {
 	@Test
 	void 상품주문_커맨드가_주어지면_상품_주문_요청과_사이드_이펙트가_성공한다() {
 		// given
-		SingleOrderCommand command = new SingleOrderCommand(1L, "memberCode", 1L, 1L, 2);
+		SingleOrderCommand command = new SingleOrderCommand(1L, "01ARZ3NDEKTSV4RRFFQ69G5FAV", 1L, 1L, 2);
 
 		ItemSnapshot itemSnapshot = new ItemSnapshot(1L, "ITEM-001", "테스트 상품", BigDecimal.valueOf(10000));
 		DeliveryAddressSnapshot deliverySnapshot = createDeliverySnapshot();

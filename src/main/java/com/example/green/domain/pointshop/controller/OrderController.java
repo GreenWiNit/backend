@@ -24,8 +24,8 @@ public class OrderController implements OrderControllerDocs {
 
 	@PostMapping("/point-products/single")
 	public ApiTemplate<Long> exchangeSinglePointProduct(@RequestBody SingleOrderRequest dto) {
-		// todo: security 추가 시 사용자 ID, 사용자 코드 추출
-		SingleOrderCommand command = SingleOrderCommand.of(1L, "memberCode", dto);
+		// TODO: 인증 시스템 구현 후 실제 사용자 정보로 변경
+		SingleOrderCommand command = SingleOrderCommand.of(1L, "01ARZ3NDEKTSV4RRFFQ69G5FAV", dto);
 		Long result = orderService.orderSingleItem(command);
 		return ApiTemplate.ok(POINT_PRODUCT_EXCHANGE_SUCCESS, result);
 	}

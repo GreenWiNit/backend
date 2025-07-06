@@ -8,7 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.example.green.domain.auth.model.vo.AccessToken;
+import com.example.green.domain.auth.entity.vo.AccessToken;
 import com.example.green.domain.auth.service.TokenService;
 import com.example.green.global.error.exception.BusinessException;
 import com.example.green.global.error.exception.GlobalExceptionMessage;

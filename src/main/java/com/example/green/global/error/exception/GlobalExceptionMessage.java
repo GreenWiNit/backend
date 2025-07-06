@@ -28,7 +28,12 @@ public enum GlobalExceptionMessage implements ExceptionMessage {
 	JWT_CREATION_FAILED(INTERNAL_SERVER_ERROR, "JWT 토큰 생성에 실패했습니다."),
 	JWT_PARSING_FAILED(UNAUTHORIZED, "JWT 토큰 파싱에 실패했습니다."),
 	JWT_VALIDATION_FAILED(UNAUTHORIZED, "JWT 토큰 유효성 검증에 실패했습니다."),
-	JWT_TOKEN_EXPIRED(UNAUTHORIZED, "JWT 토큰이 만료되었습니다.")
+	JWT_TOKEN_EXPIRED(UNAUTHORIZED, "JWT 토큰이 만료되었습니다."),
+
+	// ULID 관련
+	ULID_INVALID_FORMAT(BAD_REQUEST, "유효하지 않은 ULID 형식입니다."),
+	ULID_INVALID_CHARACTER(BAD_REQUEST, "ULID에 유효하지 않은 문자가 포함되어 있습니다."),
+	ULID_INVALID_LENGTH(BAD_REQUEST, "ULID의 길이가 올바르지 않습니다.")
 	;
 
 	private final HttpStatus httpStatus;
