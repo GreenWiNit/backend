@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -26,12 +27,16 @@ import com.example.green.domain.info.controller.api.InfoResponseMessage;
 import com.example.green.domain.info.domain.vo.InfoCategory;
 import com.example.green.domain.info.dto.InfoRequest;
 import com.example.green.domain.info.dto.admin.InfoDetailResponseByAdmin;
+import com.example.green.domain.info.dto.admin.InfoSearchResponseByAdmin;
 import com.example.green.domain.info.dto.user.InfoDetailResponseByUser;
 import com.example.green.domain.info.service.InfoService;
 import com.example.green.global.api.ApiTemplate;
+import com.example.green.global.excel.core.ExcelDownloader;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * 정보공유(Info) 관련 프레젠테이션 계층의 단위 테스트를 진행하는 클래스
@@ -49,6 +54,9 @@ class InfoControllerTest {
 	private InfoService infoService;
 	@InjectMocks
 	private InfoController infoController;
+
+	@MockitoBean
+	private ExcelDownloader excelDownloader;
 
 	// 수정 테스트 body에 들어갈 LocalDataTime 직렬화를 위해 JavaTimeModule을 등록하고, 날짜를 타임스탬프로 직렬화하지 않도록 설정
 	@BeforeEach
@@ -186,6 +194,21 @@ class InfoControllerTest {
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.success").value(true))
 				.andExpect(jsonPath("$.message").value(expectedResponse.message()));
+		}
+
+		@Test
+		void 엑셀_다운로드_성공() throws Exception {
+			// given
+			List<InfoSearchResponseByAdmin> mockResult = List.of(mock(InfoSearchResponseByAdmin.class));
+			when(infoService.getInfosForExcel()).thenReturn(mockResult);
+
+			// when & then
+			mockMvc.perform(get("/api/admin/info/excel")
+					.with(csrf())
+					.contentType(APPLICATION_JSON))
+				.andDo(print())
+				.andExpect(status().isOk());
+			verify(excelDownloader).downloadAsStream(anyList(), any(HttpServletResponse.class));
 		}
 
 		@Nested

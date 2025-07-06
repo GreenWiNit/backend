@@ -90,6 +90,15 @@ public class InfoServiceImpl implements InfoService {
 	}
 
 	@Override
+	public List<InfoSearchResponseByAdmin> getInfosForExcel() {
+		List<InfoEntity> infoList = infoRepository.findAllByOrderByCreatedDateDesc();
+		List<InfoSearchResponseByAdmin> excelInfoList = infoList.stream()
+			.map(InfoSearchResponseByAdmin::from)
+			.toList();
+		return excelInfoList;
+	}
+
+	@Override
 	@Transactional(readOnly = true)
 	public InfoSearchListResponseByUser getInfosForUser() {
 		List<InfoEntity> infoList = infoRepository.findAllByOrderByCreatedDateDesc();
