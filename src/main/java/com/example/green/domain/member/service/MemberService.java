@@ -39,7 +39,7 @@ public class MemberService {
 	)
 	public String signupFromOAuth2(String provider, String providerId, String name, String email,
 		String nickname, String profileImageUrl) {
-		// OAuth2 정보로 username 생성 (Member 도메인에서 username 생성 규칙 관리)
+		// OAuth2 정보로 username 생성
 		String username = provider + " " + providerId;
 
 		return createMember(username, name, email, nickname, profileImageUrl);
@@ -54,23 +54,18 @@ public class MemberService {
 		backoff = @Backoff(delay = 50, multiplier = 2.0, random = true)
 	)
 	private String createMember(String username, String name, String email, String nickname, String profileImageUrl) {
-		// DB 제약조건 확인: 이미 존재하는 사용자인지 먼저 확인 (가장 효율적)
 		if (memberRepository.existsByUsername(username)) {
 			log.warn("이미 존재하는 사용자입니다 (DB 체크): {}", username);
 			return username;
 		}
 
 		try {
-			// 새로운 멤버 생성
 			Member member = Member.create(username, name, email);
 
-			// 사용자가 입력한 닉네임으로 업데이트 (선택사항)
 			if (nickname != null && !nickname.trim().isEmpty()) {
 				member.updateNickname(nickname);
 				log.info("사용자 지정 닉네임: {}", nickname);
 			}
-
-			// 프로필 이미지 URL 업데이트 (선택사항)
 			if (profileImageUrl != null && !profileImageUrl.trim().isEmpty()) {
 				member.updateProfileImage(profileImageUrl);
 				log.info("사용자 지정 프로필 이미지: {}", profileImageUrl);
@@ -105,11 +100,19 @@ public class MemberService {
 	}
 
 	/**
-	 * 사용자 조회 (읽기 전용)
+	 * 사용자 조회
 	 */
 	@Transactional(readOnly = true)
 	public Optional<Member> findByUsername(String username) {
 		return memberRepository.findByUsername(username);
+	}
+
+	/**
+	 * 사용자 ID로 조회
+	 */
+	@Transactional(readOnly = true)
+	public Optional<Member> findById(Long memberId) {
+		return memberRepository.findById(memberId);
 	}
 
 	/**

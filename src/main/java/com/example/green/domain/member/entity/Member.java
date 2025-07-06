@@ -6,6 +6,7 @@ import com.example.green.domain.common.BaseEntity;
 import com.example.green.domain.member.entity.enums.MemberRole;
 import com.example.green.domain.member.entity.enums.MemberStatus;
 import com.example.green.domain.member.entity.vo.Profile;
+import com.example.green.global.utils.UlidUtils;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -29,6 +30,9 @@ public class Member extends BaseEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "member_id")
 	private Long id;
+
+	@Column(unique = true, nullable = false, updatable = false, length = 26) //ULID
+	private String memberCode;
 
 	@Version
 	private Long version; //낙관적 락을 위한 컬럼, JPA가 자동으로 관리하며, 업데이트 시마다 증가
@@ -57,6 +61,7 @@ public class Member extends BaseEntity {
 		this.username = username;
 		this.name = name;
 		this.email = email;
+		this.memberCode = UlidUtils.generate();
 		this.profile = new Profile(name, null); // OAuth2 name을 기본 닉네임으로 설정
 		this.status = MemberStatus.NORMAL;
 		this.role = MemberRole.USER;
