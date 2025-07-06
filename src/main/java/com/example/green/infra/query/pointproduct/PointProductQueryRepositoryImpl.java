@@ -49,19 +49,17 @@ public class PointProductQueryRepositoryImpl implements PointProductQueryReposit
 		List<PointProductView> productsView =
 			pointProductQueryExecutor.findProductsByCursor(cursorCondition, DEFAULT_CURSOR_VIEW_SIZE);
 
-		if (productsView.isEmpty()) {
+		boolean hasNext = productsView.size() > DEFAULT_CURSOR_VIEW_SIZE;
+		if (!hasNext) {
 			return CursorTemplate.of(productsView);
 		}
-		return toCursorTemplate(productsView);
-	}
 
-	private static CursorTemplate<Long, PointProductView> toCursorTemplate(List<PointProductView> productsView) {
-		boolean hasNext = productsView.size() > DEFAULT_CURSOR_VIEW_SIZE;
-		if (hasNext) {
-			productsView = productsView.subList(0, DEFAULT_CURSOR_VIEW_SIZE);
+		productsView.removeLast();
+		if (productsView.isEmpty()) {
+			return CursorTemplate.ofEmpty();
 		}
-		Long nextCursor = productsView.getLast().pointProductId();
 
-		return CursorTemplate.ofWithNextCursor(hasNext, nextCursor, productsView);
+		return CursorTemplate.ofWithNextCursor(productsView.getLast().pointProductId(), productsView);
 	}
+
 }

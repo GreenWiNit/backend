@@ -39,7 +39,7 @@ class CursorTemplateTest {
 		// given
 
 		// when
-		CursorTemplate<Long, Object> result = CursorTemplate.ofWithNextCursor(true, 2L, List.of());
+		CursorTemplate<Long, Object> result = CursorTemplate.ofWithNextCursor(2L, List.of());
 
 		// then
 		assertThat(result.hasNext()).isTrue();
@@ -53,7 +53,7 @@ class CursorTemplateTest {
 		String composite = "compositeCursor12421";
 
 		// when
-		CursorTemplate<String, Object> result = CursorTemplate.ofWithNextCursor(true, composite, List.of());
+		CursorTemplate<String, Object> result = CursorTemplate.ofWithNextCursor(composite, List.of());
 
 		// then
 		assertThat(result.nextCursor()).isEqualTo(composite);

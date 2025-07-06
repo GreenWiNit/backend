@@ -19,17 +19,21 @@ public record CursorTemplate<R, T>(
 	List<T> content
 ) {
 
+	public static <R, T> CursorTemplate<R, T> ofEmpty() {
+		return new CursorTemplate<>(false, null, List.of());
+	}
+
 	public static <R, T> CursorTemplate<R, T> of(List<T> content) {
 		return new CursorTemplate<>(
 			false,
-			null, // 다음 커서는 없음
+			null,
 			Optional.ofNullable(content).orElse(List.of())
 		);
 	}
 
-	public static <R, T> CursorTemplate<R, T> ofWithNextCursor(boolean hasNext, R nextCursor, List<T> content) {
+	public static <R, T> CursorTemplate<R, T> ofWithNextCursor(R nextCursor, List<T> content) {
 		return new CursorTemplate<>(
-			hasNext,
+			true,
 			nextCursor,
 			Optional.ofNullable(content).orElse(List.of())
 		);
