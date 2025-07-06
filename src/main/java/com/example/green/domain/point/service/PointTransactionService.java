@@ -34,4 +34,5 @@ public class PointTransactionService {
 		PointTransaction earn = PointTransaction.earn(memberId, pointSource, earnAmount, currentAmount);
 		pointTransactionRepository.save(earn);
 	}
+
 }

@@ -3,6 +3,7 @@ package com.example.green.infra.query.pointproduct;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.green.domain.pointshop.controller.dto.PointProductExcelCondition;
 import com.example.green.domain.pointshop.controller.dto.PointProductSearchCondition;
@@ -18,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 
 @Repository
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class PointProductQueryRepositoryImpl implements PointProductQueryRepository {
 
 	private static final int DEFAULT_CURSOR_VIEW_SIZE = 20;
@@ -47,19 +49,17 @@ public class PointProductQueryRepositoryImpl implements PointProductQueryReposit
 		List<PointProductView> productsView =
 			pointProductQueryExecutor.findProductsByCursor(cursorCondition, DEFAULT_CURSOR_VIEW_SIZE);
 
-		if (productsView.isEmpty()) {
+		boolean hasNext = productsView.size() > DEFAULT_CURSOR_VIEW_SIZE;
+		if (!hasNext) {
 			return CursorTemplate.of(productsView);
 		}
-		return toCursorTemplate(productsView);
-	}
 
-	private static CursorTemplate<Long, PointProductView> toCursorTemplate(List<PointProductView> productsView) {
-		boolean hasNext = productsView.size() > DEFAULT_CURSOR_VIEW_SIZE;
-		if (hasNext) {
-			productsView = productsView.subList(0, DEFAULT_CURSOR_VIEW_SIZE);
+		productsView.removeLast();
+		if (productsView.isEmpty()) {
+			return CursorTemplate.ofEmpty();
 		}
-		Long nextCursor = productsView.getLast().pointProductId();
 
-		return CursorTemplate.ofWithNextCursor(hasNext, nextCursor, productsView);
+		return CursorTemplate.ofWithNextCursor(productsView.getLast().pointProductId(), productsView);
 	}
+
 }

@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import com.example.green.domain.point.entity.PointTransaction;
 import com.example.green.domain.point.entity.vo.PointAmount;
 
+// todo: data jpa 통합 테스트
 public interface PointTransactionRepository extends JpaRepository<PointTransaction, Long> {
 
 	@Query("""
