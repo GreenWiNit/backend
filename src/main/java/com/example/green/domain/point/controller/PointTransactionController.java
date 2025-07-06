@@ -25,5 +25,4 @@ public class PointTransactionController {
 		MemberPointSummary result = pointTransactionQueryRepository.findMemberPointSummary(1L);
 		return ApiTemplate.ok(POINT_TRANSACTION_INQUIRY_SUCCESS, result);
 	}
-
 }
