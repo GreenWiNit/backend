@@ -36,6 +36,10 @@ public class PointAmount {
 		return new PointAmount(value);
 	}
 
+	public static PointAmount ofZero() {
+		return new PointAmount(BigDecimal.ZERO);
+	}
+
 	public PointAmount add(PointAmount amount) {
 		return PointAmount.of(this.amount.add(amount.getAmount()));
 	}

@@ -27,4 +27,11 @@ public class PointTransactionService {
 		PointTransaction spend = PointTransaction.spend(memberId, pointSource, spendAmount, currentAmount);
 		pointTransactionRepository.save(spend);
 	}
+
+	public void earnPoints(Long memberId, PointAmount earnAmount, PointSource pointSource) {
+		PointAmount currentAmount = pointTransactionRepository.findLatestBalance(memberId)
+			.orElseGet(PointAmount::ofZero);
+		PointTransaction earn = PointTransaction.earn(memberId, pointSource, earnAmount, currentAmount);
+		pointTransactionRepository.save(earn);
+	}
 }
