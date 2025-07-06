@@ -3,6 +3,7 @@ package com.example.green.infra.query.pointproduct;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.green.domain.pointshop.controller.dto.PointProductExcelCondition;
 import com.example.green.domain.pointshop.controller.dto.PointProductSearchCondition;
@@ -18,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 
 @Repository
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class PointProductQueryRepositoryImpl implements PointProductQueryRepository {
 
 	private static final int DEFAULT_CURSOR_VIEW_SIZE = 20;
