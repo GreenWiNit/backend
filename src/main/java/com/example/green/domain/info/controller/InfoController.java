@@ -77,10 +77,8 @@ public class InfoController implements InfoControllerDocs {
 	@Override
 	@AdminApi(reason = "관리자만 정보 공유 엑셀 다운로드 가능")
 	@GetMapping("/api/admin/info/excel")
-	public void getInfosForExcel(@RequestParam(name = "page", required = false) Integer page,
-		@RequestParam(name = "size", required = false) Integer size,
-		HttpServletResponse response) {
-		List<InfoSearchResponseByAdmin> result = infoService.getInfosForExcel(page, size);
+	public void getInfosForExcel(HttpServletResponse response) {
+		List<InfoSearchResponseByAdmin> result = infoService.getInfosForExcel();
 		excelDownloader.downloadAsStream(result, response);
 	}
 

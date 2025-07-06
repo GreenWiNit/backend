@@ -134,7 +134,7 @@ public interface InfoControllerDocs {
 			in = ParameterIn.PATH, required = true, example = "P000001") String infoId
 	);
 
-	@Operation(summary = "관리자 Info 엑셀 다운로드", description = "관리자가 정보공유 조회 목록을 엑셀로 다운로드 합니다. (조회 페이지 목록이기 때문에 페이지 변수 필)")
+	@Operation(summary = "관리자 Info 엑셀 다운로드", description = "관리자가 정보공유 조회 목록을 엑셀로 다운로드 합니다.")
 	@ApiResponse(responseCode = "200", description = "관리자 엑셀 다운로드용 정보공유 목록 조회 성공", useReturnTypeSchema = true)
 	@ApiResponse(
 		responseCode = "500", description = """
@@ -143,10 +143,7 @@ public interface InfoControllerDocs {
 		""",
 		content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
 	)
-	void getInfosForExcel(
-		@Parameter(name = "page", description = "조회할 페이지 번호 (0부터 시작)", example = "0", required = true) Integer page,
-		@Parameter(name = "size", description = "페이지당 게시글 수 (20개로)", example = "20", required = true) Integer size,
-		HttpServletResponse response);
+	void getInfosForExcel(HttpServletResponse response);
 
 	@Operation(summary = "일반 사용자 Info 전체 조회 (페이징 없음)", description = "일반 사용자가 페이징 없이 정보공유 목록을 조회합니다.")
 	@ApiErrorStandard

@@ -38,7 +38,7 @@ public interface InfoService {
 	/**
 	 * 관리자 Info 엑셀 다운로드용 전체 조회
 	 */
-	List<InfoSearchResponseByAdmin> getInfosForExcel(Integer page, Integer size);
+	List<InfoSearchResponseByAdmin> getInfosForExcel();
 
 	/**
 	 * 일반 사용자 노출 가능한 Info 전체 조회 (페이징 없음)

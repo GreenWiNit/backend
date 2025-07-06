@@ -200,12 +200,10 @@ class InfoControllerTest {
 		void 엑셀_다운로드_성공() throws Exception {
 			// given
 			List<InfoSearchResponseByAdmin> mockResult = List.of(mock(InfoSearchResponseByAdmin.class));
-			when(infoService.getInfosForExcel(anyInt(), anyInt())).thenReturn(mockResult);
+			when(infoService.getInfosForExcel()).thenReturn(mockResult);
 
 			// when & then
 			mockMvc.perform(get("/api/admin/info/excel")
-					.param("page", "0")
-					.param("size", "20")
 					.with(csrf())
 					.contentType(APPLICATION_JSON))
 				.andDo(print())
