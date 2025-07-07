@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import com.example.green.domain.challenge.client.PointEarnClient;
 import com.example.green.domain.challenge.client.request.PointEarnRequest;
 import com.example.green.domain.member.client.PointClient;
+import com.example.green.domain.mypage.client.PointTotalGetClient;
 import com.example.green.domain.point.entity.vo.PointAmount;
 import com.example.green.domain.point.entity.vo.PointSource;
 import com.example.green.domain.point.entity.vo.TargetType;
@@ -21,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
-public class PointTransactionAdaptor implements PointSpendClient, PointEarnClient, PointClient {
+public class PointTransactionAdaptor implements PointSpendClient, PointEarnClient, PointClient, PointTotalGetClient {
 
 	private final PointTransactionService pointTransactionService;
 	private final PointTransactionQueryRepository pointTransactionQueryRepository;
@@ -50,5 +51,11 @@ public class PointTransactionAdaptor implements PointSpendClient, PointEarnClien
 	@Override
 	public Map<Long, BigDecimal> getEarnedPointByMember(List<Long> memberIds) {
 		return pointTransactionQueryRepository.findEarnedPointByMember(memberIds);
+	}
+
+	// TODO [확인필요] @김지환 회원별 포인트 조회
+	@Override
+	public int getTotalPoints(Long userId) {
+		return 0;
 	}
 }
