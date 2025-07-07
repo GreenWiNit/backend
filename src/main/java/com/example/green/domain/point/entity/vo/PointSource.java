@@ -21,20 +21,20 @@ public class PointSource {
 
 	private Long targetId;
 	@Column(nullable = false)
-	private String detail;
+	private String description;
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private TargetType targetType;
 
-	public static PointSource ofTarget(Long targetId, String detail, TargetType targetType) {
+	public static PointSource ofTarget(Long targetId, String description, TargetType targetType) {
 		validateAutoIncrementId(targetId, "포인트 출처의 Id 값은 필수 값 입니다.");
-		validateEmptyString(detail, "포인트 출처의 상세 내용은 필수 값 입니다.");
+		validateEmptyString(description, "포인트 출처의 상세 내용은 필수 값 입니다.");
 		validateNullData(targetType, "포인트 출처의 타입 정보는 필수 값 입니다.");
-		return new PointSource(targetId, detail, targetType);
+		return new PointSource(targetId, description, targetType);
 	}
 
-	public static PointSource ofEvent(String detail) {
-		validateEmptyString(detail, "포인트 출처의 상세 내용은 필수 값 입니다.");
-		return new PointSource(null, detail, TargetType.EVENT);
+	public static PointSource ofEvent(String description) {
+		validateEmptyString(description, "포인트 출처의 상세 내용은 필수 값 입니다.");
+		return new PointSource(null, description, TargetType.EVENT);
 	}
 }
