@@ -24,4 +24,6 @@ public interface PointTransactionQueryRepository {
 		Long memberId,
 		PointTransactionSearchCondition condition
 	);
+
+	List<PointTransactionDto> findPointTransactionByMemberForExcel(Long memberId);
 }

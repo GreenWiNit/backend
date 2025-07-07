@@ -8,6 +8,7 @@ import com.example.green.global.api.page.PageTemplate;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Tag(name = "포인트 관련 API", description = "포인트 관련 API 모음 입니다.")
 public interface PointTransactionAdminControllerDocs {
@@ -18,4 +19,8 @@ public interface PointTransactionAdminControllerDocs {
 		Long memberId,
 		PointTransactionSearchCondition condition
 	);
+
+	@Operation(summary = "사용자 포인트 엑셀 다운로드 (관리자)", description = "사용자 포인트를 엑셀 파일로 다운로드 합니다.")
+	@ApiResponse(responseCode = "200")
+	void exportPointTransactionExcel(Long memberId, HttpServletResponse response);
 }

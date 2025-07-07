@@ -104,5 +104,10 @@ public class PointTransactionQueryImpl implements PointTransactionQueryRepositor
 
 		return PageTemplate.of(fetch, pagination);
 	}
+
+	@Override
+	public List<PointTransactionDto> findPointTransactionByMemberForExcel(Long memberId) {
+		return queryExecutor.createPointTransactionForExcelQuery(memberId);
+	}
 }
 

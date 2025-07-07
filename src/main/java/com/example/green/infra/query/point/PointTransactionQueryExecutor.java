@@ -64,4 +64,13 @@ public class PointTransactionQueryExecutor {
 			.fetch();
 	}
 
+	public List<PointTransactionDto> createPointTransactionForExcelQuery(Long memberId) {
+		return jpaQueryFactory
+			.select(PointTransactionProjections.toPointTransactions(qPointTransaction))
+			.from(qPointTransaction)
+			.where(qPointTransaction.memberId.eq(memberId))
+			.orderBy(qPointTransaction.createdDate.desc())
+			.fetch();
+	}
 }
+
