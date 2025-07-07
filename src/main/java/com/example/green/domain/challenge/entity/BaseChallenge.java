@@ -63,6 +63,27 @@ public abstract class BaseChallenge extends BaseEntity {
 	@Column(nullable = false)
 	private LocalDateTime endDateTime;
 
+	// 하위 클래스를 위한 protected 생성자
+	protected BaseChallenge(
+		String challengeName,
+		ChallengeStatus challengeStatus,
+		PointAmount challengePoint,
+		ChallengeType challengeType,
+		LocalDateTime beginDateTime,
+		LocalDateTime endDateTime,
+		String challengeImage,
+		String challengeContent
+	) {
+		this.challengeName = challengeName;
+		this.challengeStatus = challengeStatus;
+		this.challengePoint = challengePoint;
+		this.challengeType = challengeType;
+		this.beginDateTime = beginDateTime;
+		this.endDateTime = endDateTime;
+		this.challengeImage = challengeImage;
+		this.challengeContent = challengeContent;
+	}
+
 	/**
 	 * 챌린지가 활성 상태인지 확인
 	 */

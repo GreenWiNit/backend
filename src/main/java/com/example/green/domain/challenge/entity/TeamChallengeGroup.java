@@ -1,5 +1,7 @@
 package com.example.green.domain.challenge.entity;
 
+import static com.example.green.global.utils.EntityValidator.*;
+
 import java.time.LocalDateTime;
 
 import com.example.green.domain.challenge.enums.GroupStatus;
@@ -42,9 +44,6 @@ public class TeamChallengeGroup extends BaseEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(nullable = false)
-	private Long teamChallengeNo;
-
 	@Column(length = 100, nullable = false)
 	private String groupName;
 
@@ -74,8 +73,62 @@ public class TeamChallengeGroup extends BaseEntity {
 	private Integer currentParticipants = 0;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "challengeId", insertable = false, updatable = false)
+	@JoinColumn(name = "team_challenge_id", insertable = false, updatable = false)
 	private TeamChallenge teamChallenge;
+
+	public static TeamChallengeGroup create(
+		String groupName,
+		GroupStatus groupStatus,
+		LocalDateTime groupBeginDateTime,
+		LocalDateTime groupEndDateTime,
+		Integer maxParticipants,
+		String groupLocation,
+		String groupDescription,
+		String openChatUrl
+	) {
+		// 필수 값 validate
+		validateEmptyString(groupName, "그룹명은 필수값입니다.");
+		validateNullData(groupStatus, "그룹 상태는 필수값입니다.");
+		validateNullData(groupBeginDateTime, "그룹 시작일시는 필수값입니다.");
+		validateNullData(groupEndDateTime, "그룹 종료일시는 필수값입니다.");
+		validateDateRange(groupBeginDateTime, groupEndDateTime, "그룹 시작일시는 종료일시보다 이전이어야 합니다.");
+
+		if (maxParticipants != null && maxParticipants <= 0) {
+			throw new IllegalArgumentException("최대 참가자 수는 1 이상이어야 합니다.");
+		}
+
+		return new TeamChallengeGroup(
+			groupName,
+			groupStatus,
+			groupBeginDateTime,
+			groupEndDateTime,
+			maxParticipants,
+			groupLocation,
+			groupDescription,
+			openChatUrl
+		);
+	}
+
+	private TeamChallengeGroup(
+		String groupName,
+		GroupStatus groupStatus,
+		LocalDateTime groupBeginDateTime,
+		LocalDateTime groupEndDateTime,
+		Integer maxParticipants,
+		String groupLocation,
+		String groupDescription,
+		String openChatUrl
+	) {
+		this.groupName = groupName;
+		this.groupStatus = groupStatus;
+		this.groupBeginDateTime = groupBeginDateTime;
+		this.groupEndDateTime = groupEndDateTime;
+		this.maxParticipants = maxParticipants;
+		this.currentParticipants = 0;
+		this.groupLocation = groupLocation;
+		this.groupDescription = groupDescription;
+		this.openChatUrl = openChatUrl;
+	}
 
 	/**
 	 * 참가자 증가
