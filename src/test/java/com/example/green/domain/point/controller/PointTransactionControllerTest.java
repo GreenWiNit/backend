@@ -57,7 +57,7 @@ class PointTransactionControllerTest extends BaseControllerUnitTest {
 	void 포인트_내역_조회_요청에_성공한다() {
 		// given
 		List<MyPointTransaction> mock = List.of(
-			new MyPointTransaction(1L, "reason", BigDecimal.ZERO, TransactionType.EARN, LocalDateTime.now())
+			new MyPointTransaction(1L, "description", BigDecimal.ZERO, TransactionType.EARN, LocalDateTime.now())
 		);
 		CursorTemplate<Long, MyPointTransaction> mockResult = CursorTemplate.of(mock);
 		when(pointTransactionQueryRepository.getPointTransaction(anyLong(), anyLong(), any(TransactionType.class)))

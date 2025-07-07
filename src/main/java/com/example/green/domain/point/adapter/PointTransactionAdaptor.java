@@ -28,14 +28,14 @@ public class PointTransactionAdaptor implements PointSpendClient, PointEarnClien
 
 	@Override
 	public void spendPoints(PointSpendRequest dto) {
-		PointSource pointSource = PointSource.ofTarget(dto.targetId(), dto.reason(), TargetType.EXCHANGE);
+		PointSource pointSource = PointSource.ofTarget(dto.targetId(), dto.description(), TargetType.EXCHANGE);
 		PointAmount amount = PointAmount.of(dto.amount());
 		pointTransactionService.spendPoints(dto.memberId(), amount, pointSource);
 	}
 
 	@Override
 	public void earnPoints(PointEarnRequest dto) {
-		PointSource pointSource = PointSource.ofTarget(dto.targetId(), dto.reason(), TargetType.CHALLENGE);
+		PointSource pointSource = PointSource.ofTarget(dto.targetId(), dto.description(), TargetType.CHALLENGE);
 		PointAmount amount = PointAmount.of(dto.amount());
 		pointTransactionService.earnPoints(dto.memberId(), amount, pointSource);
 	}

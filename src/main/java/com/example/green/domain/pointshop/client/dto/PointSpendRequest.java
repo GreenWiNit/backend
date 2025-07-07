@@ -6,6 +6,6 @@ public record PointSpendRequest(
 	Long memberId,
 	BigDecimal amount,
 	Long targetId,
-	String reason
+	String description
 ) {
 }

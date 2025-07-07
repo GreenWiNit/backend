@@ -12,7 +12,7 @@ public record MyPointTransaction(
 	@Schema(description = "포인트 내역 식별자", example = "1L")
 	Long pointTransactionId,
 	@Schema(description = "포인트 적립 및 차감 내용", example = "챌린지 적립")
-	String detailReason,
+	String description,
 	@Schema(description = "적립 및 차감 포인트", example = "1000")
 	BigDecimal amount,
 	@Schema(description = "포인트 트랜잭션 상태")
