@@ -1,6 +1,10 @@
 package com.example.green.infra.query.point;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,6 +15,7 @@ import com.example.green.domain.point.repository.PointTransactionQueryRepository
 import com.example.green.domain.point.repository.dto.MemberPointSummary;
 import com.example.green.domain.point.repository.dto.MyPointTransaction;
 import com.example.green.global.api.page.CursorTemplate;
+import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -68,6 +73,29 @@ public class PointTransactionQueryImpl implements PointTransactionQueryRepositor
 			return CursorTemplate.ofEmpty();
 		}
 		return CursorTemplate.ofWithNextCursor(content.getLast().pointTransactionId(), content);
+	}
+
+	@Override
+	public Map<Long, BigDecimal> findEarnedPointByMember(List<Long> memberIds) {
+		Map<Long, BigDecimal> earnedPoints = queryFactory
+			.select(
+				qPointTransaction.memberId,
+				qPointTransaction.pointAmount.amount.sum()
+			)
+			.from(qPointTransaction)
+			.where(
+				qPointTransaction.type.eq(TransactionType.EARN),
+				qPointTransaction.memberId.in(memberIds)
+			)
+			.groupBy(qPointTransaction.memberId)
+			.transform(GroupBy.groupBy(qPointTransaction.memberId)
+				.as(qPointTransaction.pointAmount.amount.sum()));
+
+		return memberIds.stream()
+			.collect(Collectors.toMap(
+				Function.identity(),
+				memberId -> earnedPoints.getOrDefault(memberId, BigDecimal.ZERO)
+			));
 	}
 
 	private List<MyPointTransaction> getExecution(BooleanExpression expression) {
