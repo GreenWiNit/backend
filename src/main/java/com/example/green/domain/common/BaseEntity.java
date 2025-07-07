@@ -2,7 +2,9 @@ package com.example.green.domain.common;
 
 import java.time.LocalDateTime;
 
+import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -21,12 +23,12 @@ public class BaseEntity {
 	@LastModifiedDate
 	private LocalDateTime modifiedDate;
 
-	// 생성자 정보 (현재는 Security 설정이 되어있지 않아 주석처리)
-	// @CreatedBy
+	// 생성자 정보 (JWT 인증으로 현재 사용자 자동 설정)
+	@CreatedBy
 	private String createdBy;
 
-	// 수정자 정보 (현재는 Security 설정이 되어있지 않아 주석처리)
-	// @LastModifiedBy
+	// 수정자 정보 (JWT 인증으로 현재 사용자 자동 설정)  
+	@LastModifiedBy
 	private String lastModifiedBy;
 
 	private boolean deleted = false;
