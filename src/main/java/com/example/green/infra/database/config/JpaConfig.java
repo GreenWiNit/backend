@@ -1,7 +1,7 @@
 package com.example.green.infra.database.config;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.Optional;
 
 import org.hibernate.boot.model.naming.PhysicalNamingStrategy;
@@ -24,11 +24,8 @@ public class JpaConfig {
 		return new UpperSnakeNamingStrategy();
 	}
 
-	/**
-	 * 한국 시간 기준으로 현재 시간 제공 (JPA Auditing용)
-	 */
 	@Bean
-	public DateTimeProvider koreaDateTimeProvider() {
-		return () -> Optional.of(LocalDateTime.now(ZoneId.of("Asia/Seoul")));
+	public DateTimeProvider koreaDateTimeProvider(Clock clock) {
+		return () -> Optional.of(LocalDateTime.now(clock));
 	}
 }
