@@ -58,7 +58,6 @@ public class TempToken {
 		return tokenService.extractTempTokenInfo(tokenValue);
 	}
 
-	/** 편의 메서드들 **/
 	public String getEmail() {
 		return extractUserInfo().getEmail();
 	}
@@ -71,9 +70,6 @@ public class TempToken {
 		return extractUserInfo().getProvider();
 	}
 
-	public String getProviderId() {
-		return extractUserInfo().getProviderId();
-	}
 
 	/**
 	 * 원본 토큰 문자열 반환 (필요한 경우에만)
