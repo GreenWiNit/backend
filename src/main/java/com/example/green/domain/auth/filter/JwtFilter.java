@@ -60,17 +60,13 @@ public class JwtFilter extends OncePerRequestFilter {
 				return;
 			}
 
-			String username = accessToken.getUsername();
-			String role = accessToken.getRole();
+			// TokenService에서 memberId포함해서 Authentication 생성
+			Authentication authToken = tokenService.createAuthentication(accessTokenString);
 
-			PrincipalDetails principal = PrincipalDetails.fromJwt(username, role);
-
-			Authentication authToken = new UsernamePasswordAuthenticationToken(
-				principal, null, principal.getAuthorities());
-
+			// SecurityContext에 인증 정보 저장
 			SecurityContextHolder.getContext().setAuthentication(authToken);
 
-			log.debug("JWT authentication completed for user: {}", username);
+			log.debug("JWT authentication completed for user: {}", accessToken.getUsername());
 
 		} catch (BusinessException e) {
 			if (e.getExceptionMessage() == GlobalExceptionMessage.JWT_TOKEN_EXPIRED) {
