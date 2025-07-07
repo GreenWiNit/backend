@@ -3,6 +3,7 @@ package com.example.green.domain.challenge.entity;
 import static com.example.green.global.utils.EntityValidator.*;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import com.example.green.domain.challenge.enums.ChallengeStatus;
 import com.example.green.domain.challenge.enums.ChallengeType;
@@ -35,6 +36,9 @@ public abstract class BaseChallenge extends BaseEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+
+	@Column(name = "challenge_code", length = 30, nullable = false, unique = true)
+	private String challengeCode;
 
 	@Column(length = 90, nullable = false)
 	private String challengeName;
@@ -74,6 +78,7 @@ public abstract class BaseChallenge extends BaseEntity {
 		String challengeImage,
 		String challengeContent
 	) {
+		this.challengeCode = generateChallengeCode(challengeType);
 		this.challengeName = challengeName;
 		this.challengeStatus = challengeStatus;
 		this.challengePoint = challengePoint;
@@ -82,6 +87,33 @@ public abstract class BaseChallenge extends BaseEntity {
 		this.endDateTime = endDateTime;
 		this.challengeImage = challengeImage;
 		this.challengeContent = challengeContent;
+	}
+
+	/**
+	 * 챌린지 코드를 자동 생성합니다.
+	 * 형식: CH-{타입}-{날짜}-{시퀀스}
+	 * 예: CH-P-20250109-143521, CH-T-20250109-143522
+	 */
+	private String generateChallengeCode(ChallengeType challengeType) {
+		String typeCode = challengeType == ChallengeType.PERSONAL ? "P" : "T";
+		String dateCode = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+
+		// 현재 시간을 밀리초 단위까지 사용하여 중복 가능성을 최소화
+		// 형식: HHmmss (시분초) + 밀리초 마지막 자리
+		LocalDateTime now = LocalDateTime.now();
+		String timeCode = now.format(DateTimeFormatter.ofPattern("HHmmss"));
+
+		// 밀리초의 마지막 자리를 추가해서 동일 초 내 중복 방지
+		long millis = System.currentTimeMillis() % 10; // 0-9
+		String sequenceCode = timeCode + millis;
+
+		// TODO: 향후 대용량 트래픽 환경에서는 다음 방법들 고려:
+		// 1. 별도 시퀀스 테이블로 일별 순차 번호 관리 (DB 비관적 락 사용)
+		// 2. Redis INCR 명령어로 고성능 시퀀스 관리 (자정 자동 리셋)
+		// 3. Snowflake 알고리즘 등 분산 ID 생성 방식
+		// 현재 방식은 동시 요청이 많지 않은 환경에서만 안전함
+
+		return String.format("CH-%s-%s-%s", typeCode, dateCode, sequenceCode);
 	}
 
 	/**

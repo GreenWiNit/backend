@@ -20,7 +20,8 @@ import lombok.NoArgsConstructor;
  */
 @Entity
 @Table(indexes = {
-	@Index(name = "idx_personal_challenge_active", columnList = "challengeStatus, beginDateTime, endDateTime")
+	@Index(name = "idx_personal_challenge_active", columnList = "challengeStatus, beginDateTime, endDateTime"),
+	@Index(name = "idx_personal_challenge_code", columnList = "challenge_code")
 })
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
