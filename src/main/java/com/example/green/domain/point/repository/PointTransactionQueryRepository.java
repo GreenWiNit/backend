@@ -1,8 +1,8 @@
-package com.example.green.domain.point.controller.query;
+package com.example.green.domain.point.repository;
 
-import com.example.green.domain.point.controller.dto.MemberPointSummary;
-import com.example.green.domain.point.controller.dto.MyPointTransaction;
 import com.example.green.domain.point.entity.vo.TransactionType;
+import com.example.green.domain.point.repository.dto.MemberPointSummary;
+import com.example.green.domain.point.repository.dto.MyPointTransaction;
 import com.example.green.global.api.page.CursorTemplate;
 
 public interface PointTransactionQueryRepository {

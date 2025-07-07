@@ -5,11 +5,11 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.green.domain.point.controller.dto.MemberPointSummary;
-import com.example.green.domain.point.controller.dto.MyPointTransaction;
-import com.example.green.domain.point.controller.query.PointTransactionQueryRepository;
 import com.example.green.domain.point.entity.QPointTransaction;
 import com.example.green.domain.point.entity.vo.TransactionType;
+import com.example.green.domain.point.repository.PointTransactionQueryRepository;
+import com.example.green.domain.point.repository.dto.MemberPointSummary;
+import com.example.green.domain.point.repository.dto.MyPointTransaction;
 import com.example.green.global.api.page.CursorTemplate;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;

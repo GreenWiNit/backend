@@ -1,4 +1,4 @@
-package com.example.green.domain.point.controller.dto;
+package com.example.green.domain.point.repository.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

@@ -8,10 +8,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.green.domain.point.controller.docs.PointTransactionControllerDocs;
-import com.example.green.domain.point.controller.dto.MemberPointSummary;
-import com.example.green.domain.point.controller.dto.MyPointTransaction;
-import com.example.green.domain.point.controller.query.PointTransactionQueryRepository;
 import com.example.green.domain.point.entity.vo.TransactionType;
+import com.example.green.domain.point.repository.PointTransactionQueryRepository;
+import com.example.green.domain.point.repository.dto.MemberPointSummary;
+import com.example.green.domain.point.repository.dto.MyPointTransaction;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.page.CursorTemplate;
 
