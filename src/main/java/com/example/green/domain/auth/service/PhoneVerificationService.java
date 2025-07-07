@@ -21,7 +21,6 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 @Transactional
-// todo: 메일 도구로부터 메일 주소 가져오기 + 메일 수신함의 토큰 가져오기
 public class PhoneVerificationService {
 
 	private final PhoneVerificationRepository phoneVerificationRepository;
@@ -51,5 +50,17 @@ public class PhoneVerificationService {
 
 		phoneVerification.verifyExpiration(LocalDateTime.now(clock));
 		phoneVerification.verifyToken(token);
+	}
+
+	@Transactional(readOnly = true)
+	public boolean isAuthenticated(PhoneNumber phoneNumber) {
+		final int validMinutes = 15;
+		LocalDateTime validFrom = LocalDateTime.now(clock).minusMinutes(validMinutes);
+
+		return phoneVerificationRepository.existsByPhoneNumberAndStatusAndCreatedAtGreaterThanEqual(
+			phoneNumber,
+			VERIFIED,
+			validFrom
+		);
 	}
 }
