@@ -62,7 +62,7 @@ public class PointTransactionQueryImpl implements PointTransactionQueryRepositor
 		Long cursor,
 		TransactionType status
 	) {
-		BooleanExpression expression = getExpression(memberId, cursor, status);
+		BooleanExpression expression = PointTransactionPredicates.fromCondition(memberId, cursor, status);
 		List<MyPointTransactionDto> content =
 			queryExecutor.createMyPointTransactionQuery(expression, DEFAULT_CURSOR_VIEW_SIZE);
 
@@ -81,9 +81,7 @@ public class PointTransactionQueryImpl implements PointTransactionQueryRepositor
 
 	@Override
 	public Map<Long, BigDecimal> findEarnedPointByMember(List<Long> memberIds) {
-		BooleanExpression expression = qPointTransaction.type.eq(TransactionType.EARN).and(
-			qPointTransaction.memberId.in(memberIds)
-		);
+		BooleanExpression expression = PointTransactionPredicates.fromCondition(memberIds);
 		Map<Long, BigDecimal> earnedPoints = queryExecutor.createEarnedPointQuery(expression);
 
 		return memberIds.stream()
@@ -105,17 +103,6 @@ public class PointTransactionQueryImpl implements PointTransactionQueryRepositor
 		List<PointTransactionDto> fetch = queryExecutor.createPointTransactionsQuery(expression, pagination);
 
 		return PageTemplate.of(fetch, pagination);
-	}
-
-	private static BooleanExpression getExpression(Long memberId, Long cursor, TransactionType status) {
-		BooleanExpression expression = qPointTransaction.memberId.eq(memberId);
-		if (cursor != null) {
-			expression = expression.and(qPointTransaction.id.lt(cursor));
-		}
-		if (status != null) {
-			expression = expression.and(qPointTransaction.type.eq(status));
-		}
-		return expression;
 	}
 }
 
