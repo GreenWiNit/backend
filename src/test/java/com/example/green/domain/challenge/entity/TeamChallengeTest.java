@@ -13,6 +13,8 @@ import org.junit.jupiter.api.Test;
 import com.example.green.domain.challenge.enums.ChallengeStatus;
 import com.example.green.domain.challenge.enums.ChallengeType;
 import com.example.green.domain.challenge.enums.GroupStatus;
+import com.example.green.domain.challenge.exception.ChallengeException;
+import com.example.green.domain.challenge.exception.ChallengeExceptionMessage;
 import com.example.green.domain.point.entity.vo.PointAmount;
 
 class TeamChallengeTest {
@@ -330,5 +332,39 @@ class TeamChallengeTest {
 
 		// then
 		assertFalse(isMaxReached);
+	}
+
+	@Test
+	void 최대_그룹_수가_0_이하이면_ChallengeException이_발생한다() {
+		// when & then
+		assertThatThrownBy(() -> TeamChallenge.create(
+			"잘못된 챌린지",
+			ChallengeStatus.PROCEEDING,
+			challengePoint,
+			LocalDateTime.now().minusDays(1),
+			LocalDateTime.now().plusDays(7),
+			0,  // 잘못된 값
+			"challenge-image.jpg",
+			"잘못된 챌린지 설명"
+		))
+		.isInstanceOf(ChallengeException.class)
+		.hasFieldOrPropertyWithValue("exceptionMessage", ChallengeExceptionMessage.INVALID_MAX_GROUP_COUNT);
+	}
+
+	@Test
+	void 최대_그룹_수가_음수이면_ChallengeException이_발생한다() {
+		// when & then
+		assertThatThrownBy(() -> TeamChallenge.create(
+			"잘못된 챌린지",
+			ChallengeStatus.PROCEEDING,
+			challengePoint,
+			LocalDateTime.now().minusDays(1),
+			LocalDateTime.now().plusDays(7),
+			-5,  // 잘못된 값
+			"challenge-image.jpg",
+			"잘못된 챌린지 설명"
+		))
+		.isInstanceOf(ChallengeException.class)
+		.hasFieldOrPropertyWithValue("exceptionMessage", ChallengeExceptionMessage.INVALID_MAX_GROUP_COUNT);
 	}
 }

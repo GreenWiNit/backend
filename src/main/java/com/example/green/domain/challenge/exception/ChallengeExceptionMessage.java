@@ -28,6 +28,8 @@ public enum ChallengeExceptionMessage implements ExceptionMessage {
 	// 팀 챌린지 관련
 	TEAM_CHALLENGE_FULL(BAD_REQUEST, "팀 챌린지 참여 인원이 가득 찼습니다."),
 	INVALID_TEAM_COUNT(BAD_REQUEST, "팀 수가 올바르지 않습니다."),
+	INVALID_MAX_GROUP_COUNT(BAD_REQUEST, "최대 그룹 수는 1 이상이어야 합니다."),
+	INVALID_MAX_PARTICIPANTS_COUNT(BAD_REQUEST, "최대 참가자 수는 1 이상이어야 합니다."),
 
 	// 일반 챌린지 관련
 	CHALLENGE_NOT_FOUND(NOT_FOUND, "해당 챌린지를 찾을 수 없습니다."),

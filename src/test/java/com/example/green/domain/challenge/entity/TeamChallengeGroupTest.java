@@ -9,6 +9,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.example.green.domain.challenge.enums.GroupStatus;
+import com.example.green.domain.challenge.exception.ChallengeException;
+import com.example.green.domain.challenge.exception.ChallengeExceptionMessage;
 
 class TeamChallengeGroupTest {
 
@@ -285,5 +287,35 @@ class TeamChallengeGroupTest {
 
 		// then
 		assertFalse(isActive);
+	}
+
+	@Test
+	void 최대_참가자_수가_0_이하이면_ChallengeException이_발생한다() {
+		// when & then
+		assertThatThrownBy(() -> TeamChallengeGroup.create(
+			"잘못된 그룹",
+			GroupStatus.RECRUITING,
+			LocalDateTime.now().minusHours(1),
+			LocalDateTime.now().plusHours(1),
+			0,  // 잘못된 값
+			null, null, null
+		))
+		.isInstanceOf(ChallengeException.class)
+		.hasFieldOrPropertyWithValue("exceptionMessage", ChallengeExceptionMessage.INVALID_MAX_PARTICIPANTS_COUNT);
+	}
+
+	@Test
+	void 최대_참가자_수가_음수이면_ChallengeException이_발생한다() {
+		// when & then
+		assertThatThrownBy(() -> TeamChallengeGroup.create(
+			"잘못된 그룹",
+			GroupStatus.RECRUITING,
+			LocalDateTime.now().minusHours(1),
+			LocalDateTime.now().plusHours(1),
+			-10,  // 잘못된 값
+			null, null, null
+		))
+		.isInstanceOf(ChallengeException.class)
+		.hasFieldOrPropertyWithValue("exceptionMessage", ChallengeExceptionMessage.INVALID_MAX_PARTICIPANTS_COUNT);
 	}
 }

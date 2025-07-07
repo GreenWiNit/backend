@@ -5,6 +5,8 @@ import static com.example.green.global.utils.EntityValidator.*;
 import java.time.LocalDateTime;
 
 import com.example.green.domain.challenge.enums.GroupStatus;
+import com.example.green.domain.challenge.exception.ChallengeException;
+import com.example.green.domain.challenge.exception.ChallengeExceptionMessage;
 import com.example.green.domain.common.BaseEntity;
 
 import jakarta.persistence.Column;
@@ -94,7 +96,7 @@ public class TeamChallengeGroup extends BaseEntity {
 		validateDateRange(groupBeginDateTime, groupEndDateTime, "그룹 시작일시는 종료일시보다 이전이어야 합니다.");
 
 		if (maxParticipants != null && maxParticipants <= 0) {
-			throw new IllegalArgumentException("최대 참가자 수는 1 이상이어야 합니다.");
+			throw new ChallengeException(ChallengeExceptionMessage.INVALID_MAX_PARTICIPANTS_COUNT);
 		}
 
 		return new TeamChallengeGroup(

@@ -8,6 +8,8 @@ import java.util.List;
 
 import com.example.green.domain.challenge.enums.ChallengeStatus;
 import com.example.green.domain.challenge.enums.ChallengeType;
+import com.example.green.domain.challenge.exception.ChallengeException;
+import com.example.green.domain.challenge.exception.ChallengeExceptionMessage;
 import com.example.green.domain.point.entity.vo.PointAmount;
 
 import jakarta.persistence.CascadeType;
@@ -63,7 +65,7 @@ public class TeamChallenge extends BaseChallenge {
 		validateDateRange(beginDateTime, endDateTime, "시작일시는 종료일시보다 이전이어야 합니다.");
 
 		if (maxGroupCount != null && maxGroupCount <= 0) {
-			throw new IllegalArgumentException("최대 그룹 수는 1 이상이어야 합니다.");
+			throw new ChallengeException(ChallengeExceptionMessage.INVALID_MAX_GROUP_COUNT);
 		}
 
 		return new TeamChallenge(
