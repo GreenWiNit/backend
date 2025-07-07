@@ -13,6 +13,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import com.example.green.domain.pointshop.entity.pointproduct.vo.BasicInfo;
+import com.example.green.domain.pointshop.entity.pointproduct.vo.Code;
 import com.example.green.domain.pointshop.entity.pointproduct.vo.DisplayStatus;
 import com.example.green.domain.pointshop.entity.pointproduct.vo.Media;
 import com.example.green.domain.pointshop.entity.pointproduct.vo.Price;
@@ -22,6 +23,7 @@ import com.example.green.global.error.exception.BusinessException;
 
 class PointProductTest {
 
+	static Code code;
 	static BasicInfo basicInfo;
 	static Media media;
 	static Price price;
@@ -30,11 +32,12 @@ class PointProductTest {
 
 	@BeforeEach
 	void setUp() {
+		code = mock(Code.class);
 		basicInfo = mock(BasicInfo.class);
 		media = mock(Media.class);
 		price = mock(Price.class);
 		stock = mock(Stock.class);
-		pointProduct = PointProduct.create(basicInfo, media, price, stock);
+		pointProduct = PointProduct.create(code, basicInfo, media, price, stock);
 	}
 
 	@Test
@@ -47,19 +50,31 @@ class PointProductTest {
 
 	@ParameterizedTest
 	@MethodSource("invalidPointProductTestCases")
-	void 상품_기본_정보는_필수_값이고_재고는_1개_이상이어야한다(BasicInfo basicInfo, Media media, Price price, Stock stock) {
+	void 상품_기본_정보는_필수_값이고_재고는_1개_이상이어야한다(Code code, BasicInfo basicInfo, Media media,
+		Price price, Stock stock) {
 		// given & when & then
-		assertThatThrownBy(() -> PointProduct.create(basicInfo, media, price, stock))
+		assertThatThrownBy(() -> PointProduct.create(code, basicInfo, media, price, stock))
 			.isInstanceOf(BusinessException.class);
+	}
+
+	@Test
+	void 상품_코드가_수정된다() {
+		// given
+		code = new Code("PRD-AA-002");
+
+		// when
+		pointProduct.updateCode(code);
+
+		// then
+		assertThat(pointProduct.getCode()).isEqualTo(code);
 	}
 
 	@Test
 	void 상품_기본_정보가_수정된다() {
 		// given
-		String newCode = "PRD-AA-002";
 		String newName = "newName";
 		String newDescription = "newDescription";
-		BasicInfo newBasicInfo = new BasicInfo(newCode, newName, newDescription);
+		BasicInfo newBasicInfo = new BasicInfo(newName, newDescription);
 
 		// when
 		pointProduct.updateBasicInfo(newBasicInfo);
@@ -79,6 +94,7 @@ class PointProductTest {
 
 		// then
 		assertThat(pointProduct.getMedia()).isEqualTo(newMedia);
+		assertThat(pointProduct.getThumbnailUrl()).isEqualTo(newThumbnail);
 	}
 
 	@Test
@@ -96,7 +112,7 @@ class PointProductTest {
 	@Test
 	void 상품_재고_정보가_수정된다() {
 		// given
-		PointProduct pointProduct = PointProduct.create(basicInfo, media, price, stock);
+		PointProduct pointProduct = PointProduct.create(code, basicInfo, media, price, stock);
 		Stock newStock = new Stock(100);
 
 		// when
@@ -109,7 +125,7 @@ class PointProductTest {
 	@Test
 	void 상품_재고가_0개로_수정되면_매진_상태이다() {
 		// given
-		PointProduct pointProduct = PointProduct.create(basicInfo, media, price, stock);
+		PointProduct pointProduct = PointProduct.create(code, basicInfo, media, price, stock);
 		Stock newStock = new Stock(0);
 
 		// when
@@ -123,7 +139,7 @@ class PointProductTest {
 	@Test
 	void 상품이_매진_상태일_때_1개_이상으로_수정하면_교환_가능상태이다() {
 		// given
-		PointProduct pointProduct = PointProduct.create(basicInfo, media, price, stock);
+		PointProduct pointProduct = PointProduct.create(code, basicInfo, media, price, stock);
 		pointProduct.updateStock(new Stock(0));
 		Stock newStock = new Stock(1);
 
@@ -139,7 +155,7 @@ class PointProductTest {
 	void 상품_재고가_감소한다() {
 		// given
 		Stock stock = new Stock(100);
-		PointProduct pointProduct = PointProduct.create(basicInfo, media, price, stock);
+		PointProduct pointProduct = PointProduct.create(code, basicInfo, media, price, stock);
 		int amount = 50;
 
 		// when
@@ -153,7 +169,7 @@ class PointProductTest {
 	void 상품_재고가_감소시_재고가_남아있지_않다면_매진_상태가_된다() {
 		// given
 		Stock stock = new Stock(100);
-		PointProduct pointProduct = PointProduct.create(basicInfo, media, price, stock);
+		PointProduct pointProduct = PointProduct.create(code, basicInfo, media, price, stock);
 		int amount = 100;
 
 		// when
@@ -185,13 +201,35 @@ class PointProductTest {
 		assertThat(pointProduct.getDisplayStatus()).isEqualTo(DisplayStatus.DISPLAY);
 	}
 
+	@ParameterizedTest
+	@MethodSource("newImageTestCases")
+	void 새로운_이미지_정보인지_알_수_있다(Media newMeida, boolean expected) {
+		// given
+		media = new Media("https://example1.com/image.jpg");
+		pointProduct = PointProduct.create(code, basicInfo, media, price, stock);
+
+		// when
+		boolean result = pointProduct.isNewImage(newMeida);
+
+		// then
+		assertThat(result).isEqualTo(expected);
+	}
+
+	public static Stream<Arguments> newImageTestCases() {
+		return Stream.of(
+			Arguments.of(new Media("https://example1.com/image.jpg"), false),
+			Arguments.of(new Media("https://example2.com/image.jpg"), true)
+		);
+	}
+
 	static Stream<Arguments> invalidPointProductTestCases() {
 		return Stream.of(
-			Arguments.of(null, media, price, stock),
-			Arguments.of(basicInfo, null, price, stock),
-			Arguments.of(basicInfo, media, null, stock),
-			Arguments.of(basicInfo, media, price, null),
-			Arguments.of(basicInfo, media, price, new Stock(0))
+			Arguments.of(null, basicInfo, media, price, stock),
+			Arguments.of(code, null, media, price, stock),
+			Arguments.of(code, basicInfo, null, price, stock),
+			Arguments.of(code, basicInfo, media, null, stock),
+			Arguments.of(code, basicInfo, media, price, null),
+			Arguments.of(code, basicInfo, media, price, new Stock(0))
 		);
 	}
 }

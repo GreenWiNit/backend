@@ -26,19 +26,17 @@ class OrderTest {
 
 	@BeforeEach
 	void setUp() {
-		orderNumber = "2025062823001";
 		deliveryAddressSnapshot = DeliveryAddressSnapshot.of(1L, "수령자", "010-0000-0000", "도로명", "상세", "우편");
-		memberSnapshot = new MemberSnapshot(1L, "memberCode");
+		memberSnapshot = new MemberSnapshot(1L, "01ARZ3NDEKTSV4RRFFQ69G5FAV");
 		OrderItem orderItem = mock(OrderItem.class);
 		when(orderItem.calculateItemFinalPrice()).thenReturn(finalPrice);
 		orderItems = List.of(orderItem);
-		order = Order.create(orderNumber, deliveryAddressSnapshot, memberSnapshot, orderItems);
+		order = Order.create(deliveryAddressSnapshot, memberSnapshot, orderItems);
 	}
 
 	@Test
 	void 주문시_총_가격이_계산되고_배송_준비_상태가_된다() {
 		// then
-		assertThat(order.getOrderNumber()).isEqualTo(orderNumber);
 		assertThat(order.getOrderItems()).isEqualTo(orderItems);
 		assertThat(order.getTotalPrice()).isEqualTo(finalPrice);
 		assertThat(order.getStatus()).isEqualTo(OrderDeliveryStatus.PENDING_DELIVERY);

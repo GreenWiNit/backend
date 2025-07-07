@@ -5,11 +5,14 @@ import com.example.green.global.api.ResponseMessage;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-// TODO 응답값 만드는 건 엄밀히 말하면 inport 는 아니긴 함 오히려 outport 에 가깝지만 presentation controller 계층 사용
 @Getter
 @AllArgsConstructor
 public enum InfoResponseMessage implements ResponseMessage {
+	INFO_CREATED("정보공유 글이 생성되었습니다."),
+	INFO_UPDATED("정보공유 글이 수정되었습니다."),
+	INFO_DETAIL_FOUND("정보공유 글이 조회되었습니다."),
+	INFO_LIST_FOUND("정보공유 목록이 조회되었습니다."),
+	INFO_DELETED("정보공유 글이 삭제되었습니다."),
 	;
-
 	private final String Message;
 }

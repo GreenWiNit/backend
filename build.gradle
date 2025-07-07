@@ -31,6 +31,10 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
+    // spring retry
+    implementation 'org.springframework.retry:spring-retry'
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+
     // dotenv - 환경 변수 관리용
     implementation 'me.paulschwarz:spring-dotenv:4.0.0'
 
@@ -80,6 +84,9 @@ dependencies {
     // excel
     implementation 'org.apache.poi:poi:5.4.1'
     implementation 'org.apache.poi:poi-ooxml:5.4.1'
+
+    // mail
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
 }
 
 // 아래로 Test 관련
