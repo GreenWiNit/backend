@@ -12,6 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.example.green.domain.pointshop.client.PhoneVerificationClient;
 import com.example.green.domain.pointshop.entity.delivery.DeliveryAddress;
 import com.example.green.domain.pointshop.entity.delivery.vo.Address;
 import com.example.green.domain.pointshop.entity.delivery.vo.Recipient;
@@ -26,22 +27,21 @@ class DeliveryAddressServiceTest {
 
 	@Mock
 	private DeliveryAddressRepository deliveryAddressRepository;
+	@Mock
+	private PhoneVerificationClient phoneVerificationClient;
 
 	@InjectMocks
 	private DeliveryAddressService deliveryAddressService;
 
 	@Test
-	void 배송지_정보가_없다면_단일_배송지_정보가_저장된다() {
+	void 배송지_정보가_없고_휴대전화_인증을_했을_경우_단일_배송지_정보가_저장된다() {
 		// given
 		when(deliveryAddressRepository.existsByRecipientId(anyLong())).thenReturn(false);
-		DeliveryAddressCreateCommand command = new DeliveryAddressCreateCommand(
-			1L,
-			Recipient.of("이름", "010-1234-5678"),
-			Address.of("도로명", "상세", "12345")
-		);
+		DeliveryAddressCreateCommand command = getCommand();
 		DeliveryAddress mockDeliveryAddress = mock(DeliveryAddress.class);
 		when(deliveryAddressRepository.save(any(DeliveryAddress.class))).thenReturn(mockDeliveryAddress);
 		when(mockDeliveryAddress.getId()).thenReturn(1L);
+		when(phoneVerificationClient.isAuthenticated("010-1234-5678")).thenReturn(true);
 
 		// when
 		Long result = deliveryAddressService.saveSingleAddress(command);
@@ -60,6 +60,19 @@ class DeliveryAddressServiceTest {
 		assertThatThrownBy(() -> deliveryAddressService.saveSingleAddress(mockCommand))
 			.isInstanceOf(DeliveryAddressException.class)
 			.hasFieldOrPropertyWithValue("exceptionMessage", DELIVERY_ADDRESS_ALREADY_EXISTS);
+	}
+
+	@Test
+	void 휴대전화_인증을_하지_않고_배송지_저장을_할_경우_예외가_발생한다() {
+		// given
+		when(deliveryAddressRepository.existsByRecipientId(anyLong())).thenReturn(false);
+		DeliveryAddressCreateCommand command = getCommand();
+		when(phoneVerificationClient.isAuthenticated("010-1234-5678")).thenReturn(false);
+
+		// when & then
+		assertThatThrownBy(() -> deliveryAddressService.saveSingleAddress(command))
+			.isInstanceOf(DeliveryAddressException.class)
+			.hasFieldOrPropertyWithValue("exceptionMessage", UN_AUTHORIZE_PHONE_NUMBER);
 	}
 
 	@Test
@@ -142,5 +155,13 @@ class DeliveryAddressServiceTest {
 		// when & then
 		assertThatCode(() -> deliveryAddressService.validateAddressOwnership(1L, 1L))
 			.doesNotThrowAnyException();
+	}
+
+	private static DeliveryAddressCreateCommand getCommand() {
+		return new DeliveryAddressCreateCommand(
+			1L,
+			Recipient.of("이름", "010-1234-5678"),
+			Address.of("도로명", "상세", "12345")
+		);
 	}
 }

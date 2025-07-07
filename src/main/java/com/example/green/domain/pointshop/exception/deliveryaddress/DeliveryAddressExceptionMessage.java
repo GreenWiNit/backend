@@ -18,7 +18,7 @@ public enum DeliveryAddressExceptionMessage implements ExceptionMessage {
 	DELIVERY_ADDRESS_ALREADY_EXISTS(CONFLICT, "이미 배송지 정보가 존재합니다."),
 	NOT_FOUND_DELIVERY_ADDRESS(NOT_FOUND, "배송지 정보를 찾을 수 없습니다."),
 	INVALID_OWNERSHIP(UNAUTHORIZED, "해당 배송지의 소유자가 아닙니다."),
-	;
+	UN_AUTHORIZE_PHONE_NUMBER(UNAUTHORIZED, "휴대전화 인증 내역이 없습니다.");
 
 	private final HttpStatus httpStatus;
 	private final String message;

@@ -126,4 +126,36 @@ class PhoneVerificationServiceTest {
 			.isInstanceOf(AuthException.class)
 			.hasFieldOrPropertyWithValue("exceptionMessage", NOT_FOUND_TOKEN);
 	}
+
+	@Test
+	void DB에_전화번호_인증_정보가_있으면_true를_반환한다() {
+		// given
+		when(clock.getZone()).thenReturn(ZoneId.systemDefault());
+		when(clock.instant()).thenReturn(Instant.parse("2025-07-05T10:00:00Z"));
+		when(phoneVerificationRepository.existsByPhoneNumberAndStatusAndCreatedAtGreaterThanEqual(
+			any(PhoneNumber.class), eq(VERIFIED), any(LocalDateTime.class))
+		).thenReturn(true);
+
+		// when
+		boolean result = phoneVerificationService.isAuthenticated(PhoneNumber.of("010-1234-5678"));
+
+		// then
+		assertThat(result).isTrue();
+	}
+
+	@Test
+	void DB에_전화번호_인증_정보가_없으면_false를_반환한다() {
+		// given
+		when(clock.getZone()).thenReturn(ZoneId.systemDefault());
+		when(clock.instant()).thenReturn(Instant.parse("2025-07-05T10:00:00Z"));
+		when(phoneVerificationRepository.existsByPhoneNumberAndStatusAndCreatedAtGreaterThanEqual(
+			any(PhoneNumber.class), eq(VERIFIED), any(LocalDateTime.class))
+		).thenReturn(false);
+
+		// when
+		boolean result = phoneVerificationService.isAuthenticated(PhoneNumber.of("010-1234-5678"));
+
+		// then
+		assertThat(result).isFalse();
+	}
 }
