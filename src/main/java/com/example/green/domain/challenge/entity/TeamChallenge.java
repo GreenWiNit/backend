@@ -8,7 +8,7 @@ import java.util.List;
 
 import com.example.green.domain.challenge.enums.ChallengeStatus;
 import com.example.green.domain.challenge.enums.ChallengeType;
-import com.example.green.domain.pointshop.entity.point.vo.PointAmount;
+import com.example.green.domain.point.entity.vo.PointAmount;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;

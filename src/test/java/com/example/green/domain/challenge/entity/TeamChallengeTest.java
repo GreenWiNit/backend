@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 import com.example.green.domain.challenge.enums.ChallengeStatus;
 import com.example.green.domain.challenge.enums.ChallengeType;
 import com.example.green.domain.challenge.enums.GroupStatus;
-import com.example.green.domain.pointshop.entity.point.vo.PointAmount;
+import com.example.green.domain.point.entity.vo.PointAmount;
 
 class TeamChallengeTest {
 
