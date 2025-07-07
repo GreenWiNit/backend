@@ -19,6 +19,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.Index;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -28,10 +29,14 @@ import lombok.NoArgsConstructor;
  * 팀 챌린지 엔티티
  */
 @Entity
-@Table(indexes = {
-	@Index(name = "idx_team_challenge_active", columnList = "challengeStatus, beginDateTime, endDateTime"),
-	@Index(name = "idx_team_challenge_code", columnList = "challenge_code")
-})
+@Table(
+	indexes = {
+		@Index(name = "idx_team_challenge_active", columnList = "challengeStatus, beginDateTime, endDateTime")
+	},
+	uniqueConstraints = {
+		@UniqueConstraint(name = "uk_team_challenge_code", columnNames = "challenge_code")
+	}
+)
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)

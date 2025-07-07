@@ -11,6 +11,7 @@ import com.example.green.domain.point.entity.vo.PointAmount;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,10 +20,14 @@ import lombok.NoArgsConstructor;
  * 개인 챌린지 엔티티
  */
 @Entity
-@Table(indexes = {
-	@Index(name = "idx_personal_challenge_active", columnList = "challengeStatus, beginDateTime, endDateTime"),
-	@Index(name = "idx_personal_challenge_code", columnList = "challenge_code")
-})
+@Table(
+	indexes = {
+		@Index(name = "idx_personal_challenge_active", columnList = "challengeStatus, beginDateTime, endDateTime")
+	},
+	uniqueConstraints = {
+		@UniqueConstraint(name = "uk_personal_challenge_code", columnNames = "challenge_code")
+	}
+)
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PersonalChallenge extends BaseChallenge {

@@ -37,7 +37,7 @@ public abstract class BaseChallenge extends BaseEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = "challenge_code", length = 30, nullable = false, unique = true)
+	@Column(name = "challenge_code", length = 30, nullable = false)
 	private String challengeCode;
 
 	@Column(length = 90, nullable = false)
