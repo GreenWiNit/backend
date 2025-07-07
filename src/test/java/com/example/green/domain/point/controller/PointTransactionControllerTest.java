@@ -18,7 +18,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import com.example.green.domain.point.entity.vo.TransactionType;
 import com.example.green.domain.point.repository.PointTransactionQueryRepository;
 import com.example.green.domain.point.repository.dto.MemberPointSummary;
-import com.example.green.domain.point.repository.dto.MyPointTransaction;
+import com.example.green.domain.point.repository.dto.MyPointTransactionDto;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.page.CursorTemplate;
 import com.example.green.template.base.BaseControllerUnitTest;
@@ -56,15 +56,15 @@ class PointTransactionControllerTest extends BaseControllerUnitTest {
 	@Test
 	void 포인트_내역_조회_요청에_성공한다() {
 		// given
-		List<MyPointTransaction> mock = List.of(
-			new MyPointTransaction(1L, "description", BigDecimal.ZERO, TransactionType.EARN, LocalDateTime.now())
+		List<MyPointTransactionDto> mock = List.of(
+			new MyPointTransactionDto(1L, "description", BigDecimal.ZERO, TransactionType.EARN, LocalDateTime.now())
 		);
-		CursorTemplate<Long, MyPointTransaction> mockResult = CursorTemplate.of(mock);
+		CursorTemplate<Long, MyPointTransactionDto> mockResult = CursorTemplate.of(mock);
 		when(pointTransactionQueryRepository.getPointTransaction(anyLong(), anyLong(), any(TransactionType.class)))
 			.thenReturn(mockResult);
 
 		// when
-		ApiTemplate<CursorTemplate<Long, MyPointTransaction>> response = RestAssuredMockMvc
+		ApiTemplate<CursorTemplate<Long, MyPointTransactionDto>> response = RestAssuredMockMvc
 			.given().log().all()
 			.contentType(MediaType.APPLICATION_JSON)
 			.queryParam("cursor", 1L)
