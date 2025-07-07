@@ -23,10 +23,6 @@ public class PrincipalDetails implements UserDetails {
 	private final String role;
 	private final String name; // 실제 사용자 이름
 
-	public static PrincipalDetails fromJwt(String username, String role) {
-		return new PrincipalDetails(null, username, role, null);
-	}
-
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		return Collections.singleton(new SimpleGrantedAuthority(role));
