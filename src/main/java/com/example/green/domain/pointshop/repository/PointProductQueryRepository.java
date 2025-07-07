@@ -1,11 +1,11 @@
-package com.example.green.domain.pointshop.controller.query;
+package com.example.green.domain.pointshop.repository;
 
 import java.util.List;
 
-import com.example.green.domain.pointshop.controller.dto.PointProductExcelCondition;
-import com.example.green.domain.pointshop.controller.dto.PointProductSearchCondition;
-import com.example.green.domain.pointshop.controller.dto.PointProductSearchResponse;
-import com.example.green.domain.pointshop.controller.dto.PointProductView;
+import com.example.green.domain.pointshop.repository.dto.PointProductExcelCondition;
+import com.example.green.domain.pointshop.repository.dto.PointProductSearchCondition;
+import com.example.green.domain.pointshop.repository.dto.PointProductSearchResponse;
+import com.example.green.domain.pointshop.repository.dto.PointProductView;
 import com.example.green.global.api.page.CursorTemplate;
 import com.example.green.global.api.page.PageTemplate;
 

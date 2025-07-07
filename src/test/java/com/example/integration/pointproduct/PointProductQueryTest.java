@@ -18,10 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.green.domain.pointshop.controller.dto.PointProductExcelCondition;
-import com.example.green.domain.pointshop.controller.dto.PointProductSearchCondition;
-import com.example.green.domain.pointshop.controller.dto.PointProductSearchResponse;
-import com.example.green.domain.pointshop.controller.query.PointProductQueryRepository;
 import com.example.green.domain.pointshop.entity.pointproduct.PointProduct;
 import com.example.green.domain.pointshop.entity.pointproduct.vo.BasicInfo;
 import com.example.green.domain.pointshop.entity.pointproduct.vo.Code;
@@ -30,6 +26,10 @@ import com.example.green.domain.pointshop.entity.pointproduct.vo.Media;
 import com.example.green.domain.pointshop.entity.pointproduct.vo.Price;
 import com.example.green.domain.pointshop.entity.pointproduct.vo.SellingStatus;
 import com.example.green.domain.pointshop.entity.pointproduct.vo.Stock;
+import com.example.green.domain.pointshop.repository.PointProductQueryRepository;
+import com.example.green.domain.pointshop.repository.dto.PointProductExcelCondition;
+import com.example.green.domain.pointshop.repository.dto.PointProductSearchCondition;
+import com.example.green.domain.pointshop.repository.dto.PointProductSearchResponse;
 import com.example.green.global.api.page.PageTemplate;
 import com.example.integration.common.ServiceIntegrationTest;
 

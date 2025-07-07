@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
-import com.example.green.domain.pointshop.controller.dto.PointProductSearchResponse;
+import com.example.green.domain.pointshop.repository.dto.PointProductSearchResponse;
 import com.example.green.global.excel.core.ExcelDataMapper;
 import com.example.green.global.excel.style.BackGroundColor;
 import com.example.green.global.excel.style.ExcelField;
