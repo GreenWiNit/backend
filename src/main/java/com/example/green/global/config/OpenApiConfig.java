@@ -1,5 +1,6 @@
 package com.example.green.global.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -8,6 +9,7 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
+import io.swagger.v3.oas.models.servers.Server;
 
 /**
  * Swagger UI에서 Bearer Token 입력을 가능하게 하는 설정입니다.
@@ -16,11 +18,15 @@ import io.swagger.v3.oas.models.security.SecurityScheme;
 @Configuration
 public class OpenApiConfig {
 
+	@Value("${app.backend.base-url}")
+	private String backendBaseUrl;
+
 	@Bean
 	public OpenAPI customOpenApi() {
 		final String securitySchemeName = "Bearer Token";
 
 		return new OpenAPI()
+			.addServersItem(new Server().url(backendBaseUrl))
 			.info(new Info()
 				.title("Green API 문서")
 				.version("v1.0")

@@ -82,9 +82,18 @@ public class SecurityConfig {
 					CorsConfiguration configuration = new CorsConfiguration();
 
 					configuration.setAllowedOrigins(Arrays.asList(frontendBaseUrl, backendBaseUrl));
-					configuration.setAllowedMethods(Collections.singletonList("*"));
+					configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"));
+					configuration.setAllowedHeaders(Arrays.asList(
+						"Authorization",
+						"Content-Type",
+						"X-Requested-With",
+						"Accept",
+						"Origin",
+						"Access-Control-Request-Method",
+						"Access-Control-Request-Headers",
+						"X-XSRF-TOKEN"
+					));
 					configuration.setAllowCredentials(true);
-					configuration.setAllowedHeaders(Collections.singletonList("*"));
 					configuration.setMaxAge(3600L);
 
 					// 두 헤더를 함께 설정 (덮어쓰기 방지)
