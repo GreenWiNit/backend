@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 
 import java.time.Clock;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 
@@ -69,5 +70,20 @@ class TimeUtilsTest {
 
 		// then
 		assertThat(result).isEqualTo("20210503");
+	}
+
+	@Test
+	void 현재_시간을_LocalDateTime으로_가져온다() {
+		// given
+		Instant fixedInstant = Instant.now();
+		Clock fixedClock = Clock.fixed(fixedInstant, ZoneId.systemDefault());
+		TimeUtils timeUtils = new TimeUtils(fixedClock);
+
+		// when
+		LocalDateTime result = timeUtils.now();
+
+		// then
+		LocalDateTime expected = LocalDateTime.ofInstant(fixedInstant, ZoneId.systemDefault());
+		assertThat(result).isEqualTo(expected);
 	}
 }

@@ -15,14 +15,16 @@ import com.example.green.domain.challenge.exception.ChallengeExceptionMessage;
 class TeamChallengeGroupTest {
 
 	private TeamChallengeGroup teamChallengeGroup;
+	private LocalDateTime now;
 
 	@BeforeEach
 	void setUp() {
+		now = LocalDateTime.now();
 		teamChallengeGroup = TeamChallengeGroup.create(
 			"테스트 그룹",
 			GroupStatus.RECRUITING,
-			LocalDateTime.now().minusHours(1),  // 1시간 전 시작
-			LocalDateTime.now().plusHours(1),   // 1시간 후 종료
+			now.minusHours(1),  // 1시간 전 시작
+			now.plusHours(1),   // 1시간 후 종료
 			10,  // 최대 10명
 			"서울시 강남구",
 			"테스트 그룹 설명",
@@ -62,11 +64,12 @@ class TeamChallengeGroupTest {
 	@Test
 	void currentParticipants가_0일_때_참가자_감소해도_0을_유지한다() {
 		// given
+		LocalDateTime testNow = now;
 		TeamChallengeGroup group = TeamChallengeGroup.create(
 			"테스트 그룹",
 			GroupStatus.RECRUITING,
-			LocalDateTime.now().minusHours(1),
-			LocalDateTime.now().plusHours(1),
+			testNow.minusHours(1),
+			testNow.plusHours(1),
 			10,
 			null, null, null
 		);
@@ -82,11 +85,12 @@ class TeamChallengeGroupTest {
 	@Test
 	void 최대_인원에_도달하면_true를_반환한다() {
 		// given
+		LocalDateTime testNow = now;
 		TeamChallengeGroup group = TeamChallengeGroup.create(
 			"만석 그룹",
 			GroupStatus.RECRUITING,
-			LocalDateTime.now().minusHours(1),
-			LocalDateTime.now().plusHours(1),
+			testNow.minusHours(1),
+			testNow.plusHours(1),
 			5,   // 최대 5명
 			null, null, null
 		);
@@ -106,11 +110,12 @@ class TeamChallengeGroupTest {
 	@Test
 	void maxParticipants가_null이면_최대_인원에_도달하지_않은_것으로_판단한다() {
 		// given
+		LocalDateTime testNow = now;
 		TeamChallengeGroup group = TeamChallengeGroup.create(
 			"무제한 그룹",
 			GroupStatus.RECRUITING,
-			LocalDateTime.now().minusHours(1),
-			LocalDateTime.now().plusHours(1),
+			testNow.minusHours(1),
+			testNow.plusHours(1),
 			null, // 제한 없음
 			null, null, null
 		);
@@ -130,11 +135,12 @@ class TeamChallengeGroupTest {
 	@Test
 	void 모집중이고_최대인원_미달이고_종료시간_전이면_참가_가능하다() {
 		// given
+		LocalDateTime testNow = now;
 		TeamChallengeGroup group = TeamChallengeGroup.create(
 			"참가 가능한 그룹",
 			GroupStatus.RECRUITING,  // 모집중
-			LocalDateTime.now().minusHours(1),
-			LocalDateTime.now().plusHours(1),  // 종료시간 전
+			testNow.minusHours(1),
+			testNow.plusHours(1),  // 종료시간 전
 			10,  // 최대 10명
 			null, null, null
 		);
@@ -145,7 +151,7 @@ class TeamChallengeGroupTest {
 		}
 
 		// when
-		boolean canParticipate = group.canParticipate();
+		boolean canParticipate = group.canParticipate(testNow);
 
 		// then
 		assertTrue(canParticipate);
@@ -154,17 +160,18 @@ class TeamChallengeGroupTest {
 	@Test
 	void 모집중이_아니면_참가할_수_없다() {
 		// given
+		LocalDateTime testNow = now;
 		TeamChallengeGroup group = TeamChallengeGroup.create(
 			"진행중인 그룹",
 			GroupStatus.PROCEEDING,  // 모집중이 아님
-			LocalDateTime.now().minusHours(1),
-			LocalDateTime.now().plusHours(1),
+			testNow.minusHours(1),
+			testNow.plusHours(1),
 			10,
 			null, null, null
 		);
 
 		// when
-		boolean canParticipate = group.canParticipate();
+		boolean canParticipate = group.canParticipate(testNow);
 
 		// then
 		assertFalse(canParticipate);
@@ -173,11 +180,12 @@ class TeamChallengeGroupTest {
 	@Test
 	void 최대_인원에_도달하면_참가할_수_없다() {
 		// given
+		LocalDateTime testNow = now;
 		TeamChallengeGroup group = TeamChallengeGroup.create(
 			"만석 그룹",
 			GroupStatus.RECRUITING,
-			LocalDateTime.now().minusHours(1),
-			LocalDateTime.now().plusHours(1),
+			testNow.minusHours(1),
+			testNow.plusHours(1),
 			5,   // 최대 5명
 			null, null, null
 		);
@@ -188,7 +196,7 @@ class TeamChallengeGroupTest {
 		}
 
 		// when
-		boolean canParticipate = group.canParticipate();
+		boolean canParticipate = group.canParticipate(testNow);
 
 		// then
 		assertFalse(canParticipate);
@@ -197,17 +205,18 @@ class TeamChallengeGroupTest {
 	@Test
 	void 종료_시간이_지나면_참가할_수_없다() {
 		// given
+		LocalDateTime testNow = now;
 		TeamChallengeGroup group = TeamChallengeGroup.create(
 			"종료된 그룹",
 			GroupStatus.RECRUITING,
-			LocalDateTime.now().minusHours(2),
-			LocalDateTime.now().minusHours(1),  // 1시간 전 종료
+			testNow.minusHours(2),
+			testNow.minusHours(1),  // 1시간 전 종료
 			10,
 			null, null, null
 		);
 
 		// when
-		boolean canParticipate = group.canParticipate();
+		boolean canParticipate = group.canParticipate(testNow);
 
 		// then
 		assertFalse(canParticipate);
@@ -216,17 +225,18 @@ class TeamChallengeGroupTest {
 	@Test
 	void 진행중이고_현재_시간이_그룹_기간_내에_있으면_활성_상태이다() {
 		// given
+		LocalDateTime testNow = now;
 		TeamChallengeGroup group = TeamChallengeGroup.create(
 			"활성 그룹",
 			GroupStatus.PROCEEDING,  // 진행중
-			LocalDateTime.now().minusHours(1),  // 1시간 전 시작
-			LocalDateTime.now().plusHours(1),   // 1시간 후 종료
+			testNow.minusHours(1),  // 1시간 전 시작
+			testNow.plusHours(1),   // 1시간 후 종료
 			10,
 			null, null, null
 		);
 
 		// when
-		boolean isActive = group.isActive();
+		boolean isActive = group.isActive(testNow);
 
 		// then
 		assertTrue(isActive);
@@ -235,17 +245,18 @@ class TeamChallengeGroupTest {
 	@Test
 	void 진행중이_아니면_활성_상태가_아니다() {
 		// given
+		LocalDateTime testNow = now;
 		TeamChallengeGroup group = TeamChallengeGroup.create(
 			"모집중인 그룹",
 			GroupStatus.RECRUITING,  // 진행중이 아님
-			LocalDateTime.now().minusHours(1),
-			LocalDateTime.now().plusHours(1),
+			testNow.minusHours(1),
+			testNow.plusHours(1),
 			10,
 			null, null, null
 		);
 
 		// when
-		boolean isActive = group.isActive();
+		boolean isActive = group.isActive(testNow);
 
 		// then
 		assertFalse(isActive);
@@ -254,17 +265,18 @@ class TeamChallengeGroupTest {
 	@Test
 	void 시작_시간_이전이면_활성_상태가_아니다() {
 		// given
+		LocalDateTime testNow = now;
 		TeamChallengeGroup group = TeamChallengeGroup.create(
 			"미래 그룹",
 			GroupStatus.PROCEEDING,
-			LocalDateTime.now().plusHours(1),   // 1시간 후 시작
-			LocalDateTime.now().plusHours(2),
+			testNow.plusHours(1),  // 1시간 후 시작
+			testNow.plusHours(2),
 			10,
 			null, null, null
 		);
 
 		// when
-		boolean isActive = group.isActive();
+		boolean isActive = group.isActive(testNow);
 
 		// then
 		assertFalse(isActive);
@@ -273,17 +285,18 @@ class TeamChallengeGroupTest {
 	@Test
 	void 종료_시간_이후면_활성_상태가_아니다() {
 		// given
+		LocalDateTime testNow = now;
 		TeamChallengeGroup group = TeamChallengeGroup.create(
 			"종료된 그룹",
 			GroupStatus.PROCEEDING,
-			LocalDateTime.now().minusHours(2),
-			LocalDateTime.now().minusHours(1),  // 1시간 전 종료
+			testNow.minusHours(2),
+			testNow.minusHours(1),  // 1시간 전 종료
 			10,
 			null, null, null
 		);
 
 		// when
-		boolean isActive = group.isActive();
+		boolean isActive = group.isActive(testNow);
 
 		// then
 		assertFalse(isActive);

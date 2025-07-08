@@ -11,22 +11,30 @@ import org.junit.jupiter.api.Test;
 
 import com.example.green.domain.challenge.enums.ChallengeStatus;
 import com.example.green.domain.challenge.enums.ChallengeType;
+import com.example.green.domain.challenge.utils.ChallengeCodeGenerator;
 import com.example.green.domain.point.entity.vo.PointAmount;
 
+/**
+ * PersonalChallenge 엔티티 테스트
+ */
 class PersonalChallengeTest {
 
 	private PersonalChallenge personalChallenge;
 	private PointAmount challengePoint;
+	private LocalDateTime now;
 
 	@BeforeEach
 	void setUp() {
+		now = LocalDateTime.now();
 		challengePoint = PointAmount.of(BigDecimal.valueOf(1000));
+		
 		personalChallenge = PersonalChallenge.create(
+			ChallengeCodeGenerator.generate(ChallengeType.PERSONAL, now),
 			"개인 챌린지",
 			ChallengeStatus.PROCEEDING,
 			challengePoint,
-			LocalDateTime.now().minusDays(1), // 어제 시작
-			LocalDateTime.now().plusDays(1),   // 내일 종료
+			now.minusDays(1), // 어제 시작
+			now.plusDays(1),   // 내일 종료
 			"challenge-image.jpg",
 			"챌린지 설명"
 		);
@@ -35,18 +43,20 @@ class PersonalChallengeTest {
 	@Test
 	void 진행중이고_현재_시간이_챌린지_기간_내에_있으면_활성_상태이다() {
 		// given
+		LocalDateTime testNow = now;
 		PersonalChallenge activeChallenge = PersonalChallenge.create(
+			ChallengeCodeGenerator.generate(ChallengeType.PERSONAL, testNow),
 			"활성 챌린지",
 			ChallengeStatus.PROCEEDING,
 			challengePoint,
-			LocalDateTime.now().minusHours(1), // 1시간 전 시작
-			LocalDateTime.now().plusHours(1),   // 1시간 후 종료
+			testNow.minusHours(1), // 1시간 전 시작
+			testNow.plusHours(1),   // 1시간 후 종료
 			"challenge-image.jpg",
 			"챌린지 설명"
 		);
 
 		// when
-		boolean isActive = activeChallenge.isActive();
+		boolean isActive = activeChallenge.isActive(testNow);
 
 		// then
 		assertTrue(isActive);
@@ -55,18 +65,20 @@ class PersonalChallengeTest {
 	@Test
 	void 진행중이_아닌_상태면_활성_상태가_아니다() {
 		// given
+		LocalDateTime testNow = now;
 		PersonalChallenge completedChallenge = PersonalChallenge.create(
+			ChallengeCodeGenerator.generate(ChallengeType.PERSONAL, testNow),
 			"완료된 챌린지",
 			ChallengeStatus.COMPLETED,
 			challengePoint,
-			LocalDateTime.now().minusDays(2),
-			LocalDateTime.now().plusDays(1),
+			testNow.minusDays(2),
+			testNow.plusDays(1),
 			"challenge-image.jpg",
 			"챌린지 설명"
 		);
 
 		// when
-		boolean isActive = completedChallenge.isActive();
+		boolean isActive = completedChallenge.isActive(testNow);
 
 		// then
 		assertFalse(isActive);
@@ -75,18 +87,20 @@ class PersonalChallengeTest {
 	@Test
 	void 시작_시간_이전이면_활성_상태가_아니다() {
 		// given
+		LocalDateTime testNow = now;
 		PersonalChallenge futureChallenge = PersonalChallenge.create(
+			ChallengeCodeGenerator.generate(ChallengeType.PERSONAL, testNow),
 			"미래 챌린지",
 			ChallengeStatus.PROCEEDING,
 			challengePoint,
-			LocalDateTime.now().plusHours(1), // 1시간 후 시작
-			LocalDateTime.now().plusDays(1),
+			testNow.plusHours(1), // 1시간 후 시작
+			testNow.plusDays(1),
 			"challenge-image.jpg",
 			"챌린지 설명"
 		);
 
 		// when
-		boolean isActive = futureChallenge.isActive();
+		boolean isActive = futureChallenge.isActive(testNow);
 
 		// then
 		assertFalse(isActive);
@@ -95,18 +109,20 @@ class PersonalChallengeTest {
 	@Test
 	void 종료_시간_이후면_활성_상태가_아니다() {
 		// given
+		LocalDateTime testNow = now;
 		PersonalChallenge expiredChallenge = PersonalChallenge.create(
+			ChallengeCodeGenerator.generate(ChallengeType.PERSONAL, testNow),
 			"만료된 챌린지",
 			ChallengeStatus.PROCEEDING,
 			challengePoint,
-			LocalDateTime.now().minusDays(2),
-			LocalDateTime.now().minusHours(1), // 1시간 전 종료
+			testNow.minusDays(2),
+			testNow.minusHours(1), // 1시간 전 종료
 			"challenge-image.jpg",
 			"챌린지 설명"
 		);
 
 		// when
-		boolean isActive = expiredChallenge.isActive();
+		boolean isActive = expiredChallenge.isActive(testNow);
 
 		// then
 		assertFalse(isActive);
@@ -115,18 +131,20 @@ class PersonalChallengeTest {
 	@Test
 	void 진행중이고_종료_시간_이전이면_참여_가능하다() {
 		// given
+		LocalDateTime testNow = now;
 		PersonalChallenge participableChallenge = PersonalChallenge.create(
+			ChallengeCodeGenerator.generate(ChallengeType.PERSONAL, testNow),
 			"참여 가능한 챌린지",
 			ChallengeStatus.PROCEEDING,
 			challengePoint,
-			LocalDateTime.now().minusDays(1),
-			LocalDateTime.now().plusHours(1), // 1시간 후 종료
+			testNow.minusDays(1),
+			testNow.plusHours(1), // 1시간 후 종료
 			"challenge-image.jpg",
 			"챌린지 설명"
 		);
 
 		// when
-		boolean canParticipate = participableChallenge.canParticipate();
+		boolean canParticipate = participableChallenge.canParticipate(testNow);
 
 		// then
 		assertTrue(canParticipate);
@@ -135,18 +153,20 @@ class PersonalChallengeTest {
 	@Test
 	void 진행중이_아니면_참여할_수_없다() {
 		// given
+		LocalDateTime testNow = now;
 		PersonalChallenge deadlineChallenge = PersonalChallenge.create(
+			ChallengeCodeGenerator.generate(ChallengeType.PERSONAL, testNow),
 			"마감된 챌린지",
 			ChallengeStatus.DEADLINE,
 			challengePoint,
-			LocalDateTime.now().minusDays(1),
-			LocalDateTime.now().plusHours(1),
+			testNow.minusDays(1),
+			testNow.plusHours(1),
 			"challenge-image.jpg",
 			"챌린지 설명"
 		);
 
 		// when
-		boolean canParticipate = deadlineChallenge.canParticipate();
+		boolean canParticipate = deadlineChallenge.canParticipate(testNow);
 
 		// then
 		assertFalse(canParticipate);
@@ -155,18 +175,20 @@ class PersonalChallengeTest {
 	@Test
 	void 종료_시간이_지나면_참여할_수_없다() {
 		// given
+		LocalDateTime testNow = now;
 		PersonalChallenge expiredChallenge = PersonalChallenge.create(
+			ChallengeCodeGenerator.generate(ChallengeType.PERSONAL, testNow),
 			"만료된 챌린지",
 			ChallengeStatus.PROCEEDING,
 			challengePoint,
-			LocalDateTime.now().minusDays(2),
-			LocalDateTime.now().minusHours(1), // 1시간 전 종료
+			testNow.minusDays(2),
+			testNow.minusHours(1), // 1시간 전 종료
 			"challenge-image.jpg",
 			"챌린지 설명"
 		);
 
 		// when
-		boolean canParticipate = expiredChallenge.canParticipate();
+		boolean canParticipate = expiredChallenge.canParticipate(testNow);
 
 		// then
 		assertFalse(canParticipate);
@@ -176,6 +198,7 @@ class PersonalChallengeTest {
 	void PersonalChallenge는_PERSONAL_타입을_가진다() {
 		// given
 		PersonalChallenge challenge = PersonalChallenge.create(
+			ChallengeCodeGenerator.generate(ChallengeType.PERSONAL, LocalDateTime.now()),
 			"개인 챌린지",
 			ChallengeStatus.PROCEEDING,
 			challengePoint,
@@ -208,7 +231,12 @@ class PersonalChallengeTest {
 	@Test
 	void 각_PersonalChallenge마다_고유한_challengeCode를_가진다() throws InterruptedException {
 		// given
+		LocalDateTime now1 = LocalDateTime.now();
+		Thread.sleep(1); // 시간 차이를 만들기 위해
+		LocalDateTime now2 = LocalDateTime.now();
+		
 		PersonalChallenge challenge1 = PersonalChallenge.create(
+			ChallengeCodeGenerator.generate(ChallengeType.PERSONAL, now1),
 			"첫 번째 챌린지",
 			ChallengeStatus.PROCEEDING,
 			challengePoint,
@@ -218,10 +246,8 @@ class PersonalChallengeTest {
 			"첫 번째 챌린지 설명"
 		);
 
-		// 동일한 밀리초에 생성되는 것을 방지하기 위해 약간의 지연
-		Thread.sleep(1);
-
 		PersonalChallenge challenge2 = PersonalChallenge.create(
+			ChallengeCodeGenerator.generate(ChallengeType.PERSONAL, now2),
 			"두 번째 챌린지",
 			ChallengeStatus.PROCEEDING,
 			challengePoint,
@@ -236,9 +262,22 @@ class PersonalChallengeTest {
 		String code2 = challenge2.getChallengeCode();
 
 		// then
-		// 현재는 ULID 기반으로 고유성이 완전히 보장됨
 		assertThat(code1).isNotEqualTo(code2);
 		assertThat(code1).startsWith("CH-P-");
 		assertThat(code2).startsWith("CH-P-");
+	}
+
+	@Test
+	void ULID_기반_challengeCode는_Base32_문자셋을_사용한다() {
+		// when
+		String challengeCode = personalChallenge.getChallengeCode();
+
+		// then
+		// ULID는 Crockford Base32를 사용 (0123456789ABCDEFGHJKMNPQRSTVWXYZ, I,L,O,U 제외)
+		String ulidPart = challengeCode.substring(21); // 뒷 4자리
+		assertThat(ulidPart).matches("[0-9A-HJKMNP-TV-Z]{4}");
+		
+		// I, L, O, U가 포함되지 않는지 확인
+		assertThat(ulidPart).doesNotContain("I", "L", "O", "U");
 	}
 }
