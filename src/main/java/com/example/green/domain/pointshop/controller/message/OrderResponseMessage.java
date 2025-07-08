@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 public enum OrderResponseMessage implements ResponseMessage {
 
-	POINT_PRODUCT_EXCHANGE_SUCCESS("단일 상품 주문에 성공했습니다.");
+	POINT_PRODUCT_EXCHANGE_SUCCESS("단일 상품 주문에 성공했습니다."),
+	EXCHANGE_APPLICANT_INQUIRY_SUCCESS("상품 교환 신청자 조회에 성공했습니다.");
 	private final String message;
 }

@@ -1,7 +1,7 @@
 package com.example.green.infra.query.pointproduct;
 
 import com.example.green.domain.pointshop.entity.pointproduct.QPointProduct;
-import com.example.green.domain.pointshop.repository.dto.PointProductSearchResponse;
+import com.example.green.domain.pointshop.repository.dto.PointProductSearchResult;
 import com.example.green.domain.pointshop.repository.dto.PointProductView;
 import com.querydsl.core.types.ConstructorExpression;
 import com.querydsl.core.types.Projections;
@@ -13,9 +13,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class PointProductProjections {
 
-	public static QBean<PointProductSearchResponse> toSearchResponse(QPointProduct qPointProduct) {
+	public static QBean<PointProductSearchResult> toSearchResponse(QPointProduct qPointProduct) {
 		return Projections.fields(
-			PointProductSearchResponse.class,
+			PointProductSearchResult.class,
 			qPointProduct.code.code.as("code"),
 			qPointProduct.basicInfo.name.as("name"),
 			qPointProduct.price.price.as("pointPrice"),

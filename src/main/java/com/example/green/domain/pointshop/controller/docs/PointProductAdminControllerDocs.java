@@ -4,7 +4,7 @@ import com.example.green.domain.pointshop.controller.dto.PointProductCreateDto;
 import com.example.green.domain.pointshop.controller.dto.PointProductUpdateDto;
 import com.example.green.domain.pointshop.repository.dto.PointProductExcelCondition;
 import com.example.green.domain.pointshop.repository.dto.PointProductSearchCondition;
-import com.example.green.domain.pointshop.repository.dto.PointProductSearchResponse;
+import com.example.green.domain.pointshop.repository.dto.PointProductSearchResult;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.NoContent;
 import com.example.green.global.api.page.PageTemplate;
@@ -30,7 +30,7 @@ public interface PointProductAdminControllerDocs {
 
 	@Operation(summary = "포인트 상품 목록 조회(관리자)", description = "포인트 상품 목록을 조회합니다.")
 	@ApiResponse(responseCode = "200", description = "포인트 상품 목록 조회에 성공했습니다.")
-	ApiTemplate<PageTemplate<PointProductSearchResponse>> findPointProducts(PointProductSearchCondition condition);
+	ApiTemplate<PageTemplate<PointProductSearchResult>> findPointProducts(PointProductSearchCondition condition);
 
 	@Operation(summary = "포인트 상품 목록 엑셀 다운로드(관리자)", description = "포인트 상품 목록 다운로드")
 	@ApiResponse(responseCode = "200", description = "첨부파일")

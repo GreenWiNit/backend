@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
-import com.example.green.domain.pointshop.repository.dto.PointProductSearchResponse;
+import com.example.green.domain.pointshop.repository.dto.PointProductSearchResult;
 import com.example.green.global.excel.core.ExcelDataMapper;
 import com.example.green.global.excel.style.BackGroundColor;
 import com.example.green.global.excel.style.ExcelField;
@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
-public class PointProductExcelMapper implements ExcelDataMapper<PointProductSearchResponse> {
+public class PointProductExcelMapper implements ExcelDataMapper<PointProductSearchResult> {
 
 	private final TimeUtils timeUtils;
 
@@ -25,8 +25,8 @@ public class PointProductExcelMapper implements ExcelDataMapper<PointProductSear
 	}
 
 	@Override
-	public Class<PointProductSearchResponse> getDataType() {
-		return PointProductSearchResponse.class;
+	public Class<PointProductSearchResult> getDataType() {
+		return PointProductSearchResult.class;
 	}
 
 	@Override
@@ -44,7 +44,7 @@ public class PointProductExcelMapper implements ExcelDataMapper<PointProductSear
 	}
 
 	@Override
-	public Object[] extractRowData(PointProductSearchResponse data) {
+	public Object[] extractRowData(PointProductSearchResult data) {
 		return new Object[] {
 			data.getCode(),
 			data.getName(),

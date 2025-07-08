@@ -19,7 +19,7 @@ import com.example.green.domain.pointshop.entity.pointproduct.vo.SellingStatus;
 import com.example.green.domain.pointshop.repository.PointProductQueryRepository;
 import com.example.green.domain.pointshop.repository.dto.PointProductExcelCondition;
 import com.example.green.domain.pointshop.repository.dto.PointProductSearchCondition;
-import com.example.green.domain.pointshop.repository.dto.PointProductSearchResponse;
+import com.example.green.domain.pointshop.repository.dto.PointProductSearchResult;
 import com.example.green.domain.pointshop.service.PointProductService;
 import com.example.green.domain.pointshop.service.command.PointProductCreateCommand;
 import com.example.green.domain.pointshop.service.command.PointProductUpdateCommand;
@@ -58,13 +58,13 @@ class PointProductAdminControllerTest extends BaseControllerUnitTest {
 	@Test
 	void 포인트_상품_목록_조회에_성공한다() {
 		// given
-		PointProductSearchResponse mock = mock(PointProductSearchResponse.class);
-		PageTemplate<PointProductSearchResponse> mockResult = new PageTemplate<>(0, 0, 0, 0, false, List.of(mock));
+		PointProductSearchResult mock = mock(PointProductSearchResult.class);
+		PageTemplate<PointProductSearchResult> mockResult = new PageTemplate<>(0, 0, 0, 0, false, List.of(mock));
 		when(pointProductQueryRepository.searchPointProducts(any(PointProductSearchCondition.class)))
 			.thenReturn(mockResult);
 
 		// when & then
-		ApiTemplate<PageTemplate<PointProductSearchResponse>> response = PointProductRequest.searchProducts();
+		ApiTemplate<PageTemplate<PointProductSearchResult>> response = PointProductRequest.searchProducts();
 		assertThat(response.result()).usingRecursiveComparison().isEqualTo(mockResult);
 		assertThat(response.message()).isEqualTo(
 			PointProductResponseMessage.POINT_PRODUCTS_INQUIRY_SUCCESS.getMessage());
@@ -73,7 +73,7 @@ class PointProductAdminControllerTest extends BaseControllerUnitTest {
 	@Test
 	void 엑셀_다운로드에_성공한다() {
 		// given
-		List<PointProductSearchResponse> mockResult = List.of(mock(PointProductSearchResponse.class));
+		List<PointProductSearchResult> mockResult = List.of(mock(PointProductSearchResult.class));
 		when(pointProductQueryRepository.searchPointProductsForExcel(any(PointProductExcelCondition.class)))
 			.thenReturn(mockResult);
 

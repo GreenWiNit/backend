@@ -28,7 +28,7 @@ import com.example.green.domain.pointshop.entity.pointproduct.vo.Stock;
 import com.example.green.domain.pointshop.repository.PointProductQueryRepository;
 import com.example.green.domain.pointshop.repository.dto.PointProductExcelCondition;
 import com.example.green.domain.pointshop.repository.dto.PointProductSearchCondition;
-import com.example.green.domain.pointshop.repository.dto.PointProductSearchResponse;
+import com.example.green.domain.pointshop.repository.dto.PointProductSearchResult;
 import com.example.green.domain.pointshop.service.PointProductService;
 import com.example.green.domain.pointshop.service.command.PointProductCreateCommand;
 import com.example.green.domain.pointshop.service.command.PointProductUpdateCommand;
@@ -67,10 +67,10 @@ public class PointProductAdminController implements PointProductAdminControllerD
 	}
 
 	@GetMapping
-	public ApiTemplate<PageTemplate<PointProductSearchResponse>> findPointProducts(
+	public ApiTemplate<PageTemplate<PointProductSearchResult>> findPointProducts(
 		@ParameterObject @ModelAttribute PointProductSearchCondition condition
 	) {
-		PageTemplate<PointProductSearchResponse> result = pointProductQueryRepository.searchPointProducts(condition);
+		PageTemplate<PointProductSearchResult> result = pointProductQueryRepository.searchPointProducts(condition);
 		return ApiTemplate.ok(PointProductResponseMessage.POINT_PRODUCTS_INQUIRY_SUCCESS, result);
 	}
 
@@ -80,7 +80,7 @@ public class PointProductAdminController implements PointProductAdminControllerD
 		PointProductExcelCondition condition,
 		HttpServletResponse response
 	) {
-		List<PointProductSearchResponse> result = pointProductQueryRepository.searchPointProductsForExcel(condition);
+		List<PointProductSearchResult> result = pointProductQueryRepository.searchPointProductsForExcel(condition);
 		excelDownloader.downloadAsStream(result, response);
 	}
 
