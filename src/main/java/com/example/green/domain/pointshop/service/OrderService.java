@@ -12,6 +12,8 @@ import com.example.green.domain.pointshop.entity.order.OrderItem;
 import com.example.green.domain.pointshop.entity.order.vo.DeliveryAddressSnapshot;
 import com.example.green.domain.pointshop.entity.order.vo.ItemSnapshot;
 import com.example.green.domain.pointshop.entity.order.vo.MemberSnapshot;
+import com.example.green.domain.pointshop.exception.OrderException;
+import com.example.green.domain.pointshop.exception.OrderExceptionMessage;
 import com.example.green.domain.pointshop.repository.OrderRepository;
 import com.example.green.domain.pointshop.service.command.SingleOrderCommand;
 
@@ -57,5 +59,19 @@ public class OrderService {
 		OrderItem orderItem = OrderItem.create(itemSnapshot, quantity);
 		Order order = Order.create(deliveryAddress, memberSnapshot, List.of(orderItem));
 		return orderRepository.save(order);
+	}
+
+	public void shipOrder(Long orderId) {
+		orderRepository.findById(orderId)
+			.ifPresentOrElse(Order::startShipping, () -> {
+				throw new OrderException(OrderExceptionMessage.NOT_FOUND_ORDER);
+			});
+	}
+
+	public void completeDelivery(Long orderId) {
+		orderRepository.findById(orderId)
+			.ifPresentOrElse(Order::completeDelivery, () -> {
+				throw new OrderException(OrderExceptionMessage.NOT_FOUND_ORDER);
+			});
 	}
 }

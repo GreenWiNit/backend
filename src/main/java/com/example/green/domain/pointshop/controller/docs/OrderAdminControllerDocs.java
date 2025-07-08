@@ -4,11 +4,15 @@ import com.example.green.domain.pointshop.repository.dto.ExchangeApplicationResu
 import com.example.green.domain.pointshop.repository.dto.ExchangeApplicationSearchCondition;
 import com.example.green.domain.pointshop.repository.dto.PointProductApplicantResult;
 import com.example.green.global.api.ApiTemplate;
+import com.example.green.global.api.NoContent;
 import com.example.green.global.api.page.PageTemplate;
+import com.example.green.global.error.dto.ExceptionResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
@@ -30,4 +34,20 @@ public interface OrderAdminControllerDocs {
 	@ApiResponse(responseCode = "200", description = "상품 교환 신쳥 목록 조회에 성공했습니다.")
 	ApiTemplate<PageTemplate<ExchangeApplicationResult>> searchExchangeApplication(
 		ExchangeApplicationSearchCondition condition);
+
+	@Operation(summary = "상품 배송 상태로 변경 (관리자)", description = "주문된 상품 교환 내역을 배송중인 상태로 변경합니다.")
+	@ApiResponse(responseCode = "200", description = "주문이 배송 시작 상태로 변경되었습니다.")
+	@ApiResponse(responseCode = "400", description = "배송 대기 상태가 아닙니다.",
+		content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
+	@ApiResponse(responseCode = "404", description = "주문 정보를 찾을 수 없습니다.",
+		content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
+	NoContent shipOrder(@Parameter(description = "주문 식별자", example = "1") Long orderId);
+
+	@Operation(summary = "상품 배송 상태로 변경 (관리자)", description = "배송중인 상품 교환 내역을 배송 완료 상태로 변경합니다.")
+	@ApiResponse(responseCode = "200", description = "주문이 배송 완료 상태로 변경되었습니다.")
+	@ApiResponse(responseCode = "400", description = "배송 상태가 아닙니다.",
+		content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
+	@ApiResponse(responseCode = "404", description = "주문 정보를 찾을 수 없습니다.",
+		content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
+	NoContent completeDelivery(@Parameter(description = "주문 식별자", example = "1") Long orderId);
 }
