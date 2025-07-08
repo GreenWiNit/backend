@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -201,9 +200,9 @@ class PersonalChallengeTest {
 		// then
 		assertThat(challengeCode).isNotNull();
 		assertThat(challengeCode).startsWith("CH-P-");
-		assertThat(challengeCode).hasSize(21); // CH-P-20250109-1435217 형태 (21자)
-		// 날짜 부분 확인
-		assertThat(challengeCode).matches("CH-P-\\d{8}-\\d{7}");
+		assertThat(challengeCode).hasSize(25); // CH-P-20250109-143521-A3FV 형태 (25자)
+		// 날짜, 시간, ULID 뒷 4자리 형식 확인
+		assertThat(challengeCode).matches("CH-P-\\d{8}-\\d{6}-[0-9A-HJKMNP-TV-Z]{4}");
 	}
 
 	@Test
@@ -237,40 +236,9 @@ class PersonalChallengeTest {
 		String code2 = challenge2.getChallengeCode();
 
 		// then
-		// 현재는 시간 기반으로 생성되어 거의 항상 고유하지만,
-		// 향후 시퀀스 테이블이나 Redis로 변경 시 완전한 고유성 보장
+		// 현재는 ULID 기반으로 고유성이 완전히 보장됨
 		assertThat(code1).isNotEqualTo(code2);
 		assertThat(code1).startsWith("CH-P-");
 		assertThat(code2).startsWith("CH-P-");
-	}
-
-	@Test
-	void 챌린지_코드가_시간_기반으로_올바르게_생성된다() {
-		// when
-		PersonalChallenge challenge = PersonalChallenge.create(
-			"시간 기반 테스트 챌린지",
-			ChallengeStatus.PROCEEDING,
-			challengePoint,
-			LocalDateTime.now(),
-			LocalDateTime.now().plusDays(1),
-			"challenge-image.jpg",
-			"시간 기반 테스트 설명"
-		);
-
-		// then
-		String challengeCode = challenge.getChallengeCode();
-		String today = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-
-		// 형식 검증: CH-P-yyyyMMdd-HHmmsss (시분초 + 밀리초 마지막 자리)
-		assertThat(challengeCode).matches("CH-P-\\d{8}-\\d{7}");
-		assertThat(challengeCode).contains(today); // 오늘 날짜 포함
-		assertThat(challengeCode).hasSize(21);
-
-		// 타입 확인
-		assertThat(challengeCode).startsWith("CH-P-");
-
-		// 시간 부분이 숫자인지 확인 (마지막 7자리)
-		String timePart = challengeCode.substring(challengeCode.length() - 7);
-		assertThat(timePart).matches("\\d{7}");
 	}
 }

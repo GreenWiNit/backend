@@ -54,9 +54,9 @@ class TeamChallengeTest {
 		// then
 		assertThat(challengeCode).isNotNull();
 		assertThat(challengeCode).startsWith("CH-T-");
-		assertThat(challengeCode).hasSize(21); // CH-T-20250109-1435217 형태 (21자)
-		// 날짜 부분 확인
-		assertThat(challengeCode).matches("CH-T-\\d{8}-\\d{7}");
+		assertThat(challengeCode).hasSize(25); // CH-T-20250109-143521-A3FV 형태 (25자)
+		// 날짜, 시간, ULID 뒷 4자리 형식 확인
+		assertThat(challengeCode).matches("CH-T-\\d{8}-\\d{6}-[0-9A-HJKMNP-TV-Z]{4}");
 	}
 
 	@Test
@@ -92,8 +92,7 @@ class TeamChallengeTest {
 		String code2 = challenge2.getChallengeCode();
 
 		// then
-		// 현재는 시간 기반으로 생성되어 거의 항상 고유하지만,
-		// 향후 시퀀스 테이블이나 Redis로 변경 시 완전한 고유성 보장
+		// 현재는 ULID 기반으로 고유성이 완전히 보장됨
 		assertThat(code1).isNotEqualTo(code2);
 		assertThat(code1).startsWith("CH-T-");
 		assertThat(code2).startsWith("CH-T-");
@@ -117,17 +116,17 @@ class TeamChallengeTest {
 		String challengeCode = challenge.getChallengeCode();
 		String today = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 
-		// 형식 검증: CH-T-yyyyMMdd-HHmmsss (시분초 + 밀리초 마지막 자리)
-		assertThat(challengeCode).matches("CH-T-\\d{8}-\\d{7}");
+		// 형식 검증: CH-T-yyyyMMdd-HHmmss-XXXX (날짜-시간-ULID 뒷 4자리)
+		assertThat(challengeCode).matches("CH-T-\\d{8}-\\d{6}-[0-9A-HJKMNP-TV-Z]{4}");
 		assertThat(challengeCode).contains(today); // 오늘 날짜 포함
-		assertThat(challengeCode).hasSize(21);
+		assertThat(challengeCode).hasSize(25);
 
 		// 타입 확인
 		assertThat(challengeCode).startsWith("CH-T-");
 
-		// 시간 부분이 숫자인지 확인 (마지막 7자리)
-		String timePart = challengeCode.substring(challengeCode.length() - 7);
-		assertThat(timePart).matches("\\d{7}");
+		// ULID 뒷 4자리 부분이 Base32 문자인지 확인
+		String ulidPart = challengeCode.substring(challengeCode.length() - 4);
+		assertThat(ulidPart).matches("[0-9A-HJKMNP-TV-Z]{4}");
 	}
 
 	@Test
@@ -347,8 +346,8 @@ class TeamChallengeTest {
 			"challenge-image.jpg",
 			"잘못된 챌린지 설명"
 		))
-		.isInstanceOf(ChallengeException.class)
-		.hasFieldOrPropertyWithValue("exceptionMessage", ChallengeExceptionMessage.INVALID_MAX_GROUP_COUNT);
+			.isInstanceOf(ChallengeException.class)
+			.hasFieldOrPropertyWithValue("exceptionMessage", ChallengeExceptionMessage.INVALID_MAX_GROUP_COUNT);
 	}
 
 	@Test
@@ -364,7 +363,7 @@ class TeamChallengeTest {
 			"challenge-image.jpg",
 			"잘못된 챌린지 설명"
 		))
-		.isInstanceOf(ChallengeException.class)
-		.hasFieldOrPropertyWithValue("exceptionMessage", ChallengeExceptionMessage.INVALID_MAX_GROUP_COUNT);
+			.isInstanceOf(ChallengeException.class)
+			.hasFieldOrPropertyWithValue("exceptionMessage", ChallengeExceptionMessage.INVALID_MAX_GROUP_COUNT);
 	}
 }
