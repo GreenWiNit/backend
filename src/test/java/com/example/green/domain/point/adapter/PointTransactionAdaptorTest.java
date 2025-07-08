@@ -28,7 +28,7 @@ class PointTransactionAdaptorTest {
 	@Test
 	void 주문_컨텍스트_요청을_처리한다() {
 		// given
-		PointSpendRequest dto = new PointSpendRequest(1L, BigDecimal.ONE, 1L, "reason");
+		PointSpendRequest dto = new PointSpendRequest(1L, BigDecimal.ONE, 1L, "description");
 
 		// when
 		pointTransactionAdaptor.spendPoints(dto);
@@ -40,7 +40,7 @@ class PointTransactionAdaptorTest {
 	@Test
 	void 챌린지_컨텍스트_요청을_처리한다() {
 		// given
-		PointEarnRequest dto = new PointEarnRequest(1L, BigDecimal.ONE, 1L, "reason");
+		PointEarnRequest dto = new PointEarnRequest(1L, BigDecimal.ONE, 1L, "description");
 
 		// when
 		pointTransactionAdaptor.earnPoints(dto);
@@ -53,7 +53,7 @@ class PointTransactionAdaptorTest {
 	void 멤버_컨텍스트_요청을_처리한다() {
 		// given
 		// when
-		pointTransactionAdaptor.earnPoints(1L, "reason", BigDecimal.ONE);
+		pointTransactionAdaptor.earnPoints(1L, "description", BigDecimal.ONE);
 
 		// then
 		verify(pointTransactionService).earnPoints(anyLong(), any(PointAmount.class), any(PointSource.class));

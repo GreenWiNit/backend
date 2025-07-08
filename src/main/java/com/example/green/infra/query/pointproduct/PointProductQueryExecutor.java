@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
-import com.example.green.domain.pointshop.controller.dto.PointProductSearchResponse;
-import com.example.green.domain.pointshop.controller.dto.PointProductView;
 import com.example.green.domain.pointshop.entity.pointproduct.QPointProduct;
+import com.example.green.domain.pointshop.repository.dto.PointProductSearchResult;
+import com.example.green.domain.pointshop.repository.dto.PointProductView;
 import com.example.green.global.api.page.Pagination;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -20,7 +20,7 @@ public class PointProductQueryExecutor {
 	private final JPAQueryFactory jpaQueryFactory;
 	private final QPointProduct qPointProduct = QPointProduct.pointProduct;
 
-	public List<PointProductSearchResponse> findProducts(BooleanExpression expression, Pagination pagination) {
+	public List<PointProductSearchResult> findProducts(BooleanExpression expression, Pagination pagination) {
 		return jpaQueryFactory
 			.select(PointProductProjections.toSearchResponse(qPointProduct))
 			.from(qPointProduct)
@@ -39,7 +39,7 @@ public class PointProductQueryExecutor {
 			.fetchOne();
 	}
 
-	public List<PointProductSearchResponse> findProductsForExcel(BooleanExpression expression) {
+	public List<PointProductSearchResult> findProductsForExcel(BooleanExpression expression) {
 		return jpaQueryFactory
 			.select(PointProductProjections.toSearchResponse(qPointProduct))
 			.from(qPointProduct)

@@ -18,10 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.green.domain.pointshop.controller.dto.PointProductExcelCondition;
-import com.example.green.domain.pointshop.controller.dto.PointProductSearchCondition;
-import com.example.green.domain.pointshop.controller.dto.PointProductSearchResponse;
-import com.example.green.domain.pointshop.controller.query.PointProductQueryRepository;
 import com.example.green.domain.pointshop.entity.pointproduct.PointProduct;
 import com.example.green.domain.pointshop.entity.pointproduct.vo.BasicInfo;
 import com.example.green.domain.pointshop.entity.pointproduct.vo.Code;
@@ -30,6 +26,10 @@ import com.example.green.domain.pointshop.entity.pointproduct.vo.Media;
 import com.example.green.domain.pointshop.entity.pointproduct.vo.Price;
 import com.example.green.domain.pointshop.entity.pointproduct.vo.SellingStatus;
 import com.example.green.domain.pointshop.entity.pointproduct.vo.Stock;
+import com.example.green.domain.pointshop.repository.PointProductQueryRepository;
+import com.example.green.domain.pointshop.repository.dto.PointProductExcelCondition;
+import com.example.green.domain.pointshop.repository.dto.PointProductSearchCondition;
+import com.example.green.domain.pointshop.repository.dto.PointProductSearchResult;
 import com.example.green.global.api.page.PageTemplate;
 import com.example.integration.common.ServiceIntegrationTest;
 
@@ -74,7 +74,7 @@ class PointProductQueryTest extends ServiceIntegrationTest {
 			PointProductSearchCondition condition = getCondition(keyword, null);
 
 			// when
-			PageTemplate<PointProductSearchResponse> res = pointProductQueryRepository.searchPointProducts(condition);
+			PageTemplate<PointProductSearchResult> res = pointProductQueryRepository.searchPointProducts(condition);
 
 			// then
 			assertThat(res.totalElements()).isEqualTo(4);
@@ -88,7 +88,7 @@ class PointProductQueryTest extends ServiceIntegrationTest {
 			PointProductSearchCondition condition = getCondition(keyword, null);
 
 			// when
-			PageTemplate<PointProductSearchResponse> res = pointProductQueryRepository.searchPointProducts(condition);
+			PageTemplate<PointProductSearchResult> res = pointProductQueryRepository.searchPointProducts(condition);
 
 			// then
 			assertThat(res.totalElements()).isEqualTo(4);
@@ -101,7 +101,7 @@ class PointProductQueryTest extends ServiceIntegrationTest {
 			PointProductSearchCondition condition = getCondition(null, status);
 
 			// when
-			PageTemplate<PointProductSearchResponse> res = pointProductQueryRepository.searchPointProducts(condition);
+			PageTemplate<PointProductSearchResult> res = pointProductQueryRepository.searchPointProducts(condition);
 
 			// then
 			assertThat(res.totalElements()).isEqualTo(result);
@@ -115,7 +115,7 @@ class PointProductQueryTest extends ServiceIntegrationTest {
 			PointProductSearchCondition condition = getCondition(keyword, status);
 
 			// when
-			PageTemplate<PointProductSearchResponse> res = pointProductQueryRepository.searchPointProducts(condition);
+			PageTemplate<PointProductSearchResult> res = pointProductQueryRepository.searchPointProducts(condition);
 
 			// then
 			assertThat(res.totalElements()).isEqualTo(1);
@@ -131,7 +131,7 @@ class PointProductQueryTest extends ServiceIntegrationTest {
 			PointProductSearchCondition condition = getCondition("말도 안되는 키워드", EXCHANGEABLE);
 
 			// when
-			PageTemplate<PointProductSearchResponse> res = pointProductQueryRepository.searchPointProducts(condition);
+			PageTemplate<PointProductSearchResult> res = pointProductQueryRepository.searchPointProducts(condition);
 
 			// then
 			assertThat(res.totalElements()).isZero();
@@ -144,10 +144,10 @@ class PointProductQueryTest extends ServiceIntegrationTest {
 			PointProductSearchCondition condition = getCondition(null, null);
 
 			// when
-			PageTemplate<PointProductSearchResponse> res = pointProductQueryRepository.searchPointProducts(condition);
+			PageTemplate<PointProductSearchResult> res = pointProductQueryRepository.searchPointProducts(condition);
 
 			// then
-			List<PointProductSearchResponse> copy = new ArrayList<>(res.content());
+			List<PointProductSearchResult> copy = new ArrayList<>(res.content());
 			copy.sort((r1, r2) -> r2.getCreatedDate().compareTo(r1.getCreatedDate()));
 			assertThat(res.totalElements()).isEqualTo(11);
 			assertThat(res.content()).hasSize(10);
@@ -164,7 +164,7 @@ class PointProductQueryTest extends ServiceIntegrationTest {
 			PointProductExcelCondition condition = new PointProductExcelCondition(null, null);
 
 			// when
-			List<PointProductSearchResponse> res = pointProductQueryRepository.searchPointProductsForExcel(condition);
+			List<PointProductSearchResult> res = pointProductQueryRepository.searchPointProductsForExcel(condition);
 
 			// then
 			assertThat(res.size()).isEqualTo(11);

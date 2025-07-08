@@ -1,8 +1,8 @@
 package com.example.green.domain.point.controller.docs;
 
-import com.example.green.domain.point.controller.dto.MemberPointSummary;
-import com.example.green.domain.point.controller.dto.MyPointTransaction;
 import com.example.green.domain.point.entity.vo.TransactionType;
+import com.example.green.domain.point.repository.dto.MemberPointSummary;
+import com.example.green.domain.point.repository.dto.MyPointTransactionDto;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.page.CursorTemplate;
 
@@ -20,7 +20,7 @@ public interface PointTransactionControllerDocs {
 
 	@Operation(summary = "내 포인트 내역 조회", description = "현재 포인트 내역을 조회합니다.")
 	@ApiResponse(responseCode = "200", description = "포인트 내역 조회에 성공했습니다.")
-	ApiTemplate<CursorTemplate<Long, MyPointTransaction>> getMyPointTransaction(
+	ApiTemplate<CursorTemplate<Long, MyPointTransactionDto>> getMyPointTransaction(
 		@Schema(description = "커서 정보", example = "1") Long cursor,
 		@Schema(description = "포인트 내역 상태", type = "string", allowableValues = {"earn", "spend"}) TransactionType status
 	);

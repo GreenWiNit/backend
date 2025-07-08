@@ -1,4 +1,4 @@
-package com.example.green.domain.pointshop.controller.dto;
+package com.example.green.domain.pointshop.repository.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Schema(description = "관리자 상품 목록 조회 응답")
-public class PointProductSearchResponse {
+public class PointProductSearchResult {
 
 	@Schema(description = "상품 코드", example = "PRD-AA-001")
 	private String code;

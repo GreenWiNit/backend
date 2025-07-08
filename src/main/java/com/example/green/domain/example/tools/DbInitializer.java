@@ -11,7 +11,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.UUID;
 
+import org.springframework.context.annotation.Profile;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,17 +25,28 @@ import com.example.green.domain.point.entity.vo.PointAmount;
 import com.example.green.domain.point.entity.vo.PointSource;
 import com.example.green.domain.point.entity.vo.TargetType;
 import com.example.green.domain.point.repository.PointTransactionRepository;
+import com.example.green.domain.pointshop.entity.delivery.DeliveryAddress;
+import com.example.green.domain.pointshop.entity.delivery.vo.Address;
+import com.example.green.domain.pointshop.entity.delivery.vo.Recipient;
+import com.example.green.domain.pointshop.entity.order.Order;
+import com.example.green.domain.pointshop.entity.order.OrderItem;
+import com.example.green.domain.pointshop.entity.order.vo.DeliveryAddressSnapshot;
+import com.example.green.domain.pointshop.entity.order.vo.ItemSnapshot;
+import com.example.green.domain.pointshop.entity.order.vo.MemberSnapshot;
 import com.example.green.domain.pointshop.entity.pointproduct.PointProduct;
 import com.example.green.domain.pointshop.entity.pointproduct.vo.BasicInfo;
 import com.example.green.domain.pointshop.entity.pointproduct.vo.Code;
 import com.example.green.domain.pointshop.entity.pointproduct.vo.Media;
 import com.example.green.domain.pointshop.entity.pointproduct.vo.Price;
 import com.example.green.domain.pointshop.entity.pointproduct.vo.Stock;
+import com.example.green.domain.pointshop.repository.DeliveryAddressRepository;
+import com.example.green.domain.pointshop.repository.OrderRepository;
 import com.example.green.domain.pointshop.repository.PointProductRepository;
 
 import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 
+@Profile("!prod")
 @RestController
 @RequiredArgsConstructor
 @Transactional
@@ -143,5 +156,49 @@ public class DbInitializer {
 			.sellingStatus(random.nextInt(10) < 8 ? EXCHANGEABLE : SOLD_OUT)
 			.displayStatus(random.nextInt(10) < 8 ? DISPLAY : HIDDEN)
 			.build();
+	}
+
+	static String[] firstName = {"김", "이", "박", "최", "강", "구", "오", "정"};
+	static String[] secondName = {"길동", "순신", "황", "종서", "호동", "재석", "명수", "재훈", "랜덤"};
+	private final DeliveryAddressRepository deliveryAddressRepository;
+
+	@GetMapping("/api/tools/init-db-deliveryAddresses")
+	public void initDeliveryAddresses() {
+		List<DeliveryAddress> deliveryAddresses = new ArrayList<>();
+		for (int i = 0; i < 100; i++) {
+			String name = firstName[random.nextInt(firstName.length)] +
+				" " +
+				secondName[random.nextInt(secondName.length)];
+			String phoneNumber = "010-" + random.nextInt(1000, 10000) + "-" + random.nextInt(1000, 10000);
+			Recipient recipient = Recipient.of(name, phoneNumber);
+			Address address = Address.of("랜덤 도로명" + i, "상세 주소" + i, String.valueOf(random.nextInt(10000, 100000)));
+			DeliveryAddress deliveryAddress = DeliveryAddress.create(i + 1L, recipient, address);
+			deliveryAddresses.add(deliveryAddress);
+		}
+		deliveryAddressRepository.saveAll(deliveryAddresses);
+	}
+
+	private final OrderRepository orderRepository;
+
+	@GetMapping("/api/tools/init-db-orders")
+	public void initOrders() {
+		List<Order> orders = new ArrayList<>();
+		for (int i = 0; i < 100; i++) {
+			String name = firstName[random.nextInt(firstName.length)] +
+				" " +
+				secondName[random.nextInt(secondName.length)];
+			String phoneNumber = "010-" + random.nextInt(1000, 10000) + "-" + random.nextInt(1000, 10000);
+			DeliveryAddressSnapshot deliveryAddressSnapshot = DeliveryAddressSnapshot.of(
+				i + 1L, name, phoneNumber, "랜덤 도로명" + i, "상세 주소" + i,
+				String.valueOf(random.nextInt(10000, 100000)));
+			MemberSnapshot memberSnapshot = new MemberSnapshot(random.nextLong(1, 101), UUID.randomUUID().toString());
+			int price = random.nextInt(1000, 10000);
+			ItemSnapshot itemSnapshot =
+				new ItemSnapshot(i + 1L, "랜덤 아이템" + i, UUID.randomUUID().toString(), BigDecimal.valueOf(price));
+			OrderItem orderItem = OrderItem.create(itemSnapshot, random.nextInt(1, 6));
+			Order order = Order.create(deliveryAddressSnapshot, memberSnapshot, List.of(orderItem));
+			orders.add(order);
+		}
+		orderRepository.saveAll(orders);
 	}
 }

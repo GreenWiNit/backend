@@ -1,19 +1,25 @@
 package com.example.green.infra.query.point;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.green.domain.point.controller.dto.MemberPointSummary;
-import com.example.green.domain.point.controller.dto.MyPointTransaction;
-import com.example.green.domain.point.controller.query.PointTransactionQueryRepository;
+import com.example.green.domain.point.controller.dto.PointTransactionSearchCondition;
 import com.example.green.domain.point.entity.QPointTransaction;
 import com.example.green.domain.point.entity.vo.TransactionType;
+import com.example.green.domain.point.repository.PointTransactionQueryRepository;
+import com.example.green.domain.point.repository.dto.MemberPointSummary;
+import com.example.green.domain.point.repository.dto.MyPointTransactionDto;
+import com.example.green.domain.point.repository.dto.PointTransactionDto;
 import com.example.green.global.api.page.CursorTemplate;
-import com.querydsl.core.types.Projections;
+import com.example.green.global.api.page.PageTemplate;
+import com.example.green.global.api.page.Pagination;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
@@ -24,15 +30,15 @@ import lombok.RequiredArgsConstructor;
 @Transactional(readOnly = true)
 public class PointTransactionQueryImpl implements PointTransactionQueryRepository {
 
-	private final static int DEFAULT_PAGE_SIZE = 20;
+	private final static int DEFAULT_CURSOR_VIEW_SIZE = 20;
 	private final static QPointTransaction qPointTransaction = QPointTransaction.pointTransaction;
+	private final PointTransactionQueryExecutor queryExecutor;
 	private final EntityManager entityManager;
-	private final JPAQueryFactory queryFactory;
 
 	@Override
 	public MemberPointSummary findMemberPointSummary(Long memberId) {
 		return entityManager.createQuery("""
-				SELECT new com.example.green.domain.point.controller.dto.MemberPointSummary(
+				SELECT new com.example.green.domain.point.repository.dto.MemberPointSummary(
 				    COALESCE(
 				        (SELECT pt2.balanceAfter.amount 
 				         FROM PointTransaction pt2 
@@ -51,50 +57,57 @@ public class PointTransactionQueryImpl implements PointTransactionQueryRepositor
 	}
 
 	@Override
-	public CursorTemplate<Long, MyPointTransaction> getPointTransaction(
+	public CursorTemplate<Long, MyPointTransactionDto> getPointTransaction(
 		Long memberId,
 		Long cursor,
 		TransactionType status
 	) {
-		BooleanExpression expression = getExpression(memberId, cursor, status);
-		List<MyPointTransaction> content = getExecution(expression);
-		boolean hasNext = content.size() > DEFAULT_PAGE_SIZE;
+		BooleanExpression expression = PointTransactionPredicates.fromCondition(memberId, cursor, status);
+		List<MyPointTransactionDto> content =
+			queryExecutor.createMyPointTransactionQuery(expression, DEFAULT_CURSOR_VIEW_SIZE);
+
+		boolean hasNext = content.size() > DEFAULT_CURSOR_VIEW_SIZE;
 		if (!hasNext) {
 			return CursorTemplate.of(content);
 		}
-		content.removeLast();
 
+		content.removeLast();
 		if (content.isEmpty()) {
 			return CursorTemplate.ofEmpty();
 		}
+
 		return CursorTemplate.ofWithNextCursor(content.getLast().pointTransactionId(), content);
 	}
 
-	private List<MyPointTransaction> getExecution(BooleanExpression expression) {
-		return queryFactory
-			.select(Projections.constructor(MyPointTransaction.class,
-				qPointTransaction.id,
-				qPointTransaction.pointSource.detail,
-				qPointTransaction.pointAmount.amount,
-				qPointTransaction.type,
-				qPointTransaction.createdDate
-			))
-			.from(qPointTransaction)
-			.where(expression)
-			.orderBy(qPointTransaction.id.desc())
-			.limit(DEFAULT_PAGE_SIZE + 1)
-			.fetch();
+	@Override
+	public Map<Long, BigDecimal> findEarnedPointByMember(List<Long> memberIds) {
+		BooleanExpression expression = PointTransactionPredicates.fromCondition(memberIds);
+		Map<Long, BigDecimal> earnedPoints = queryExecutor.createEarnedPointQuery(expression);
+
+		return memberIds.stream()
+			.collect(Collectors.toMap(
+				Function.identity(),
+				memberId -> earnedPoints.getOrDefault(memberId, BigDecimal.ZERO)
+			));
 	}
 
-	private static BooleanExpression getExpression(Long memberId, Long cursor, TransactionType status) {
+	@Override
+	public PageTemplate<PointTransactionDto> findPointTransactionByMember(
+		Long memberId,
+		PointTransactionSearchCondition condition
+	) {
 		BooleanExpression expression = qPointTransaction.memberId.eq(memberId);
-		if (cursor != null) {
-			expression = expression.and(qPointTransaction.id.lt(cursor));
-		}
-		if (status != null) {
-			expression = expression.and(qPointTransaction.type.eq(status));
-		}
-		return expression;
+
+		Long totalCount = queryExecutor.createTotalCountQuery(expression);
+		Pagination pagination = Pagination.fromCondition(condition, totalCount);
+		List<PointTransactionDto> fetch = queryExecutor.createPointTransactionsQuery(expression, pagination);
+
+		return PageTemplate.of(fetch, pagination);
 	}
 
+	@Override
+	public List<PointTransactionDto> findPointTransactionByMemberForExcel(Long memberId) {
+		return queryExecutor.createPointTransactionForExcelQuery(memberId);
+	}
 }
+

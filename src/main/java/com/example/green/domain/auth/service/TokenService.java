@@ -13,6 +13,8 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +26,7 @@ import com.example.green.domain.member.exception.MemberExceptionMessage;
 import com.example.green.domain.member.service.MemberService;
 import com.example.green.global.error.exception.BusinessException;
 import com.example.green.global.error.exception.GlobalExceptionMessage;
+import com.example.green.global.security.PrincipalDetails;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -85,8 +88,7 @@ public class TokenService {
 	}
 
 	/**
-	 * 사용자의 최신 tokenVersion 조회 (TokenManager 기반)
-	 * MemberService 의존성 제거를 위해 Auth 도메인 내에서 해결
+	 * 사용자의 최신 tokenVersion 조회
 	 */
 	private Long getCurrentTokenVersion(String username) {
 		List<TokenManager> tokens = refreshTokenRepository.findAllByUsernameAndNotRevoked(username);
@@ -133,7 +135,6 @@ public class TokenService {
 				.signWith(secretKey)
 				.compact();
 
-			// 사용자 조회 (TokenManager 엔티티 생성에 필요)
 			Member member = memberService.findByUsername(username)
 				.orElseThrow(() -> {
 					log.error("TokenManager 생성 실패: 사용자를 찾을 수 없음 - {}", username);
@@ -143,7 +144,6 @@ public class TokenService {
 			// 기존 토큰 정리 (선택적: 한 사용자당 최대 토큰 수 제한)
 			cleanupOldTokens(username);
 
-			// DB에 TokenManager 저장
 			LocalDateTime expiresAt = LocalDateTime.now().plusSeconds(refreshTokenExpiration / 1000);
 			TokenManager tokenManager = TokenManager.create(tokenValue, expiresAt, member, deviceInfo, ipAddress);
 			refreshTokenRepository.save(tokenManager);
@@ -197,7 +197,6 @@ public class TokenService {
 		return false;
 	}
 
-	// TokenManager 검증 (DB 조회 포함)
 	public boolean validateRefreshToken(String tokenValue) {
 		try {
 			// 먼저 JWT 형식 검증
@@ -449,6 +448,39 @@ public class TokenService {
 
 		public String getMemberUsername() {
 			return memberUsername;
+		}
+	}
+
+	/**
+	 * Access Token으로부터 Authentication 객체 생성
+	 * - username으로 Member 조회 -> memberId 포함하도록
+	 */
+	public Authentication createAuthentication(String token) {
+		try {
+			String username = getUsername(token);
+			String role = getRole(token);
+
+			Member member = memberService.findByUsername(username)
+				.orElseThrow(() -> {
+					log.error("JWT 토큰 검증 중 사용자를 찾을 수 없음: {}", username);
+					return new BusinessException(MemberExceptionMessage.MEMBER_NOT_FOUND);
+				});
+
+			PrincipalDetails principal = new PrincipalDetails(
+				member.getId(),       // memberId
+				username,             // OAuth2 username (provider+providerId)
+				role,                 // 권한
+				member.getName()      // 실제 사용자 이름 (프로바이더로 콜백 받은)
+			);
+
+			return new UsernamePasswordAuthenticationToken(
+				principal,
+				null,
+				principal.getAuthorities()
+			);
+		} catch (Exception e) {
+			log.error("Authentication 생성 실패: {}", e.getMessage());
+			throw new BusinessException(GlobalExceptionMessage.JWT_PARSING_FAILED);
 		}
 	}
 }

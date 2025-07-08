@@ -12,13 +12,13 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import com.example.green.domain.pointshop.controller.dto.PointProductDetail;
-import com.example.green.domain.pointshop.controller.dto.PointProductView;
-import com.example.green.domain.pointshop.controller.query.PointProductQueryRepository;
 import com.example.green.domain.pointshop.controller.request.PointProductRequest;
 import com.example.green.domain.pointshop.entity.pointproduct.PointProduct;
 import com.example.green.domain.pointshop.entity.pointproduct.vo.BasicInfo;
 import com.example.green.domain.pointshop.entity.pointproduct.vo.Price;
 import com.example.green.domain.pointshop.entity.pointproduct.vo.Stock;
+import com.example.green.domain.pointshop.repository.PointProductQueryRepository;
+import com.example.green.domain.pointshop.repository.dto.PointProductView;
 import com.example.green.domain.pointshop.service.PointProductDomainService;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.page.CursorTemplate;
