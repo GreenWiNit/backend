@@ -3,12 +3,14 @@ package com.example.green.domain.admin.service;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
+import static org.mockito.Mockito.mock;
 
 import java.util.Optional;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -38,8 +40,8 @@ class AdminServiceTest {
 		// given
 		String loginId = "admin1234";
 		String password = "admin1234!";
-		
-		Admin mockAdmin = createMockAdmin(loginId);
+
+		Admin mockAdmin = createMockAdmin();
 		given(adminRepository.findByLoginIdAndStatus(loginId, AdminStatus.ACTIVE))
 			.willReturn(Optional.of(mockAdmin));
 		given(mockAdmin.verifyPassword(password, passwordEncoder))
@@ -60,7 +62,7 @@ class AdminServiceTest {
 		// given
 		String loginId = "nonexistent";
 		String password = "admin1234!";
-		
+
 		given(adminRepository.findByLoginIdAndStatus(loginId, AdminStatus.ACTIVE))
 			.willReturn(Optional.empty());
 
@@ -76,9 +78,9 @@ class AdminServiceTest {
 		// given
 		String loginId = "admin1234";
 		String password = "admin1234!";
-		
+
 		given(adminRepository.findByLoginIdAndStatus(loginId, AdminStatus.ACTIVE))
-			.willReturn(Optional.empty()); // ACTIVE 상태가 아니므로 조회되지 않음
+			.willReturn(Optional.empty());
 
 		// when & then
 		assertThatThrownBy(() -> adminService.authenticate(loginId, password))
@@ -92,8 +94,8 @@ class AdminServiceTest {
 		// given
 		String loginId = "admin1234";
 		String wrongPassword = "wrongpassword";
-		
-		Admin mockAdmin = createMockAdmin(loginId);
+
+		Admin mockAdmin = createMockAdmin();
 		given(adminRepository.findByLoginIdAndStatus(loginId, AdminStatus.ACTIVE))
 			.willReturn(Optional.of(mockAdmin));
 		given(mockAdmin.verifyPassword(wrongPassword, passwordEncoder))
@@ -103,8 +105,7 @@ class AdminServiceTest {
 		assertThatThrownBy(() -> adminService.authenticate(loginId, wrongPassword))
 			.isInstanceOf(BusinessException.class)
 			.hasMessage(AdminExceptionMessage.INVALID_PASSWORD.getMessage());
-		
-		// 비밀번호가 틀렸으므로 로그인 시간 업데이트 및 저장이 호출되지 않아야 함
+
 		then(mockAdmin).should(never()).updateLastLogin();
 		then(adminRepository).should(never()).save(any());
 	}
@@ -114,7 +115,7 @@ class AdminServiceTest {
 	void loginId로_어드민_조회_성공() {
 		// given
 		String loginId = "admin1234";
-		Admin mockAdmin = createMockAdmin(loginId);
+		Admin mockAdmin = createMockAdmin();
 		given(adminRepository.findByLoginId(loginId))
 			.willReturn(Optional.of(mockAdmin));
 
@@ -122,8 +123,8 @@ class AdminServiceTest {
 		Optional<Admin> result = adminService.findByLoginId(loginId);
 
 		// then
-		assertThat(result).isPresent();
-		assertThat(result.get()).isEqualTo(mockAdmin);
+		assertThat(result).isPresent()
+			.get().isEqualTo(mockAdmin);
 	}
 
 	@Test
@@ -146,7 +147,7 @@ class AdminServiceTest {
 	void ID로_어드민_조회_성공() {
 		// given
 		Long adminId = 1L;
-		Admin mockAdmin = createMockAdmin("admin1234");
+		Admin mockAdmin = createMockAdmin();
 		given(adminRepository.findById(adminId))
 			.willReturn(Optional.of(mockAdmin));
 
@@ -154,14 +155,11 @@ class AdminServiceTest {
 		Optional<Admin> result = adminService.findById(adminId);
 
 		// then
-		assertThat(result).isPresent();
-		assertThat(result.get()).isEqualTo(mockAdmin);
+		assertThat(result).isPresent()
+			.get().isEqualTo(mockAdmin);
 	}
 
-	private Admin createMockAdmin(String loginId) {
-		Admin admin = mock(Admin.class);
-		given(admin.getLoginId()).willReturn(loginId);
-		given(admin.getName()).willReturn("관리자");
-		return admin;
+	private Admin createMockAdmin() {
+		return mock(Admin.class);
 	}
-} 
+}
