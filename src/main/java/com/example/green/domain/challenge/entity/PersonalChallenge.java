@@ -33,6 +33,7 @@ import lombok.NoArgsConstructor;
 public class PersonalChallenge extends BaseChallenge {
 
 	public static PersonalChallenge create(
+		String challengeCode,
 		String challengeName,
 		ChallengeStatus challengeStatus,
 		PointAmount challengePoint,
@@ -42,6 +43,7 @@ public class PersonalChallenge extends BaseChallenge {
 		String challengeContent
 	) {
 		// 필수 값 validate
+		validateEmptyString(challengeCode, "챌린지 코드는 필수값입니다.");
 		validateEmptyString(challengeName, "챌린지명은 필수값입니다.");
 		validateNullData(challengeStatus, "챌린지 상태는 필수값입니다.");
 		validateNullData(challengePoint, "챌린지 포인트는 필수값입니다.");
@@ -50,6 +52,7 @@ public class PersonalChallenge extends BaseChallenge {
 		validateDateRange(beginDateTime, endDateTime, "시작일시는 종료일시보다 이전이어야 합니다.");
 
 		return new PersonalChallenge(
+			challengeCode,
 			challengeName,
 			challengeStatus,
 			challengePoint,
@@ -62,6 +65,7 @@ public class PersonalChallenge extends BaseChallenge {
 	}
 
 	private PersonalChallenge(
+		String challengeCode,
 		String challengeName,
 		ChallengeStatus challengeStatus,
 		PointAmount challengePoint,
@@ -71,7 +75,7 @@ public class PersonalChallenge extends BaseChallenge {
 		String challengeImage,
 		String challengeContent
 	) {
-		super(challengeName, challengeStatus, challengePoint, challengeType,
+		super(challengeCode, challengeName, challengeStatus, challengePoint, challengeType,
 			beginDateTime, endDateTime, challengeImage, challengeContent);
 	}
 }

@@ -3,13 +3,11 @@ package com.example.green.domain.challenge.entity;
 import static com.example.green.global.utils.EntityValidator.*;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 import com.example.green.domain.challenge.enums.ChallengeStatus;
 import com.example.green.domain.challenge.enums.ChallengeType;
 import com.example.green.domain.common.BaseEntity;
 import com.example.green.domain.point.entity.vo.PointAmount;
-import com.example.green.global.utils.UlidUtils;
 
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
@@ -68,8 +66,9 @@ public abstract class BaseChallenge extends BaseEntity {
 	@Column(nullable = false)
 	private LocalDateTime endDateTime;
 
-	// 하위 클래스를 위한 protected 생성자
+	// 하위 클래스를 위한 protected 생성자 - challengeCode는 외부에서 생성하여 주입받음
 	protected BaseChallenge(
+		String challengeCode,
 		String challengeName,
 		ChallengeStatus challengeStatus,
 		PointAmount challengePoint,
@@ -79,7 +78,7 @@ public abstract class BaseChallenge extends BaseEntity {
 		String challengeImage,
 		String challengeContent
 	) {
-		this.challengeCode = generateChallengeCode(challengeType);
+		this.challengeCode = challengeCode;
 		this.challengeName = challengeName;
 		this.challengeStatus = challengeStatus;
 		this.challengePoint = challengePoint;
@@ -91,28 +90,9 @@ public abstract class BaseChallenge extends BaseEntity {
 	}
 
 	/**
-	 * 챌린지 코드를 자동 생성합니다.
-	 * 형식: CH-{타입}-{생성일자}-{시간}-{ULID 뒷 4자리}
-	 * 예: CH-P-20250109-143521-A3FV, CH-T-20250109-143522-B7MX
-	 */
-	private String generateChallengeCode(ChallengeType challengeType) {
-		String typeCode = challengeType.getCode();
-		LocalDateTime now = LocalDateTime.now();
-		String dateCode = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-		String timeCode = now.format(DateTimeFormatter.ofPattern("HHmmss"));
-
-		// ULID 생성 후 뒷 4자리 추출
-		String ulid = UlidUtils.generate();
-		String randomCode = ulid.substring(ulid.length() - 4); // 뒷 4자리
-
-		return String.format("CH-%s-%s-%s-%s", typeCode, dateCode, timeCode, randomCode);
-	}
-
-	/**
 	 * 챌린지가 활성 상태인지 확인
 	 */
-	public boolean isActive() {
-		LocalDateTime now = LocalDateTime.now();
+	public boolean isActive(LocalDateTime now) {
 		return challengeStatus == ChallengeStatus.PROCEEDING
 			&& now.isAfter(beginDateTime)
 			&& now.isBefore(endDateTime);
@@ -121,8 +101,8 @@ public abstract class BaseChallenge extends BaseEntity {
 	/**
 	 * 챌린지 참여 가능 여부 확인
 	 */
-	public boolean canParticipate() {
-		return challengeStatus == ChallengeStatus.PROCEEDING && LocalDateTime.now().isBefore(endDateTime);
+	public boolean canParticipate(LocalDateTime now) {
+		return challengeStatus == ChallengeStatus.PROCEEDING && now.isBefore(endDateTime);
 	}
 
 	/**

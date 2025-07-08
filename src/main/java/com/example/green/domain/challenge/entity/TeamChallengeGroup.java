@@ -164,17 +164,16 @@ public class TeamChallengeGroup extends BaseEntity {
 	/**
 	 * 참가 가능 여부 확인
 	 */
-	public boolean canParticipate() {
+	public boolean canParticipate(LocalDateTime now) {
 		return !isMaxParticipantsReached()
 			&& groupStatus == GroupStatus.RECRUITING
-			&& LocalDateTime.now().isBefore(groupEndDateTime);
+			&& now.isBefore(groupEndDateTime);
 	}
 
 	/**
 	 * 그룹이 활성 상태인지 확인
 	 */
-	public boolean isActive() {
-		LocalDateTime now = LocalDateTime.now();
+	public boolean isActive(LocalDateTime now) {
 		return groupStatus == GroupStatus.PROCEEDING
 			&& now.isAfter(groupBeginDateTime)
 			&& now.isBefore(groupEndDateTime);

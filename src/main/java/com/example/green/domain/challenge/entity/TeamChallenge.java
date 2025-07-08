@@ -52,6 +52,7 @@ public class TeamChallenge extends BaseChallenge {
 	private List<TeamChallengeGroup> challengeGroups = new ArrayList<>();
 
 	public static TeamChallenge create(
+		String challengeCode,
 		String challengeName,
 		ChallengeStatus challengeStatus,
 		PointAmount challengePoint,
@@ -62,6 +63,7 @@ public class TeamChallenge extends BaseChallenge {
 		String challengeContent
 	) {
 		// 필수 값 validate
+		validateEmptyString(challengeCode, "챌린지 코드는 필수값입니다.");
 		validateEmptyString(challengeName, "챌린지명은 필수값입니다.");
 		validateNullData(challengeStatus, "챌린지 상태는 필수값입니다.");
 		validateNullData(challengePoint, "챌린지 포인트는 필수값입니다.");
@@ -74,6 +76,7 @@ public class TeamChallenge extends BaseChallenge {
 		}
 
 		return new TeamChallenge(
+			challengeCode,
 			challengeName,
 			challengeStatus,
 			challengePoint,
@@ -87,6 +90,7 @@ public class TeamChallenge extends BaseChallenge {
 	}
 
 	private TeamChallenge(
+		String challengeCode,
 		String challengeName,
 		ChallengeStatus challengeStatus,
 		PointAmount challengePoint,
@@ -97,7 +101,7 @@ public class TeamChallenge extends BaseChallenge {
 		String challengeContent,
 		Integer maxGroupCount
 	) {
-		super(challengeName, challengeStatus, challengePoint, challengeType,
+		super(challengeCode, challengeName, challengeStatus, challengePoint, challengeType,
 			beginDateTime, endDateTime, challengeImage, challengeContent);
 		this.maxGroupCount = maxGroupCount;
 		this.currentGroupCount = 0;
