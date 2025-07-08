@@ -5,11 +5,11 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.green.domain.pointshop.controller.dto.PointProductExcelCondition;
-import com.example.green.domain.pointshop.controller.dto.PointProductSearchCondition;
-import com.example.green.domain.pointshop.controller.dto.PointProductSearchResponse;
-import com.example.green.domain.pointshop.controller.dto.PointProductView;
-import com.example.green.domain.pointshop.controller.query.PointProductQueryRepository;
+import com.example.green.domain.pointshop.repository.PointProductQueryRepository;
+import com.example.green.domain.pointshop.repository.dto.PointProductExcelCondition;
+import com.example.green.domain.pointshop.repository.dto.PointProductSearchCondition;
+import com.example.green.domain.pointshop.repository.dto.PointProductSearchResult;
+import com.example.green.domain.pointshop.repository.dto.PointProductView;
 import com.example.green.global.api.page.CursorTemplate;
 import com.example.green.global.api.page.PageTemplate;
 import com.example.green.global.api.page.Pagination;
@@ -26,19 +26,19 @@ public class PointProductQueryRepositoryImpl implements PointProductQueryReposit
 	private final PointProductQueryExecutor pointProductQueryExecutor;
 
 	@Override
-	public PageTemplate<PointProductSearchResponse> searchPointProducts(PointProductSearchCondition condition) {
+	public PageTemplate<PointProductSearchResult> searchPointProducts(PointProductSearchCondition condition) {
 		BooleanExpression expression = PointProductPredicates.fromCondition(condition);
 
 		Long totalCount = pointProductQueryExecutor.countProducts(expression);
 		Pagination pagination = Pagination.fromCondition(condition, totalCount);
 
-		List<PointProductSearchResponse> content = pointProductQueryExecutor.findProducts(expression, pagination);
+		List<PointProductSearchResult> content = pointProductQueryExecutor.findProducts(expression, pagination);
 
 		return PageTemplate.of(content, pagination);
 	}
 
 	@Override
-	public List<PointProductSearchResponse> searchPointProductsForExcel(PointProductExcelCondition condition) {
+	public List<PointProductSearchResult> searchPointProductsForExcel(PointProductExcelCondition condition) {
 		BooleanExpression expression = PointProductPredicates.fromCondition(condition);
 		return pointProductQueryExecutor.findProductsForExcel(expression);
 	}

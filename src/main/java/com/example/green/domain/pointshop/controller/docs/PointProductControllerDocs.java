@@ -1,7 +1,7 @@
 package com.example.green.domain.pointshop.controller.docs;
 
 import com.example.green.domain.pointshop.controller.dto.PointProductDetail;
-import com.example.green.domain.pointshop.controller.dto.PointProductView;
+import com.example.green.domain.pointshop.repository.dto.PointProductView;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.page.CursorTemplate;
 import com.example.green.global.error.dto.ExceptionResponse;

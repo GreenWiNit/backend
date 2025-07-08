@@ -5,9 +5,9 @@ import org.springframework.http.MediaType;
 
 import com.example.green.domain.pointshop.controller.dto.PointProductCreateDto;
 import com.example.green.domain.pointshop.controller.dto.PointProductDetail;
-import com.example.green.domain.pointshop.controller.dto.PointProductSearchResponse;
 import com.example.green.domain.pointshop.controller.dto.PointProductUpdateDto;
-import com.example.green.domain.pointshop.controller.dto.PointProductView;
+import com.example.green.domain.pointshop.repository.dto.PointProductSearchResult;
+import com.example.green.domain.pointshop.repository.dto.PointProductView;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.NoContent;
 import com.example.green.global.api.page.CursorTemplate;
@@ -30,7 +30,7 @@ public class PointProductRequest {
 			});
 	}
 
-	public static ApiTemplate<PageTemplate<PointProductSearchResponse>> searchProducts() {
+	public static ApiTemplate<PageTemplate<PointProductSearchResult>> searchProducts() {
 		return RestAssuredMockMvc
 			.given().log().all()
 			.contentType(MediaType.APPLICATION_JSON)

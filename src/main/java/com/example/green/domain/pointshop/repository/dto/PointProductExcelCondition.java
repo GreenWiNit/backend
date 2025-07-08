@@ -1,4 +1,4 @@
-package com.example.green.domain.pointshop.controller.dto;
+package com.example.green.domain.pointshop.repository.dto;
 
 import com.example.green.domain.pointshop.entity.pointproduct.vo.SellingStatus;
 
