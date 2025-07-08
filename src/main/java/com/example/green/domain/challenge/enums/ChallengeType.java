@@ -9,8 +9,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Getter
 public enum ChallengeType {
-	PERSONAL("개인"),
-	TEAM("팀");
+	PERSONAL("P", "개인"),
+	TEAM("T", "팀");
 
+	private final String code;
 	private final String description;
 }

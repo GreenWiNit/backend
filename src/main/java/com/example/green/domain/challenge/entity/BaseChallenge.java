@@ -95,7 +95,7 @@ public abstract class BaseChallenge extends BaseEntity {
 	 * 예: CH-P-20250109-143521, CH-T-20250109-143522
 	 */
 	private String generateChallengeCode(ChallengeType challengeType) {
-		String typeCode = challengeType == ChallengeType.PERSONAL ? "P" : "T";
+		String typeCode = challengeType.getCode();
 		String dateCode = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
 
 		// 현재 시간을 밀리초 단위까지 사용하여 중복 가능성을 최소화
