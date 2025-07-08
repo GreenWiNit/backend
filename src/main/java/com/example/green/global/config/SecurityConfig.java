@@ -43,16 +43,19 @@ public class SecurityConfig {
 	private final OAuth2FailureHandler oauth2FailureHandler;
 	private final TokenService tokenService;
 	private final String frontendBaseUrl;
+	private final String backendBaseUrl;
 
 	public SecurityConfig(CustomOAuth2UserService customOAuth2UserService, CustomSuccessHandler customSuccessHandler,
 		OAuth2FailureHandler oauth2FailureHandler, TokenService tokenService,
-		@Value("${app.frontend.base-url}") String frontendBaseUrl) {
+		@Value("${app.frontend.base-url}") String frontendBaseUrl,
+		@Value("${app.backend.base-url}") String backendBaseUrl) {
 
 		this.customOAuth2UserService = customOAuth2UserService;
 		this.customSuccessHandler = customSuccessHandler;
 		this.oauth2FailureHandler = oauth2FailureHandler;
 		this.tokenService = tokenService;
 		this.frontendBaseUrl = frontendBaseUrl;
+		this.backendBaseUrl = backendBaseUrl;
 	}
 
 	@Bean
@@ -78,7 +81,7 @@ public class SecurityConfig {
 
 					CorsConfiguration configuration = new CorsConfiguration();
 
-					configuration.setAllowedOrigins(Collections.singletonList(frontendBaseUrl));
+					configuration.setAllowedOrigins(Arrays.asList(frontendBaseUrl, backendBaseUrl));
 					configuration.setAllowedMethods(Collections.singletonList("*"));
 					configuration.setAllowCredentials(true);
 					configuration.setAllowedHeaders(Collections.singletonList("*"));
