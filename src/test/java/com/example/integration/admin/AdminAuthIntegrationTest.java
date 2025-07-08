@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.hamcrest.Matchers.containsString;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -50,11 +51,11 @@ class AdminAuthIntegrationTest extends BaseIntegrationTest {
 	void 올바른_어드민_로그인_전체_플로우_테스트() throws Exception {
 		// given
 		String loginRequest = """
-			{
-				"loginId": "admin1234",
-				"password": "admin1234!"
-			}
-			""";
+            {
+                "loginId": "admin1234",
+                "password": "admin1234!"
+            }
+            """;
 
 		// when & then
 		String responseContent = mockMvc.perform(post("/api/admin/login")
@@ -73,7 +74,7 @@ class AdminAuthIntegrationTest extends BaseIntegrationTest {
 		// JWT 토큰 검증
 		JsonNode response = objectMapper.readTree(responseContent);
 		String accessToken = response.get("accessToken").asText();
-		
+
 		assertThat(accessToken).isNotEmpty();
 		assertThat(accessToken).startsWith("eyJ"); // JWT 형식 확인
 
@@ -87,11 +88,11 @@ class AdminAuthIntegrationTest extends BaseIntegrationTest {
 	void 잘못된_비밀번호로_로그인_실패() throws Exception {
 		// given
 		String loginRequest = """
-			{
-				"loginId": "admin1234",
-				"password": "wrongpassword"
-			}
-			""";
+            {
+                "loginId": "admin1234",
+                "password": "wrongpassword"
+            }
+            """;
 
 		// when & then
 		mockMvc.perform(post("/api/admin/login")
@@ -112,11 +113,11 @@ class AdminAuthIntegrationTest extends BaseIntegrationTest {
 	void 존재하지_않는_계정으로_로그인_실패() throws Exception {
 		// given
 		String loginRequest = """
-			{
-				"loginId": "nonexistent",
-				"password": "admin1234!"
-			}
-			""";
+            {
+                "loginId": "nonexistent",
+                "password": "admin1234!"
+            }
+            """;
 
 		// when & then
 		mockMvc.perform(post("/api/admin/login")
@@ -133,23 +134,22 @@ class AdminAuthIntegrationTest extends BaseIntegrationTest {
 	void 잠긴_계정으로_로그인_실패() throws Exception {
 		// given
 		Admin lockedAdmin = createTestAdmin("locked", "admin1234!", "잠긴관리자", "locked@test.com");
-		// status를 LOCKED로 변경
 		setAdminStatus(lockedAdmin, AdminStatus.LOCKED);
 		adminRepository.save(lockedAdmin);
 
 		String loginRequest = """
-			{
-				"loginId": "locked",
-				"password": "admin1234!"
-			}
-			""";
+            {
+                "loginId": "locked",
+                "password": "admin1234!"
+            }
+            """;
 
 		// when & then
 		mockMvc.perform(post("/api/admin/login")
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(loginRequest))
 			.andDo(print())
-			.andExpect(status().isNotFound()) // ACTIVE가 아니므로 NOT_FOUND
+			.andExpect(status().isNotFound())
 			.andExpect(jsonPath("$.success").value(false))
 			.andExpect(jsonPath("$.message").value("해당 관리자를 찾을 수 없습니다."));
 	}
@@ -159,11 +159,11 @@ class AdminAuthIntegrationTest extends BaseIntegrationTest {
 	void 유효성_검증_실패_빈_로그인_ID() throws Exception {
 		// given
 		String loginRequest = """
-			{
-				"loginId": "",
-				"password": "admin1234!"
-			}
-			""";
+            {
+                "loginId": "",
+                "password": "admin1234!"
+            }
+            """;
 
 		// when & then
 		mockMvc.perform(post("/api/admin/login")
@@ -172,13 +172,12 @@ class AdminAuthIntegrationTest extends BaseIntegrationTest {
 			.andDo(print())
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.success").value(false))
-			.andExpect(jsonPath("$.message").value(org.hamcrest.Matchers.containsString("로그인 ID를 입력해주세요")));
+			// 상세 에러 메시지를 errors[0].message 에서 검증하도록 수정
+			.andExpect(jsonPath("$.errors[0].message", containsString("로그인 ID를 입력해주세요")));
 	}
 
 	private Admin createTestAdmin(String loginId, String password, String name, String email) {
 		String encodedPassword = passwordEncoder.encode(password);
-		
-		// Reflection을 사용해서 private 생성자 호출
 		try {
 			var constructor = Admin.class.getDeclaredConstructor(String.class, String.class, String.class, String.class);
 			constructor.setAccessible(true);
@@ -197,4 +196,4 @@ class AdminAuthIntegrationTest extends BaseIntegrationTest {
 			throw new RuntimeException("Admin 상태 설정 실패", e);
 		}
 	}
-} 
+}

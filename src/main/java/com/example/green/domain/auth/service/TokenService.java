@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.green.domain.auth.dto.TempTokenInfoDto;
 import com.example.green.domain.admin.entity.Admin;
 import com.example.green.domain.admin.exception.AdminExceptionMessage;
-import com.example.green.domain.admin.service.AdminService;
+import com.example.green.domain.admin.repository.AdminRepository;
 import com.example.green.domain.auth.entity.TokenManager;
 import com.example.green.domain.auth.repository.RefreshTokenRepository;
 import com.example.green.domain.member.entity.Member;
@@ -67,7 +67,7 @@ public class TokenService {
 
 	private final RefreshTokenRepository refreshTokenRepository;
 	private final MemberService memberService;
-	private final AdminService adminService;
+	private final AdminRepository adminRepository;
 	private final ApplicationEventPublisher eventPublisher;
 
 	public TokenService(
@@ -77,7 +77,7 @@ public class TokenService {
 		@Value("${jwt.temp-expiration:600000}") Long tempTokenExpiration,
 		RefreshTokenRepository refreshTokenRepository,
 		MemberService memberService,
-		AdminService adminService,
+		AdminRepository adminRepository,
 		ApplicationEventPublisher eventPublisher) {
 
 		this.secretKey = new SecretKeySpec(
@@ -89,7 +89,7 @@ public class TokenService {
 		this.tempTokenExpiration = tempTokenExpiration;
 		this.refreshTokenRepository = refreshTokenRepository;
 		this.memberService = memberService;
-		this.adminService = adminService;
+		this.adminRepository = adminRepository;
 		this.eventPublisher = eventPublisher;
 	}
 
@@ -481,7 +481,7 @@ public class TokenService {
 			// 어드민 계정 처리 (admin_ prefix로 구분)
 			if (username.startsWith("admin_")) {
 				String adminLoginId = username.substring(6); // "admin_" prefix 제거
-				Admin admin = adminService.findByLoginId(adminLoginId)
+				Admin admin = adminRepository.findByLoginId(adminLoginId)
 					.orElseThrow(() -> {
 						log.error("JWT 토큰 검증 중 관리자를 찾을 수 없음: {}", adminLoginId);
 						return new BusinessException(AdminExceptionMessage.ADMIN_NOT_FOUND);
