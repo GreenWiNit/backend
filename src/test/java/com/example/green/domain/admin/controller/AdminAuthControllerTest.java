@@ -1,8 +1,9 @@
 package com.example.green.domain.admin.controller;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
+import static org.assertj.core.api.AssertionsForClassTypes.*;
 import static org.mockito.BDDMockito.*;
+import static org.mockito.Mockito.mock;
+import static org.hamcrest.Matchers.*;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -35,7 +36,6 @@ class AdminAuthControllerTest extends BaseControllerUnitTest {
 	@Test
 	@DisplayName("올바른 로그인 정보로 로그인 성공")
 	void 올바른_로그인_정보로_로그인_성공() {
-		// given
 		AdminLoginRequestDto request = new AdminLoginRequestDto("admin1234", "admin1234!");
 		Admin mockAdmin = createMockAdmin();
 		String expectedToken = "eyJhbGciOiJIUzI1NiJ9...";
@@ -45,7 +45,6 @@ class AdminAuthControllerTest extends BaseControllerUnitTest {
 		given(tokenService.createAccessToken("admin_admin1234", Admin.ROLE_ADMIN))
 			.willReturn(expectedToken);
 
-		// when
 		AdminLoginResponseDto response = RestAssuredMockMvc
 			.given().log().all()
 			.contentType(MediaType.APPLICATION_JSON)
@@ -55,7 +54,6 @@ class AdminAuthControllerTest extends BaseControllerUnitTest {
 			.status(HttpStatus.OK)
 			.extract().as(new TypeRef<>() {});
 
-		// then
 		assertThat(response.getAccessToken()).isEqualTo(expectedToken);
 		assertThat(response.getLoginId()).isEqualTo("admin1234");
 		assertThat(response.getName()).isEqualTo("관리자");
@@ -65,13 +63,11 @@ class AdminAuthControllerTest extends BaseControllerUnitTest {
 	@Test
 	@DisplayName("존재하지 않는 계정으로 로그인 실패")
 	void 존재하지_않는_계정으로_로그인_실패() {
-		// given
 		AdminLoginRequestDto request = new AdminLoginRequestDto("nonexistent", "admin1234!");
 
 		given(adminService.authenticate("nonexistent", "admin1234!"))
 			.willThrow(new BusinessException(AdminExceptionMessage.ADMIN_NOT_FOUND));
 
-		// when & then
 		RestAssuredMockMvc
 			.given().log().all()
 			.contentType(MediaType.APPLICATION_JSON)
@@ -79,20 +75,18 @@ class AdminAuthControllerTest extends BaseControllerUnitTest {
 			.when().post("/api/admin/login")
 			.then().log().all()
 			.status(HttpStatus.NOT_FOUND)
-			.body("success", org.hamcrest.Matchers.equalTo(false))
-			.body("message", org.hamcrest.Matchers.equalTo(AdminExceptionMessage.ADMIN_NOT_FOUND.getMessage()));
+			.body("success", equalTo(false))
+			.body("message", equalTo(AdminExceptionMessage.ADMIN_NOT_FOUND.getMessage()));
 	}
 
 	@Test
 	@DisplayName("잘못된 비밀번호로 로그인 실패")
 	void 잘못된_비밀번호로_로그인_실패() {
-		// given
 		AdminLoginRequestDto request = new AdminLoginRequestDto("admin1234", "wrongpassword");
 
 		given(adminService.authenticate("admin1234", "wrongpassword"))
 			.willThrow(new BusinessException(AdminExceptionMessage.INVALID_PASSWORD));
 
-		// when & then
 		RestAssuredMockMvc
 			.given().log().all()
 			.contentType(MediaType.APPLICATION_JSON)
@@ -100,17 +94,15 @@ class AdminAuthControllerTest extends BaseControllerUnitTest {
 			.when().post("/api/admin/login")
 			.then().log().all()
 			.status(HttpStatus.UNAUTHORIZED)
-			.body("success", org.hamcrest.Matchers.equalTo(false))
-			.body("message", org.hamcrest.Matchers.equalTo(AdminExceptionMessage.INVALID_PASSWORD.getMessage()));
+			.body("success", equalTo(false))
+			.body("message", equalTo(AdminExceptionMessage.INVALID_PASSWORD.getMessage()));
 	}
 
 	@Test
 	@DisplayName("빈 로그인 ID로 요청 시 검증 실패")
 	void 빈_로그인_ID로_요청시_검증_실패() {
-		// given
 		AdminLoginRequestDto request = new AdminLoginRequestDto("", "admin1234!");
 
-		// when & then
 		RestAssuredMockMvc
 			.given().log().all()
 			.contentType(MediaType.APPLICATION_JSON)
@@ -118,17 +110,15 @@ class AdminAuthControllerTest extends BaseControllerUnitTest {
 			.when().post("/api/admin/login")
 			.then().log().all()
 			.status(HttpStatus.BAD_REQUEST)
-			.body("success", org.hamcrest.Matchers.equalTo(false))
-			.body("message", org.hamcrest.Matchers.containsString("로그인 ID를 입력해주세요"));
+			.body("success", equalTo(false))
+			.body("errors[0].message", containsString("로그인 ID를 입력해주세요"));
 	}
 
 	@Test
 	@DisplayName("빈 비밀번호로 요청 시 검증 실패")
 	void 빈_비밀번호로_요청시_검증_실패() {
-		// given
 		AdminLoginRequestDto request = new AdminLoginRequestDto("admin1234", "");
 
-		// when & then
 		RestAssuredMockMvc
 			.given().log().all()
 			.contentType(MediaType.APPLICATION_JSON)
@@ -136,18 +126,17 @@ class AdminAuthControllerTest extends BaseControllerUnitTest {
 			.when().post("/api/admin/login")
 			.then().log().all()
 			.status(HttpStatus.BAD_REQUEST)
-			.body("success", org.hamcrest.Matchers.equalTo(false))
-			.body("message", org.hamcrest.Matchers.containsString("비밀번호를 입력해주세요"));
+			.body("success", equalTo(false))
+			// 두 개의 에러 메시지 중 NotBlank 메시지도 반드시 포함되었는지 검사
+			.body("errors.message", hasItem(containsString("비밀번호를 입력해주세요")));
 	}
 
 	@Test
 	@DisplayName("너무 긴 로그인 ID로 요청 시 검증 실패")
 	void 너무_긴_로그인_ID로_요청시_검증_실패() {
-		// given
-		String tooLongLoginId = "a".repeat(51); // 50자 초과
+		String tooLongLoginId = "a".repeat(51);
 		AdminLoginRequestDto request = new AdminLoginRequestDto(tooLongLoginId, "admin1234!");
 
-		// when & then
 		RestAssuredMockMvc
 			.given().log().all()
 			.contentType(MediaType.APPLICATION_JSON)
@@ -155,17 +144,15 @@ class AdminAuthControllerTest extends BaseControllerUnitTest {
 			.when().post("/api/admin/login")
 			.then().log().all()
 			.status(HttpStatus.BAD_REQUEST)
-			.body("success", org.hamcrest.Matchers.equalTo(false))
-			.body("message", org.hamcrest.Matchers.containsString("로그인 ID는 50자 이하로 입력해주세요"));
+			.body("success", equalTo(false))
+			.body("errors[0].message", containsString("로그인 ID는 50자 이하로 입력해주세요"));
 	}
 
 	@Test
 	@DisplayName("너무 짧은 비밀번호로 요청 시 검증 실패")
 	void 너무_짧은_비밀번호로_요청시_검증_실패() {
-		// given
-		AdminLoginRequestDto request = new AdminLoginRequestDto("admin1234", "123"); // 4자 미만
+		AdminLoginRequestDto request = new AdminLoginRequestDto("admin1234", "123");
 
-		// when & then
 		RestAssuredMockMvc
 			.given().log().all()
 			.contentType(MediaType.APPLICATION_JSON)
@@ -173,8 +160,8 @@ class AdminAuthControllerTest extends BaseControllerUnitTest {
 			.when().post("/api/admin/login")
 			.then().log().all()
 			.status(HttpStatus.BAD_REQUEST)
-			.body("success", org.hamcrest.Matchers.equalTo(false))
-			.body("message", org.hamcrest.Matchers.containsString("비밀번호는 4자 이상 100자 이하로 입력해주세요"));
+			.body("success", equalTo(false))
+			.body("errors[0].message", containsString("비밀번호는 4자 이상 100자 이하로 입력해주세요"));
 	}
 
 	private Admin createMockAdmin() {
@@ -184,4 +171,4 @@ class AdminAuthControllerTest extends BaseControllerUnitTest {
 		given(admin.getTokenUsername()).willReturn("admin_admin1234");
 		return admin;
 	}
-} 
+}
