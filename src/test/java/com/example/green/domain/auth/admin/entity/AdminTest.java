@@ -1,4 +1,4 @@
-package com.example.green.domain.admin.entity;
+package com.example.green.domain.auth.admin.entity;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -10,7 +10,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.example.green.domain.admin.entity.enums.AdminStatus;
+import com.example.green.domain.auth.admin.entity.Admin;
+import com.example.green.domain.auth.admin.entity.enums.AdminStatus;
 
 class AdminTest {
 

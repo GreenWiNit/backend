@@ -1,4 +1,4 @@
-package com.example.green.domain.admin.service;
+package com.example.green.domain.auth.admin.service;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -16,10 +16,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.example.green.domain.admin.entity.Admin;
-import com.example.green.domain.admin.entity.enums.AdminStatus;
-import com.example.green.domain.admin.exception.AdminExceptionMessage;
-import com.example.green.domain.admin.repository.AdminRepository;
+import com.example.green.domain.auth.admin.entity.Admin;
+import com.example.green.domain.auth.admin.entity.enums.AdminStatus;
+import com.example.green.domain.auth.admin.exception.AdminExceptionMessage;
+import com.example.green.domain.auth.admin.repository.AdminRepository;
+import com.example.green.domain.auth.admin.service.AdminService;
 import com.example.green.global.error.exception.BusinessException;
 
 @ExtendWith(MockitoExtension.class)

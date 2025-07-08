@@ -15,9 +15,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.green.domain.admin.entity.Admin;
-import com.example.green.domain.admin.entity.enums.AdminStatus;
-import com.example.green.domain.admin.repository.AdminRepository;
+import com.example.green.domain.auth.admin.entity.Admin;
+import com.example.green.domain.auth.admin.entity.enums.AdminStatus;
+import com.example.green.domain.auth.admin.repository.AdminRepository;
 import com.example.integration.common.BaseIntegrationTest;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

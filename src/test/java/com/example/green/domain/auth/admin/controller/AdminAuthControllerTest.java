@@ -1,4 +1,4 @@
-package com.example.green.domain.admin.controller;
+package com.example.green.domain.auth.admin.controller;
 
 import static org.assertj.core.api.AssertionsForClassTypes.*;
 import static org.mockito.BDDMockito.*;
@@ -12,11 +12,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
-import com.example.green.domain.admin.dto.AdminLoginRequestDto;
-import com.example.green.domain.admin.dto.AdminLoginResponseDto;
-import com.example.green.domain.admin.entity.Admin;
-import com.example.green.domain.admin.exception.AdminExceptionMessage;
-import com.example.green.domain.admin.service.AdminService;
+import com.example.green.domain.auth.admin.controller.AdminAuthController;
+import com.example.green.domain.auth.admin.dto.AdminLoginRequestDto;
+import com.example.green.domain.auth.admin.dto.AdminLoginResponseDto;
+import com.example.green.domain.auth.admin.entity.Admin;
+import com.example.green.domain.auth.admin.exception.AdminExceptionMessage;
+import com.example.green.domain.auth.admin.service.AdminService;
 import com.example.green.domain.auth.service.TokenService;
 import com.example.green.global.error.exception.BusinessException;
 import com.example.green.template.base.BaseControllerUnitTest;

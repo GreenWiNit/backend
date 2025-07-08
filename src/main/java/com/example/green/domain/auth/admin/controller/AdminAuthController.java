@@ -1,4 +1,4 @@
-package com.example.green.domain.admin.controller;
+package com.example.green.domain.auth.admin.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -6,10 +6,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.green.domain.admin.dto.AdminLoginRequestDto;
-import com.example.green.domain.admin.dto.AdminLoginResponseDto;
-import com.example.green.domain.admin.entity.Admin;
-import com.example.green.domain.admin.service.AdminService;
+import com.example.green.domain.auth.admin.dto.AdminLoginRequestDto;
+import com.example.green.domain.auth.admin.dto.AdminLoginResponseDto;
+import com.example.green.domain.auth.admin.entity.Admin;
+import com.example.green.domain.auth.admin.service.AdminService;
 import com.example.green.domain.auth.service.TokenService;
 import com.example.green.global.security.annotation.PublicApi;
 

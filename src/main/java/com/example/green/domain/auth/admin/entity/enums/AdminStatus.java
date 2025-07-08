@@ -1,4 +1,4 @@
-package com.example.green.domain.admin.entity.enums;
+package com.example.green.domain.auth.admin.entity.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

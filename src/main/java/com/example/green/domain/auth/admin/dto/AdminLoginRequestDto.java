@@ -1,4 +1,4 @@
-package com.example.green.domain.admin.dto;
+package com.example.green.domain.auth.admin.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

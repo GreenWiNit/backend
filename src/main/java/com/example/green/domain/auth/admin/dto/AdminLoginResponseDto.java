@@ -1,6 +1,6 @@
-package com.example.green.domain.admin.dto;
+package com.example.green.domain.auth.admin.dto;
 
-import com.example.green.domain.admin.entity.Admin;
+import com.example.green.domain.auth.admin.entity.Admin;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

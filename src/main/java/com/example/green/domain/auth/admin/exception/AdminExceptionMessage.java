@@ -1,4 +1,4 @@
-package com.example.green.domain.admin.exception;
+package com.example.green.domain.auth.admin.exception;
 
 import static org.springframework.http.HttpStatus.*;
 

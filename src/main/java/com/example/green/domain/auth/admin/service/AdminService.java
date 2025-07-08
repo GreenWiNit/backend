@@ -1,4 +1,4 @@
-package com.example.green.domain.admin.service;
+package com.example.green.domain.auth.admin.service;
 
 import java.util.Optional;
 
@@ -6,10 +6,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.green.domain.admin.entity.Admin;
-import com.example.green.domain.admin.entity.enums.AdminStatus;
-import com.example.green.domain.admin.exception.AdminExceptionMessage;
-import com.example.green.domain.admin.repository.AdminRepository;
+import com.example.green.domain.auth.admin.entity.Admin;
+import com.example.green.domain.auth.admin.entity.enums.AdminStatus;
+import com.example.green.domain.auth.admin.exception.AdminExceptionMessage;
+import com.example.green.domain.auth.admin.repository.AdminRepository;
 import com.example.green.global.error.exception.BusinessException;
 
 import lombok.RequiredArgsConstructor;

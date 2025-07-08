@@ -19,9 +19,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.green.domain.auth.dto.TempTokenInfoDto;
-import com.example.green.domain.admin.entity.Admin;
-import com.example.green.domain.admin.exception.AdminExceptionMessage;
-import com.example.green.domain.admin.repository.AdminRepository;
+import com.example.green.domain.auth.admin.entity.Admin;
+import com.example.green.domain.auth.admin.exception.AdminExceptionMessage;
+import com.example.green.domain.auth.admin.repository.AdminRepository;
 import com.example.green.domain.auth.entity.TokenManager;
 import com.example.green.domain.auth.repository.RefreshTokenRepository;
 import com.example.green.domain.member.entity.Member;

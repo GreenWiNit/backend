@@ -1,10 +1,10 @@
-package com.example.green.domain.admin.entity;
+package com.example.green.domain.auth.admin.entity;
 
 import java.time.LocalDateTime;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.example.green.domain.admin.entity.enums.AdminStatus;
+import com.example.green.domain.auth.admin.entity.enums.AdminStatus;
 import com.example.green.domain.common.BaseEntity;
 
 import jakarta.persistence.Column;
