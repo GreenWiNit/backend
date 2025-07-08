@@ -15,6 +15,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class DeliveryAddressSnapshot {
 
+	private static final String FULL_ADDRESS_FORMAT = "%s (%s), %s";
+
 	@Column(nullable = false)
 	private Long deliveryAddressId;
 	@Column(nullable = false)
@@ -45,5 +47,9 @@ public class DeliveryAddressSnapshot {
 		return new DeliveryAddressSnapshot(
 			deliveryAddressId, recipientName, phoneNumber, roadAddress, detailAddress, zipCode
 		);
+	}
+
+	public String getFullAddress() {
+		return String.format(FULL_ADDRESS_FORMAT, roadAddress, zipCode, detailAddress);
 	}
 }
