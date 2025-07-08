@@ -19,6 +19,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.green.domain.auth.dto.TempTokenInfoDto;
+import com.example.green.domain.admin.entity.Admin;
+import com.example.green.domain.admin.exception.AdminExceptionMessage;
+import com.example.green.domain.admin.service.AdminService;
 import com.example.green.domain.auth.entity.TokenManager;
 import com.example.green.domain.auth.repository.RefreshTokenRepository;
 import com.example.green.domain.member.entity.Member;
@@ -64,6 +67,7 @@ public class TokenService {
 
 	private final RefreshTokenRepository refreshTokenRepository;
 	private final MemberService memberService;
+	private final AdminService adminService;
 	private final ApplicationEventPublisher eventPublisher;
 
 	public TokenService(
@@ -73,6 +77,7 @@ public class TokenService {
 		@Value("${jwt.temp-expiration:600000}") Long tempTokenExpiration,
 		RefreshTokenRepository refreshTokenRepository,
 		MemberService memberService,
+		AdminService adminService,
 		ApplicationEventPublisher eventPublisher) {
 
 		this.secretKey = new SecretKeySpec(
@@ -84,6 +89,7 @@ public class TokenService {
 		this.tempTokenExpiration = tempTokenExpiration;
 		this.refreshTokenRepository = refreshTokenRepository;
 		this.memberService = memberService;
+		this.adminService = adminService;
 		this.eventPublisher = eventPublisher;
 	}
 
@@ -104,10 +110,17 @@ public class TokenService {
 
 	public String createAccessToken(String username, String role) {
 		try {
-			// RefreshToken에서 최신 tokenVersion 조회 (Auth 도메인 독립성)
-			Long tokenVersion = getCurrentTokenVersion(username);
-			if (tokenVersion == null) {
-				throw new BusinessException(GlobalExceptionMessage.JWT_CREATION_FAILED);
+			Long tokenVersion;
+			
+			// 어드민 계정의 경우 기본 토큰 버전 사용 (RefreshToken 미사용)
+			if (username.startsWith("admin_")) {
+				tokenVersion = 1L;
+			} else {
+				// 일반 사용자: RefreshToken에서 최신 tokenVersion 조회
+				tokenVersion = getCurrentTokenVersion(username);
+				if (tokenVersion == null) {
+					throw new BusinessException(GlobalExceptionMessage.JWT_CREATION_FAILED);
+				}
 			}
 
 			return Jwts.builder()
@@ -301,7 +314,12 @@ public class TokenService {
 			String username = getUsername(accessToken);
 			Long tokenVersion = getTokenVersion(accessToken);
 
-			// 4. RefreshToken에서 현재 tokenVersion 조회 (Auth 도메인 독립성)
+			// 4. 어드민 계정의 경우 기본 검증만 수행 (RefreshToken 미사용)
+			if (username.startsWith("admin_")) {
+				return tokenVersion.equals(1L); // 어드민은 항상 tokenVersion 1
+			}
+
+			// 5. 일반 사용자: RefreshToken에서 현재 tokenVersion 조회
 			Long currentTokenVersion = getCurrentTokenVersion(username);
 
 			if (currentTokenVersion == null) {
@@ -309,7 +327,7 @@ public class TokenService {
 				return false;
 			}
 
-			// 5. tokenVersion 비교
+			// 6. tokenVersion 비교
 			boolean isValidVersion = currentTokenVersion.equals(tokenVersion);
 			if (!isValidVersion) {
 				log.debug("토큰 버전 불일치 - DB: {}, Token: {} (사용자: {})",
@@ -453,13 +471,37 @@ public class TokenService {
 
 	/**
 	 * Access Token으로부터 Authentication 객체 생성
-	 * - username으로 Member 조회 -> memberId 포함하도록
+	 * - username으로 Member 또는 Admin 조회 -> memberId/adminId 포함하도록
 	 */
 	public Authentication createAuthentication(String token) {
 		try {
 			String username = getUsername(token);
 			String role = getRole(token);
 
+			// 어드민 계정 처리 (admin_ prefix로 구분)
+			if (username.startsWith("admin_")) {
+				String adminLoginId = username.substring(6); // "admin_" prefix 제거
+				Admin admin = adminService.findByLoginId(adminLoginId)
+					.orElseThrow(() -> {
+						log.error("JWT 토큰 검증 중 관리자를 찾을 수 없음: {}", adminLoginId);
+						return new BusinessException(AdminExceptionMessage.ADMIN_NOT_FOUND);
+					});
+
+				PrincipalDetails principal = new PrincipalDetails(
+					admin.getId(),       // adminId
+					username,            // admin_ prefix가 포함된 username
+					role,                // 권한 (ROLE_ADMIN, ROLE_SUPER_ADMIN)
+					admin.getName()      // 실제 관리자 이름
+				);
+
+				return new UsernamePasswordAuthenticationToken(
+					principal,
+					null,
+					principal.getAuthorities()
+				);
+			}
+
+			// 일반 사용자 처리
 			Member member = memberService.findByUsername(username)
 				.orElseThrow(() -> {
 					log.error("JWT 토큰 검증 중 사용자를 찾을 수 없음: {}", username);
