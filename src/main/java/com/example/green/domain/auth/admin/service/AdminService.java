@@ -41,18 +41,8 @@ public class AdminService {
 		return admin;
 	}
 
-	/**
-	 * loginId로 어드민 조회
-	 */
 	public Optional<Admin> findByLoginId(String loginId) {
 		return adminRepository.findByLoginId(loginId);
-	}
-
-	/**
-	 * ID로 어드민 조회
-	 */
-	public Optional<Admin> findById(Long adminId) {
-		return adminRepository.findById(adminId);
 	}
 
 	private Admin findActiveAdminByLoginId(String loginId) {

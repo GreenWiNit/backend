@@ -20,7 +20,6 @@ import com.example.green.domain.auth.admin.entity.Admin;
 import com.example.green.domain.auth.admin.entity.enums.AdminStatus;
 import com.example.green.domain.auth.admin.exception.AdminExceptionMessage;
 import com.example.green.domain.auth.admin.repository.AdminRepository;
-import com.example.green.domain.auth.admin.service.AdminService;
 import com.example.green.global.error.exception.BusinessException;
 
 @ExtendWith(MockitoExtension.class)
@@ -43,10 +42,8 @@ class AdminServiceTest {
 		String password = "admin1234!";
 
 		Admin mockAdmin = createMockAdmin();
-		given(adminRepository.findByLoginIdAndStatus(loginId, AdminStatus.ACTIVE))
-			.willReturn(Optional.of(mockAdmin));
-		given(mockAdmin.verifyPassword(password, passwordEncoder))
-			.willReturn(true);
+		given(adminRepository.findByLoginIdAndStatus(loginId, AdminStatus.ACTIVE)).willReturn(Optional.of(mockAdmin));
+		given(mockAdmin.verifyPassword(password, passwordEncoder)).willReturn(true);
 
 		// when
 		Admin result = adminService.authenticate(loginId, password);
@@ -64,12 +61,10 @@ class AdminServiceTest {
 		String loginId = "nonexistent";
 		String password = "admin1234!";
 
-		given(adminRepository.findByLoginIdAndStatus(loginId, AdminStatus.ACTIVE))
-			.willReturn(Optional.empty());
+		given(adminRepository.findByLoginIdAndStatus(loginId, AdminStatus.ACTIVE)).willReturn(Optional.empty());
 
 		// when & then
-		assertThatThrownBy(() -> adminService.authenticate(loginId, password))
-			.isInstanceOf(BusinessException.class)
+		assertThatThrownBy(() -> adminService.authenticate(loginId, password)).isInstanceOf(BusinessException.class)
 			.hasMessage(AdminExceptionMessage.ADMIN_NOT_FOUND.getMessage());
 	}
 
@@ -80,12 +75,10 @@ class AdminServiceTest {
 		String loginId = "admin1234";
 		String password = "admin1234!";
 
-		given(adminRepository.findByLoginIdAndStatus(loginId, AdminStatus.ACTIVE))
-			.willReturn(Optional.empty());
+		given(adminRepository.findByLoginIdAndStatus(loginId, AdminStatus.ACTIVE)).willReturn(Optional.empty());
 
 		// when & then
-		assertThatThrownBy(() -> adminService.authenticate(loginId, password))
-			.isInstanceOf(BusinessException.class)
+		assertThatThrownBy(() -> adminService.authenticate(loginId, password)).isInstanceOf(BusinessException.class)
 			.hasMessage(AdminExceptionMessage.ADMIN_NOT_FOUND.getMessage());
 	}
 
@@ -97,15 +90,12 @@ class AdminServiceTest {
 		String wrongPassword = "wrongpassword";
 
 		Admin mockAdmin = createMockAdmin();
-		given(adminRepository.findByLoginIdAndStatus(loginId, AdminStatus.ACTIVE))
-			.willReturn(Optional.of(mockAdmin));
-		given(mockAdmin.verifyPassword(wrongPassword, passwordEncoder))
-			.willReturn(false);
+		given(adminRepository.findByLoginIdAndStatus(loginId, AdminStatus.ACTIVE)).willReturn(Optional.of(mockAdmin));
+		given(mockAdmin.verifyPassword(wrongPassword, passwordEncoder)).willReturn(false);
 
 		// when & then
-		assertThatThrownBy(() -> adminService.authenticate(loginId, wrongPassword))
-			.isInstanceOf(BusinessException.class)
-			.hasMessage(AdminExceptionMessage.INVALID_PASSWORD.getMessage());
+		assertThatThrownBy(() -> adminService.authenticate(loginId, wrongPassword)).isInstanceOf(
+			BusinessException.class).hasMessage(AdminExceptionMessage.INVALID_PASSWORD.getMessage());
 
 		then(mockAdmin).should(never()).updateLastLogin();
 		then(adminRepository).should(never()).save(any());
@@ -117,15 +107,13 @@ class AdminServiceTest {
 		// given
 		String loginId = "admin1234";
 		Admin mockAdmin = createMockAdmin();
-		given(adminRepository.findByLoginId(loginId))
-			.willReturn(Optional.of(mockAdmin));
+		given(adminRepository.findByLoginId(loginId)).willReturn(Optional.of(mockAdmin));
 
 		// when
 		Optional<Admin> result = adminService.findByLoginId(loginId);
 
 		// then
-		assertThat(result).isPresent()
-			.get().isEqualTo(mockAdmin);
+		assertThat(result).isPresent().get().isEqualTo(mockAdmin);
 	}
 
 	@Test
@@ -133,31 +121,13 @@ class AdminServiceTest {
 	void loginId로_어드민_조회_시_존재하지_않으면_빈_Optional_반환() {
 		// given
 		String loginId = "nonexistent";
-		given(adminRepository.findByLoginId(loginId))
-			.willReturn(Optional.empty());
+		given(adminRepository.findByLoginId(loginId)).willReturn(Optional.empty());
 
 		// when
 		Optional<Admin> result = adminService.findByLoginId(loginId);
 
 		// then
 		assertThat(result).isEmpty();
-	}
-
-	@Test
-	@DisplayName("ID로 어드민 조회 성공")
-	void ID로_어드민_조회_성공() {
-		// given
-		Long adminId = 1L;
-		Admin mockAdmin = createMockAdmin();
-		given(adminRepository.findById(adminId))
-			.willReturn(Optional.of(mockAdmin));
-
-		// when
-		Optional<Admin> result = adminService.findById(adminId);
-
-		// then
-		assertThat(result).isPresent()
-			.get().isEqualTo(mockAdmin);
 	}
 
 	private Admin createMockAdmin() {

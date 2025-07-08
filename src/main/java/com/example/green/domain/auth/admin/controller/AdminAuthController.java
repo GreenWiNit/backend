@@ -24,10 +24,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * 어드민 인증 관련 API 컨트롤러
- * 어드민 로그인 기능 제공
- */
 @Slf4j
 @RestController
 @RequestMapping("/api/admin")
