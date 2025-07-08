@@ -16,7 +16,8 @@ import com.example.integration.common.ServiceIntegrationTest;
 @TestPropertySource(properties = {
 	"jwt.secret=test-jwt-secret-key-for-testing-purpose-only",
 	"jwt.expiration=3600000",
-	"app.frontend.base-url=http://localhost:3000"
+	"app.frontend.base-url=http://localhost:3000",
+	"app.backend.base-url=http://localhost:8080"
 })
 class SecurityAnnotationTest extends ServiceIntegrationTest {
 
