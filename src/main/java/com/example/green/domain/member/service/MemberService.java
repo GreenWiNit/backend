@@ -8,9 +8,15 @@ import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.example.green.domain.common.service.FileManager;
+import com.example.green.domain.file.domain.vo.Purpose;
+import com.example.green.domain.file.service.FileService;
 import com.example.green.domain.member.entity.Member;
+import com.example.green.domain.member.exception.MemberExceptionMessage;
 import com.example.green.domain.member.repository.MemberRepository;
+import com.example.green.global.error.exception.BusinessException;
 
 import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +33,8 @@ import lombok.extern.slf4j.Slf4j;
 public class MemberService {
 
 	private final MemberRepository memberRepository;
+	private final FileManager fileManager;
+	private final FileService fileService;
 
 	/**
 	 * OAuth2 회원가입 (Member 도메인의 핵심 책임)
@@ -46,13 +54,8 @@ public class MemberService {
 	}
 
 	/**
-	 * 일반 회원가입 (내부 사용)
+	 * 일반 회원가입
 	 */
-	@Retryable(
-		retryFor = {OptimisticLockException.class, ObjectOptimisticLockingFailureException.class},
-		maxAttempts = 3,
-		backoff = @Backoff(delay = 50, multiplier = 2.0, random = true)
-	)
 	private String createMember(String username, String name, String email, String nickname, String profileImageUrl) {
 		if (memberRepository.existsByUsername(username)) {
 			log.warn("이미 존재하는 사용자입니다 (DB 체크): {}", username);
@@ -62,22 +65,18 @@ public class MemberService {
 		try {
 			Member member = Member.create(username, name, email);
 
-			if (nickname != null && !nickname.trim().isEmpty()) {
-				member.updateNickname(nickname);
-				log.info("사용자 지정 닉네임: {}", nickname);
+			if ((nickname != null && !nickname.trim().isEmpty()) || 
+				(profileImageUrl != null && !profileImageUrl.trim().isEmpty())) {
+				
+				member.updateProfile(nickname, profileImageUrl);
+				log.info("사용자 지정 프로필 설정: nickname={}, profileImageUrl={}", nickname, profileImageUrl);
 			}
-			if (profileImageUrl != null && !profileImageUrl.trim().isEmpty()) {
-				member.updateProfileImage(profileImageUrl);
-				log.info("사용자 지정 프로필 이미지: {}", profileImageUrl);
-			}
-
 			memberRepository.save(member);
 
 			log.info("신규 사용자 회원가입 완료: {} ({})", name, email);
 			return username;
 
 		} catch (DataIntegrityViolationException e) {
-			// DB 제약조건 위반 시 (동시 가입으로 인한 중복)
 			log.warn("동시 회원가입으로 인한 중복 감지, 기존 사용자로 처리: {}", username, e);
 			return username;
 		}
@@ -99,28 +98,68 @@ public class MemberService {
 			});
 	}
 
-	/**
-	 * 사용자 조회
-	 */
 	@Transactional(readOnly = true)
 	public Optional<Member> findByUsername(String username) {
 		return memberRepository.findByUsername(username);
 	}
 
-	/**
-	 * 사용자 ID로 조회
-	 */
-	@Transactional(readOnly = true)
-	public Optional<Member> findById(Long memberId) {
-		return memberRepository.findById(memberId);
-	}
-
-	/**
-	 * 사용자 존재 확인
-	 */
 	@Transactional(readOnly = true)
 	public boolean existsByUsername(String username) {
 		return memberRepository.existsByUsername(username);
+	}
+	
+	public Member updateProfile(Long memberId, String nickname, MultipartFile profileImage) {
+		Member member = findMemberById(memberId);
+		String newProfileImageUrl = processProfileImageUpload(profileImage, member);
+		updateMemberProfile(member, nickname, newProfileImageUrl, memberId);
+		
+		return memberRepository.save(member);
+	}
+
+	private Member findMemberById(Long memberId) {
+		return memberRepository.findById(memberId)
+			.orElseThrow(() -> {
+				log.error("프로필 업데이트 실패: 사용자를 찾을 수 없음 - memberId: {}", memberId);
+				return new BusinessException(MemberExceptionMessage.MEMBER_NOT_FOUND);
+			});
+	}
+
+	private String processProfileImageUpload(MultipartFile profileImage, Member member) {
+		if (profileImage == null || profileImage.isEmpty()) {
+			return null;
+		}
+
+		String oldProfileImageUrl = member.getProfile().getProfileImageUrl();
+		
+		try {
+			String newProfileImageUrl = fileService.uploadImage(profileImage, Purpose.PROFILE);
+
+			confirmNewImageAndCleanupOld(newProfileImageUrl, oldProfileImageUrl);
+			
+			log.info("프로필 이미지 처리 완료: {} -> {}", oldProfileImageUrl, newProfileImageUrl);
+			return newProfileImageUrl;
+			
+		} catch (Exception e) {
+			log.error("프로필 이미지 업로드 실패: {}", e.getMessage());
+			throw new BusinessException(MemberExceptionMessage.MEMBER_PROFILE_UPDATE_FAILED);
+		}
+	}
+
+	private void confirmNewImageAndCleanupOld(String newProfileImageUrl, String oldProfileImageUrl) {
+
+		fileManager.confirmUsingImage(newProfileImageUrl);
+		log.info("새 프로필 이미지 사용 확정: {}", newProfileImageUrl);
+
+		if (oldProfileImageUrl != null && !oldProfileImageUrl.trim().isEmpty()) {
+			fileManager.unUseImage(oldProfileImageUrl);
+			log.info("기존 프로필 이미지 사용 중지: {}", oldProfileImageUrl);
+		}
+	}
+
+	private void updateMemberProfile(Member member, String nickname, String newProfileImageUrl, Long memberId) {
+		member.updateProfile(nickname, newProfileImageUrl);
+		log.info("프로필 업데이트 완료: memberId={}, nickname={}, profileImageUrl={}", 
+			memberId, nickname, newProfileImageUrl);
 	}
 
 }
