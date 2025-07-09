@@ -3,6 +3,7 @@ package com.example.green.global.utils;
 import java.text.SimpleDateFormat;
 import java.time.Clock;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import org.springframework.stereotype.Component;
@@ -34,5 +35,9 @@ public class TimeUtils {
 
 	public String getFormattedDate(String format) {
 		return new SimpleDateFormat(format).format(getDate());
+	}
+
+	public LocalDateTime now() {
+		return LocalDateTime.now(clock);
 	}
 }
