@@ -14,6 +14,7 @@ import com.example.green.domain.point.entity.vo.PointAmount;
 import com.example.green.domain.point.entity.vo.PointSource;
 import com.example.green.domain.point.entity.vo.TargetType;
 import com.example.green.domain.point.repository.PointTransactionQueryRepository;
+import com.example.green.domain.point.repository.PointTransactionRepository;
 import com.example.green.domain.point.service.PointTransactionService;
 import com.example.green.domain.pointshop.client.PointSpendClient;
 import com.example.green.domain.pointshop.client.dto.PointSpendRequest;
@@ -26,6 +27,7 @@ public class PointTransactionAdaptor implements PointSpendClient, PointEarnClien
 
 	private final PointTransactionService pointTransactionService;
 	private final PointTransactionQueryRepository pointTransactionQueryRepository;
+	private final PointTransactionRepository pointTransactionRepository;
 
 	@Override
 	public void spendPoints(PointSpendRequest dto) {
@@ -55,7 +57,9 @@ public class PointTransactionAdaptor implements PointSpendClient, PointEarnClien
 
 	// TODO [확인필요] @김지환 회원별 포인트 조회
 	@Override
-	public int getTotalPoints(Long userId) {
-		return 0;
+	public BigDecimal getTotalPoints(Long userId) {
+		return pointTransactionRepository.findLatestBalance(userId)
+			.orElseGet(PointAmount::ofZero)
+			.getAmount();
 	}
 }

@@ -1,5 +1,7 @@
 package com.example.green.domain.mypage.client;
 
+import java.math.BigDecimal;
+
 public interface PointTotalGetClient {
 
 	/**
@@ -8,5 +10,5 @@ public interface PointTotalGetClient {
 	 * @param userId 사용자 ID
 	 * @return 포인트 정보
 	 */
-	int getTotalPoints(Long userId);
+	BigDecimal getTotalPoints(Long userId);
 }
