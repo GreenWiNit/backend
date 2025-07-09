@@ -10,13 +10,14 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+
+
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.example.green.domain.member.entity.Member;
@@ -30,7 +31,7 @@ class MemberControllerTest {
 	@Autowired
 	private MockMvc mockMvc;
 
-	@MockBean
+	@MockitoBean
 	private MemberService memberService;
 
 	@Test
@@ -48,9 +49,9 @@ class MemberControllerTest {
 		Member updatedMember = createMockMember(1L, nickname, "https://example.com/new-image.jpg");
 		given(memberService.updateProfile(eq(1L), eq(nickname), any())).willReturn(updatedMember);
 
-		// PrincipalDetails 생성
 		PrincipalDetails principalDetails = new PrincipalDetails(1L, "testUser", "ROLE_USER", "테스트사용자");
-		Authentication authentication = new UsernamePasswordAuthenticationToken(principalDetails, null, principalDetails.getAuthorities());
+		Authentication authentication = new UsernamePasswordAuthenticationToken(
+			principalDetails, null, principalDetails.getAuthorities());
 
 		// when & then
 		mockMvc.perform(multipart(HttpMethod.PUT, "/api/members/profile")
@@ -75,9 +76,9 @@ class MemberControllerTest {
 		Member updatedMember = createMockMember(1L, nickname, null);
 		given(memberService.updateProfile(eq(1L), eq(nickname), isNull())).willReturn(updatedMember);
 
-		// PrincipalDetails 생성
 		PrincipalDetails principalDetails = new PrincipalDetails(1L, "testUser", "ROLE_USER", "테스트사용자");
-		Authentication authentication = new UsernamePasswordAuthenticationToken(principalDetails, null, principalDetails.getAuthorities());
+		Authentication authentication = new UsernamePasswordAuthenticationToken(
+			principalDetails, null, principalDetails.getAuthorities());
 
 		// when & then
 		mockMvc.perform(multipart(HttpMethod.PUT, "/api/members/profile")
@@ -115,9 +116,9 @@ class MemberControllerTest {
 			"test image content".getBytes()
 		);
 
-		// PrincipalDetails 생성
 		PrincipalDetails principalDetails = new PrincipalDetails(1L, "testUser", "ROLE_USER", "테스트사용자");
-		Authentication authentication = new UsernamePasswordAuthenticationToken(principalDetails, null, principalDetails.getAuthorities());
+		Authentication authentication = new UsernamePasswordAuthenticationToken(
+			principalDetails, null, principalDetails.getAuthorities());
 
 		// when & then
 		mockMvc.perform(multipart(HttpMethod.PUT, "/api/members/profile")
@@ -129,15 +130,14 @@ class MemberControllerTest {
 	}
 
 	private Member createMockMember(Long id, String nickname, String profileImageUrl) {
-		// Member 엔티티를 Mock하기 위한 도우미 메서드
 		Member member = mock(Member.class);
 		Profile profile = mock(Profile.class);
-		
+
 		given(member.getId()).willReturn(id);
 		given(member.getProfile()).willReturn(profile);
 		given(profile.getNickname()).willReturn(nickname);
 		given(profile.getProfileImageUrl()).willReturn(profileImageUrl);
-		
+
 		return member;
 	}
-} 
+}
