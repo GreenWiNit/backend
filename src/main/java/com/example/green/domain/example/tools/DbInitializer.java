@@ -20,6 +20,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.green.domain.common.BaseEntity;
+import com.example.green.domain.member.entity.Member;
+import com.example.green.domain.member.repository.MemberRepository;
 import com.example.green.domain.point.entity.PointTransaction;
 import com.example.green.domain.point.entity.vo.PointAmount;
 import com.example.green.domain.point.entity.vo.PointSource;
@@ -200,5 +202,17 @@ public class DbInitializer {
 			orders.add(order);
 		}
 		orderRepository.saveAll(orders);
+	}
+
+	private final MemberRepository memberRepository;
+
+	@GetMapping("/api/tools/init-db-members")
+	public void createMembers() {
+		List<Member> members = new ArrayList<>();
+		for (int i = 0; i < 100; i++) {
+			Member member = Member.create("name" + i, "nickname" + i, "email" + i);
+			members.add(member);
+		}
+		memberRepository.saveAll(members);
 	}
 }
