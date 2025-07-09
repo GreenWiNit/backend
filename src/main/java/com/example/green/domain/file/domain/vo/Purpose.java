@@ -10,7 +10,8 @@ public enum Purpose {
 	CHALLENGE("challenge"),
 	CHALLENGE_AUTH("challenge-auth"),
 	INFO("info"),
-	PRODUCT("product");
+	PRODUCT("product"),
+	PROFILE("profile");
 
 	private final String value;
 

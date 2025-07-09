@@ -79,18 +79,99 @@ class ProfileTest {
     }
 
     @Test
-    @DisplayName("닉네임 유효성을 검증할 수 있다")
-    void shouldValidateNickname() {
-        // given
+    @DisplayName("유효한 닉네임으로 Profile을 생성할 수 있다")
+    void shouldCreateProfileWithValidNickname() {
+        // given & when
         Profile validProfile = new Profile("validNick", "https://example.com/image.jpg");
-        Profile tooShortProfile = new Profile("a", "https://example.com/image.jpg");
-        Profile tooLongProfile = new Profile("a".repeat(21), "https://example.com/image.jpg");
-        Profile nullNicknameProfile = new Profile(null, "https://example.com/image.jpg");
 
-        // when & then
+        // then
         assertThat(validProfile.isValidNickname()).isTrue();
-        assertThat(tooShortProfile.isValidNickname()).isFalse();
-        assertThat(tooLongProfile.isValidNickname()).isFalse();
-        assertThat(nullNicknameProfile.isValidNickname()).isFalse();
+        assertThat(validProfile.getNickname()).isEqualTo("validNick");
+    }
+
+    @Test
+    @DisplayName("유효하지 않은 닉네임으로 Profile 생성시 예외가 발생한다")
+    void shouldThrowExceptionWhenInvalidNickname() {
+        // when & then
+        assertThatThrownBy(() -> new Profile("a", "https://example.com/image.jpg"))
+            .isInstanceOf(Exception.class);
+        assertThatThrownBy(() -> new Profile("a".repeat(21), "https://example.com/image.jpg"))
+            .isInstanceOf(Exception.class);
+        assertThatThrownBy(() -> new Profile(null, "https://example.com/image.jpg"))
+            .isInstanceOf(Exception.class);
+    }
+
+    @Test
+    @DisplayName("프로필 업데이트 - 닉네임만 변경")
+    void update_OnlyNickname() {
+        // given
+        Profile original = new Profile("oldNick", "https://example.com/image.jpg");
+        String newNickname = "newNick";
+
+        // when
+        Profile updated = original.update(newNickname, null);
+
+        // then
+        assertThat(updated.getNickname()).isEqualTo(newNickname);
+        assertThat(updated.getProfileImageUrl()).isEqualTo("https://example.com/image.jpg");
+    }
+
+    @Test
+    @DisplayName("프로필 업데이트 - 프로필 이미지만 변경")
+    void update_OnlyProfileImage() {
+        // given
+        Profile original = new Profile("nickname", "https://example.com/old-image.jpg");
+        String newImageUrl = "https://example.com/new-image.jpg";
+
+        // when
+        Profile updated = original.update(null, newImageUrl);
+
+        // then
+        assertThat(updated.getNickname()).isEqualTo("nickname");
+        assertThat(updated.getProfileImageUrl()).isEqualTo(newImageUrl);
+    }
+
+    @Test
+    @DisplayName("프로필 업데이트 - 닉네임과 프로필 이미지 모두 변경")
+    void update_BothNicknameAndImage() {
+        // given
+        Profile original = new Profile("oldNick", "https://example.com/old-image.jpg");
+        String newNickname = "newNick";
+        String newImageUrl = "https://example.com/new-image.jpg";
+
+        // when
+        Profile updated = original.update(newNickname, newImageUrl);
+
+        // then
+        assertThat(updated.getNickname()).isEqualTo(newNickname);
+        assertThat(updated.getProfileImageUrl()).isEqualTo(newImageUrl);
+    }
+
+    @Test
+    @DisplayName("프로필 업데이트 - 변경사항이 없으면 같은 객체 반환")
+    void update_NoChanges_ReturnsSameObject() {
+        // given
+        Profile original = new Profile("nickname", "https://example.com/image.jpg");
+
+        // when
+        Profile updated = original.update("nickname", "https://example.com/image.jpg");
+
+        // then
+        assertThat(updated).isSameAs(original); // 성능 최적화: 같은 객체 반환
+    }
+
+    @Test
+    @DisplayName("프로필 업데이트 - 빈 문자열은 무시됨")
+    void update_EmptyStringsIgnored() {
+        // given
+        Profile original = new Profile("nickname", "https://example.com/image.jpg");
+
+        // when
+        Profile updated = original.update("   ", "   ");
+
+        // then
+        assertThat(updated).isSameAs(original); // 변경사항 없음
+        assertThat(updated.getNickname()).isEqualTo("nickname");
+        assertThat(updated.getProfileImageUrl()).isEqualTo("https://example.com/image.jpg");
     }
 }

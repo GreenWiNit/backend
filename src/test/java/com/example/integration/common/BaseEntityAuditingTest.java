@@ -98,7 +98,7 @@ class BaseEntityAuditingTest extends BaseIntegrationTest {
 			new UsernamePasswordAuthenticationToken(secondPrincipal, null, secondPrincipal.getAuthorities()));
 
 		LocalDateTime beforeUpdate = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
-		savedMember.updateNickname("수정된이름");
+		savedMember.updateProfile("수정된이름", null);
 		Member updatedMember = memberRepository.saveAndFlush(savedMember);
 		LocalDateTime afterUpdate = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
 
