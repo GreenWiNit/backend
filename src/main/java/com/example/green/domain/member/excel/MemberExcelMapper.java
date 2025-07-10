@@ -33,22 +33,26 @@ public class MemberExcelMapper implements ExcelDataMapper<MemberListResponseDto>
 	public List<ExcelField> getFields() {
 		BackGroundColor headerColor = BackGroundColor.LIGHT_GRAY;
 		return List.of(
+			ExcelField.of("사용자명", headerColor, FieldFormat.TEXT),
 			ExcelField.of("이메일", headerColor, FieldFormat.TEXT),
 			ExcelField.of("닉네임", headerColor, FieldFormat.TEXT),
 			ExcelField.of("전화번호", headerColor, FieldFormat.TEXT),
 			ExcelField.of("가입일", headerColor, FieldFormat.DATE),
-			ExcelField.of("등급", headerColor, FieldFormat.TEXT)
+			ExcelField.of("등급", headerColor, FieldFormat.TEXT),
+			ExcelField.of("소셜 제공자", headerColor, FieldFormat.TEXT)
 		);
 	}
 
 	@Override
 	public Object[] extractRowData(MemberListResponseDto data) {
 		return new Object[] {
+			data.username(),
 			data.email(),
 			data.nickname(),
-			data.phoneNumber() != null ? data.phoneNumber() : "-", // 전화번호가 null이면 "-" 표시
+			data.phoneNumber() != null ? data.phoneNumber() : "-",
 			data.joinDate(),
-			data.role()
+			data.role(),
+			data.provider()
 		};
 	}
 
