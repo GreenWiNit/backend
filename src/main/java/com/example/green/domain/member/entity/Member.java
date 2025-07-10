@@ -42,7 +42,10 @@ public class Member extends BaseEntity {
 	@Column(nullable = false)
 	private String email;
 
-	@Column(name = "phone_number")
+	/**
+	 * 전화번호 컬럼 추가 (nullable = true)
+	 */
+	@Column(name = "phone_number", nullable = true, length = 20)
 	private String phoneNumber;
 
 	@Embedded
@@ -86,10 +89,10 @@ public class Member extends BaseEntity {
 	public void updatePhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
 	}
-
+	
 	public void withdraw() {
 		this.status = MemberStatus.DELETED;
-		this.lastLoginAt = null; //마지막 로그인 시간 초기화
+		this.lastLoginAt = null; // 마지막 로그인 시간 초기화
 		this.markDeleted();
 	}
 
