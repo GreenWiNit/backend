@@ -148,9 +148,9 @@ public class TokenService {
 				.signWith(secretKey)
 				.compact();
 
-			Member member = memberService.findByUsername(username)
+			Member member = memberService.findActiveByUsername(username)
 				.orElseThrow(() -> {
-					log.error("TokenManager 생성 실패: 사용자를 찾을 수 없음 - {}", username);
+					log.error("TokenManager 생성 실패: 활성 사용자를 찾을 수 없음 (탈퇴했거나 존재하지 않음) - {}", username);
 					return new BusinessException(MemberExceptionMessage.MEMBER_NOT_FOUND);
 				});
 
@@ -212,12 +212,9 @@ public class TokenService {
 
 	public boolean validateRefreshToken(String tokenValue) {
 		try {
-			// 먼저 JWT 형식 검증
 			if (!validateToken(tokenValue)) {
 				return false;
 			}
-
-			// DB에서 토큰 조회 및 검증
 			TokenManager tokenManager = refreshTokenRepository.findByTokenValueAndNotRevoked(tokenValue)
 				.orElse(null);
 
@@ -401,7 +398,7 @@ public class TokenService {
 	}
 
 	public void revokeAllRefreshTokens(String username) {
-		// Auth 도메인 독립성: username으로 직접 무효화
+		// username으로 직접 무효화
 		refreshTokenRepository.revokeAllByUsername(username);
 		log.info("사용자의 모든 TokenManager 무효화 완료: {}", username);
 	}
@@ -413,9 +410,9 @@ public class TokenService {
 	 * TODO: 향후 소프트 딜리트 방식으로 개선 예정
 	 */
 	private void cleanupOldTokens(String username) {
-		Optional<Member> memberOpt = memberService.findByUsername(username);
+		Optional<Member> memberOpt = memberService.findActiveByUsername(username);
 		if (memberOpt.isEmpty()) {
-			log.warn("토큰 정리 실패: 사용자를 찾을 수 없음 - {}", username);
+			log.warn("토큰 정리 실패: 활성 사용자를 찾을 수 없음 (탈퇴했거나 존재하지 않음) - {}", username);
 			return;
 		}
 		Member member = memberOpt.get();
@@ -501,10 +498,10 @@ public class TokenService {
 				);
 			}
 
-			// 일반 사용자 처리
-			Member member = memberService.findByUsername(username)
+			// 일반 사용자 처리 (활성 회원만 조회 - 탈퇴한 회원의 토큰 자동 무효화)
+			Member member = memberService.findActiveByUsername(username)
 				.orElseThrow(() -> {
-					log.error("JWT 토큰 검증 중 사용자를 찾을 수 없음: {}", username);
+					log.error("JWT 토큰 검증 중 활성 사용자를 찾을 수 없음 (탈퇴했거나 존재하지 않음): {}", username);
 					return new BusinessException(MemberExceptionMessage.MEMBER_NOT_FOUND);
 				});
 

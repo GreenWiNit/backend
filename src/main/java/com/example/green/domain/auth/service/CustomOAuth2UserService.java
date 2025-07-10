@@ -45,19 +45,19 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 			oAuth2Response.getProviderId()
 		);
 
-		boolean isExistingUser = memberService.existsByUsername(username);
+		boolean isExistingUser = memberService.existsActiveByUsername(username);
 
 		if (!isExistingUser) {
 			log.info("신규 사용자 발견: {}", username);
 			UserDto userDto = UserDto.forNewUser(oauth2UserInfoDto);
 			return new CustomOAuth2UserDto(userDto);
 		} else {
-			// 기존 사용자 정보 업데이트 (Member 도메인에 위임)
+			// 기존 사용자 정보 업데이트
 			return updateExistingUser(username, oAuth2Response);
 		}
 	}
 
-	@Transactional // 별도 트랜잭션으로 재시도
+	@Transactional
 	public CustomOAuth2UserDto updateExistingUser(String username, OAuth2ResponseDto oAuth2Response) {
 		log.info("기존 사용자 로그인: {}", username);
 

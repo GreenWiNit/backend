@@ -233,4 +233,66 @@ public class AuthController {
 		log.info("[LOGOUT-ALL] User {} logged out from all devices", username);
 		return ResponseEntity.ok().build();
 	}
+	
+	@AuthenticatedApi(reason = "회원 탈퇴는 로그인한 사용자만 가능합니다")
+	@Operation(
+		summary = "회원 탈퇴", 
+		description = "현재 로그인한 사용자의 회원 탈퇴를 처리합니다. " +
+			"모든 토큰을 무효화하고 계정을 비활성화합니다. " +
+			"Soft Delete 방식으로 처리되어 일정 기간 후 완전 삭제됩니다."
+	)
+	@ApiResponses(value = {
+		@ApiResponse(
+			responseCode = "200",
+			description = "회원 탈퇴 성공",
+			content = @Content(
+				mediaType = "application/json",
+				examples = @ExampleObject(value = """
+					{
+						"success": true,
+						"message": "회원 탈퇴가 완료되었습니다."
+					}
+					""")
+			)),
+		@ApiResponse(
+			responseCode = "400",
+			description = "이미 탈퇴한 회원",
+			content = @Content(
+				mediaType = "application/json",
+				examples = @ExampleObject(value = """
+					{
+						"success": false,
+						"message": "이미 탈퇴한 회원입니다."
+					}
+					""")
+			)),
+		@ApiResponse(
+			responseCode = "401",
+			description = "인증되지 않은 사용자",
+			content = @Content(
+				mediaType = "application/json",
+				examples = @ExampleObject(value = """
+					{
+						"error": "UNAUTHORIZED",
+						"message": "로그인이 필요합니다."
+					}
+					""")
+			))
+	})
+	@PostMapping("/withdraw")
+	public ResponseEntity<Void> withdraw(HttpServletRequest request, HttpServletResponse response,
+		@AuthenticationPrincipal PrincipalDetails currentUser) {
+		String username = currentUser.getUsername();
+		
+		log.info("[WITHDRAW] 회원 탈퇴 요청 - username: {}", username);
+		
+		// Auth 도메인 서비스를 통해 회원 탈퇴 처리
+		authService.withdrawMember(username);
+		
+		// RefreshToken 쿠키 제거
+		WebUtils.removeRefreshTokenCookie(response);
+		
+		log.info("[WITHDRAW] 회원 탈퇴 완료 - username: {}", username);
+		return ResponseEntity.ok().build();
+	}
 }

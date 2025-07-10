@@ -85,16 +85,11 @@ class MemberTest {
 	}
 
 	@Test
-	@DisplayName("유효하지 않은 닉네임인 경우 isValidNickname()는 false를 반환한다")
-	void shouldReturnFalseWhenInvalidNickname() {
-		// given
-		Profile profileWithNull = new Profile(null, "image.jpg");
-		Profile profileWith1Char = new Profile("a", "image.jpg");
-		Profile profileWith21Chars = new Profile("123456789012345678901", "image.jpg");
-
+	@DisplayName("유효하지 않은 닉네임인 경우 Profile 생성시 예외가 발생한다")
+	void shouldThrowExceptionWhenInvalidNickname() {
 		// when & then
-		assertFalse(profileWithNull.isValidNickname());
-		assertFalse(profileWith1Char.isValidNickname());
-		assertFalse(profileWith21Chars.isValidNickname());
+		assertThrows(Exception.class, () -> new Profile(null, "image.jpg"));
+		assertThrows(Exception.class, () -> new Profile("a", "image.jpg"));
+		assertThrows(Exception.class, () -> new Profile("123456789012345678901", "image.jpg"));
 	}
 }
