@@ -1,7 +1,10 @@
 package com.example.green.domain.member.repository;
 
+import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,6 +16,10 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 	Optional<Member> findByUsername(String username);
 
 	boolean existsByUsername(String username);
+	
+	Optional<Member> findByEmail(String email);
+	
+	boolean existsByEmail(String email);
 	
 	/**
 	 * 활성 회원만 조회 (탈퇴하지 않은 회원)
@@ -40,4 +47,20 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 	default boolean existsActiveByUsername(String username) {
 		return existsActiveByUsername(username, MemberStatus.NORMAL);
 	}
+	
+	/**
+	 * 관리자용 활성 회원 목록 조회 (페이징)
+	 * - 탈퇴하지 않은 회원만 조회
+	 * - 가입일순 내림차순 정렬
+	 */
+	@Query("SELECT m FROM Member m WHERE m.status = 'NORMAL' AND m.deleted = false")
+	Page<Member> findActiveMembersForAdmin(Pageable pageable);
+	
+	/**
+	 * 관리자용 활성 회원 전체 목록 조회 (엑셀 다운로드용)
+	 * - 탈퇴하지 않은 회원만 조회
+	 * - 가입일순 내림차순 정렬
+	 */
+	@Query("SELECT m FROM Member m WHERE m.status = 'NORMAL' AND m.deleted = false ORDER BY m.createdDate DESC")
+	List<Member> findAllActiveMembersForAdmin();
 }

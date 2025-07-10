@@ -230,7 +230,7 @@ public class MemberService {
 	}
 
 	/**
-	 * 회원 탈퇴 처리
+	 * 회원 탈퇴 처리 (본인 탈퇴)
 	 * 회원 상태를 DELETED로 변경하고, 관련 파일 리소스를 정리.
 	 *
 	 * @param memberId 탈퇴할 회원 ID
@@ -249,13 +249,42 @@ public class MemberService {
 
 		member.withdraw();
 
-		log.info("회원 탈퇴 완료 (Soft Delete): memberId={}, username={}",
+		log.info("회원 탈퇴 완료 (본인 탈퇴): memberId={}, username={}",
 			memberId, member.getUsername());
 
 		// TODO: 배치 시스템으로 물리적 삭제 처리
 		// - 탈퇴 후 일정 기간(예: 30일) 경과 시 개인정보 완전 삭제
 		// - 관련 토큰, 포인트 내역, 주문 내역 등도 함께 처리
 		// - 법적 보관 의무가 있는 데이터는 별도 보관소로 이관
+	}
+
+	/**
+	 * 관리자에 의한 회원 강제 삭제 처리
+	 * 관리자가 회원을 강퇴하거나 삭제 시 사용.
+	 * 
+	 * @param memberId 삭제할 회원 ID
+	 * @throws BusinessException 회원을 찾을 수 없거나 이미 탈퇴한 경우
+	 */
+	@Retryable(
+		retryFor = {OptimisticLockException.class, ObjectOptimisticLockingFailureException.class},
+		maxAttempts = GENERAL_MAX_ATTEMPTS,
+		backoff = @Backoff(delay = GENERAL_DELAY, multiplier = GENERAL_MULTIPLIER, random = true)
+	)
+	public void forceDeleteMemberByAdmin(Long memberId) {
+		Member member = findMemberById(memberId, "관리자 강제 삭제");
+
+		validateMemberCanWithdraw(member);
+		processProfileImageOnWithdraw(member);
+
+		member.withdraw();
+
+		log.warn("관리자에 의한 강제 삭제 완료: memberId={}, username={}",
+			memberId, member.getUsername());
+
+		// TODO: 관리자 삭제 감사 로그 별도 기록
+		// - 삭제한 관리자 정보
+		// - 삭제 시점
+		// - 복구 가능 기간 설정
 	}
 
 	/**
