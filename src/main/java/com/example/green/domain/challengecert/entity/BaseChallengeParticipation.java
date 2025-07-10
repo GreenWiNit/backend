@@ -26,28 +26,28 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public abstract class BaseChallengeParticipation extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id", nullable = false)
-    private Member member;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "member_id", nullable = false)
+	private Member member;
 
-    @Column(nullable = false)
-    private LocalDateTime participatedAt;
+	@Column(nullable = false)
+	private LocalDateTime participatedAt;
 
-    // 하위 클래스를 위한 protected 생성자
-    protected BaseChallengeParticipation(
-        Member member,
-        LocalDateTime participatedAt
-    ) {
-        this.member = member;
-        this.participatedAt = participatedAt;
-    }
+	// 하위 클래스를 위한 protected 생성자
+	protected BaseChallengeParticipation(
+		Member member,
+		LocalDateTime participatedAt
+	) {
+		this.member = member;
+		this.participatedAt = participatedAt;
+	}
 
-    protected void validateParticipation() {
-        validateNullData(member, "회원은 필수값입니다.");
-        validateNullData(participatedAt, "참여 시각은 필수값입니다.");
-    }
+	protected void validateParticipation() {
+		validateNullData(member, "회원은 필수값입니다.");
+		validateNullData(participatedAt, "참여 시각은 필수값입니다.");
+	}
 }
