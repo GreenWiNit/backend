@@ -3,12 +3,16 @@ package com.example.green.domain.challenge.entity;
 import static com.example.green.global.utils.EntityValidator.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.example.green.domain.challenge.enums.GroupStatus;
 import com.example.green.domain.challenge.exception.ChallengeException;
 import com.example.green.domain.challenge.exception.ChallengeExceptionMessage;
+import com.example.green.domain.challengecert.entity.TeamChallengeParticipation;
 import com.example.green.domain.common.BaseEntity;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -20,6 +24,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -78,6 +83,9 @@ public class TeamChallengeGroup extends BaseEntity {
 	@JoinColumn(name = "team_challenge_id", insertable = false, updatable = false)
 	private TeamChallenge teamChallenge;
 
+	@OneToMany(mappedBy = "teamChallengeGroup", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private List<TeamChallengeParticipation> participations = new ArrayList<>();
+
 	public static TeamChallengeGroup create(
 		String groupName,
 		GroupStatus groupStatus,
@@ -130,6 +138,7 @@ public class TeamChallengeGroup extends BaseEntity {
 		this.groupLocation = groupLocation;
 		this.groupDescription = groupDescription;
 		this.openChatUrl = openChatUrl;
+		this.participations = new ArrayList<>();
 	}
 
 	/**
@@ -177,5 +186,21 @@ public class TeamChallengeGroup extends BaseEntity {
 		return groupStatus == GroupStatus.PROCEEDING
 			&& now.isAfter(groupBeginDateTime)
 			&& now.isBefore(groupEndDateTime);
+	}
+
+	/**
+	 * 참여자 추가
+	 */
+	public void addParticipation(TeamChallengeParticipation participation) {
+		participations.add(participation);
+		increaseParticipants();
+	}
+
+	/**
+	 * 참여자 제거
+	 */
+	public void removeParticipation(TeamChallengeParticipation participation) {
+		participations.remove(participation);
+		decreaseParticipants();
 	}
 }

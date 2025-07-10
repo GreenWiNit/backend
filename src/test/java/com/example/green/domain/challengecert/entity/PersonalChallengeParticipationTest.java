@@ -91,7 +91,6 @@ class PersonalChallengeParticipationTest {
 			now
 		))
 			.isInstanceOf(BusinessException.class);
-
 	}
 
 	@Test
@@ -103,6 +102,5 @@ class PersonalChallengeParticipationTest {
 			null
 		))
 			.isInstanceOf(BusinessException.class);
-
 	}
 }

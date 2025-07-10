@@ -18,6 +18,8 @@ import com.example.green.domain.challengecert.entity.enums.GroupRoleType;
 import com.example.green.domain.member.entity.Member;
 import com.example.green.domain.point.entity.vo.PointAmount;
 import com.example.green.global.error.exception.BusinessException;
+import com.example.green.domain.challengecert.exception.ChallengeCertException;
+import com.example.green.domain.challengecert.exception.ChallengeCertExceptionMessage;
 
 /**
  * TeamChallengeParticipation 테스트
@@ -131,7 +133,6 @@ class TeamChallengeParticipationTest {
 			now
 		))
 			.isInstanceOf(BusinessException.class);
-
 	}
 
 	@Test
@@ -150,7 +151,6 @@ class TeamChallengeParticipationTest {
 			now
 		))
 			.isInstanceOf(BusinessException.class);
-
 	}
 
 	@Test
@@ -169,7 +169,25 @@ class TeamChallengeParticipationTest {
 			null
 		))
 			.isInstanceOf(BusinessException.class);
+	}
 
+	@Test
+	void 이미_리더가_있는_그룹에_리더를_추가하면_예외가_발생한다() {
+		// given
+		TeamChallengeParticipation leader = TeamChallengeParticipation.createLeader(
+			teamChallengeGroup,
+			member,
+			now
+		);
+
+		// when & then
+		assertThatThrownBy(() -> TeamChallengeParticipation.createLeader(
+			teamChallengeGroup,
+			member,
+			now
+		))
+			.isInstanceOf(ChallengeCertException.class)
+			.hasMessage(ChallengeCertExceptionMessage.DUPLICATE_TEAM_LEADER.getMessage());
 	}
 
 	@Test

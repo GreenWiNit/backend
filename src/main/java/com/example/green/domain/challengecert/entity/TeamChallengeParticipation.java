@@ -6,6 +6,8 @@ import java.time.LocalDateTime;
 
 import com.example.green.domain.challenge.entity.TeamChallengeGroup;
 import com.example.green.domain.challengecert.entity.enums.GroupRoleType;
+import com.example.green.domain.challengecert.exception.ChallengeCertException;
+import com.example.green.domain.challengecert.exception.ChallengeCertExceptionMessage;
 import com.example.green.domain.member.entity.Member;
 
 import jakarta.persistence.Column;
@@ -56,6 +58,17 @@ public class TeamChallengeParticipation extends BaseChallengeParticipation {
 		Member member,
 		LocalDateTime participatedAt
 	) {
+		// 필수 값 validate
+		validateNullData(teamChallengeGroup, "팀 챌린지 그룹은 필수값입니다.");
+		validateNullData(member, "회원은 필수값입니다.");
+		validateNullData(participatedAt, "참여 시각은 필수값입니다.");
+
+		// 리더 중복 검증
+		if (teamChallengeGroup.getParticipations().stream()
+			.anyMatch(TeamChallengeParticipation::isLeader)) {
+			throw new ChallengeCertException(ChallengeCertExceptionMessage.DUPLICATE_TEAM_LEADER);
+		}
+
 		return create(
 			teamChallengeGroup,
 			member,
@@ -92,12 +105,15 @@ public class TeamChallengeParticipation extends BaseChallengeParticipation {
 		validateNullData(groupRoleType, "팀 내 역할은 필수값입니다.");
 		validateNullData(participatedAt, "참여 시각은 필수값입니다.");
 
-		return new TeamChallengeParticipation(
+		TeamChallengeParticipation participation = new TeamChallengeParticipation(
 			teamChallengeGroup,
 			member,
 			groupRoleType,
 			participatedAt
 		);
+
+		teamChallengeGroup.addParticipation(participation);
+		return participation;
 	}
 
 	private TeamChallengeParticipation(
