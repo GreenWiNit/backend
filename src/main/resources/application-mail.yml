@@ -1,7 +1,5 @@
 spring:
   mail:
-    host: ...
-    port: ...
     username: ${RECEIVER_EMAIL_ADDRESS}
     password: ${RECEIVER_EMAIL_PASSWORD}
     properties:
