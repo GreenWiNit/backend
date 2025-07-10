@@ -42,6 +42,9 @@ public class Member extends BaseEntity {
 	@Column(nullable = false)
 	private String email;
 
+	@Column(name = "phone_number")
+	private String phoneNumber;
+
 	@Embedded
 	private Profile profile;
 
@@ -78,6 +81,10 @@ public class Member extends BaseEntity {
 
 	public void updateProfile(String nickname, String profileImageUrl) {
 		this.profile = this.profile.update(nickname, profileImageUrl);
+	}
+
+	public void updatePhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
 	}
 
 	public void withdraw() {
