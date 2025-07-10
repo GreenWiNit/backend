@@ -1,7 +1,10 @@
 package com.example.green.domain.mypage.service;
 
+import java.math.BigDecimal;
+
 import org.springframework.stereotype.Service;
 
+import com.example.green.domain.mypage.client.PointTotalGetClient;
 import com.example.green.domain.mypage.dto.MypageMainResponseDto;
 
 import lombok.RequiredArgsConstructor;
@@ -18,11 +21,11 @@ public class MypageFacadeService {
 	// TODO [확인필요] @임현정 챌린지 서비스 단에서 implement 하여 회원별 챌린지 카운트 조회 구현
 	//private final ChallengeCountGetClient challengeCountGetClient;
 	// TODO [확인필요] @김지환 포인트 PointTransactionAdaptor 단에서 implement 하여 회원별 챌린지 카운트 조회 구현
-	//private final PointTotalGetClient pointTotalGetClient;
+	private final PointTotalGetClient pointTotalGetClient;
 
 	public MypageMainResponseDto getMypageMain(Long memberNo) {
 		// int userChallengeCount = challengeCountGetClient.getChallengeCount(memberNo); // 예시로 memberNo 1L 사용
-		// int userTotalPoints = pointTotalGetClient.getTotalPoints(memberNo); // 예시로 memberNo 1L 사용
+		BigDecimal userTotalPoints = pointTotalGetClient.getTotalPoints(memberNo); // 예시로 memberNo 1L 사용
 		return new MypageMainResponseDto(0, 0); // 임시 반환
 	}
 }
