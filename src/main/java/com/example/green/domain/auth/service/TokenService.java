@@ -488,7 +488,8 @@ public class TokenService {
 					admin.getId(),       // adminId
 					username,            // admin_ prefix가 포함된 username
 					role,                // 권한 (ROLE_ADMIN, ROLE_SUPER_ADMIN)
-					admin.getName()      // 실제 관리자 이름
+					admin.getName(),     // 실제 관리자 이름
+					admin.getEmail()     // 관리자 이메일
 				);
 
 				return new UsernamePasswordAuthenticationToken(
@@ -509,7 +510,8 @@ public class TokenService {
 				member.getId(),       // memberId
 				username,             // OAuth2 username (provider+providerId)
 				role,                 // 권한
-				member.getName()      // 실제 사용자 이름 (프로바이더로 콜백 받은)
+				member.getName(),     // 실제 사용자 이름 (프로바이더로 콜백 받은)
+				member.getEmail()     // 회원 이메일
 			);
 
 			return new UsernamePasswordAuthenticationToken(

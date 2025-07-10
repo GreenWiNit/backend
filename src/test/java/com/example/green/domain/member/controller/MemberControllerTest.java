@@ -49,7 +49,7 @@ class MemberControllerTest {
 		given(memberService.updateProfile(eq(1L), eq(nickname), eq(profileImageUrl)))
 			.willReturn(updatedMember);
 
-		PrincipalDetails principalDetails = new PrincipalDetails(1L, "testUser", "ROLE_USER", "테스트사용자");
+		PrincipalDetails principalDetails = new PrincipalDetails(1L, "testUser", "ROLE_USER", "테스트사용자", "test@email.com");
 		Authentication auth = new UsernamePasswordAuthenticationToken(
 			principalDetails, null, principalDetails.getAuthorities());
 
@@ -77,7 +77,7 @@ class MemberControllerTest {
 		given(memberService.updateProfile(eq(1L), eq(nickname), isNull()))
 			.willReturn(updatedMember);
 
-		PrincipalDetails principalDetails = new PrincipalDetails(1L, "testUser", "ROLE_USER", "테스트사용자");
+		PrincipalDetails principalDetails = new PrincipalDetails(1L, "testUser", "ROLE_USER", "테스트사용자", "test@email.com");
 		Authentication auth = new UsernamePasswordAuthenticationToken(
 			principalDetails, null, principalDetails.getAuthorities());
 
@@ -110,7 +110,7 @@ class MemberControllerTest {
 	void updateProfile_MissingNickname() throws Exception {
 		ProfileUpdateRequestDto request = new ProfileUpdateRequestDto(null, "https://example.com/image.jpg");
 
-		PrincipalDetails principalDetails = new PrincipalDetails(1L, "testUser", "ROLE_USER", "테스트사용자");
+		PrincipalDetails principalDetails = new PrincipalDetails(1L, "testUser", "ROLE_USER", "테스트사용자", "test@email.com");
 		Authentication auth = new UsernamePasswordAuthenticationToken(
 			principalDetails, null, principalDetails.getAuthorities());
 
@@ -127,7 +127,7 @@ class MemberControllerTest {
 	void updateProfile_InvalidJson() throws Exception {
 		String invalidJson = "{ invalid json }";
 
-		PrincipalDetails principalDetails = new PrincipalDetails(1L, "testUser", "ROLE_USER", "테스트사용자");
+		PrincipalDetails principalDetails = new PrincipalDetails(1L, "testUser", "ROLE_USER", "테스트사용자", "test@email.com");
 		Authentication auth = new UsernamePasswordAuthenticationToken(
 			principalDetails, null, principalDetails.getAuthorities());
 

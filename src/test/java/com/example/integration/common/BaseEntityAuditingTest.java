@@ -32,7 +32,7 @@ class BaseEntityAuditingTest extends BaseIntegrationTest {
 		// given - 인증된 사용자 설정
 		String testUsername = "google 123456789";
 		String testName = "테스트유저";
-		PrincipalDetails principal = new PrincipalDetails(1L, testUsername, "ROLE_USER", testName);
+		PrincipalDetails principal = new PrincipalDetails(1L, testUsername, "ROLE_USER", testName, "test@email.com");
 		UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
 			principal, null, principal.getAuthorities());
 		SecurityContextHolder.getContext().setAuthentication(auth);
@@ -78,7 +78,7 @@ class BaseEntityAuditingTest extends BaseIntegrationTest {
 	void shouldUpdateLastModifiedInfoWhenEntityUpdated() throws InterruptedException {
 		// given - 첫 번째 사용자로 엔티티 생성
 		String firstUser = "google 111111111";
-		PrincipalDetails firstPrincipal = new PrincipalDetails(1L, firstUser, "ROLE_USER", "첫번째유저");
+		PrincipalDetails firstPrincipal = new PrincipalDetails(1L, firstUser, "ROLE_USER", "첫번째유저", "first@email.com");
 		SecurityContextHolder.getContext().setAuthentication(
 			new UsernamePasswordAuthenticationToken(firstPrincipal, null, firstPrincipal.getAuthorities()));
 
@@ -93,7 +93,7 @@ class BaseEntityAuditingTest extends BaseIntegrationTest {
 
 		// when - 두 번째 사용자로 엔티티 수정
 		String secondUser = "kakao 222222222";
-		PrincipalDetails secondPrincipal = new PrincipalDetails(2L, secondUser, "ROLE_USER", "두번째유저");
+		PrincipalDetails secondPrincipal = new PrincipalDetails(2L, secondUser, "ROLE_USER", "두번째유저", "second@email.com");
 		SecurityContextHolder.getContext().setAuthentication(
 			new UsernamePasswordAuthenticationToken(secondPrincipal, null, secondPrincipal.getAuthorities()));
 
@@ -149,7 +149,7 @@ class BaseEntityAuditingTest extends BaseIntegrationTest {
 	void shouldApplyKoreanTimeZone() {
 		// given
 		String testUsername = "naver 555555555";
-		PrincipalDetails principal = new PrincipalDetails(5L, testUsername, "ROLE_USER", "시간테스트유저");
+		PrincipalDetails principal = new PrincipalDetails(5L, testUsername, "ROLE_USER", "시간테스트유저", "timezone@test.com");
 		SecurityContextHolder.getContext().setAuthentication(
 			new UsernamePasswordAuthenticationToken(principal, null, principal.getAuthorities()));
 

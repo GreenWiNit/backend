@@ -22,6 +22,7 @@ public class PrincipalDetails implements UserDetails {
 	private final String username; // OAuth2 username (예: "google 123456789")
 	private final String role;
 	private final String name; // 실제 사용자 이름
+	private final String email; // 이메일 주소
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
