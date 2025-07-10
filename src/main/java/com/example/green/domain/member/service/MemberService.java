@@ -8,6 +8,8 @@ import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+
 import com.example.green.domain.common.service.FileManager;
 import com.example.green.domain.member.entity.Member;
 import com.example.green.domain.member.exception.MemberExceptionMessage;
@@ -18,10 +20,6 @@ import jakarta.persistence.OptimisticLockException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * Member 도메인 서비스
- * 회원 정보 관리, 프로필 관리, 회원 생명주기 관리
- */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -32,7 +30,7 @@ public class MemberService {
 	private final FileManager fileManager;
 
 	/**
-	 * OAuth2 회원가입 (Member 도메인의 핵심 책임)
+	 * OAuth2 회원가입
 	 * Auth 도메인의 TempToken 정보를 받아 회원 생성
 	 */
 	@Retryable(
@@ -93,21 +91,23 @@ public class MemberService {
 			});
 	}
 
+	/**
+	 * 활성 회원만 조회 (탈퇴하지 않은 회원)
+	 * 토큰 검증 등에서 사용되며, 탈퇴한 회원의 토큰을 자동으로 무효화
+	 */
 	@Transactional(readOnly = true)
-	public Optional<Member> findByUsername(String username) {
-		return memberRepository.findByUsername(username);
-	}
-
-	@Transactional(readOnly = true)
-	public boolean existsByUsername(String username) {
-		return memberRepository.existsByUsername(username);
+	public Optional<Member> findActiveByUsername(String username) {
+		return memberRepository.findActiveByUsername(username);
 	}
 	
 	/**
-	 * 사용자 프로필 업데이트
-	 * 닉네임과 프로필 이미지 URL을 수정합니다.
-	 * 프로필 이미지는 ImageUploadController를 통해 미리 업로드된 URL을 사용합니다.
+	 * 활성 회원 존재 여부 확인
 	 */
+	@Transactional(readOnly = true)
+	public boolean existsActiveByUsername(String username) {
+		return memberRepository.existsActiveByUsername(username);
+	}
+
 	@Transactional
 	public Member updateProfile(Long memberId, String nickname, String profileImageUrl) {
 		Member member = findMemberById(memberId);
@@ -133,18 +133,61 @@ public class MemberService {
 	}
 
 	private void processFileManagement(String oldProfileImageUrl, String newProfileImageUrl) {
-		// 새 이미지가 있다면 사용 확정
-		if (newProfileImageUrl != null && !newProfileImageUrl.trim().isEmpty()) {
+
+		if (StringUtils.hasText(newProfileImageUrl)) {
 			fileManager.confirmUsingImage(newProfileImageUrl);
 			log.info("새 프로필 이미지 사용 확정: {}", newProfileImageUrl);
 		}
 
-		// 기존 이미지가 있고 새 이미지와 다르다면 사용 중지
-		if (oldProfileImageUrl != null && !oldProfileImageUrl.trim().isEmpty() 
+		if (StringUtils.hasText(oldProfileImageUrl)
 			&& !oldProfileImageUrl.equals(newProfileImageUrl)) {
 			fileManager.unUseImage(oldProfileImageUrl);
 			log.info("기존 프로필 이미지 사용 중지: {}", oldProfileImageUrl);
 		}
+
+	}
+
+	@Retryable(
+		retryFor = {OptimisticLockException.class, ObjectOptimisticLockingFailureException.class},
+		maxAttempts = 3,
+		backoff = @Backoff(delay = 100, multiplier = 2.0, random = true)
+	)
+	public void withdrawMember(Long memberId) {
+		Member member = findMemberById(memberId);
+
+		if (member.isWithdrawn()) {
+			log.warn("이미 탈퇴한 회원입니다: memberId={}", memberId);
+			throw new BusinessException(MemberExceptionMessage.MEMBER_ALREADY_WITHDRAWN);
+		}
+
+		if (member.getProfile().hasProfileImage()) {
+			String profileImageUrl = member.getProfile().getProfileImageUrl();
+			fileManager.unUseImage(profileImageUrl);
+		}
+		member.withdraw();
+		
+		log.info("회원 탈퇴 완료 (Soft Delete): memberId={}, username={}", 
+			memberId, member.getUsername());
+			
+		// TODO: 배치 시스템으로 물리적 삭제 처리
+		// - 탈퇴 후 일정 기간 경과 시 개인정보 완전 삭제
+		// - 관련 토큰, 포인트 내역, 주문 내역 등도 함께 처리
+		// - 법적 보관 의무가 있는 데이터는 별도 보관소로 이관
+	}
+
+	@Retryable(
+		retryFor = {OptimisticLockException.class, ObjectOptimisticLockingFailureException.class},
+		maxAttempts = 3,
+		backoff = @Backoff(delay = 100, multiplier = 2.0, random = true)
+	)
+	public void withdrawMemberByUsername(String username) {
+		Member member = memberRepository.findByUsername(username)
+			.orElseThrow(() -> {
+				log.error("회원 탈퇴 실패: 사용자를 찾을 수 없음 - username: {}", username);
+				return new BusinessException(MemberExceptionMessage.MEMBER_NOT_FOUND);
+			});
+			
+		withdrawMember(member.getId());
 	}
 
 }
