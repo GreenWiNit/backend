@@ -16,6 +16,8 @@ import com.example.green.domain.challenge.utils.ChallengeCodeGenerator;
 import com.example.green.domain.member.entity.Member;
 import com.example.green.domain.point.entity.vo.PointAmount;
 import com.example.green.global.error.exception.BusinessException;
+import com.example.green.domain.challengecert.exception.ChallengeCertException;
+import com.example.green.domain.challengecert.exception.ChallengeCertExceptionMessage;
 
 /**
  * PersonalChallengeCertification 테스트
@@ -103,7 +105,6 @@ class PersonalChallengeCertificationTest {
 			"2025-01-09"
 		))
 			.isInstanceOf(BusinessException.class);
-
 	}
 
 	@Test
@@ -205,5 +206,37 @@ class PersonalChallengeCertificationTest {
 		// then
 		assertThat(certification.getCertificationImageUrl()).isEqualTo(newImageUrl);
 		assertThat(certification.getCertificationReview()).isEqualTo(newReview);
+	}
+
+	@Test
+	void 이미_승인된_인증을_다시_승인하면_예외가_발생한다() {
+		// given
+		certification.approve(now);
+
+		// when & then
+		assertThatThrownBy(() -> certification.approve(now.plusMinutes(1)))
+			.isInstanceOf(ChallengeCertException.class)
+			.hasMessage(ChallengeCertExceptionMessage.CERTIFICATION_ALREADY_APPROVED.getMessage());
+	}
+
+	@Test
+	void 승인_시각이_null이면_예외가_발생한다() {
+		// when & then
+		assertThatThrownBy(() -> certification.approve(null))
+			.isInstanceOf(BusinessException.class);
+	}
+
+	@Test
+	void 이미_승인된_인증을_수정하면_예외가_발생한다() {
+		// given
+		certification.approve(now);
+
+		// when & then
+		assertThatThrownBy(() -> certification.updateCertification(
+			"https://example.com/new-image.jpg",
+			"수정된 후기"
+		))
+			.isInstanceOf(ChallengeCertException.class)
+			.hasMessage(ChallengeCertExceptionMessage.CERTIFICATION_ALREADY_APPROVED.getMessage());
 	}
 }
