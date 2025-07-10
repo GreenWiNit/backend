@@ -1,7 +1,5 @@
 package com.example.green.domain.challengecert.entity;
 
-import static com.example.green.global.utils.EntityValidator.*;
-
 import java.time.LocalDateTime;
 
 import com.example.green.domain.common.BaseEntity;
@@ -44,10 +42,5 @@ public abstract class BaseChallengeParticipation extends BaseEntity {
 	) {
 		this.member = member;
 		this.participatedAt = participatedAt;
-	}
-
-	protected void validateParticipation() {
-		validateNullData(member, "회원은 필수값입니다.");
-		validateNullData(participatedAt, "참여 시각은 필수값입니다.");
 	}
 }
