@@ -72,4 +72,37 @@ class SecurityAnnotationTest extends ServiceIntegrationTest {
 			.andDo(print())
 			.andExpect(status().isOk());
 	}
+
+	@Test
+	@DisplayName("@PublicApi - 무효한 토큰이 있어도 접근 가능")
+	void shouldAllowAccessToPublicApiWithInvalidToken() throws Exception {
+		mockMvc.perform(get("/api/posts/1")
+				.header("Authorization", "Bearer invalid-token-here"))
+			.andDo(print())
+			.andExpect(status().isOk());
+	}
+
+	@Test
+	@DisplayName("@PublicApi - 만료된 형식의 토큰이 있어도 접근 가능")
+	void shouldAllowAccessToPublicApiWithExpiredToken() throws Exception {
+		// 만료된 JWT 토큰 (실제로는 잘못된 형식의 토큰으로 테스트)
+		String expiredToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.invalid-signature";
+		
+		mockMvc.perform(get("/api/posts/1")
+				.header("Authorization", "Bearer " + expiredToken))
+			.andDo(print())
+			.andExpect(status().isOk());
+	}
+
+	@Test
+	@DisplayName("@AuthenticatedApi - 무효한 토큰으로는 접근 불가")
+	void shouldDenyAccessToAuthenticatedApiWithInvalidToken() throws Exception {
+		mockMvc.perform(post("/api/posts")
+				.header("Authorization", "Bearer invalid-token-here")
+				.contentType("application/json")
+				.content(
+					"{\"title\":\"Valid Title Here\",\"content\":\"This is a valid content that meets the minimum length requirement.\",\"challengeId\":1}"))
+			.andDo(print())
+			.andExpect(status().isForbidden());
+	}
 } 
