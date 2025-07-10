@@ -36,13 +36,11 @@ import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.NoContent;
 import com.example.green.global.api.page.PageTemplate;
 import com.example.green.global.excel.core.ExcelDownloader;
-import com.example.green.global.security.annotation.AdminApi;
 
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
-@AdminApi
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/admin/point-products")

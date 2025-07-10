@@ -18,8 +18,7 @@ public class PointTransactionService {
 	private final PointTransactionRepository pointTransactionRepository;
 
 	public void spendPoints(Long memberId, PointAmount spendAmount, PointSource pointSource) {
-		PointAmount currentAmount = pointTransactionRepository.findLatestBalance(memberId)
-			.orElseThrow(() -> new PointException(PointExceptionMessage.NO_POINTS_ACCUMULATED));
+		PointAmount currentAmount = getPointAmount(memberId);
 		if (!currentAmount.canSpend(spendAmount)) {
 			throw new PointException(PointExceptionMessage.NOT_ENOUGH_POINT);
 		}
@@ -29,9 +28,13 @@ public class PointTransactionService {
 	}
 
 	public void earnPoints(Long memberId, PointAmount earnAmount, PointSource pointSource) {
-		PointAmount currentAmount = pointTransactionRepository.findLatestBalance(memberId)
-			.orElseGet(PointAmount::ofZero);
+		PointAmount currentAmount = getPointAmount(memberId);
 		PointTransaction earn = PointTransaction.earn(memberId, pointSource, earnAmount, currentAmount);
 		pointTransactionRepository.save(earn);
+	}
+
+	public PointAmount getPointAmount(Long memberId) {
+		return pointTransactionRepository.findLatestBalance(memberId)
+			.orElseGet(PointAmount::ofZero);
 	}
 }
