@@ -34,7 +34,7 @@ public class Profile {
 	@Builder
 	public Profile(String nickname, String profileImageUrl) {
 		validateNickname(nickname);
-		this.nickname = nickname.trim();
+		this.nickname = nickname != null ? nickname.trim() : null;
 		this.profileImageUrl = profileImageUrl;
 	}
 

@@ -8,11 +8,7 @@ import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.example.green.domain.common.service.FileManager;
-import com.example.green.domain.file.domain.vo.Purpose;
-import com.example.green.domain.file.service.FileService;
 import com.example.green.domain.member.entity.Member;
 import com.example.green.domain.member.exception.MemberExceptionMessage;
 import com.example.green.domain.member.repository.MemberRepository;
@@ -34,7 +30,6 @@ public class MemberService {
 
 	private final MemberRepository memberRepository;
 	private final FileManager fileManager;
-	private final FileService fileService;
 
 	/**
 	 * OAuth2 회원가입 (Member 도메인의 핵심 책임)
@@ -108,12 +103,25 @@ public class MemberService {
 		return memberRepository.existsByUsername(username);
 	}
 	
-	public Member updateProfile(Long memberId, String nickname, MultipartFile profileImage) {
+	/**
+	 * 사용자 프로필 업데이트
+	 * 닉네임과 프로필 이미지 URL을 수정합니다.
+	 * 프로필 이미지는 ImageUploadController를 통해 미리 업로드된 URL을 사용합니다.
+	 */
+	@Transactional
+	public Member updateProfile(Long memberId, String nickname, String profileImageUrl) {
 		Member member = findMemberById(memberId);
-		String newProfileImageUrl = processProfileImageUpload(profileImage, member);
-		updateMemberProfile(member, nickname, newProfileImageUrl, memberId);
 		
-		return memberRepository.save(member);
+		String oldProfileImageUrl = member.getProfile().getProfileImageUrl();
+
+		member.updateProfile(nickname, profileImageUrl);
+
+		processFileManagement(oldProfileImageUrl, profileImageUrl);
+		
+		log.info("프로필 업데이트 완료: memberId={}, nickname={}, profileImageUrl={}", 
+			memberId, nickname, profileImageUrl);
+		
+		return member;
 	}
 
 	private Member findMemberById(Long memberId) {
@@ -124,42 +132,19 @@ public class MemberService {
 			});
 	}
 
-	private String processProfileImageUpload(MultipartFile profileImage, Member member) {
-		if (profileImage == null || profileImage.isEmpty()) {
-			return null;
+	private void processFileManagement(String oldProfileImageUrl, String newProfileImageUrl) {
+		// 새 이미지가 있다면 사용 확정
+		if (newProfileImageUrl != null && !newProfileImageUrl.trim().isEmpty()) {
+			fileManager.confirmUsingImage(newProfileImageUrl);
+			log.info("새 프로필 이미지 사용 확정: {}", newProfileImageUrl);
 		}
 
-		String oldProfileImageUrl = member.getProfile().getProfileImageUrl();
-		
-		try {
-			String newProfileImageUrl = fileService.uploadImage(profileImage, Purpose.PROFILE);
-
-			confirmNewImageAndCleanupOld(newProfileImageUrl, oldProfileImageUrl);
-			
-			log.info("프로필 이미지 처리 완료: {} -> {}", oldProfileImageUrl, newProfileImageUrl);
-			return newProfileImageUrl;
-			
-		} catch (Exception e) {
-			log.error("프로필 이미지 업로드 실패: {}", e.getMessage());
-			throw new BusinessException(MemberExceptionMessage.MEMBER_PROFILE_UPDATE_FAILED);
-		}
-	}
-
-	private void confirmNewImageAndCleanupOld(String newProfileImageUrl, String oldProfileImageUrl) {
-
-		fileManager.confirmUsingImage(newProfileImageUrl);
-		log.info("새 프로필 이미지 사용 확정: {}", newProfileImageUrl);
-
-		if (oldProfileImageUrl != null && !oldProfileImageUrl.trim().isEmpty()) {
+		// 기존 이미지가 있고 새 이미지와 다르다면 사용 중지
+		if (oldProfileImageUrl != null && !oldProfileImageUrl.trim().isEmpty() 
+			&& !oldProfileImageUrl.equals(newProfileImageUrl)) {
 			fileManager.unUseImage(oldProfileImageUrl);
 			log.info("기존 프로필 이미지 사용 중지: {}", oldProfileImageUrl);
 		}
-	}
-
-	private void updateMemberProfile(Member member, String nickname, String newProfileImageUrl, Long memberId) {
-		member.updateProfile(nickname, newProfileImageUrl);
-		log.info("프로필 업데이트 완료: memberId={}, nickname={}, profileImageUrl={}", 
-			memberId, nickname, newProfileImageUrl);
 	}
 
 }
