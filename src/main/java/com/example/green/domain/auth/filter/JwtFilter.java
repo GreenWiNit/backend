@@ -2,8 +2,6 @@ package com.example.green.domain.auth.filter;
 
 import java.io.IOException;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -12,7 +10,6 @@ import com.example.green.domain.auth.entity.vo.AccessToken;
 import com.example.green.domain.auth.service.TokenService;
 import com.example.green.global.error.exception.BusinessException;
 import com.example.green.global.error.exception.GlobalExceptionMessage;
-import com.example.green.global.security.PrincipalDetails;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -26,12 +23,6 @@ public class JwtFilter extends OncePerRequestFilter {
 	private static final String AUTHORIZATION_HEADER = "Authorization";
 	private static final String BEARER_PREFIX = "Bearer ";
 	private static final int BEARER_PREFIX_LENGTH = 7;
-	private static final String JSON_CONTENT_TYPE = "application/json;charset=UTF-8";
-
-	private static final String ERROR_TOKEN_EXPIRED = "TOKEN_EXPIRED";
-	private static final String ERROR_INVALID_TOKEN = "INVALID_TOKEN";
-	private static final String MESSAGE_TOKEN_EXPIRED = "Access token has expired. Please refresh your token.";
-	private static final String MESSAGE_INVALID_TOKEN = "Invalid access token. Please login again.";
 
 	private final TokenService tokenService;
 
@@ -55,8 +46,9 @@ public class JwtFilter extends OncePerRequestFilter {
 			AccessToken accessToken = AccessToken.from(accessTokenString, tokenService);
 
 			if (!accessToken.isValid()) {
-				log.debug("Invalid AccessToken");
-				handleInvalidToken(response);
+				log.debug("Invalid AccessToken - proceeding without authentication for @PreAuthorize evaluation");
+				// SecurityContext를 비워두고 계속 진행하여 @PreAuthorize에서 권한 검증하도록 함
+				filterChain.doFilter(request, response);
 				return;
 			}
 
@@ -70,10 +62,14 @@ public class JwtFilter extends OncePerRequestFilter {
 
 		} catch (BusinessException e) {
 			if (e.getExceptionMessage() == GlobalExceptionMessage.JWT_TOKEN_EXPIRED) {
-				handleExpiredToken(response);
+				log.debug("AccessToken expired - proceeding without authentication for @PreAuthorize evaluation");
 			} else {
-				handleInvalidToken(response);
+				log.debug(
+					"AccessToken validation failed - proceeding without authentication for @PreAuthorize evaluation");
 			}
+			// 토큰이 만료되거나 유효하지 않더라도 SecurityContext를 비워두고 계속 진행
+			// @PreAuthorize에서 최종 권한 검증을 수행하도록 함
+			filterChain.doFilter(request, response);
 			return;
 		}
 
@@ -88,24 +84,5 @@ public class JwtFilter extends OncePerRequestFilter {
 		return null;
 	}
 
-	private void handleExpiredToken(HttpServletResponse response) throws IOException {
-		response.setStatus(HttpStatus.UNAUTHORIZED.value());
-		response.setContentType(JSON_CONTENT_TYPE);
-		response.getWriter().write(
-			String.format("{\"error\":\"%s\",\"message\":\"%s\"}",
-				ERROR_TOKEN_EXPIRED, MESSAGE_TOKEN_EXPIRED)
-		);
-		log.debug("AccessToken expired - 401 Unauthorized response sent");
-	}
-
-	private void handleInvalidToken(HttpServletResponse response) throws IOException {
-		response.setStatus(HttpStatus.UNAUTHORIZED.value());
-		response.setContentType(JSON_CONTENT_TYPE);
-		response.getWriter().write(
-			String.format("{\"error\":\"%s\",\"message\":\"%s\"}",
-				ERROR_INVALID_TOKEN, MESSAGE_INVALID_TOKEN)
-		);
-		log.debug("Invalid AccessToken - 401 Unauthorized response sent");
-	}
 }
 
