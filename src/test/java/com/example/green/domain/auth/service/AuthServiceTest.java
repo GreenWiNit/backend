@@ -15,9 +15,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.example.green.domain.auth.entity.TokenManager;
-import com.example.green.domain.member.exception.MemberExceptionMessage;
 import com.example.green.domain.auth.repository.RefreshTokenRepository;
-import com.example.green.domain.member.entity.Member;
+import com.example.green.domain.member.exception.MemberExceptionMessage;
 import com.example.green.domain.member.service.MemberService;
 import com.example.green.global.error.exception.BusinessException;
 
@@ -38,10 +37,9 @@ class AuthServiceTest {
 
 	@BeforeEach
 	void setUp() {
+		// 단순히 mock 객체만 생성
 		tokenManager1 = mock(TokenManager.class);
 		tokenManager2 = mock(TokenManager.class);
-		when(tokenManager1.logoutAllDevices()).thenReturn(1001L);
-		when(tokenManager2.logoutAllDevices()).thenReturn(1002L);
 	}
 
 	@Test
@@ -50,7 +48,9 @@ class AuthServiceTest {
 		// given
 		String username = "google 123";
 		List<TokenManager> allTokens = Arrays.asList(tokenManager1, tokenManager2);
-		
+		// 이 테스트에서만 사용하는 stubbing
+		when(tokenManager1.logoutAllDevices()).thenReturn(1001L);
+		when(tokenManager2.logoutAllDevices()).thenReturn(1002L);
 		when(refreshTokenRepository.findAllByUsernameAndNotRevoked(username))
 			.thenReturn(allTokens);
 
@@ -58,15 +58,10 @@ class AuthServiceTest {
 		authService.withdrawMember(username);
 
 		// then
-		// 1. 모든 디바이스 로그아웃 확인
 		verify(tokenManager1).logoutAllDevices();
 		verify(tokenManager2).logoutAllDevices();
 		verify(refreshTokenRepository).saveAll(allTokens);
-		
-		// 2. 모든 RefreshToken 무효화 확인
 		verify(refreshTokenRepository).revokeAllByUsername(username);
-		
-		// 3. Member 도메인 탈퇴 처리 확인
 		verify(memberService).withdrawMemberByUsername(username);
 	}
 
@@ -75,7 +70,6 @@ class AuthServiceTest {
 	void withdrawMember_WithNoTokens_ShouldStillWithdrawMember() {
 		// given
 		String username = "google 123";
-		
 		when(refreshTokenRepository.findAllByUsernameAndNotRevoked(username))
 			.thenReturn(List.of());
 
@@ -83,13 +77,8 @@ class AuthServiceTest {
 		authService.withdrawMember(username);
 
 		// then
-		// 1. 토큰 무효화 단계는 스킵됨
 		verify(refreshTokenRepository, never()).saveAll(any());
-		
-		// 2. RefreshToken 무효화는 실행됨
 		verify(refreshTokenRepository).revokeAllByUsername(username);
-		
-		// 3. Member 도메인 탈퇴 처리는 실행됨
 		verify(memberService).withdrawMemberByUsername(username);
 	}
 
@@ -98,12 +87,11 @@ class AuthServiceTest {
 	void withdrawMember_WhenMemberServiceFails_ShouldPropagateException() {
 		// given
 		String username = "google 123";
-		List<TokenManager> allTokens = Arrays.asList(tokenManager1);
-		
+		List<TokenManager> allTokens = List.of(tokenManager1);
+		// 이 테스트에서만 사용하는 stubbing
+		when(tokenManager1.logoutAllDevices()).thenReturn(1001L);
 		when(refreshTokenRepository.findAllByUsernameAndNotRevoked(username))
 			.thenReturn(allTokens);
-		
-		// Member 도메인에서 탈퇴 실패 시뮬레이션
 		doThrow(new BusinessException(MemberExceptionMessage.MEMBER_NOT_FOUND))
 			.when(memberService).withdrawMemberByUsername(username);
 
@@ -111,13 +99,10 @@ class AuthServiceTest {
 		assertThatThrownBy(() -> authService.withdrawMember(username))
 			.isInstanceOf(BusinessException.class)
 			.hasMessage(MemberExceptionMessage.MEMBER_NOT_FOUND.getMessage());
-		
-		// 토큰 무효화는 완료되었어야 함
+
 		verify(tokenManager1).logoutAllDevices();
 		verify(refreshTokenRepository).saveAll(allTokens);
 		verify(refreshTokenRepository).revokeAllByUsername(username);
-		
-		// Member 도메인 탈퇴 처리는 호출되었어야 함
 		verify(memberService).withdrawMemberByUsername(username);
 	}
 
@@ -126,12 +111,11 @@ class AuthServiceTest {
 	void withdrawMember_WhenTokenInvalidationFails_ShouldPropagateException() {
 		// given
 		String username = "google 123";
-		List<TokenManager> allTokens = Arrays.asList(tokenManager1);
-		
+		List<TokenManager> allTokens = List.of(tokenManager1);
+		// 이 테스트에서만 사용하는 stubbing
+		when(tokenManager1.logoutAllDevices()).thenReturn(1001L);
 		when(refreshTokenRepository.findAllByUsernameAndNotRevoked(username))
 			.thenReturn(allTokens);
-		
-		// RefreshToken 무효화 중 예외 발생 시뮬레이션
 		doThrow(new RuntimeException("Database error"))
 			.when(refreshTokenRepository).revokeAllByUsername(username);
 
@@ -139,12 +123,9 @@ class AuthServiceTest {
 		assertThatThrownBy(() -> authService.withdrawMember(username))
 			.isInstanceOf(RuntimeException.class)
 			.hasMessage("Database error");
-		
-		// 토큰 로그아웃은 완료되었어야 함
+
 		verify(tokenManager1).logoutAllDevices();
 		verify(refreshTokenRepository).saveAll(allTokens);
-		
-		// Member 도메인 탈퇴 처리는 호출되지 않았어야 함
 		verify(memberService, never()).withdrawMemberByUsername(username);
 	}
-} 
+}

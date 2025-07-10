@@ -34,14 +34,36 @@ public class AuthService {
 
 	/**
 	 * OAuth2 회원가입 처리
-	 * TempToken에서 추출한 정보와 사용자 입력 정보를 결합하여 회원가입 처리
+	 * - TempToken에서 추출한 정보와 사용자 입력 정보를 결합
+	 * - Member 도메인에 회원 생성 위임
+	 * - 회원가입 결과로 생성된 username 반환
+	 * 
+	 * @param tempInfo OAuth2 인증 정보 (provider, providerId, name, email)
+	 * @param nickname 사용자가 입력한 닉네임
+	 * @param profileImageUrl 사용자가 선택한 프로필 이미지 URL
+	 * @return 생성된 사용자의 username
 	 */
 	public String signup(TempTokenInfoDto tempInfo, String nickname, String profileImageUrl) {
 		log.info("[AUTH] 회원가입 처리 시작 - provider: {}, email: {}",
 			tempInfo.getProvider(), tempInfo.getEmail());
 
-		// Member 도메인에 회원 생성 요청
-		String username = memberService.signupFromOAuth2(
+		String username = createMemberFromOAuth2(tempInfo, nickname, profileImageUrl);
+
+		log.info("[AUTH] 회원가입 완료 - username: {}", username);
+		return username;
+	}
+
+	/**
+	 * OAuth2 정보로 회원 생성
+	 * - Member 도메인에 회원 생성 요청
+	 * 
+	 * @param tempInfo OAuth2 인증 정보
+	 * @param nickname 닉네임
+	 * @param profileImageUrl 프로필 이미지 URL
+	 * @return 생성된 사용자의 username
+	 */
+	private String createMemberFromOAuth2(TempTokenInfoDto tempInfo, String nickname, String profileImageUrl) {
+		return memberService.signupFromOAuth2(
 			tempInfo.getProvider(),
 			tempInfo.getProviderId(),
 			tempInfo.getName(),
@@ -49,13 +71,12 @@ public class AuthService {
 			nickname,
 			profileImageUrl
 		);
-
-		log.info("[AUTH] 회원가입 완료 - username: {}", username);
-		return username;
 	}
 
 	/**
 	 * 단일 디바이스 로그아웃
+	 * - 현재 디바이스의 토큰만 무효화
+	 * - 토큰이 없으면 경고 로그만 남기고 종료
 	 */
 	@Retryable(
 		retryFor = {OptimisticLockException.class, ObjectOptimisticLockingFailureException.class},
@@ -77,6 +98,9 @@ public class AuthService {
 
 	/**
 	 * 모든 디바이스 로그아웃
+	 * - 사용자의 모든 디바이스에서 발급된 토큰 무효화
+	 * - 토큰 버전을 크게 증가시켜 모든 AccessToken 무효화
+	 * - 토큰이 없으면 경고 로그만 남기고 종료
 	 */
 	@Retryable(
 		retryFor = {OptimisticLockException.class, ObjectOptimisticLockingFailureException.class},
@@ -85,32 +109,52 @@ public class AuthService {
 	)
 	public void logoutAllDevices(String username) {
 		List<TokenManager> allTokens = refreshTokenRepository.findAllByUsernameAndNotRevoked(username);
-		if (!allTokens.isEmpty()) {
-			// 모든 유효한 RefreshToken의 tokenVersion을 크게 증가
-			Long maxTokenVersion = null;
-			for (TokenManager token : allTokens) {
-				Long newTokenVersion = token.logoutAllDevices(); // tokenVersion += 1000
-				maxTokenVersion = newTokenVersion;
-			}
-			refreshTokenRepository.saveAll(allTokens);
-			log.info("[AUTH] 모든 디바이스 로그아웃 완료 - 모든 AccessToken 무효화: {} (tokenVersion: {})",
-				username, maxTokenVersion);
-		} else {
+
+		if (allTokens.isEmpty()) {
 			log.warn("[AUTH] 로그아웃 대상 토큰을 찾을 수 없음: {}", username);
+			return;
 		}
+
+		// 모든 유효한 RefreshToken의 tokenVersion을 크게 증가
+		Long maxTokenVersion = invalidateAllTokens(allTokens);
+
+		log.info("[AUTH] 모든 디바이스 로그아웃 완료 - 모든 AccessToken 무효화: {} (tokenVersion: {})",
+			username, maxTokenVersion);
 	}
 
+	/**
+	 * 모든 토큰 무효화 처리
+	 * 
+	 * @param tokens 무효화할 토큰 목록
+	 * @return 최종 토큰 버전
+	 */
+	private Long invalidateAllTokens(List<TokenManager> tokens) {
+		Long maxTokenVersion = null;
+
+		for (TokenManager token : tokens) {
+			Long newTokenVersion = token.logoutAllDevices(); // tokenVersion += 1000
+			maxTokenVersion = newTokenVersion;
+		}
+
+		refreshTokenRepository.saveAll(tokens);
+		return maxTokenVersion;
+	}
+
+	/**
+	 * 회원 탈퇴 처리
+	 * - 모든 디바이스에서 로그아웃 (AccessToken 무효화)
+	 * - 모든 RefreshToken 무효화 (즉시 처리)
+	 * - Member 도메인에 탈퇴 처리 위임
+	 * 
+	 * @param username 탈퇴할 회원의 사용자명
+	 */
 	public void withdrawMember(String username) {
 		log.info("[AUTH] 회원 탈퇴 처리 시작 - username: {}", username);
 
-		// 1. 모든 디바이스에서 로그아웃 (모든 토큰 무효화)
-		logoutAllDevices(username);
+		// 1단계: 인증 관련 처리
+		invalidateAllAuthentications(username);
 
-		// 2. 모든 RefreshToken 무효화 (즉시 처리)
-		refreshTokenRepository.revokeAllByUsername(username);
-		log.info("[AUTH] 모든 RefreshToken 무효화 완료: {}", username);
-
-		// 3. Member 도메인에 탈퇴 처리 위임
+		// 2단계: 회원 정보 처리
 		memberService.withdrawMemberByUsername(username);
 
 		log.info("[AUTH] 회원 탈퇴 완료 - username: {}", username);
@@ -120,6 +164,20 @@ public class AuthService {
 		// - 관련 인증 로그, 세션 기록 등도 함께 정리
 		// - 개인정보 보호법에 따른 데이터 보관/삭제 정책 적용
 	}
+
+	/**
+	 * 모든 인증 정보 무효화
+	 * - 모든 디바이스 로그아웃 (AccessToken 무효화)
+	 * - 모든 RefreshToken 무효화
+	 * 
+	 * @param username 사용자명
+	 */
+	private void invalidateAllAuthentications(String username) {
+		// 모든 디바이스에서 로그아웃 (모든 AccessToken 무효화)
+		logoutAllDevices(username);
+
+		// 모든 RefreshToken 무효화
+		refreshTokenRepository.revokeAllByUsername(username);
+		log.info("[AUTH] 모든 RefreshToken 무효화 완료: {}", username);
+	}
 }
-
-
