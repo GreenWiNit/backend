@@ -100,4 +100,26 @@ public class AuthService {
 		}
 	}
 
+	public void withdrawMember(String username) {
+		log.info("[AUTH] 회원 탈퇴 처리 시작 - username: {}", username);
+
+		// 1. 모든 디바이스에서 로그아웃 (모든 토큰 무효화)
+		logoutAllDevices(username);
+
+		// 2. 모든 RefreshToken 무효화 (즉시 처리)
+		refreshTokenRepository.revokeAllByUsername(username);
+		log.info("[AUTH] 모든 RefreshToken 무효화 완료: {}", username);
+
+		// 3. Member 도메인에 탈퇴 처리 위임
+		memberService.withdrawMemberByUsername(username);
+
+		log.info("[AUTH] 회원 탈퇴 완료 - username: {}", username);
+
+		// TODO: 배치 시스템으로 토큰 물리적 삭제 처리
+		// - 탈퇴한 사용자의 모든 TokenManager 레코드 물리적 삭제
+		// - 관련 인증 로그, 세션 기록 등도 함께 정리
+		// - 개인정보 보호법에 따른 데이터 보관/삭제 정책 적용
+	}
 }
+
+
