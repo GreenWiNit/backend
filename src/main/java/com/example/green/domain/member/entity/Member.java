@@ -1,10 +1,12 @@
 package com.example.green.domain.member.entity;
 
 import java.time.LocalDateTime;
+
 import com.example.green.domain.common.BaseEntity;
 import com.example.green.domain.member.entity.enums.MemberRole;
 import com.example.green.domain.member.entity.enums.MemberStatus;
 import com.example.green.domain.member.entity.vo.Profile;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -77,4 +79,15 @@ public class Member extends BaseEntity {
 	public void updateProfile(String nickname, String profileImageUrl) {
 		this.profile = this.profile.update(nickname, profileImageUrl);
 	}
+
+	public void withdraw() {
+		this.status = MemberStatus.DELETED;
+		this.lastLoginAt = null; //마지막 로그인 시간 초기화
+		this.markDeleted();
+	}
+
+	public boolean isWithdrawn() {
+		return this.status == MemberStatus.DELETED || this.isDeleted();
+	}
+
 }
