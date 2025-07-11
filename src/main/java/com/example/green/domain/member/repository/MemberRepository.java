@@ -63,4 +63,20 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 	 */
 	@Query("SELECT m FROM Member m WHERE m.status = 'NORMAL' AND m.deleted = false ORDER BY m.createdDate DESC")
 	List<Member> findAllActiveMembersForAdmin();
+	
+	/**
+	 * 관리자용 탈퇴 회원 목록 조회 (페이징)
+	 * - 탈퇴한 회원만 조회
+	 * - 탈퇴일순 내림차순 정렬
+	 */
+	@Query("SELECT m FROM Member m WHERE m.status = 'DELETED' OR m.deleted = true ORDER BY m.modifiedDate DESC")
+	Page<Member> findWithdrawnMembersForAdmin(Pageable pageable);
+	
+	/**
+	 * 관리자용 탈퇴 회원 전체 목록 조회 (엑셀 다운로드용)
+	 * - 탈퇴한 회원만 조회
+	 * - 탈퇴일순 내림차순 정렬
+	 */
+	@Query("SELECT m FROM Member m WHERE m.status = 'DELETED' OR m.deleted = true ORDER BY m.modifiedDate DESC")
+	List<Member> findAllWithdrawnMembersForAdmin();
 }
