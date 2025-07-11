@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.green.domain.member.dto.admin.MemberListRequestDto;
 import com.example.green.domain.member.dto.admin.MemberListResponseDto;
+import com.example.green.domain.member.dto.admin.WithdrawnMemberListResponseDto;
 import com.example.green.domain.member.entity.Member;
 import com.example.green.domain.member.exception.MemberExceptionMessage;
 import com.example.green.domain.member.repository.MemberRepository;
@@ -64,6 +65,47 @@ public class MemberAdminService {
 			.toList();
 		
 		log.info("[ADMIN] 회원 엑셀 다운로드용 전체 목록 조회 완료: count={}", result.size());
+		return result;
+	}
+
+	/**
+	 * 관리자용 탈퇴 회원 목록 조회 (페이징)
+	 * - 탈퇴한 회원만 조회
+	 * - 탈퇴일순 내림차순 정렬
+	 */
+	public PageTemplate<WithdrawnMemberListResponseDto> getWithdrawnMemberList(MemberListRequestDto request) {
+		Page<Member> memberPage = memberRepository.findWithdrawnMembersForAdmin(request.toPageable());
+		
+		List<WithdrawnMemberListResponseDto> content = memberPage.getContent().stream()
+			.map(WithdrawnMemberListResponseDto::from)
+			.toList();
+		
+		log.info("[ADMIN] 탈퇴 회원 목록 조회 완료: page={}, size={}, totalElements={}", 
+			request.page(), request.size(), memberPage.getTotalElements());
+		
+		return new PageTemplate<WithdrawnMemberListResponseDto>(
+			memberPage.getTotalElements(),
+			memberPage.getTotalPages(),
+			memberPage.getNumber(),
+			memberPage.getSize(),
+			memberPage.hasNext(),
+			content
+		);
+	}
+
+	/**
+	 * 관리자용 탈퇴 회원 전체 목록 조회 (엑셀 다운로드용)
+	 * - 탈퇴한 회원만 조회
+	 * - 탈퇴일순 내림차순 정렬
+	 */
+	public List<WithdrawnMemberListResponseDto> getAllWithdrawnMembersForExcel() {
+		List<Member> members = memberRepository.findAllWithdrawnMembersForAdmin();
+		
+		List<WithdrawnMemberListResponseDto> result = members.stream()
+			.map(WithdrawnMemberListResponseDto::from)
+			.toList();
+		
+		log.info("[ADMIN] 탈퇴 회원 엑셀 다운로드용 전체 목록 조회 완료: count={}", result.size());
 		return result;
 	}
 
