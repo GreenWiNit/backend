@@ -22,11 +22,4 @@ public class ProfileUpdateRequestDto {
 
 	@Schema(description = "프로필 이미지 URL", example = "https://s3.amazonaws.com/bucket/files/profile/uuid.jpg")
 	private String profileImageUrl;
-
-	public Profile toProfile() {
-		return Profile.builder()
-			.nickname(nickname)
-			.profileImageUrl(profileImageUrl)
-			.build();
-	}
 } 
