@@ -1,6 +1,7 @@
 package com.example.green.domain.point.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.green.domain.point.entity.PointTransaction;
 import com.example.green.domain.point.entity.vo.PointAmount;
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class PointTransactionService {
 
 	private final PointTransactionRepository pointTransactionRepository;
