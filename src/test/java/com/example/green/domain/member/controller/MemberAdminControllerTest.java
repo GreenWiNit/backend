@@ -16,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import com.example.green.domain.member.dto.admin.MemberListResponseDto;
+import com.example.green.domain.member.dto.admin.WithdrawnMemberListResponseDto;
 import com.example.green.domain.member.service.MemberAdminService;
 import com.example.green.global.api.page.PageTemplate;
 import com.example.green.global.excel.core.ExcelDownloader;
@@ -150,5 +151,56 @@ class MemberAdminControllerTest extends BaseControllerUnitTest {
 
 		verify(memberAdminService).validateMemberExistsByUsername(username);
 		verify(memberAdminService, never()).deleteMemberByUsername(any());
+	}
+
+	@Test
+	@DisplayName("관리자가 탈퇴 회원 목록을 페이징으로 조회할 수 있다")
+	void getWithdrawnMemberList_Success() {
+		// given
+		WithdrawnMemberListResponseDto member = new WithdrawnMemberListResponseDto(
+			"naver 123456789", "test@naver.com", "탈퇴회원", "010-1234-5678", 
+			LocalDateTime.now().minusDays(10), LocalDateTime.now().minusDays(5), 
+			"일반회원", "naver"
+		);
+		PageTemplate<WithdrawnMemberListResponseDto> mockPage = new PageTemplate<>(
+			1L, 1, 0, 10, false, List.of(member)
+		);
+		
+		when(memberAdminService.getWithdrawnMemberList(any())).thenReturn(mockPage);
+
+		// when & then
+		given().log().all()
+			.param("page", "0")
+			.param("size", "10")
+		.when()
+			.get("/api/admin/members/withdrawn")
+		.then().log().all()
+			.status(HttpStatus.OK)
+			.body("success", equalTo(true))
+			.body("message", equalTo("탈퇴 회원 목록 조회가 완료되었습니다."))
+			.body("result.totalElements", equalTo(1))
+			.body("result.content[0].username", equalTo("naver 123456789"))
+			.body("result.content[0].email", equalTo("test@naver.com"))
+			.body("result.content[0].provider", equalTo("naver"));
+	}
+
+	@Test
+	@DisplayName("관리자가 탈퇴 회원 목록을 엑셀로 다운로드할 수 있다")
+	void downloadWithdrawnMemberListExcel_Success() {
+		// given
+		List<WithdrawnMemberListResponseDto> members = List.of(
+			new WithdrawnMemberListResponseDto("naver 123456789", "test@naver.com", "탈퇴회원", "010-1234-5678", 
+				LocalDateTime.now().minusDays(10), LocalDateTime.now().minusDays(5), "일반회원", "naver")
+		);
+		when(memberAdminService.getAllWithdrawnMembersForExcel()).thenReturn(members);
+
+		// when & then
+		given().log().all()
+		.when()
+			.get("/api/admin/members/withdrawn/excel")
+		.then().log().all()
+			.status(HttpStatus.OK);
+
+		verify(excelDownloader).downloadAsStream(eq(members), any());
 	}
 } 
