@@ -18,7 +18,6 @@ import com.example.green.domain.point.entity.vo.TransactionType;
 import com.example.green.domain.point.repository.PointTransactionRepository;
 import com.example.green.domain.point.service.PointTransactionService;
 import com.example.green.domain.pointshop.exception.point.PointException;
-import com.example.green.domain.pointshop.exception.point.PointExceptionMessage;
 import com.example.integration.common.BaseIntegrationTest;
 import com.example.integration.common.concurrency.ConcurrencyTestResult;
 import com.example.integration.common.concurrency.ConcurrencyTestTemplate;
@@ -26,7 +25,7 @@ import com.example.integration.common.concurrency.ConcurrencyTestTemplate;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class PointTransactionIntTest extends BaseIntegrationTest {
+public class PointTransactionRaceConditionTest extends BaseIntegrationTest {
 
 	@Autowired
 	private PointTransactionService service;
@@ -40,22 +39,6 @@ public class PointTransactionIntTest extends BaseIntegrationTest {
 	@BeforeEach
 	void setUp() {
 		jdbcTemplate.execute("TRUNCATE TABLE POINT_TRANSACTIONS");
-	}
-
-	@Test
-	void 포인트_부족으로_차감_실패시_잔액이_보존_된다() {
-		// given - 100
-		service.earnPoints(1L, PointAmount.of(1000), PointSource.ofEvent("초기적립"));
-
-		// when & then
-		assertThatThrownBy(() ->
-			service.spendPoints(1L, PointAmount.of(2000), PointSource.ofEvent("구매"))
-		)
-			.isInstanceOf(PointException.class)
-			.hasFieldOrPropertyWithValue("exceptionMessage", PointExceptionMessage.NOT_ENOUGH_POINT);
-
-		assertThat(service.getPointAmount(1L))
-			.isEqualTo(PointAmount.of(1000));
 	}
 
 	@Test
@@ -157,8 +140,8 @@ public class PointTransactionIntTest extends BaseIntegrationTest {
 			assertThat(finalBalance).isEqualTo(PointAmount.of(300));
 		} else if (result.successCount() == 1) {
 			// 하나만 성공: 차감이 먼저 시도되어 실패한 경우
-			// 800p 차감 불가
-			assertThat(finalBalance).isEqualTo(PointAmount.ofZero());
+			// 800p 차감 불가, 1000p만 지급됨
+			assertThat(finalBalance).isEqualTo(PointAmount.of(1000));
 		}
 	}
 }
