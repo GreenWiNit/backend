@@ -89,7 +89,7 @@ public class Member extends BaseEntity {
 	public void updatePhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
 	}
-	
+
 	public void withdraw() {
 		this.status = MemberStatus.DELETED;
 		this.lastLoginAt = null; // 마지막 로그인 시간 초기화

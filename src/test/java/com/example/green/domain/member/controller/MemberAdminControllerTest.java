@@ -11,9 +11,9 @@ import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import com.example.green.domain.member.dto.admin.MemberListResponseDto;
 import com.example.green.domain.member.service.MemberAdminService;
@@ -21,15 +21,14 @@ import com.example.green.global.api.page.PageTemplate;
 import com.example.green.global.excel.core.ExcelDownloader;
 import com.example.green.template.base.BaseControllerUnitTest;
 
-import jakarta.servlet.http.HttpServletResponse;
 
 @WebMvcTest(MemberAdminController.class)
 class MemberAdminControllerTest extends BaseControllerUnitTest {
 
-	@MockBean
+	@MockitoBean
 	private MemberAdminService memberAdminService;
 
-	@MockBean
+	@MockitoBean
 	private ExcelDownloader excelDownloader;
 
 	@Test
