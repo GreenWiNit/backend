@@ -14,6 +14,7 @@ import com.example.green.domain.member.controller.docs.MemberAdminControllerDocs
 import com.example.green.domain.member.dto.admin.MemberDeleteRequestDto;
 import com.example.green.domain.member.dto.admin.MemberListRequestDto;
 import com.example.green.domain.member.dto.admin.MemberListResponseDto;
+import com.example.green.domain.member.dto.admin.WithdrawnMemberListResponseDto;
 import com.example.green.domain.member.service.MemberAdminService;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.NoContent;
@@ -56,6 +57,27 @@ public class MemberAdminController implements MemberAdminControllerDocs {
 		excelDownloader.downloadAsStream(members, response);
 		
 		log.info("[ADMIN] 회원 목록 엑셀 다운로드 완료: count={}", members.size());
+	}
+
+	@GetMapping("/withdrawn")
+	public ApiTemplate<PageTemplate<WithdrawnMemberListResponseDto>> getWithdrawnMemberList(
+		@ParameterObject @ModelAttribute @Valid MemberListRequestDto request
+	) {
+		log.info("[ADMIN] 탈퇴 회원 목록 조회 요청: page={}, size={}", request.page(), request.size());
+		
+		PageTemplate<WithdrawnMemberListResponseDto> result = memberAdminService.getWithdrawnMemberList(request);
+		
+		return ApiTemplate.ok(() -> "탈퇴 회원 목록 조회가 완료되었습니다.", result);
+	}
+
+	@GetMapping("/withdrawn/excel")
+	public void downloadWithdrawnMemberListExcel(HttpServletResponse response) {
+		log.info("[ADMIN] 탈퇴 회원 목록 엑셀 다운로드 요청");
+		
+		List<WithdrawnMemberListResponseDto> members = memberAdminService.getAllWithdrawnMembersForExcel();
+		excelDownloader.downloadAsStream(members, response);
+		
+		log.info("[ADMIN] 탈퇴 회원 목록 엑셀 다운로드 완료: count={}", members.size());
 	}
 
 	@PostMapping("/delete")

@@ -3,6 +3,7 @@ package com.example.green.domain.member.controller.docs;
 import com.example.green.domain.member.dto.admin.MemberDeleteRequestDto;
 import com.example.green.domain.member.dto.admin.MemberListRequestDto;
 import com.example.green.domain.member.dto.admin.MemberListResponseDto;
+import com.example.green.domain.member.dto.admin.WithdrawnMemberListResponseDto;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.NoContent;
 import com.example.green.global.api.page.PageTemplate;
@@ -104,6 +105,89 @@ public interface MemberAdminControllerDocs {
 		)
 	})
 	void downloadMemberListExcel(HttpServletResponse response);
+
+	@Operation(summary = "관리자용 탈퇴 회원 목록 조회", description = "관리자가 탈퇴한 회원 목록을 페이징으로 조회합니다.")
+	@ApiResponses(value = {
+		@ApiResponse(
+			responseCode = "200",
+			description = "탈퇴 회원 목록 조회 성공",
+			content = @Content(
+				mediaType = "application/json",
+				schema = @Schema(implementation = ApiTemplate.class),
+				examples = @ExampleObject(value = """
+					{
+						"success": true,
+						"message": "탈퇴 회원 목록 조회가 완료되었습니다.",
+						"result": {
+							"page": 0,
+							"size": 10,
+							"totalElements": 5,
+							"totalPages": 1,
+							"hasNext": false,
+							"content": [
+								{
+									"username": "naver 123456789",
+									"email": "user@naver.com",
+									"nickname": "홍길동",
+									"phoneNumber": "010-1234-5678",
+									"joinDate": "2025-01-15T10:30:00",
+									"withdrawalDate": "2025-01-20T14:20:00",
+									"role": "일반회원",
+									"provider": "naver"
+								}
+							]
+						}
+					}
+					""")
+			)
+		),
+		@ApiResponse(
+			responseCode = "403",
+			description = "관리자 권한 필요",
+			content = @Content(
+				mediaType = "application/json",
+				examples = @ExampleObject(value = """
+					{
+						"success": false,
+						"message": "관리자 권한이 필요합니다."
+					}
+					""")
+			)
+		)
+	})
+	@ApiErrorStandard
+	ApiTemplate<PageTemplate<WithdrawnMemberListResponseDto>> getWithdrawnMemberList(MemberListRequestDto request);
+
+	@Operation(summary = "관리자용 탈퇴 회원 목록 엑셀 다운로드", description = "관리자가 전체 탈퇴 회원 목록을 엑셀 파일로 다운로드합니다.")
+	@ApiResponses(value = {
+		@ApiResponse(
+			responseCode = "200",
+			description = "엑셀 다운로드 성공",
+			content = @Content(
+				mediaType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+				schema = @Schema(type = "string", format = "binary")
+			)
+		),
+		@ApiResponse(
+			responseCode = "403",
+			description = "관리자 권한 필요",
+			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+		),
+		@ApiResponse(
+			responseCode = "500",
+			description = "엑셀 생성 실패",
+			content = @Content(
+				schema = @Schema(implementation = ExceptionResponse.class),
+				examples = @ExampleObject(value = """
+					{
+						"success": false,
+						"message": "엑셀 파일 생성에 실패했습니다."
+					}
+					""")
+			)
+		)
+	})
+	void downloadWithdrawnMemberListExcel(HttpServletResponse response);
 
 	@Operation(summary = "관리자용 회원 강제 삭제", description = "관리자가 회원을 강제 삭제(강퇴)합니다. username(소셜 로그인 제공자별 고유 식별자)으로 회원을 식별합니다.")
 	@ApiResponses(value = {
