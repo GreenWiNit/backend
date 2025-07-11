@@ -46,7 +46,7 @@ spring:
             client-name: ${OAUTH2_GOOGLE_CLIENT_NAME:google}
             client-id: ${OAUTH2_GOOGLE_CLIENT_ID}
             client-secret: ${OAUTH2_GOOGLE_CLIENT_SECRET}
-            redirect-uri: ${OAUTH2_GOOGLE_REDIRECT_URI:http://localhost:8080/login/oauth2/code/google}
+            redirect-uri: ${OAUTH2_GOOGLE_REDIRECT_URI:https://www.greenwinit.store/login/oauth2/code/google}
             authorization-grant-type: ${OAUTH2_GOOGLE_GRANT_TYPE:authorization_code}
             scope: ${OAUTH2_GOOGLE_SCOPE:profile,email}
 
@@ -73,9 +73,9 @@ app:
     bucket: ${STORAGE_BUCKET}
     base-url: ${STORAGE_BASE_URL}
   frontend:
-    base-url: ${FRONTEND_URL:http://localhost:3000}
+    base-url: ${FRONTEND_URL:https://www.greenwinit.store}
   backend:
-    base-url: ${BACKEND_URL:http://localhost:8080}
+    base-url: ${BACKEND_URL:https://www.greenwinit.store}
 
 jwt:
   secret: ${JWT_SECRET}
