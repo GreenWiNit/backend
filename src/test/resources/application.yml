@@ -60,8 +60,10 @@ jwt:
 
 logging:
   level:
-    org.springframework: ${LOG_LEVEL_SPRING:INFO}
-    org.hibernate.SQL: ${LOG_LEVEL_SQL:DEBUG}
+    com.example.integration: DEBUG
+    org.springframework: WARN
+  pattern:
+    console: "%d{HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
 
 decorator:
   datasource:

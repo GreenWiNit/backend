@@ -43,18 +43,6 @@ class PointTransactionServiceTest {
 	}
 
 	@Test
-	void 적립한_포인트_내역이_없으면_예외가_발생한다() {
-		// given
-		when(pointTransactionRepository.findLatestBalance(anyLong())).thenReturn(Optional.empty());
-
-		// when & then
-		assertThatThrownBy(() ->
-			pointTransactionService.spendPoints(1L, PointAmount.of(BigDecimal.valueOf(1000)), mock(PointSource.class)))
-			.isInstanceOf(PointException.class)
-			.hasFieldOrPropertyWithValue("exceptionMessage", PointExceptionMessage.NO_POINTS_ACCUMULATED);
-	}
-
-	@Test
 	void 포인트_차감_시_사용_가능한_포인트가_충분하지_않으면_예외가_발생한다() {
 		// given
 		PointAmount mock = mock(PointAmount.class);

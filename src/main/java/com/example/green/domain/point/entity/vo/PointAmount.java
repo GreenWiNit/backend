@@ -36,6 +36,14 @@ public class PointAmount {
 		return new PointAmount(value);
 	}
 
+	public static PointAmount of(long value) {
+		validateNullData(value, "포인트 금액은 필수 값입니다.");
+		if (value < 0) {
+			throw new PointException(PointExceptionMessage.INVALID_POINT_AMOUNT);
+		}
+		return new PointAmount(BigDecimal.valueOf(value));
+	}
+
 	public static PointAmount ofZero() {
 		return new PointAmount(BigDecimal.ZERO);
 	}
