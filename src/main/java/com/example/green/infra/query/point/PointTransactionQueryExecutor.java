@@ -58,7 +58,7 @@ public class PointTransactionQueryExecutor {
 			.select(PointTransactionProjections.toPointTransactions(qPointTransaction))
 			.from(qPointTransaction)
 			.where(expression)
-			.orderBy(qPointTransaction.createdDate.desc())
+			.orderBy(qPointTransaction.id.desc())
 			.offset(pagination.calculateOffset())
 			.limit(pagination.getPageSize())
 			.fetch();
@@ -69,7 +69,7 @@ public class PointTransactionQueryExecutor {
 			.select(PointTransactionProjections.toPointTransactions(qPointTransaction))
 			.from(qPointTransaction)
 			.where(qPointTransaction.memberId.eq(memberId))
-			.orderBy(qPointTransaction.createdDate.desc())
+			.orderBy(qPointTransaction.id.desc())
 			.fetch();
 	}
 }
