@@ -1,0 +1,46 @@
+package com.example.green.domain.challengecert.entity;
+
+import java.time.LocalDateTime;
+
+import com.example.green.domain.common.BaseEntity;
+import com.example.green.domain.member.entity.Member;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MappedSuperclass;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@MappedSuperclass
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+public abstract class BaseChallengeParticipation extends BaseEntity {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "member_id", nullable = false)
+	private Member member;
+
+	@Column(nullable = false)
+	private LocalDateTime participatedAt;
+
+	// 하위 클래스를 위한 protected 생성자
+	protected BaseChallengeParticipation(
+		Member member,
+		LocalDateTime participatedAt
+	) {
+		this.member = member;
+		this.participatedAt = participatedAt;
+	}
+}
