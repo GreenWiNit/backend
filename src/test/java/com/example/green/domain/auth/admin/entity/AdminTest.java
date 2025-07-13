@@ -86,7 +86,7 @@ class AdminTest {
 	@DisplayName("JWT 토큰용 username에 admin_ prefix가 추가된다")
 	void JWT_토큰용_username_생성() {
 		// when
-		String tokenUsername = admin.getTokenUsername();
+		String tokenUsername = admin.getTokenMemberKey();
 
 		// then
 		assertThat(tokenUsername).isEqualTo("admin_testAdmin");

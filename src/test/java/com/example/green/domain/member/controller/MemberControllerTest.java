@@ -143,7 +143,6 @@ class MemberControllerTest {
 		Member member = mock(Member.class);
 		Profile profile = mock(Profile.class);
 
-		// member.getProfile() 만 필요하므로 getId() 스터빙은 제거
 		given(member.getProfile()).willReturn(profile);
 		given(profile.getNickname()).willReturn(nickname);
 		given(profile.getProfileImageUrl()).willReturn(profileImageUrl);

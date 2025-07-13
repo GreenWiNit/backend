@@ -35,10 +35,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * 인증 관련 API 컨트롤러
- * Auth 도메인 서비스(AuthService)를 통해서만 비즈니스 로직 처리
- */
 @Tag(name = "인증 API", description = "OAuth2 로그인, 회원가입, 토큰 관리 등 인증 관련 API")
 @Slf4j
 @RestController
@@ -66,7 +62,7 @@ public class AuthController {
 				examples = @ExampleObject(value = """
 					{
 					"accessToken": "eyJhbGciOiJIUzI1NiJ9...",
-					"username": "google_123456789",
+					"memberKey": "google_123456789",
 					"userName": "홍길동"}
 					"""))),
 		@ApiResponse(
@@ -106,12 +102,10 @@ public class AuthController {
 		TempToken tempToken = TempToken.from(request.tempToken(), tokenService);
 		TempTokenInfoDto tempInfo = tempToken.extractUserInfo();
 
-		// Auth 도메인 서비스를 통해 회원가입 처리
-		String username = authService.signup(tempInfo, request.nickname(), request.profileImageUrl());
+		String memberKey = authService.signup(tempInfo, request.nickname(), request.profileImageUrl());
 
-		// TokenManager 먼저 생성
 		String refreshTokenString = tokenService.createRefreshToken(
-			username,
+			memberKey,
 			WebUtils.extractDeviceInfo(httpRequest),
 			WebUtils.extractClientIp(httpRequest)
 		);
@@ -122,14 +116,13 @@ public class AuthController {
 		);
 		response.addCookie(cookie);
 
-		// AccessToken 나중 생성
-		String accessTokenString = tokenService.createAccessToken(username, ROLE_USER);
+		String accessTokenString = tokenService.createAccessToken(memberKey, ROLE_USER);
 		AccessToken accessToken = AccessToken.from(accessTokenString, tokenService);
 
-		log.info("[SIGNUP] completed for username={}", username);
+		log.info("[SIGNUP] completed for memberKey={}", memberKey);
 		return ResponseEntity.ok(new TokenResponseDto(
 			accessToken.getValue(),
-			username,
+			memberKey,
 			tempToken.getName()
 		));
 	}
@@ -148,7 +141,7 @@ public class AuthController {
 					value = """
 						{
 						"accessToken": "eyJhbGciOiJIUzI1NiJ9...",
-						"username": "google_123456789",
+						"memberKey": "google_123456789",
 						"userName": null
 						}
 						"""
@@ -191,13 +184,13 @@ public class AuthController {
 			return ResponseEntity.badRequest().build();
 		}
 
-		String username = tokenService.getUsername(refreshTokenString);
+		String memberKey = tokenService.getMemberKey(refreshTokenString);
 		String currentIpAddress = WebUtils.extractClientIp(request);
 		String newAccessTokenString = tokenService.refreshAccessToken(refreshTokenString, ROLE_USER, currentIpAddress);
 		AccessToken newAccessToken = AccessToken.from(newAccessTokenString, tokenService);
 
-		log.info("[REFRESH] issued new AccessToken for username={} from IP={}", username, currentIpAddress);
-		return ResponseEntity.ok(new TokenResponseDto(newAccessToken.getValue(), username, null));
+		log.info("[REFRESH] issued new AccessToken for memberKey={} from IP={}", memberKey, currentIpAddress);
+		return ResponseEntity.ok(new TokenResponseDto(newAccessToken.getValue(), memberKey, null));
 	}
 
 	@AuthenticatedApi(reason = "로그아웃은 로그인한 사용자만 가능합니다")
@@ -205,17 +198,17 @@ public class AuthController {
 	@PostMapping("/logout")
 	public ResponseEntity<Void> logout(HttpServletRequest request, HttpServletResponse response,
 		@AuthenticationPrincipal PrincipalDetails currentUser) {
-		String username = currentUser.getUsername();
+		String memberKey = currentUser.getUsername();
 
 		String refreshToken = WebUtils.extractCookieValue(request, REFRESH_TOKEN_COOKIE_NAME);
 		if (refreshToken != null) {
 			tokenService.revokeRefreshToken(refreshToken);
 		}
 
-		authService.logout(username);
+		authService.logout(memberKey);
 		WebUtils.removeRefreshTokenCookie(response);
 
-		log.info("[LOGOUT] User {} logged out", username);
+		log.info("[LOGOUT] User {} logged out", memberKey);
 		return ResponseEntity.ok().build();
 	}
 
@@ -224,13 +217,13 @@ public class AuthController {
 	@PostMapping("/logout-all")
 	public ResponseEntity<Void> logoutAll(HttpServletRequest request, HttpServletResponse response,
 		@AuthenticationPrincipal PrincipalDetails currentUser) {
-		String username = currentUser.getUsername();
+		String memberKey = currentUser.getUsername();
 
-		tokenService.revokeAllRefreshTokens(username);
-		authService.logoutAllDevices(username);
+		tokenService.revokeAllRefreshTokens(memberKey);
+		authService.logoutAllDevices(memberKey);
 		WebUtils.removeRefreshTokenCookie(response);
 
-		log.info("[LOGOUT-ALL] User {} logged out from all devices", username);
+		log.info("[LOGOUT-ALL] User {} logged out from all devices", memberKey);
 		return ResponseEntity.ok().build();
 	}
 	
@@ -282,17 +275,15 @@ public class AuthController {
 	@PostMapping("/withdraw")
 	public ResponseEntity<Void> withdraw(HttpServletRequest request, HttpServletResponse response,
 		@AuthenticationPrincipal PrincipalDetails currentUser) {
-		String username = currentUser.getUsername();
+		String memberKey = currentUser.getUsername();
 		
-		log.info("[WITHDRAW] 회원 탈퇴 요청 - username: {}", username);
-		
-		// Auth 도메인 서비스를 통해 회원 탈퇴 처리
-		authService.withdrawMember(username);
-		
-		// RefreshToken 쿠키 제거
+		log.info("[WITHDRAW] 회원 탈퇴 요청 - memberKey: {}", memberKey);
+
+		authService.withdrawMember(memberKey);
+
 		WebUtils.removeRefreshTokenCookie(response);
 		
-		log.info("[WITHDRAW] 회원 탈퇴 완료 - username: {}", username);
+		log.info("[WITHDRAW] 회원 탈퇴 완료 - memberKey: {}", memberKey);
 		return ResponseEntity.ok().build();
 	}
 }

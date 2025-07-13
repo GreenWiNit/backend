@@ -22,7 +22,7 @@ class MemberTest {
 		Member member = Member.create(username, name, email);
 
 		// then
-		assertThat(member.getUsername()).isEqualTo(username);
+		assertThat(member.getMemberKey()).isEqualTo(username);
 		assertThat(member.getName()).isEqualTo(name);
 		assertThat(member.getEmail()).isEqualTo(email);
 		assertThat(member.getStatus()).isEqualTo(MemberStatus.NORMAL);

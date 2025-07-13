@@ -106,11 +106,11 @@ class MemberServiceTest {
 	void withdrawMemberByUsername_WithValidUsername_ShouldSucceed() {
 		// given
 		String username = "google 123";
-		when(memberRepository.findByUsername(username)).thenReturn(Optional.of(normalMember));
+		when(memberRepository.findByMemberKey(username)).thenReturn(Optional.of(normalMember));
 		when(memberRepository.findById(1L)).thenReturn(Optional.of(normalMember));
 
 		// when
-		memberService.withdrawMemberByUsername(username);
+		memberService.withdrawMemberByMemberKey(username);
 
 		// then
 		assertThat(normalMember.getStatus()).isEqualTo(MemberStatus.DELETED);
@@ -125,10 +125,10 @@ class MemberServiceTest {
 	void withdrawMemberByUsername_WithNonExistentUsername_ShouldThrowException() {
 		// given
 		String username = "nonexistent";
-		when(memberRepository.findByUsername(username)).thenReturn(Optional.empty());
+		when(memberRepository.findByMemberKey(username)).thenReturn(Optional.empty());
 
 		// when & then
-		assertThatThrownBy(() -> memberService.withdrawMemberByUsername(username))
+		assertThatThrownBy(() -> memberService.withdrawMemberByMemberKey(username))
 			.isInstanceOf(BusinessException.class)
 			.hasMessage(MemberExceptionMessage.MEMBER_NOT_FOUND.getMessage());
 	}
@@ -154,15 +154,15 @@ class MemberServiceTest {
 	void findActiveByUsername_ShouldReturnActiveMember() {
 		// given
 		String username = "google 123";
-		when(memberRepository.findActiveByUsername(username)).thenReturn(Optional.of(normalMember));
+		when(memberRepository.findActiveByMemberKey(username)).thenReturn(Optional.of(normalMember));
 
 		// when
-		Optional<Member> result = memberService.findActiveByUsername(username);
+		Optional<Member> result = memberService.findActiveByMemberKey(username);
 
 		// then
 		assertThat(result).isPresent();
 		assertThat(result.get().getName()).isEqualTo("정상회원");
-		verify(memberRepository).findActiveByUsername(username);
+		verify(memberRepository).findActiveByMemberKey(username);
 	}
 
 	@Test
@@ -170,14 +170,14 @@ class MemberServiceTest {
 	void existsActiveByUsername_ShouldReturnCorrectResult() {
 		// given
 		String username = "google 123";
-		when(memberRepository.existsActiveByUsername(username)).thenReturn(true);
+		when(memberRepository.existsActiveByMemberKey(username)).thenReturn(true);
 
 		// when
-		boolean result = memberService.existsActiveByUsername(username);
+		boolean result = memberService.existsActiveByMemberKey(username);
 
 		// then
 		assertThat(result).isTrue();
-		verify(memberRepository).existsActiveByUsername(username);
+		verify(memberRepository).existsActiveByMemberKey(username);
 	}
 
 	@Test
