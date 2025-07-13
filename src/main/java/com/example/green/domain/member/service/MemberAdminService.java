@@ -28,7 +28,7 @@ public class MemberAdminService {
 	private final MemberService memberService;
 
 	/**
-	 * 관리자용 회원 목록 조회 (페이징)
+	 * 관리자용 회원 목록 조회
 	 * - 탈퇴하지 않은 회원만 조회
 	 * - 가입일순 내림차순 정렬
 	 */
@@ -110,9 +110,7 @@ public class MemberAdminService {
 	}
 
 	/**
-	 * 관리자가 회원 강제 삭제 (탈퇴 처리) - memberKey로 식별
-	 * - 성능 최적화: memberKey로 직접 조회 (UNIQUE 인덱스)
-	 * - 소셜 로그인 제공자별 명확한 구분
+	 * 관리자가 회원 강제 삭제 (탈퇴 처리)
 	 */
 	@Transactional
 	public void deleteMemberByMemberKey(String memberKey) {
@@ -136,7 +134,7 @@ public class MemberAdminService {
 	}
 
 	/**
-	 * 회원 존재 여부 확인 (관리자용) - memberKey로 확인
+	 * 회원 존재 여부 확인 (관리자용)
 	 */
 	public void validateMemberExistsByMemberKey(String memberKey) {
 		if (!memberRepository.existsByMemberKey(memberKey)) {

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.green.domain.member.controller.docs.MemberAdminControllerDocs;
+import com.example.green.domain.member.controller.docs.MemberManagementControllerDocs;
 import com.example.green.domain.member.dto.admin.MemberDeleteRequestDto;
 import com.example.green.domain.member.dto.admin.MemberListRequestDto;
 import com.example.green.domain.member.dto.admin.MemberListResponseDto;
@@ -32,7 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @RequestMapping("/api/admin/members")
 @AdminApi(reason = "회원 관리는 관리자만 접근 가능")
-public class MemberAdminController implements MemberAdminControllerDocs {
+public class MemberAdminController implements MemberManagementControllerDocs {
 
 	private final MemberAdminService memberAdminService;
 	private final ExcelDownloader excelDownloader;
