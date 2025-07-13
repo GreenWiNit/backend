@@ -85,8 +85,8 @@ class MemberAdminControllerTest extends BaseControllerUnitTest {
 	void deleteMember_Success() {
 		// given
 		String username = "naver 123456789";
-		doNothing().when(memberAdminService).validateMemberExistsByUsername(username);
-		doNothing().when(memberAdminService).deleteMemberByUsername(username);
+		doNothing().when(memberAdminService).validateMemberExistsByMemberKey(username);
+		doNothing().when(memberAdminService).deleteMemberByMemberKey(username);
 
 		// when & then
 		given().log().all()
@@ -103,8 +103,8 @@ class MemberAdminControllerTest extends BaseControllerUnitTest {
 			.body("success", equalTo(true))
 			.body("message", equalTo("회원 삭제가 완료되었습니다."));
 
-		verify(memberAdminService).validateMemberExistsByUsername(username);
-		verify(memberAdminService).deleteMemberByUsername(username);
+		verify(memberAdminService).validateMemberExistsByMemberKey(username);
+		verify(memberAdminService).deleteMemberByMemberKey(username);
 	}
 
 	@Test
@@ -134,7 +134,7 @@ class MemberAdminControllerTest extends BaseControllerUnitTest {
 		// given
 		String username = "invalid_username";
 		doThrow(new RuntimeException("해당 회원을 찾을 수 없습니다."))
-			.when(memberAdminService).validateMemberExistsByUsername(username);
+			.when(memberAdminService).validateMemberExistsByMemberKey(username);
 
 		// when & then
 		given().log().all()
@@ -149,8 +149,8 @@ class MemberAdminControllerTest extends BaseControllerUnitTest {
 		.then().log().all()
 			.status(HttpStatus.INTERNAL_SERVER_ERROR);
 
-		verify(memberAdminService).validateMemberExistsByUsername(username);
-		verify(memberAdminService, never()).deleteMemberByUsername(any());
+		verify(memberAdminService).validateMemberExistsByMemberKey(username);
+		verify(memberAdminService, never()).deleteMemberByMemberKey(any());
 	}
 
 	@Test

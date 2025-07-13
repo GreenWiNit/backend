@@ -19,7 +19,7 @@ import lombok.Getter;
 public class PrincipalDetails implements UserDetails {
 
 	private final Long memberId;
-	private final String username; // OAuth2 username (예: "google 123456789")
+	private final String memberKey; // OAuth2 memberKey (예: "google 123456789")
 	private final String role;
 	private final String name; // 실제 사용자 이름
 	private final String email; // 이메일 주소
@@ -36,7 +36,7 @@ public class PrincipalDetails implements UserDetails {
 
 	@Override
 	public String getUsername() {
-		return username;
+		return memberKey;
 	}
 
 	@Override

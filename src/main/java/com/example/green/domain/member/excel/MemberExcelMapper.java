@@ -46,7 +46,7 @@ public class MemberExcelMapper implements ExcelDataMapper<MemberListResponseDto>
 	@Override
 	public Object[] extractRowData(MemberListResponseDto data) {
 		return new Object[] {
-			data.username(),
+			data.memberKey(),
 			data.email(),
 			data.nickname(),
 			data.phoneNumber() != null ? data.phoneNumber() : "-",

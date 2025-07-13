@@ -21,35 +21,35 @@ public interface RefreshTokenRepository extends JpaRepository<TokenManager, Long
 	@Query("SELECT rt FROM TokenManager rt WHERE rt.tokenValue = :tokenValue AND rt.isRevoked = false")
 	Optional<TokenManager> findByTokenValueAndNotRevoked(@Param("tokenValue") String tokenValue);
 
-	// username으로 모든 유효한 TokenManager 조회 (Auth 서비스용)
-	@Query("SELECT rt FROM TokenManager rt " + "WHERE rt.member.username = :username AND rt.isRevoked = false "
+	// memberKey로 모든 유효한 TokenManager 조회 (Auth 서비스용)
+	@Query("SELECT rt FROM TokenManager rt " + "WHERE rt.member.memberKey = :memberKey AND rt.isRevoked = false "
 		+ "ORDER BY rt.id ASC")
-	List<TokenManager> findAllByUsernameAndNotRevoked(@Param("username") String username);
+	List<TokenManager> findAllByMemberKeyAndNotRevoked(@Param("memberKey") String memberKey);
 
-	// username으로 가장 최신 TokenManager 조회 (로그아웃용)
+	// memberKey로 가장 최신 TokenManager 조회 (로그아웃용)
 	@Query("SELECT rt FROM TokenManager rt "
-		+ "WHERE rt.member.username = :username AND rt.isRevoked = false "
+		+ "WHERE rt.member.memberKey = :memberKey AND rt.isRevoked = false "
 		+ "ORDER BY rt.tokenVersion DESC, rt.id DESC")
-	Optional<TokenManager> findLatestByUsernameAndNotRevoked(@Param("username") String username);
+	Optional<TokenManager> findLatestByMemberKeyAndNotRevoked(@Param("memberKey") String memberKey);
 
 	// 토큰 정리 전용
 	@Lock(LockModeType.PESSIMISTIC_WRITE)
 	@Query("SELECT rt FROM TokenManager rt WHERE rt.member = :member AND rt.isRevoked = false ORDER BY rt.id ASC")
 	List<TokenManager> findAllByMemberForCleanupWithLock(@Param("member") Member member);
 
-	// 사용자의 모든 TokenManager 무효화 (username 기반)
+	// 사용자의 모든 TokenManager 무효화 (memberKey 기반)
 	@Modifying
 	@Query(
 		"UPDATE TokenManager rt " + "SET rt.isRevoked = true "
-			+ "WHERE rt.member.username = :username AND rt.isRevoked = false"
+			+ "WHERE rt.member.memberKey = :memberKey AND rt.isRevoked = false"
 	)
-	void revokeAllByUsername(@Param("username") String username);
+	void revokeAllByMemberKey(@Param("memberKey") String memberKey);
 
-	// 특정 사용자의 만료된 토큰 삭제 (username 기반)
+	// 특정 사용자의 만료된 토큰 삭제 (memberKey 기반)
 	@Modifying
-	@Query("DELETE FROM TokenManager rt " + "WHERE rt.member.username = :username "
+	@Query("DELETE FROM TokenManager rt " + "WHERE rt.member.memberKey = :memberKey "
 		+ "AND (rt.expiresAt < :now OR rt.isRevoked = true)")
-	void deleteExpiredAndRevokedTokensByUsername(@Param("username") String username, @Param("now") LocalDateTime now);
+	void deleteExpiredAndRevokedTokensByMemberKey(@Param("memberKey") String memberKey, @Param("now") LocalDateTime now);
 
 	// 만료된 토큰 일괄 삭제 (스케줄러용)
 	@Modifying

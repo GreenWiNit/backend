@@ -45,7 +45,7 @@ public class MemberService {
 	 * OAuth2 회원가입 처리
 	 *
 	 * OAuth2 인증 정보를 기반으로 새로운 회원을 생성.
-	 * provider와 providerId를 조합하여 고유한 username을 생성하고,
+	 * provider와 providerId를 조합하여 고유한 memberKey를 생성하고,
 	 * 사용자가 입력한 추가 정보(닉네임, 프로필 이미지)와 함께 회원을 등록.
 	 *
 	 * @param provider OAuth2 제공자 (google, naver, kakao 등)
@@ -54,7 +54,7 @@ public class MemberService {
 	 * @param email OAuth2에서 제공하는 이메일 주소
 	 * @param nickname 사용자가 입력한 닉네임
 	 * @param profileImageUrl 사용자가 선택한 프로필 이미지 URL
-	 * @return 생성된 사용자의 username (provider + " " + providerId)
+	 * @return 생성된 사용자의 memberKey (provider + " " + providerId)
 	 */
 	@Retryable(
 		retryFor = {OptimisticLockException.class, ObjectOptimisticLockingFailureException.class},
@@ -64,22 +64,22 @@ public class MemberService {
 	public String signupFromOAuth2(String provider, String providerId, String name, String email,
 		String nickname, String profileImageUrl) {
 
-		String username = createUsername(provider, providerId);
+		String memberKey = createMemberKey(provider, providerId);
 
-		return createMember(username, name, email, nickname, profileImageUrl);
+		return createMember(memberKey, name, email, nickname, profileImageUrl);
 	}
 
 	/**
-	 * OAuth2 정보로 username 생성
+	 * OAuth2 정보로 memberKey 생성
 	 *
-	 * OAuth2 provider와 providerId를 조합하여 고유한 username을 생성.
+	 * OAuth2 provider와 providerId를 조합하여 고유한 memberKey를 생성.
 	 * 형식: "provider providerId" (예: "google 123456789")
 	 *
 	 * @param provider OAuth2 제공자
 	 * @param providerId OAuth2 제공자에서 발급한 고유 ID
-	 * @return 생성된 username
+	 * @return 생성된 memberKey
 	 */
-	private String createUsername(String provider, String providerId) {
+	private String createMemberKey(String provider, String providerId) {
 		return provider + " " + providerId;
 	}
 
@@ -88,21 +88,21 @@ public class MemberService {
 	 * 주어진 정보로 새로운 회원을 생성하고 데이터베이스에 저장.
 	 * 동시성 문제로 인한 중복 생성을 방지하기 위해 예외 처리를 포함.
 	 *
-	 * @param username 고유 사용자명
+	 * @param memberKey 고유 사용자명
 	 * @param name 사용자 이름
 	 * @param email 이메일 주소
 	 * @param nickname 닉네임 (선택사항)
 	 * @param profileImageUrl 프로필 이미지 URL (선택사항)
-	 * @return 생성된 사용자의 username
+	 * @return 생성된 사용자의 memberKey
 	 */
-	private String createMember(String username, String name, String email, String nickname, String profileImageUrl) {
-		if (memberRepository.existsByUsername(username)) {
-			log.warn("이미 존재하는 사용자입니다 (DB 체크): {}", username);
-			return username;
+	private String createMember(String memberKey, String name, String email, String nickname, String profileImageUrl) {
+		if (memberRepository.existsByMemberKey(memberKey)) {
+			log.warn("이미 존재하는 사용자입니다 (DB 체크): {}", memberKey);
+			return memberKey;
 		}
 
 		try {
-			Member member = Member.create(username, name, email);
+			Member member = Member.create(memberKey, name, email);
 
 			// 추가 프로필 정보가 있는 경우 업데이트
 			if (hasAdditionalProfileInfo(nickname, profileImageUrl)) {
@@ -112,11 +112,11 @@ public class MemberService {
 
 			memberRepository.save(member);
 			log.info("신규 사용자 회원가입 완료: {} ({})", name, email);
-			return username;
+			return memberKey;
 
 		} catch (DataIntegrityViolationException e) {
-			log.warn("동시 회원가입으로 인한 중복 감지, 기존 사용자로 처리: {}", username, e);
-			return username;
+			log.warn("동시 회원가입으로 인한 중복 감지, 기존 사용자로 처리: {}", memberKey, e);
+			return memberKey;
 		}
 	}
 
@@ -135,7 +135,7 @@ public class MemberService {
 	 * 로그인 시점에 OAuth2 제공자로부터 받은 최신 정보로 갱신하여
 	 * 사용자 정보의 일관성을 유지.
 	 *
-	 * @param username 업데이트할 사용자의 username
+	 * @param memberKey 업데이트할 사용자의 memberKey
 	 * @param name OAuth2에서 제공하는 최신 사용자 이름
 	 * @param email OAuth2에서 제공하는 최신 이메일 주소
 	 */
@@ -144,11 +144,11 @@ public class MemberService {
 		maxAttempts = GENERAL_MAX_ATTEMPTS,
 		backoff = @Backoff(delay = GENERAL_DELAY, multiplier = GENERAL_MULTIPLIER, random = true)
 	)
-	public void updateOAuth2Info(String username, String name, String email) {
-		memberRepository.findByUsername(username)
+	public void updateOAuth2Info(String memberKey, String name, String email) {
+		memberRepository.findByMemberKey(memberKey)
 			.ifPresent(member -> {
 				member.updateOAuth2Info(name, email);
-				log.debug("OAuth2 사용자 정보 업데이트 완료: {}", username);
+				log.debug("OAuth2 사용자 정보 업데이트 완료: {}", memberKey);
 			});
 	}
 
@@ -157,16 +157,16 @@ public class MemberService {
 	 * 토큰 검증 등에서 사용되며, 탈퇴한 회원의 토큰을 자동으로 무효화
 	 */
 	@Transactional(readOnly = true)
-	public Optional<Member> findActiveByUsername(String username) {
-		return memberRepository.findActiveByUsername(username);
+	public Optional<Member> findActiveByMemberKey(String memberKey) {
+		return memberRepository.findActiveByMemberKey(memberKey);
 	}
 
 	/**
 	 * 활성 회원 존재 여부 확인
 	 */
 	@Transactional(readOnly = true)
-	public boolean existsActiveByUsername(String username) {
-		return memberRepository.existsActiveByUsername(username);
+	public boolean existsActiveByMemberKey(String memberKey) {
+		return memberRepository.existsActiveByMemberKey(memberKey);
 	}
 
 	/**
@@ -249,8 +249,8 @@ public class MemberService {
 
 		member.withdraw();
 
-		log.info("회원 탈퇴 완료 (본인 탈퇴): memberId={}, username={}",
-			memberId, member.getUsername());
+		log.info("회원 탈퇴 완료 (본인 탈퇴): memberId={}, memberKey={}",
+			memberId, member.getMemberKey());
 
 		// TODO: 배치 시스템으로 물리적 삭제 처리
 		// - 탈퇴 후 일정 기간(예: 30일) 경과 시 개인정보 완전 삭제
@@ -278,8 +278,8 @@ public class MemberService {
 
 		member.withdraw();
 
-		log.warn("관리자에 의한 강제 삭제 완료: memberId={}, username={}",
-			memberId, member.getUsername());
+		log.warn("관리자에 의한 강제 삭제 완료: memberId={}, memberKey={}",
+			memberId, member.getMemberKey());
 
 		// TODO: 관리자 삭제 감사 로그 별도 기록
 		// - 삭제한 관리자 정보
@@ -308,10 +308,10 @@ public class MemberService {
 	}
 
 	/**
-	 * username으로 회원 탈퇴 처리
+	 * memberKey로 회원 탈퇴 처리
 	 * Auth 도메인에서 토큰 무효화 후 Member 도메인 탈퇴 처리를 위해 호출됩니다.
 	 *
-	 * @param username 탈퇴할 사용자의 username
+	 * @param memberKey 탈퇴할 사용자의 memberKey
 	 * @throws BusinessException 회원을 찾을 수 없는 경우
 	 */
 	@Retryable(
@@ -319,8 +319,8 @@ public class MemberService {
 		maxAttempts = GENERAL_MAX_ATTEMPTS,
 		backoff = @Backoff(delay = GENERAL_DELAY, multiplier = GENERAL_MULTIPLIER, random = true)
 	)
-	public void withdrawMemberByUsername(String username) {
-		Member member = findMemberByUsername(username, "회원 탈퇴");
+	public void withdrawMemberByMemberKey(String memberKey) {
+		Member member = findMemberByMemberKey(memberKey, "회원 탈퇴");
 		withdrawMember(member.getId());
 	}
 
@@ -328,15 +328,15 @@ public class MemberService {
 	 * 사용자명으로 회원 조회
 	 * - 회원이 존재하지 않으면 예외 발생
 	 *
-	 * @param username 사용자명
+	 * @param memberKey 사용자명
 	 * @param operation 수행 중인 작업
 	 * @return 조회된 회원
 	 * @throws BusinessException 회원이 존재하지 않는 경우
 	 */
-	private Member findMemberByUsername(String username, String operation) {
-		return memberRepository.findByUsername(username)
+	private Member findMemberByMemberKey(String memberKey, String operation) {
+		return memberRepository.findByMemberKey(memberKey)
 			.orElseThrow(() -> {
-				log.error("{} 실패: 사용자를 찾을 수 없음 - username: {}", operation, username);
+				log.error("{} 실패: 사용자를 찾을 수 없음 - memberKey: {}", operation, memberKey);
 				return new BusinessException(MemberExceptionMessage.MEMBER_NOT_FOUND);
 			});
 	}

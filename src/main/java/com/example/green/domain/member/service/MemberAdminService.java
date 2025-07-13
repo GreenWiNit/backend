@@ -110,37 +110,37 @@ public class MemberAdminService {
 	}
 
 	/**
-	 * 관리자가 회원 강제 삭제 (탈퇴 처리) - username으로 식별
-	 * - 성능 최적화: username으로 직접 조회 (UNIQUE 인덱스)
+	 * 관리자가 회원 강제 삭제 (탈퇴 처리) - memberKey로 식별
+	 * - 성능 최적화: memberKey로 직접 조회 (UNIQUE 인덱스)
 	 * - 소셜 로그인 제공자별 명확한 구분
 	 */
 	@Transactional
-	public void deleteMemberByUsername(String username) {
-		log.info("[ADMIN] 관리자에 의한 회원 강제 삭제 요청: username={}", username);
+	public void deleteMemberByMemberKey(String memberKey) {
+		log.info("[ADMIN] 관리자에 의한 회원 강제 삭제 요청: memberKey={}", memberKey);
 		
-		// username으로 회원 조회
-		Member member = memberRepository.findByUsername(username)
+		// memberKey로 회원 조회
+		Member member = memberRepository.findByMemberKey(memberKey)
 			.orElseThrow(() -> {
-				log.error("[ADMIN] 존재하지 않는 회원 사용자명: {}", username);
+				log.error("[ADMIN] 존재하지 않는 회원 사용자명: {}", memberKey);
 				return new BusinessException(MemberExceptionMessage.MEMBER_NOT_FOUND);
 			});
 		
 		try {
 			memberService.forceDeleteMemberByAdmin(member.getId());
-			log.info("[ADMIN] 관리자에 의한 회원 강제 삭제 완료: username={}, memberId={}, email={}", 
-				username, member.getId(), member.getEmail());
+			log.info("[ADMIN] 관리자에 의한 회원 강제 삭제 완료: memberKey={}, memberId={}, email={}", 
+				memberKey, member.getId(), member.getEmail());
 		} catch (BusinessException e) {
-			log.error("[ADMIN] 회원 강제 삭제 실패: username={}, error={}", username, e.getMessage());
+			log.error("[ADMIN] 회원 강제 삭제 실패: memberKey={}, error={}", memberKey, e.getMessage());
 			throw e;
 		}
 	}
 
 	/**
-	 * 회원 존재 여부 확인 (관리자용) - username으로 확인
+	 * 회원 존재 여부 확인 (관리자용) - memberKey로 확인
 	 */
-	public void validateMemberExistsByUsername(String username) {
-		if (!memberRepository.existsByUsername(username)) {
-			log.error("[ADMIN] 존재하지 않는 회원 사용자명: {}", username);
+	public void validateMemberExistsByMemberKey(String memberKey) {
+		if (!memberRepository.existsByMemberKey(memberKey)) {
+			log.error("[ADMIN] 존재하지 않는 회원 사용자명: {}", memberKey);
 			throw new BusinessException(MemberExceptionMessage.MEMBER_NOT_FOUND);
 		}
 	}

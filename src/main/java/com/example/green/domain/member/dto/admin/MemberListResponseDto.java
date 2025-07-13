@@ -9,8 +9,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "관리자용 회원 목록 조회 응답")
 public record MemberListResponseDto(
-	@Schema(description = "사용자명 (고유 식별자)", example = "naver 123456789")
-	String username,
+	@Schema(description = "회원키 (고유 식별자)", example = "naver 123456789")
+	String memberKey,
 	
 	@Schema(description = "이메일 (참고용)", example = "user@naver.com")
 	String email,
@@ -32,19 +32,19 @@ public record MemberListResponseDto(
 ) {
 	public static MemberListResponseDto from(Member member) {
 		return new MemberListResponseDto(
-			member.getUsername(),
+			member.getMemberKey(),
 			member.getEmail(),
 			member.getProfile().getNickname(),
 			member.getPhoneNumber(),
 			member.getCreatedDate(),
 			member.getRole() == MemberRole.ADMIN ? "관리자" : "일반회원",
-			extractProvider(member.getUsername())
+			extractProvider(member.getMemberKey())
 		);
 	}
 	
-	private static String extractProvider(String username) {
-		if (username == null) return "unknown";
-		String[] parts = username.split(" ");
+	private static String extractProvider(String memberKey) {
+		if (memberKey == null) return "unknown";
+		String[] parts = memberKey.split(" ");
 		return parts.length > 0 ? parts[0] : "unknown";
 	}
 } 

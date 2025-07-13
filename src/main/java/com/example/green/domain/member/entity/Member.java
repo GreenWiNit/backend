@@ -34,7 +34,7 @@ public class Member extends BaseEntity {
 	private Long version;
 
 	@Column(unique = true, nullable = false)
-	private String username;
+	private String memberKey;
 
 	@Column(nullable = false)
 	private String name;
@@ -59,8 +59,8 @@ public class Member extends BaseEntity {
 
 	private LocalDateTime lastLoginAt;
 
-	private Member(String username, String name, String email) {
-		this.username = username;
+	private Member(String memberKey, String name, String email) {
+		this.memberKey = memberKey;
 		this.name = name;
 		this.email = email;
 		this.profile = Profile.builder()
@@ -72,8 +72,8 @@ public class Member extends BaseEntity {
 		this.lastLoginAt = LocalDateTime.now();
 	}
 
-	public static Member create(String username, String name, String email) {
-		return new Member(username, name, email);
+	public static Member create(String memberKey, String name, String email) {
+		return new Member(memberKey, name, email);
 	}
 
 	public void updateOAuth2Info(String name, String email) {

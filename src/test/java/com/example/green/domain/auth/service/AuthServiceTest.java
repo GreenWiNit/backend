@@ -46,86 +46,86 @@ class AuthServiceTest {
 	@DisplayName("회원 탈퇴 시 모든 토큰 무효화 후 Member 도메인 탈퇴 처리")
 	void withdrawMember_ShouldInvalidateAllTokensAndWithdrawMember() {
 		// given
-		String username = "google 123";
+		String memberKey = "google 123";
 		List<TokenManager> allTokens = Arrays.asList(tokenManager1, tokenManager2);
 		// 이 테스트에서만 사용하는 stubbing
 		when(tokenManager1.logoutAllDevices()).thenReturn(1001L);
 		when(tokenManager2.logoutAllDevices()).thenReturn(1002L);
-		when(refreshTokenRepository.findAllByUsernameAndNotRevoked(username))
+		when(refreshTokenRepository.findAllByMemberKeyAndNotRevoked(memberKey))
 			.thenReturn(allTokens);
 
 		// when
-		authService.withdrawMember(username);
+		authService.withdrawMember(memberKey);
 
 		// then
 		verify(tokenManager1).logoutAllDevices();
 		verify(tokenManager2).logoutAllDevices();
 		verify(refreshTokenRepository).saveAll(allTokens);
-		verify(refreshTokenRepository).revokeAllByUsername(username);
-		verify(memberService).withdrawMemberByUsername(username);
+		verify(refreshTokenRepository).revokeAllByMemberKey(memberKey);
+		verify(memberService).withdrawMemberByMemberKey(memberKey);
 	}
 
 	@Test
 	@DisplayName("토큰이 없는 회원 탈퇴 시에도 정상 처리")
 	void withdrawMember_WithNoTokens_ShouldStillWithdrawMember() {
 		// given
-		String username = "google 123";
-		when(refreshTokenRepository.findAllByUsernameAndNotRevoked(username))
+		String memberKey = "google 123";
+		when(refreshTokenRepository.findAllByMemberKeyAndNotRevoked(memberKey))
 			.thenReturn(List.of());
 
 		// when
-		authService.withdrawMember(username);
+		authService.withdrawMember(memberKey);
 
 		// then
 		verify(refreshTokenRepository, never()).saveAll(any());
-		verify(refreshTokenRepository).revokeAllByUsername(username);
-		verify(memberService).withdrawMemberByUsername(username);
+		verify(refreshTokenRepository).revokeAllByMemberKey(memberKey);
+		verify(memberService).withdrawMemberByMemberKey(memberKey);
 	}
 
 	@Test
 	@DisplayName("Member 도메인 탈퇴 실패 시 예외 전파")
 	void withdrawMember_WhenMemberServiceFails_ShouldPropagateException() {
 		// given
-		String username = "google 123";
+		String memberKey = "google 123";
 		List<TokenManager> allTokens = List.of(tokenManager1);
 		// 이 테스트에서만 사용하는 stubbing
 		when(tokenManager1.logoutAllDevices()).thenReturn(1001L);
-		when(refreshTokenRepository.findAllByUsernameAndNotRevoked(username))
+		when(refreshTokenRepository.findAllByMemberKeyAndNotRevoked(memberKey))
 			.thenReturn(allTokens);
 		doThrow(new BusinessException(MemberExceptionMessage.MEMBER_NOT_FOUND))
-			.when(memberService).withdrawMemberByUsername(username);
+			.when(memberService).withdrawMemberByMemberKey(memberKey);
 
 		// when & then
-		assertThatThrownBy(() -> authService.withdrawMember(username))
+		assertThatThrownBy(() -> authService.withdrawMember(memberKey))
 			.isInstanceOf(BusinessException.class)
 			.hasMessage(MemberExceptionMessage.MEMBER_NOT_FOUND.getMessage());
 
 		verify(tokenManager1).logoutAllDevices();
 		verify(refreshTokenRepository).saveAll(allTokens);
-		verify(refreshTokenRepository).revokeAllByUsername(username);
-		verify(memberService).withdrawMemberByUsername(username);
+		verify(refreshTokenRepository).revokeAllByMemberKey(memberKey);
+		verify(memberService).withdrawMemberByMemberKey(memberKey);
 	}
 
 	@Test
 	@DisplayName("토큰 무효화 중 예외 발생 시 예외 전파")
 	void withdrawMember_WhenTokenInvalidationFails_ShouldPropagateException() {
 		// given
-		String username = "google 123";
+		String memberKey = "google 123";
 		List<TokenManager> allTokens = List.of(tokenManager1);
 		// 이 테스트에서만 사용하는 stubbing
 		when(tokenManager1.logoutAllDevices()).thenReturn(1001L);
-		when(refreshTokenRepository.findAllByUsernameAndNotRevoked(username))
+		when(refreshTokenRepository.findAllByMemberKeyAndNotRevoked(memberKey))
 			.thenReturn(allTokens);
 		doThrow(new RuntimeException("Database error"))
-			.when(refreshTokenRepository).revokeAllByUsername(username);
+			.when(refreshTokenRepository).revokeAllByMemberKey(memberKey);
 
 		// when & then
-		assertThatThrownBy(() -> authService.withdrawMember(username))
+		assertThatThrownBy(() -> authService.withdrawMember(memberKey))
 			.isInstanceOf(RuntimeException.class)
 			.hasMessage("Database error");
 
 		verify(tokenManager1).logoutAllDevices();
 		verify(refreshTokenRepository).saveAll(allTokens);
-		verify(memberService, never()).withdrawMemberByUsername(username);
+		verify(memberService, never()).withdrawMemberByMemberKey(memberKey);
 	}
 }

@@ -69,7 +69,7 @@ class WithdrawMemberIntegrationTest extends BaseIntegrationTest {
 	@DisplayName("정상 회원 탈퇴 시 전체 플로우가 성공적으로 처리된다")
 	void withdrawMember_WithValidMember_ShouldSucceed() {
 		// given
-		String username = testMember.getUsername();
+		String username = testMember.getMemberKey();
 		Long memberId = testMember.getId();
 
 		// when
@@ -82,10 +82,10 @@ class WithdrawMemberIntegrationTest extends BaseIntegrationTest {
 		assertThat(updatedMember.getLastLoginAt()).isNull();
 		assertThat(updatedMember.isWithdrawn()).isTrue();
 
-		assertThat(refreshTokenRepository.findAllByUsernameAndNotRevoked(username))
+		assertThat(refreshTokenRepository.findAllByMemberKeyAndNotRevoked(username))
 			.isEmpty();
 
-		assertThat(memberRepository.findActiveByUsername(username))
+		assertThat(memberRepository.findActiveByMemberKey(username))
 			.isEmpty();
 	}
 
@@ -105,7 +105,7 @@ class WithdrawMemberIntegrationTest extends BaseIntegrationTest {
 	@DisplayName("프로필 이미지가 있는 회원 탈퇴 시 파일 처리도 함께 수행된다")
 	void withdrawMember_WithProfileImage_ShouldProcessFile() {
 		// given
-		String username = testMember.getUsername();
+		String username = testMember.getMemberKey();
 		String profileImageUrl = testMember.getProfile().getProfileImageUrl();
 
 		// when

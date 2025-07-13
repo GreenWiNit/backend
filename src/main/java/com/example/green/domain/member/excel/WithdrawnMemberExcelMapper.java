@@ -47,7 +47,7 @@ public class WithdrawnMemberExcelMapper implements ExcelDataMapper<WithdrawnMemb
 	@Override
 	public Object[] extractRowData(WithdrawnMemberListResponseDto data) {
 		return new Object[] {
-			data.username(),
+			data.memberKey(),
 			data.email(),
 			data.nickname(),
 			data.phoneNumber() != null ? data.phoneNumber() : "-",

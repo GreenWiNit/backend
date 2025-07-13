@@ -44,7 +44,7 @@ public interface MemberAdminControllerDocs {
 							"hasNext": true,
 							"content": [
 								{
-									"username": "naver 123456789",
+									"memberKey": "naver 123456789",
 									"email": "user@naver.com",
 									"nickname": "홍길동",
 									"phoneNumber": "010-1234-5678",
@@ -126,7 +126,7 @@ public interface MemberAdminControllerDocs {
 							"hasNext": false,
 							"content": [
 								{
-									"username": "naver 123456789",
+									"memberKey": "naver 123456789",
 									"email": "user@naver.com",
 									"nickname": "홍길동",
 									"phoneNumber": "010-1234-5678",
@@ -189,7 +189,7 @@ public interface MemberAdminControllerDocs {
 	})
 	void downloadWithdrawnMemberListExcel(HttpServletResponse response);
 
-	@Operation(summary = "관리자용 회원 강제 삭제", description = "관리자가 회원을 강제 삭제(강퇴)합니다. username(소셜 로그인 제공자별 고유 식별자)으로 회원을 식별합니다.")
+	@Operation(summary = "관리자용 회원 강제 삭제", description = "관리자가 회원을 강제 삭제(강퇴)합니다. memberKey(소셜 로그인 제공자별 고유 식별자)으로 회원을 식별합니다.")
 	@ApiResponses(value = {
 		@ApiResponse(
 			responseCode = "200",

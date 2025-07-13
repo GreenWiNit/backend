@@ -50,7 +50,7 @@ public class AdminAuthController {
 		Admin admin = adminService.authenticate(request.getLoginId(), request.getPassword());
 
 		// 2. JWT Access Token 생성
-		String accessToken = tokenService.createAccessToken(admin.getTokenUsername(), Admin.ROLE_ADMIN);
+		String accessToken = tokenService.createAccessToken(admin.getTokenMemberKey(), Admin.ROLE_ADMIN);
 
 		// 3. 응답 생성
 		AdminLoginResponseDto response = AdminLoginResponseDto.of(accessToken, admin);

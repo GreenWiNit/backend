@@ -83,16 +83,16 @@ public class AuthService {
 		maxAttempts = 3,
 		backoff = @Backoff(delay = 50, multiplier = 2.0, random = true)
 	)
-	public void logout(String username) {
-		Optional<TokenManager> latestToken = refreshTokenRepository.findLatestByUsernameAndNotRevoked(username);
+	public void logout(String memberKey) {
+		Optional<TokenManager> latestToken = refreshTokenRepository.findLatestByMemberKeyAndNotRevoked(memberKey);
 		if (latestToken.isPresent()) {
 			TokenManager token = latestToken.get();
 			Long newTokenVersion = token.logout(); // tokenVersion++
 			refreshTokenRepository.save(token);
 			log.info("[AUTH] 로그아웃 완료 - AccessToken 무효화: {} (tokenVersion: {})",
-				username, newTokenVersion);
+				memberKey, newTokenVersion);
 		} else {
-			log.warn("[AUTH] 로그아웃 대상 토큰을 찾을 수 없음: {}", username);
+			log.warn("[AUTH] 로그아웃 대상 토큰을 찾을 수 없음: {}", memberKey);
 		}
 	}
 
@@ -107,11 +107,11 @@ public class AuthService {
 		maxAttempts = 3,
 		backoff = @Backoff(delay = 50, multiplier = 2.0, random = true)
 	)
-	public void logoutAllDevices(String username) {
-		List<TokenManager> allTokens = refreshTokenRepository.findAllByUsernameAndNotRevoked(username);
+	public void logoutAllDevices(String memberKey) {
+		List<TokenManager> allTokens = refreshTokenRepository.findAllByMemberKeyAndNotRevoked(memberKey);
 
 		if (allTokens.isEmpty()) {
-			log.warn("[AUTH] 로그아웃 대상 토큰을 찾을 수 없음: {}", username);
+			log.warn("[AUTH] 로그아웃 대상 토큰을 찾을 수 없음: {}", memberKey);
 			return;
 		}
 
@@ -119,7 +119,7 @@ public class AuthService {
 		Long maxTokenVersion = invalidateAllTokens(allTokens);
 
 		log.info("[AUTH] 모든 디바이스 로그아웃 완료 - 모든 AccessToken 무효화: {} (tokenVersion: {})",
-			username, maxTokenVersion);
+			memberKey, maxTokenVersion);
 	}
 
 	/**
@@ -148,16 +148,16 @@ public class AuthService {
 	 * 
 	 * @param username 탈퇴할 회원의 사용자명
 	 */
-	public void withdrawMember(String username) {
-		log.info("[AUTH] 회원 탈퇴 처리 시작 - username: {}", username);
+	public void withdrawMember(String memberKey) {
+		log.info("[AUTH] 회원 탈퇴 처리 시작 - memberKey: {}", memberKey);
 
 		// 1단계: 인증 관련 처리
-		invalidateAllAuthentications(username);
+		invalidateAllAuthentications(memberKey);
 
 		// 2단계: 회원 정보 처리
-		memberService.withdrawMemberByUsername(username);
+		memberService.withdrawMemberByMemberKey(memberKey);
 
-		log.info("[AUTH] 회원 탈퇴 완료 - username: {}", username);
+		log.info("[AUTH] 회원 탈퇴 완료 - memberKey: {}", memberKey);
 
 		// TODO: 배치 시스템으로 토큰 물리적 삭제 처리
 		// - 탈퇴한 사용자의 모든 TokenManager 레코드 물리적 삭제
@@ -170,14 +170,14 @@ public class AuthService {
 	 * - 모든 디바이스 로그아웃 (AccessToken 무효화)
 	 * - 모든 RefreshToken 무효화
 	 * 
-	 * @param username 사용자명
+	 * @param memberKey 회원키
 	 */
-	private void invalidateAllAuthentications(String username) {
+	private void invalidateAllAuthentications(String memberKey) {
 		// 모든 디바이스에서 로그아웃 (모든 AccessToken 무효화)
-		logoutAllDevices(username);
+		logoutAllDevices(memberKey);
 
 		// 모든 RefreshToken 무효화
-		refreshTokenRepository.revokeAllByUsername(username);
-		log.info("[AUTH] 모든 RefreshToken 무효화 완료: {}", username);
+		refreshTokenRepository.revokeAllByMemberKey(memberKey);
+		log.info("[AUTH] 모든 RefreshToken 무효화 완료: {}", memberKey);
 	}
 }

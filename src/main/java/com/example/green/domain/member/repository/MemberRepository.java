@@ -13,41 +13,41 @@ import com.example.green.domain.member.entity.Member;
 import com.example.green.domain.member.entity.enums.MemberStatus;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
-	Optional<Member> findByUsername(String username);
+	Optional<Member> findByMemberKey(String memberKey);
 
-	boolean existsByUsername(String username);
-	
+	boolean existsByMemberKey(String memberKey);
+
 	Optional<Member> findByEmail(String email);
-	
+
 	boolean existsByEmail(String email);
-	
+
 	/**
 	 * 활성 회원만 조회 (탈퇴하지 않은 회원)
 	 * - MemberStatus가 NORMAL이고 deleted가 false인 회원
 	 */
-	@Query("SELECT m FROM Member m WHERE m.username = :username AND m.status = :status AND m.deleted = false")
-	Optional<Member> findActiveByUsername(@Param("username") String username, @Param("status") MemberStatus status);
-	
+	@Query("SELECT m FROM Member m WHERE m.memberKey = :memberKey AND m.status = :status AND m.deleted = false")
+	Optional<Member> findActiveByMemberKey(@Param("memberKey") String memberKey, @Param("status") MemberStatus status);
+
 	/**
 	 * 활성 회원만 조회 (오버로드 - NORMAL 상태 기본값)
 	 */
-	default Optional<Member> findActiveByUsername(String username) {
-		return findActiveByUsername(username, MemberStatus.NORMAL);
+	default Optional<Member> findActiveByMemberKey(String memberKey) {
+		return findActiveByMemberKey(memberKey, MemberStatus.NORMAL);
 	}
-	
+
 	/**
 	 * 활성 회원 존재 여부 확인
 	 */
-	@Query("SELECT COUNT(m) > 0 FROM Member m WHERE m.username = :username AND m.status = :status AND m.deleted = false")
-	boolean existsActiveByUsername(@Param("username") String username, @Param("status") MemberStatus status);
-	
+	@Query("SELECT COUNT(m) > 0 FROM Member m WHERE m.memberKey = :memberKey AND m.status = :status AND m.deleted = false")
+	boolean existsActiveByMemberKey(@Param("memberKey") String memberKey, @Param("status") MemberStatus status);
+
 	/**
 	 * 활성 회원 존재 여부 확인 (오버로드 - NORMAL 상태 기본값)
 	 */
-	default boolean existsActiveByUsername(String username) {
-		return existsActiveByUsername(username, MemberStatus.NORMAL);
+	default boolean existsActiveByMemberKey(String memberKey) {
+		return existsActiveByMemberKey(memberKey, MemberStatus.NORMAL);
 	}
-	
+
 	/**
 	 * 관리자용 활성 회원 목록 조회 (페이징)
 	 * - 탈퇴하지 않은 회원만 조회
@@ -55,7 +55,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 	 */
 	@Query("SELECT m FROM Member m WHERE m.status = 'NORMAL' AND m.deleted = false")
 	Page<Member> findActiveMembersForAdmin(Pageable pageable);
-	
+
 	/**
 	 * 관리자용 활성 회원 전체 목록 조회 (엑셀 다운로드용)
 	 * - 탈퇴하지 않은 회원만 조회
@@ -63,7 +63,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 	 */
 	@Query("SELECT m FROM Member m WHERE m.status = 'NORMAL' AND m.deleted = false ORDER BY m.createdDate DESC")
 	List<Member> findAllActiveMembersForAdmin();
-	
+
 	/**
 	 * 관리자용 탈퇴 회원 목록 조회 (페이징)
 	 * - 탈퇴한 회원만 조회
@@ -71,7 +71,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 	 */
 	@Query("SELECT m FROM Member m WHERE m.status = 'DELETED' OR m.deleted = true ORDER BY m.modifiedDate DESC")
 	Page<Member> findWithdrawnMembersForAdmin(Pageable pageable);
-	
+
 	/**
 	 * 관리자용 탈퇴 회원 전체 목록 조회 (엑셀 다운로드용)
 	 * - 탈퇴한 회원만 조회

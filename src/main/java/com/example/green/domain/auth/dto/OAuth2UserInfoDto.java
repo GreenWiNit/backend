@@ -8,7 +8,7 @@ public record OAuth2UserInfoDto(
 	String providerId
 ) {
 
-	public String getUsername() {
+	public String getMemberKey() {
 		return provider + " " + providerId;
 	}
 }

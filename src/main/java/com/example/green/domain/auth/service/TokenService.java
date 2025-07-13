@@ -96,8 +96,8 @@ public class TokenService {
 	/**
 	 * 사용자의 최신 tokenVersion 조회
 	 */
-	private Long getCurrentTokenVersion(String username) {
-		List<TokenManager> tokens = refreshTokenRepository.findAllByUsernameAndNotRevoked(username);
+	private Long getCurrentTokenVersion(String memberKey) {
+		List<TokenManager> tokens = refreshTokenRepository.findAllByMemberKeyAndNotRevoked(memberKey);
 		if (tokens.isEmpty()) {
 			return 1L; // 기본값
 		}
@@ -108,23 +108,23 @@ public class TokenService {
 			.orElse(1L);
 	}
 
-	public String createAccessToken(String username, String role) {
+	public String createAccessToken(String memberKey, String role) {
 		try {
 			Long tokenVersion;
 			
 			// 어드민 계정의 경우 기본 토큰 버전 사용 (RefreshToken 미사용)
-			if (username.startsWith("admin_")) {
+			if (memberKey.startsWith("admin_")) {
 				tokenVersion = 1L;
 			} else {
 				// 일반 사용자: RefreshToken에서 최신 tokenVersion 조회
-				tokenVersion = getCurrentTokenVersion(username);
+				tokenVersion = getCurrentTokenVersion(memberKey);
 				if (tokenVersion == null) {
 					throw new BusinessException(GlobalExceptionMessage.JWT_CREATION_FAILED);
 				}
 			}
 
 			return Jwts.builder()
-				.claim(CLAIM_USERNAME, username)
+				.claim(CLAIM_USERNAME, memberKey)
 				.claim(CLAIM_ROLE, role)
 				.claim(CLAIM_TYPE, TOKEN_TYPE_ACCESS)
 				.claim(CLAIM_TOKEN_VERSION, tokenVersion)
@@ -138,30 +138,30 @@ public class TokenService {
 		}
 	}
 
-	public String createRefreshToken(String username, String deviceInfo, String ipAddress) {
+	public String createRefreshToken(String memberKey, String deviceInfo, String ipAddress) {
 		try {
 			String tokenValue = Jwts.builder()
-				.claim(CLAIM_USERNAME, username)
+				.claim(CLAIM_USERNAME, memberKey)
 				.claim(CLAIM_TYPE, TOKEN_TYPE_REFRESH)
 				.issuedAt(new Date(System.currentTimeMillis()))
 				.expiration(new Date(System.currentTimeMillis() + refreshTokenExpiration))
 				.signWith(secretKey)
 				.compact();
 
-			Member member = memberService.findActiveByUsername(username)
+			Member member = memberService.findActiveByMemberKey(memberKey)
 				.orElseThrow(() -> {
-					log.error("TokenManager 생성 실패: 활성 사용자를 찾을 수 없음 (탈퇴했거나 존재하지 않음) - {}", username);
+					log.error("TokenManager 생성 실패: 활성 사용자를 찾을 수 없음 (탈퇴했거나 존재하지 않음) - {}", memberKey);
 					return new BusinessException(MemberExceptionMessage.MEMBER_NOT_FOUND);
 				});
 
 			// 기존 토큰 정리 (선택적: 한 사용자당 최대 토큰 수 제한)
-			cleanupOldTokens(username);
+			cleanupOldTokens(memberKey);
 
 			LocalDateTime expiresAt = LocalDateTime.now().plusSeconds(refreshTokenExpiration / 1000);
 			TokenManager tokenManager = TokenManager.create(tokenValue, expiresAt, member, deviceInfo, ipAddress);
 			refreshTokenRepository.save(tokenManager);
 
-			log.info("TokenManager 생성 및 DB 저장 완료: {} (IP: {})", username, ipAddress);
+			log.info("TokenManager 생성 및 DB 저장 완료: {} (IP: {})", memberKey, ipAddress);
 			return tokenValue;
 		} catch (Exception e) {
 			log.error("TokenManager 생성 실패: {}", e.getMessage());
@@ -397,10 +397,10 @@ public class TokenService {
 		log.info("TokenManager 무효화 완료: {}", tokenValue.substring(0, 20) + "...");
 	}
 
-	public void revokeAllRefreshTokens(String username) {
-		// username으로 직접 무효화
-		refreshTokenRepository.revokeAllByUsername(username);
-		log.info("사용자의 모든 TokenManager 무효화 완료: {}", username);
+	public void revokeAllRefreshTokens(String memberKey) {
+		// memberKey로 직접 무효화
+		refreshTokenRepository.revokeAllByMemberKey(memberKey);
+		log.info("사용자의 모든 TokenManager 무효화 완료: {}", memberKey);
 	}
 
 	/**
@@ -409,10 +409,10 @@ public class TokenService {
 	 *
 	 * TODO: 향후 소프트 딜리트 방식으로 개선 예정
 	 */
-	private void cleanupOldTokens(String username) {
-		Optional<Member> memberOpt = memberService.findActiveByUsername(username);
+	private void cleanupOldTokens(String memberKey) {
+		Optional<Member> memberOpt = memberService.findActiveByMemberKey(memberKey);
 		if (memberOpt.isEmpty()) {
-			log.warn("토큰 정리 실패: 활성 사용자를 찾을 수 없음 (탈퇴했거나 존재하지 않음) - {}", username);
+			log.warn("토큰 정리 실패: 활성 사용자를 찾을 수 없음 (탈퇴했거나 존재하지 않음) - {}", memberKey);
 			return;
 		}
 		Member member = memberOpt.get();
@@ -445,10 +445,10 @@ public class TokenService {
 		refreshTokenRepository.saveAll(remainingTokens);
 
 		// 이벤트 발행: 트랜잭션 커밋 후 정리 작업 예약
-		eventPublisher.publishEvent(new TokenCleanupEvent(null, username)); // memberId 불필요 (Auth 도메인 독립성)
+		eventPublisher.publishEvent(new TokenCleanupEvent(null, memberKey)); // memberId 불필요 (Auth 도메인 독립성)
 
 		log.info("3대 디바이스 제한 - 토큰 무효화 완료: {} (TokenManager: {}개 revoke, AccessToken: tokenVersion {}로 무효화)",
-			username, tokensToRevokeCount, maxTokenVersion);
+			memberKey, tokensToRevokeCount, maxTokenVersion);
 	}
 
 	// 토큰 정리 이벤트
@@ -500,7 +500,7 @@ public class TokenService {
 			}
 
 			// 일반 사용자 처리 (활성 회원만 조회 - 탈퇴한 회원의 토큰 자동 무효화)
-			Member member = memberService.findActiveByUsername(username)
+			Member member = memberService.findActiveByMemberKey(username)
 				.orElseThrow(() -> {
 					log.error("JWT 토큰 검증 중 활성 사용자를 찾을 수 없음 (탈퇴했거나 존재하지 않음): {}", username);
 					return new BusinessException(MemberExceptionMessage.MEMBER_NOT_FOUND);
