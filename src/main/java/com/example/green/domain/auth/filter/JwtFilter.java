@@ -58,7 +58,7 @@ public class JwtFilter extends OncePerRequestFilter {
 			// SecurityContext에 인증 정보 저장
 			SecurityContextHolder.getContext().setAuthentication(authToken);
 
-			log.debug("JWT authentication completed for user: {}", accessToken.getUsername());
+			log.debug("JWT authentication completed for user: {}", accessToken.getMemberKey());
 
 		} catch (BusinessException e) {
 			if (e.getExceptionMessage() == GlobalExceptionMessage.JWT_TOKEN_EXPIRED) {

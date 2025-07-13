@@ -146,7 +146,7 @@ public class AuthService {
 	 * - 모든 RefreshToken 무효화 (즉시 처리)
 	 * - Member 도메인에 탈퇴 처리 위임
 	 * 
-	 * @param username 탈퇴할 회원의 사용자명
+	 * @param memberKey 탈퇴할 회원의 사용자명
 	 */
 	public void withdrawMember(String memberKey) {
 		log.info("[AUTH] 회원 탈퇴 처리 시작 - memberKey: {}", memberKey);

@@ -35,10 +35,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * 인증 관련 API 컨트롤러
- * Auth 도메인 서비스(AuthService)를 통해서만 비즈니스 로직 처리
- */
 @Tag(name = "인증 API", description = "OAuth2 로그인, 회원가입, 토큰 관리 등 인증 관련 API")
 @Slf4j
 @RestController
@@ -106,10 +102,8 @@ public class AuthController {
 		TempToken tempToken = TempToken.from(request.tempToken(), tokenService);
 		TempTokenInfoDto tempInfo = tempToken.extractUserInfo();
 
-		// Auth 도메인 서비스를 통해 회원가입 처리
 		String memberKey = authService.signup(tempInfo, request.nickname(), request.profileImageUrl());
 
-		// TokenManager 먼저 생성
 		String refreshTokenString = tokenService.createRefreshToken(
 			memberKey,
 			WebUtils.extractDeviceInfo(httpRequest),
@@ -122,7 +116,6 @@ public class AuthController {
 		);
 		response.addCookie(cookie);
 
-		// AccessToken 나중 생성
 		String accessTokenString = tokenService.createAccessToken(memberKey, ROLE_USER);
 		AccessToken accessToken = AccessToken.from(accessTokenString, tokenService);
 
@@ -191,7 +184,7 @@ public class AuthController {
 			return ResponseEntity.badRequest().build();
 		}
 
-		String memberKey = tokenService.getUsername(refreshTokenString);
+		String memberKey = tokenService.getMemberKey(refreshTokenString);
 		String currentIpAddress = WebUtils.extractClientIp(request);
 		String newAccessTokenString = tokenService.refreshAccessToken(refreshTokenString, ROLE_USER, currentIpAddress);
 		AccessToken newAccessToken = AccessToken.from(newAccessTokenString, tokenService);
@@ -285,11 +278,9 @@ public class AuthController {
 		String memberKey = currentUser.getUsername();
 		
 		log.info("[WITHDRAW] 회원 탈퇴 요청 - memberKey: {}", memberKey);
-		
-		// Auth 도메인 서비스를 통해 회원 탈퇴 처리
+
 		authService.withdrawMember(memberKey);
-		
-		// RefreshToken 쿠키 제거
+
 		WebUtils.removeRefreshTokenCookie(response);
 		
 		log.info("[WITHDRAW] 회원 탈퇴 완료 - memberKey: {}", memberKey);

@@ -42,7 +42,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 		Authentication authentication) throws IOException, ServletException {
 
 		CustomOAuth2UserDto customUserDetails = (CustomOAuth2UserDto)authentication.getPrincipal();
-		String memberKey = customUserDetails.getUsername();
+		String memberKey = customUserDetails.getMemberKey();
 
 		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 		Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
@@ -87,7 +87,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 	private void handleExistingUser(CustomOAuth2UserDto user, String role, HttpServletResponse response) throws
 		IOException {
 
-		String memberKey = user.getUsername();
+		String memberKey = user.getMemberKey();
 
 		// TokenManager 먼저 생성 (기존 토큰 정리 + tokenVersion 증가)
 		String refreshTokenString = tokenService.createRefreshToken(memberKey, "Web Browser",
