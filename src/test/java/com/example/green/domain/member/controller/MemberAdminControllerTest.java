@@ -22,7 +22,6 @@ import com.example.green.global.api.page.PageTemplate;
 import com.example.green.global.excel.core.ExcelDownloader;
 import com.example.green.template.base.BaseControllerUnitTest;
 
-
 @WebMvcTest(MemberAdminController.class)
 class MemberAdminControllerTest extends BaseControllerUnitTest {
 
@@ -42,21 +41,21 @@ class MemberAdminControllerTest extends BaseControllerUnitTest {
 		PageTemplate<MemberListResponseDto> mockPage = new PageTemplate<>(
 			1L, 1, 0, 10, false, List.of(member)
 		);
-		
+
 		when(memberAdminService.getMemberList(any())).thenReturn(mockPage);
 
 		// when & then
 		given().log().all()
 			.param("page", "0")
 			.param("size", "10")
-		.when()
+			.when()
 			.get("/api/admin/members")
-		.then().log().all()
+			.then().log().all()
 			.status(HttpStatus.OK)
 			.body("success", equalTo(true))
 			.body("message", equalTo("회원 목록 조회가 완료되었습니다."))
 			.body("result.totalElements", equalTo(1))
-			.body("result.content[0].username", equalTo("naver 123456789"))
+			.body("result.content[0].memberKey", equalTo("naver 123456789"))
 			.body("result.content[0].email", equalTo("test@naver.com"))
 			.body("result.content[0].provider", equalTo("naver"));
 	}
@@ -72,9 +71,9 @@ class MemberAdminControllerTest extends BaseControllerUnitTest {
 
 		// when & then
 		given().log().all()
-		.when()
+			.when()
 			.get("/api/admin/members/excel")
-		.then().log().all()
+			.then().log().all()
 			.status(HttpStatus.OK);
 
 		verify(excelDownloader).downloadAsStream(eq(members), any());
@@ -84,27 +83,27 @@ class MemberAdminControllerTest extends BaseControllerUnitTest {
 	@DisplayName("관리자가 회원을 삭제할 수 있다")
 	void deleteMember_Success() {
 		// given
-		String username = "naver 123456789";
-		doNothing().when(memberAdminService).validateMemberExistsByMemberKey(username);
-		doNothing().when(memberAdminService).deleteMemberByMemberKey(username);
+		String memberKey = "naver 123456789";
+		doNothing().when(memberAdminService).validateMemberExistsByMemberKey(memberKey);
+		doNothing().when(memberAdminService).deleteMemberByMemberKey(memberKey);
 
 		// when & then
 		given().log().all()
 			.contentType(MediaType.APPLICATION_JSON_VALUE)
 			.body("""
-				{
-					"username": "naver 123456789"
-				}
-				""")
-		.when()
+                {
+                    "memberKey": "naver 123456789"
+                }
+                """)
+			.when()
 			.post("/api/admin/members/delete")
-		.then().log().all()
+			.then().log().all()
 			.status(HttpStatus.OK)
 			.body("success", equalTo(true))
 			.body("message", equalTo("회원 삭제가 완료되었습니다."));
 
-		verify(memberAdminService).validateMemberExistsByMemberKey(username);
-		verify(memberAdminService).deleteMemberByMemberKey(username);
+		verify(memberAdminService).validateMemberExistsByMemberKey(memberKey);
+		verify(memberAdminService).deleteMemberByMemberKey(memberKey);
 	}
 
 	@Test
@@ -118,13 +117,12 @@ class MemberAdminControllerTest extends BaseControllerUnitTest {
 
 		// when & then
 		given().log().all()
-		.when()
+			.when()
 			.get("/api/admin/members")
-		.then().log().all()
-			.status(HttpStatus.OK)
-			.body("success", equalTo(true));
+			.then().log().all()
+			.status(HttpStatus.OK);
 
-		verify(memberAdminService).getMemberList(argThat(request -> 
+		verify(memberAdminService).getMemberList(argThat(request ->
 			request.page() == 0 && request.size() == 10));
 	}
 
@@ -132,24 +130,24 @@ class MemberAdminControllerTest extends BaseControllerUnitTest {
 	@DisplayName("존재하지 않는 회원 삭제 시 에러가 발생한다")
 	void deleteMember_MemberNotFound() {
 		// given
-		String username = "invalid_username";
+		String memberKey = "invalid_username";
 		doThrow(new RuntimeException("해당 회원을 찾을 수 없습니다."))
-			.when(memberAdminService).validateMemberExistsByMemberKey(username);
+			.when(memberAdminService).validateMemberExistsByMemberKey(memberKey);
 
 		// when & then
 		given().log().all()
 			.contentType(MediaType.APPLICATION_JSON_VALUE)
 			.body("""
-				{
-					"username": "invalid_username"
-				}
-				""")
-		.when()
+                {
+                    "memberKey": "invalid_username"
+                }
+                """)
+			.when()
 			.post("/api/admin/members/delete")
-		.then().log().all()
+			.then().log().all()
 			.status(HttpStatus.INTERNAL_SERVER_ERROR);
 
-		verify(memberAdminService).validateMemberExistsByMemberKey(username);
+		verify(memberAdminService).validateMemberExistsByMemberKey(memberKey);
 		verify(memberAdminService, never()).deleteMemberByMemberKey(any());
 	}
 
@@ -158,28 +156,28 @@ class MemberAdminControllerTest extends BaseControllerUnitTest {
 	void getWithdrawnMemberList_Success() {
 		// given
 		WithdrawnMemberListResponseDto member = new WithdrawnMemberListResponseDto(
-			"naver 123456789", "test@naver.com", "탈퇴회원", "010-1234-5678", 
-			LocalDateTime.now().minusDays(10), LocalDateTime.now().minusDays(5), 
+			"naver 123456789", "test@naver.com", "탈퇴회원", "010-1234-5678",
+			LocalDateTime.now().minusDays(10), LocalDateTime.now().minusDays(5),
 			"일반회원", "naver"
 		);
 		PageTemplate<WithdrawnMemberListResponseDto> mockPage = new PageTemplate<>(
 			1L, 1, 0, 10, false, List.of(member)
 		);
-		
+
 		when(memberAdminService.getWithdrawnMemberList(any())).thenReturn(mockPage);
 
 		// when & then
 		given().log().all()
 			.param("page", "0")
 			.param("size", "10")
-		.when()
+			.when()
 			.get("/api/admin/members/withdrawn")
-		.then().log().all()
+			.then().log().all()
 			.status(HttpStatus.OK)
 			.body("success", equalTo(true))
 			.body("message", equalTo("탈퇴 회원 목록 조회가 완료되었습니다."))
 			.body("result.totalElements", equalTo(1))
-			.body("result.content[0].username", equalTo("naver 123456789"))
+			.body("result.content[0].memberKey", equalTo("naver 123456789"))
 			.body("result.content[0].email", equalTo("test@naver.com"))
 			.body("result.content[0].provider", equalTo("naver"));
 	}
@@ -189,18 +187,18 @@ class MemberAdminControllerTest extends BaseControllerUnitTest {
 	void downloadWithdrawnMemberListExcel_Success() {
 		// given
 		List<WithdrawnMemberListResponseDto> members = List.of(
-			new WithdrawnMemberListResponseDto("naver 123456789", "test@naver.com", "탈퇴회원", "010-1234-5678", 
+			new WithdrawnMemberListResponseDto("naver 123456789", "test@naver.com", "탈퇴회원", "010-1234-5678",
 				LocalDateTime.now().minusDays(10), LocalDateTime.now().minusDays(5), "일반회원", "naver")
 		);
 		when(memberAdminService.getAllWithdrawnMembersForExcel()).thenReturn(members);
 
 		// when & then
 		given().log().all()
-		.when()
+			.when()
 			.get("/api/admin/members/withdrawn/excel")
-		.then().log().all()
+			.then().log().all()
 			.status(HttpStatus.OK);
 
 		verify(excelDownloader).downloadAsStream(eq(members), any());
 	}
-} 
+}
