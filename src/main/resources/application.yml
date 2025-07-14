@@ -46,7 +46,7 @@ spring:
             client-name: ${OAUTH2_GOOGLE_CLIENT_NAME:google}
             client-id: ${OAUTH2_GOOGLE_CLIENT_ID}
             client-secret: ${OAUTH2_GOOGLE_CLIENT_SECRET}
-            redirect-uri: ${OAUTH2_GOOGLE_REDIRECT_URI:https://www.greenwinit.store/login/oauth2/code/google}
+            redirect-uri: ${OAUTH2_GOOGLE_REDIRECT_URI:https://api.greenwinit.store/login/oauth2/code/google}
             authorization-grant-type: ${OAUTH2_GOOGLE_GRANT_TYPE:authorization_code}
             scope: ${OAUTH2_GOOGLE_SCOPE:profile,email}
 
@@ -75,7 +75,7 @@ app:
   frontend:
     base-url: ${FRONTEND_URL:https://www.greenwinit.store}
   backend:
-    base-url: ${BACKEND_URL:https://www.greenwinit.store}
+    base-url: ${BACKEND_URL:https://api.greenwinit.store}
 
 jwt:
   secret: ${JWT_SECRET}

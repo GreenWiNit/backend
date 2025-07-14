@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -27,16 +28,14 @@ import com.example.green.domain.auth.service.TokenService;
 import jakarta.servlet.http.HttpServletRequest;
 
 /**
- * Spring Security 설정 클래스입니다.
- * - OAuth2 로그인과 JWT 토큰 기반 인증을 지원합니다.
- * - 경로별 세부 권한 설정을 @PreAuthorize 메타 어노테이션으로 위임합니다.
- * - 기본적인 보안 설정만 중앙에서 관리합니다.
- * - 도메인별 보안 정책은 각 컨트롤러에서 명시적으로 선언합니다.
+ * 
+ * 1. OAuth2/정적 리소스용 FilterChain (JWT 필터 없음)
+ * 2. API용 FilterChain (JWT 필터 있음, @PreAuthorize로 세부 권한 제어)
+ *
  */
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true) // @PreAuthorize 활성화
-
 public class SecurityConfig {
 
 	private final CustomOAuth2UserService customOAuth2UserService;
@@ -64,93 +63,115 @@ public class SecurityConfig {
 		return new BCryptPasswordEncoder();
 	}
 
+	/**
+	 * OAuth2 및 정적 리소스용 SecurityFilterChain
+	 * - JWT 필터를 적용하지 않음
+	 * - OAuth2 로그인 플로우 처리
+	 * - 정적 리소스 및 개발 도구 접근 허용
+	 */
 	@Bean
-	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		// CSRF disable (JWT의 stateless한 상태로 관리할 것이기 때문)
-		http
-			.csrf(AbstractHttpConfigurer::disable);
-
-		// From 로그인 방식 disable
-		http
-			.formLogin(AbstractHttpConfigurer::disable);
-
-		// HTTP Basic 인증 방식 disable
-		http
-			.httpBasic(AbstractHttpConfigurer::disable);
-
-		// CORS 설정 (Spring Security 레벨)
-		http
-			.cors(corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
-
-				@Override
-				public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
-
-					CorsConfiguration configuration = new CorsConfiguration();
-
-					configuration.setAllowedOrigins(Arrays.asList(frontendBaseUrl, backendBaseUrl));
-					configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"));
-					configuration.setAllowedHeaders(Arrays.asList(
-						"Authorization",
-						"Content-Type",
-						"X-Requested-With",
-						"Accept",
-						"Origin",
-						"Access-Control-Request-Method",
-						"Access-Control-Request-Headers",
-						"X-XSRF-TOKEN"
-					));
-					configuration.setAllowCredentials(true);
-					configuration.setMaxAge(3600L);
-
-					// 두 헤더를 함께 설정 (덮어쓰기 방지)
-					configuration.setExposedHeaders(Arrays.asList("Set-Cookie", "Authorization"));
-
-					return configuration;
-				}
-			}));
-
-		//JWTFilter 추가 (AccessToken 검증용)
-		http
-			.addFilterBefore(new JwtFilter(tokenService), UsernamePasswordAuthenticationFilter.class);
-
-		// OAuth2 로그인 설정
-		http
-			.oauth2Login((oauth2) -> oauth2
-				.userInfoEndpoint((userInfoEndpointConfig) -> userInfoEndpointConfig
+	@Order(1)
+	public SecurityFilterChain oauthAndStaticResourcesSecurityFilterChain(HttpSecurity http) throws Exception {
+		return http
+			// 특정 경로에만 이 필터체인 적용
+			.securityMatcher(
+				"/oauth2/**", 
+				"/login/**",
+				"/swagger-ui/**", 
+				"/v3/api-docs/**", 
+				"/swagger-ui.html",
+				"/swagger-resources/**", 
+				"/webjars/**", 
+				"/favicon.ico", 
+				"/actuator/health",
+				"/oauth-test.html", 
+				"/signup.html",
+				"/"
+			)
+			// CSRF disable
+			.csrf(AbstractHttpConfigurer::disable)
+			// Form 로그인 방식 disable  
+			.formLogin(AbstractHttpConfigurer::disable)
+			// HTTP Basic 인증 방식 disable
+			.httpBasic(AbstractHttpConfigurer::disable)
+			// CORS 설정
+			.cors(corsCustomizer -> corsCustomizer.configurationSource(createCorsConfigurationSource()))
+			// OAuth2 로그인 설정
+			.oauth2Login(oauth2 -> oauth2
+				.userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig
 					.userService(customOAuth2UserService))
 				.successHandler(customSuccessHandler)
-				.failureHandler(oauth2FailureHandler));
-
-		// 경로별 인가 작업
-		http
+				.failureHandler(oauth2FailureHandler))
+			// 모든 요청 허용 (OAuth2 플로우와 정적 리소스)
 			.authorizeHttpRequests(auth -> auth
-				// 정적 리소스는 항상 허용
 				.requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-				// 개발/운영 도구 경로 허용
-				.requestMatchers(
-					"/swagger-ui/**",
-					"/v3/api-docs/**",
-					"/swagger-ui.html",
-					"/swagger-resources/**",
-					"/webjars/**",
-					"/favicon.ico",
-					"/actuator/health"
-				).permitAll()
-				// OAuth2 로그인 및 Auth API 허용
-				.requestMatchers("/oauth2/**", "/login/**", "/api/auth/**").permitAll()
-				// 테스트 페이지 허용
-				.requestMatchers("/oauth-test.html", "/signup.html").permitAll()
-				// 루트 경로 허용
-				.requestMatchers("/").permitAll()
-				// 나머지 모든 요청은 메타 어노테이션(@PreAuthorize)으로 권한 검사
-				.anyRequest().permitAll());
-
-		// 세션 설정: STATELESS (JWT 토큰 기반 인증을 위해)
-		http
+				.anyRequest().permitAll())
+			// 세션 설정: OAuth2에서는 세션 사용
 			.sessionManagement(session -> session
-				.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+				.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
+			.build();
+	}
 
-		return http.build();
+	/**
+	 * API용 SecurityFilterChain  
+	 * - JWT 필터 적용
+	 * - @PreAuthorize로 세부 권한 제어
+	 * - Stateless 세션 정책
+	 */
+	@Bean
+	@Order(2)
+	public SecurityFilterChain apiSecurityFilterChain(HttpSecurity http) throws Exception {
+		return http
+			// API 경로에만 이 필터체인 적용
+			.securityMatcher("/api/**")
+			// CSRF disable (JWT의 stateless한 상태로 관리)
+			.csrf(AbstractHttpConfigurer::disable)
+			// Form 로그인 방식 disable
+			.formLogin(AbstractHttpConfigurer::disable)
+			// HTTP Basic 인증 방식 disable
+			.httpBasic(AbstractHttpConfigurer::disable)
+			// CORS 설정
+			.cors(corsCustomizer -> corsCustomizer.configurationSource(createCorsConfigurationSource()))
+			// JWT 필터 추가 (AccessToken 검증용)
+			.addFilterBefore(new JwtFilter(tokenService), UsernamePasswordAuthenticationFilter.class)
+			// 모든 API 요청은 @PreAuthorize에서 권한 검사
+			.authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+			// 세션 설정: STATELESS (JWT 토큰 기반 인증)
+			.sessionManagement(session -> session
+				.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+			.build();
+	}
+
+	/**
+	 * CORS 설정을 별도 메서드로 분리하여 두 FilterChain에서 공통 사용
+	 */
+	private CorsConfigurationSource createCorsConfigurationSource() {
+		return new CorsConfigurationSource() {
+			@Override
+			public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
+				CorsConfiguration configuration = new CorsConfiguration();
+
+				configuration.setAllowedOrigins(Arrays.asList(frontendBaseUrl, backendBaseUrl));
+				configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"));
+				configuration.setAllowedHeaders(Arrays.asList(
+					"Authorization",
+					"Content-Type",
+					"X-Requested-With",
+					"Accept",
+					"Origin",
+					"Access-Control-Request-Method",
+					"Access-Control-Request-Headers",
+					"X-XSRF-TOKEN"
+				));
+				configuration.setAllowCredentials(true);
+				configuration.setMaxAge(3600L);
+
+				// 두 헤더를 함께 설정 (덮어쓰기 방지)
+				configuration.setExposedHeaders(Arrays.asList("Set-Cookie", "Authorization"));
+
+				return configuration;
+			}
+		};
 	}
 }
 
