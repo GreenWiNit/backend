@@ -19,7 +19,7 @@ public class DeliveryAddressRequest {
 			.given().log().all()
 			.contentType(MediaType.APPLICATION_JSON)
 			.body(dto)
-			.when().post("/api/deliveries/address")
+			.when().post("/api/deliveries/addresses")
 			.then().log().all()
 			.status(HttpStatus.OK)
 			.extract().as(new TypeRef<>() {
@@ -42,7 +42,7 @@ public class DeliveryAddressRequest {
 		return RestAssuredMockMvc
 			.given().log().all()
 			.contentType(MediaType.APPLICATION_JSON)
-			.when().get("/api/deliveries/address")
+			.when().get("/api/deliveries/addresses")
 			.then().log().all()
 			.status(HttpStatus.OK)
 			.extract().as(new TypeRef<>() {
