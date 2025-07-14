@@ -19,6 +19,7 @@ import com.example.green.domain.pointshop.entity.order.vo.DeliveryAddressSnapsho
 import com.example.green.domain.pointshop.exception.deliveryaddress.DeliveryAddressException;
 import com.example.green.domain.pointshop.repository.DeliveryAddressRepository;
 import com.example.green.domain.pointshop.service.command.DeliveryAddressCreateCommand;
+import com.example.green.domain.pointshop.service.command.DeliveryAddressUpdateCommand;
 import com.example.green.domain.pointshop.service.result.DeliveryResult;
 
 @ExtendWith(MockitoExtension.class)
@@ -128,6 +129,25 @@ class DeliveryAddressServiceTest {
 		assertThatThrownBy(() -> deliveryAddressService.validateAddressOwnership(1L, 1L))
 			.isInstanceOf(DeliveryAddressException.class)
 			.hasFieldOrPropertyWithValue("exceptionMessage", INVALID_OWNERSHIP);
+	}
+
+	@Test
+	void 배송지_수정_커맨드가_발생하면_배송지_도메인의_수정_메서드를_호출한다() {
+		// given
+		DeliveryAddress mock = mock(DeliveryAddress.class);
+		when(deliveryAddressRepository.findById(anyLong())).thenReturn(Optional.of(mock));
+		DeliveryAddressUpdateCommand command = new DeliveryAddressUpdateCommand(
+			1L,
+			1L,
+			Recipient.of("이름", "010-1234-5678"),
+			Address.of("도로명", "상세", "12345"));
+
+		// when
+		deliveryAddressService.updateSingleAddress(command);
+
+		// then
+		verify(mock).updateAddress(command.address());
+		verify(mock).updateRecipient(command.recipient());
 	}
 
 	@Test

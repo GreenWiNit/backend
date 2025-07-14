@@ -10,6 +10,7 @@ import com.example.green.domain.pointshop.entity.order.vo.DeliveryAddressSnapsho
 import com.example.green.domain.pointshop.exception.deliveryaddress.DeliveryAddressException;
 import com.example.green.domain.pointshop.repository.DeliveryAddressRepository;
 import com.example.green.domain.pointshop.service.command.DeliveryAddressCreateCommand;
+import com.example.green.domain.pointshop.service.command.DeliveryAddressUpdateCommand;
 import com.example.green.domain.pointshop.service.result.DeliveryResult;
 
 import lombok.RequiredArgsConstructor;
@@ -64,5 +65,13 @@ public class DeliveryAddressService {
 		if (!deliveryAddressRepository.existsByIdAndRecipientId(deliveryAddressId, recipientId)) {
 			throw new DeliveryAddressException(INVALID_OWNERSHIP);
 		}
+	}
+
+	public void updateSingleAddress(DeliveryAddressUpdateCommand command) {
+		DeliveryAddress deliveryAddress = deliveryAddressRepository.findById(command.deliveryAddressId())
+			.orElseThrow(() -> new DeliveryAddressException(NOT_FOUND_DELIVERY_ADDRESS));
+
+		deliveryAddress.updateRecipient(command.recipient());
+		deliveryAddress.updateAddress(command.address());
 	}
 }
