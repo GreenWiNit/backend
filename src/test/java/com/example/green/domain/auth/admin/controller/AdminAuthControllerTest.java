@@ -169,7 +169,7 @@ class AdminAuthControllerTest extends BaseControllerUnitTest {
 		Admin admin = mock(Admin.class);
 		given(admin.getLoginId()).willReturn("admin1234");
 		given(admin.getName()).willReturn("관리자");
-		given(admin.getTokenUsername()).willReturn("admin_admin1234");
+		given(admin.getTokenMemberKey()).willReturn("admin_admin1234");
 		return admin;
 	}
 }

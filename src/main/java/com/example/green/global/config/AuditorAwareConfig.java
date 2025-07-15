@@ -33,9 +33,9 @@ public class AuditorAwareConfig implements AuditorAware<String> {
 
 			// JWT 인증된 사용자인 경우
 			if (authentication.getPrincipal() instanceof PrincipalDetails principalDetails) {
-				String username = principalDetails.getUsername();
-				log.debug("현재 Auditor: {}", username);
-				return Optional.of(username);
+				String memberKey = principalDetails.getUsername();
+				log.debug("현재 Auditor: {}", memberKey);
+				return Optional.of(memberKey);
 			}
 
 			log.warn("알 수 없는 Principal 타입: {}", authentication.getPrincipal().getClass());

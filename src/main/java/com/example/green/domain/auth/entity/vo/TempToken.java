@@ -20,12 +20,10 @@ public class TempToken {
 	private final String tokenValue;
 	private final TokenService tokenService;
 
-	/**
-	 * 정적 팩토리 메서드 - TempToken 생성
-	 */
+
 	public static TempToken from(String tokenValue, TokenService tokenService) {
 		if (tokenValue == null || tokenValue.trim().isEmpty()) {
-			throw new IllegalArgumentException("TempToken 값은 null이거나 비어있을 수 없습니다.");
+			throw new BusinessException(GlobalExceptionMessage.TEMP_TOKEN_EMPTY);
 		}
 		return new TempToken(tokenValue.trim(), tokenService);
 	}

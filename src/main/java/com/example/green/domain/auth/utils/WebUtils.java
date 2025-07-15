@@ -94,7 +94,6 @@ public class WebUtils {
 
 	/**
 	 * User-Agent 기반 디바이스 정보 추출
-	 * Map + 스트림을 활용한 패턴 매칭 방식
 	 */
 	public static String extractDeviceInfo(HttpServletRequest request) {
 		String userAgent = request.getHeader(USER_AGENT_HEADER);

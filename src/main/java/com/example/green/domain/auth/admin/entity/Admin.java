@@ -79,9 +79,9 @@ public class Admin extends BaseEntity {
 	}
 
 	/**
-	 * JWT 토큰용 username 생성 (auth 도메인과 구분하기 위함)
+	 * JWT 토큰용 memberKey 생성 (auth 도메인과 구분하기 위함)
 	 */
-	public String getTokenUsername() {
+	public String getTokenMemberKey() {
 		return "admin_" + this.loginId;
 	}
 } 

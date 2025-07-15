@@ -35,7 +35,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 		OAuth2ResponseDto oAuth2Response = OAuth2Provider.of(registrationId)
 			.createResponse(oAuth2User.getAttributes());
 
-		String username = oAuth2Response.getProvider() + " " + oAuth2Response.getProviderId();
+		String memberKey = oAuth2Response.getProvider() + " " + oAuth2Response.getProviderId();
 
 		OAuth2UserInfoDto oauth2UserInfoDto = new OAuth2UserInfoDto(
 			oAuth2Response.getEmail(),
@@ -45,32 +45,32 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 			oAuth2Response.getProviderId()
 		);
 
-		boolean isExistingUser = memberService.existsActiveByUsername(username);
+		boolean isExistingUser = memberService.existsActiveByMemberKey(memberKey);
 
 		if (!isExistingUser) {
-			log.info("신규 사용자 발견: {}", username);
+			log.info("신규 사용자 발견: {}", memberKey);
 			UserDto userDto = UserDto.forNewUser(oauth2UserInfoDto);
 			return new CustomOAuth2UserDto(userDto);
 		} else {
 			// 기존 사용자 정보 업데이트
-			return updateExistingUser(username, oAuth2Response);
+			return updateExistingUser(memberKey, oAuth2Response);
 		}
 	}
 
 	@Transactional
-	public CustomOAuth2UserDto updateExistingUser(String username, OAuth2ResponseDto oAuth2Response) {
-		log.info("기존 사용자 로그인: {}", username);
+	public CustomOAuth2UserDto updateExistingUser(String memberKey, OAuth2ResponseDto oAuth2Response) {
+		log.info("기존 사용자 로그인: {}", memberKey);
 
 		// Member 도메인 서비스에 위임하여 OAuth2 정보 업데이트
-		memberService.updateOAuth2Info(username, oAuth2Response.getName(), oAuth2Response.getEmail());
+		memberService.updateOAuth2Info(memberKey, oAuth2Response.getName(), oAuth2Response.getEmail());
 
 		UserDto userDto = UserDto.forExistingUser(
 			"ROLE_USER",
 			oAuth2Response.getName(),
-			username
+			memberKey
 		);
 
-		log.debug("OAuth2 사용자 정보 업데이트 완료: {}", username);
+		log.debug("OAuth2 사용자 정보 업데이트 완료: {}", memberKey);
 		return new CustomOAuth2UserDto(userDto);
 	}
 }

@@ -17,6 +17,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * JWT 토큰 검증 필터
+ * OAuth2 경로나 정적 리소스에는 적용되지 않으므로 경로 제외 로직이 불필요합니다.
+ * - 유효한 토큰: SecurityContext에 인증 정보 저장
+ * - 무효한/없는 토큰: SecurityContext 비워둠 → @PreAuthorize에서 최종 권한 검증
+ */
 @Slf4j
 public class JwtFilter extends OncePerRequestFilter {
 
@@ -37,7 +43,7 @@ public class JwtFilter extends OncePerRequestFilter {
 		String accessTokenString = extractAccessTokenFromHeader(request);
 
 		if (accessTokenString == null) {
-			log.debug("AccessToken not found in Authorization header");
+			log.debug("AccessToken not found in Authorization header for path: {}", request.getRequestURI());
 			filterChain.doFilter(request, response);
 			return;
 		}
@@ -52,13 +58,11 @@ public class JwtFilter extends OncePerRequestFilter {
 				return;
 			}
 
-			// TokenService에서 memberId포함해서 Authentication 생성
 			Authentication authToken = tokenService.createAuthentication(accessTokenString);
 
-			// SecurityContext에 인증 정보 저장
 			SecurityContextHolder.getContext().setAuthentication(authToken);
 
-			log.debug("JWT authentication completed for user: {}", accessToken.getUsername());
+			log.debug("JWT authentication completed for user: {}", accessToken.getMemberKey());
 
 		} catch (BusinessException e) {
 			if (e.getExceptionMessage() == GlobalExceptionMessage.JWT_TOKEN_EXPIRED) {
@@ -83,6 +87,5 @@ public class JwtFilter extends OncePerRequestFilter {
 		}
 		return null;
 	}
-
 }
 

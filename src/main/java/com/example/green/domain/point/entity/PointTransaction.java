@@ -15,6 +15,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -23,7 +24,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "point_transactions")
+@Table(
+	name = "point_transactions",
+	indexes = {
+		@Index(name = "idx_member_id_point_transaction_id_desc", columnList = "memberId, pointTransactionId desc")
+	}
+)
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -39,9 +45,16 @@ public class PointTransaction extends TimeBaseEntity {
 	private Long memberId;
 
 	private PointSource pointSource;
-	@AttributeOverride(name = "amount", column = @Column(name = "point_amount"))
+
+	@AttributeOverride(
+		name = "amount",
+		column = @Column(name = "point_amount", nullable = false, precision = 19, scale = 2)
+	)
 	private PointAmount pointAmount;
-	@AttributeOverride(name = "amount", column = @Column(name = "balance_after"))
+	@AttributeOverride(
+		name = "amount",
+		column = @Column(name = "balance_after", nullable = false, precision = 19, scale = 2)
+	)
 	private PointAmount balanceAfter;
 
 	@Column(nullable = false)

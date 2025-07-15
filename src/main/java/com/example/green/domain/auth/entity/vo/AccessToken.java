@@ -17,12 +17,9 @@ public class AccessToken {
 	private final String tokenValue;
 	private final TokenService tokenService;
 
-	/**
-	 * 정적 팩토리 메서드 - AccessToken 생성
-	 */
 	public static AccessToken from(String tokenValue, TokenService tokenService) {
 		if (tokenValue == null || tokenValue.trim().isEmpty()) {
-			throw new IllegalArgumentException("AccessToken 값은 null이거나 비어있을 수 없습니다.");
+			throw new BusinessException(GlobalExceptionMessage.TEMP_TOKEN_EMPTY);
 		}
 		return new AccessToken(tokenValue.trim(), tokenService);
 	}
@@ -42,9 +39,9 @@ public class AccessToken {
 	/**
 	 * 토큰에서 사용자명 추출
 	 */
-	public String getUsername() {
+	public String getMemberKey() {
 		validateTokenBeforeExtraction();
-		return tokenService.getUsername(tokenValue);
+		return tokenService.getMemberKey(tokenValue);
 	}
 
 	/**

@@ -29,7 +29,7 @@ public class TokenCleanupEventListener {
 	public void handleTokenCleanup(TokenService.TokenCleanupEvent event) {
 		try {
 			// TODO: 소프트 딜리트로 개선 예정
-			refreshTokenRepository.deleteExpiredAndRevokedTokensByUsername(event.getMemberUsername(),
+			refreshTokenRepository.deleteExpiredAndRevokedTokensByMemberKey(event.getMemberUsername(),
 				LocalDateTime.now());
 
 			log.debug("만료된 토큰 하드 딜리트 완료 - 사용자: {}", event.getMemberUsername());
