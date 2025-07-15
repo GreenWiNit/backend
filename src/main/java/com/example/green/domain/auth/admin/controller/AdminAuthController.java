@@ -46,13 +46,11 @@ public class AdminAuthController {
 	})
 	@PostMapping("/login")
 	public ResponseEntity<AdminLoginResponseDto> login(@Valid @RequestBody AdminLoginRequestDto request) {
-		// 1. 어드민 인증
+
 		Admin admin = adminService.authenticate(request.getLoginId(), request.getPassword());
 
-		// 2. JWT Access Token 생성
-		String accessToken = tokenService.createAccessToken(admin.getTokenUsername(), Admin.ROLE_ADMIN);
+		String accessToken = tokenService.createAccessToken(admin.getTokenMemberKey(), Admin.ROLE_ADMIN);
 
-		// 3. 응답 생성
 		AdminLoginResponseDto response = AdminLoginResponseDto.of(accessToken, admin);
 
 		log.info("[ADMIN_AUTH] 로그인 성공: {} ({})", admin.getLoginId(), admin.getName());

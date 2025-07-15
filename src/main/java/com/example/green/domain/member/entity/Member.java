@@ -34,13 +34,19 @@ public class Member extends BaseEntity {
 	private Long version;
 
 	@Column(unique = true, nullable = false)
-	private String username;
+	private String memberKey;
 
 	@Column(nullable = false)
 	private String name;
 
 	@Column(nullable = false)
 	private String email;
+
+	/**
+	 * 전화번호 컬럼 추가 (nullable = true)
+	 */
+	@Column(name = "phone_number", nullable = true, length = 20)
+	private String phoneNumber;
 
 	@Embedded
 	private Profile profile;
@@ -53,8 +59,8 @@ public class Member extends BaseEntity {
 
 	private LocalDateTime lastLoginAt;
 
-	private Member(String username, String name, String email) {
-		this.username = username;
+	private Member(String memberKey, String name, String email) {
+		this.memberKey = memberKey;
 		this.name = name;
 		this.email = email;
 		this.profile = Profile.builder()
@@ -66,8 +72,8 @@ public class Member extends BaseEntity {
 		this.lastLoginAt = LocalDateTime.now();
 	}
 
-	public static Member create(String username, String name, String email) {
-		return new Member(username, name, email);
+	public static Member create(String memberKey, String name, String email) {
+		return new Member(memberKey, name, email);
 	}
 
 	public void updateOAuth2Info(String name, String email) {
@@ -80,9 +86,13 @@ public class Member extends BaseEntity {
 		this.profile = this.profile.update(nickname, profileImageUrl);
 	}
 
+	public void updatePhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
+
 	public void withdraw() {
 		this.status = MemberStatus.DELETED;
-		this.lastLoginAt = null; //마지막 로그인 시간 초기화
+		this.lastLoginAt = null; // 마지막 로그인 시간 초기화
 		this.markDeleted();
 	}
 

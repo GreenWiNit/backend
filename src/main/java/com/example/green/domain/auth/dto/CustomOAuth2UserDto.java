@@ -32,7 +32,7 @@ public class CustomOAuth2UserDto implements OAuth2User {
 		return userDto.name();
 	}
 
-	public String getUsername() {
-		return userDto.username();
+	public String getMemberKey() {
+		return userDto.memberKey();
 	}
 }

@@ -24,11 +24,14 @@ public enum GlobalExceptionMessage implements ExceptionMessage {
 	AUTH_NOT_FOUND(INTERNAL_SERVER_ERROR, "시큐리티 인증 정보를 찾을 수 없습니다."),
 	ACCESS_DENIED_MESSAGE(FORBIDDEN, "접근이 거부되었습니다."),
 
+	TEMP_TOKEN_EMPTY(BAD_REQUEST, "TempToken 값은 null이거나 비어있을 수 없습니다."),
+
 	// JWT 관련
 	JWT_CREATION_FAILED(INTERNAL_SERVER_ERROR, "JWT 토큰 생성에 실패했습니다."),
 	JWT_PARSING_FAILED(UNAUTHORIZED, "JWT 토큰 파싱에 실패했습니다."),
 	JWT_VALIDATION_FAILED(UNAUTHORIZED, "JWT 토큰 유효성 검증에 실패했습니다."),
 	JWT_TOKEN_EXPIRED(UNAUTHORIZED, "JWT 토큰이 만료되었습니다."),
+
 
 	// ULID 관련
 	ULID_INVALID_FORMAT(BAD_REQUEST, "유효하지 않은 ULID 형식입니다."),

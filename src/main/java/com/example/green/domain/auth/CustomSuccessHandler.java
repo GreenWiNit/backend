@@ -42,7 +42,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 		Authentication authentication) throws IOException, ServletException {
 
 		CustomOAuth2UserDto customUserDetails = (CustomOAuth2UserDto)authentication.getPrincipal();
-		String username = customUserDetails.getUsername();
+		String memberKey = customUserDetails.getMemberKey();
 
 		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 		Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
@@ -87,16 +87,16 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 	private void handleExistingUser(CustomOAuth2UserDto user, String role, HttpServletResponse response) throws
 		IOException {
 
-		String username = user.getUsername();
+		String memberKey = user.getMemberKey();
 
 		// TokenManager 먼저 생성 (기존 토큰 정리 + tokenVersion 증가)
-		String refreshTokenString = tokenService.createRefreshToken(username, "Web Browser",
+		String refreshTokenString = tokenService.createRefreshToken(memberKey, "Web Browser",
 			// 디바이스 정보 (추후 User-Agent에서 추출 가능)
 			"Unknown IP"   // IP 주소 (추후 HttpServletRequest에서 추출 가능)
 		);
 
 		// AccessToken 나중 생성 (새로운 tokenVersion으로)
-		String accessTokenString = tokenService.createAccessToken(username, role);
+		String accessTokenString = tokenService.createAccessToken(memberKey, role);
 		AccessToken accessToken = AccessToken.from(accessTokenString, tokenService);
 
 		// RefreshToken을 HTTP-Only 쿠키에 저장
@@ -116,12 +116,12 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 			redirectUrl =
 				"/oauth-test.html?success=true&accessToken=" + encodedAccessToken + "&userName=" + encodedUserInfo;
 		} else {
-			// 프로덕션 환경: 실제 프론트엔드
+			// 프로덕션 환경: 실제 프론트엔드 홈 화면
 			redirectUrl =
-				frontendBaseUrl + "/login/success?accessToken=" + encodedAccessToken + "&userName=" + encodedUserInfo;
+				frontendBaseUrl + "/?accessToken=" + encodedAccessToken + "&userName=" + encodedUserInfo;
 		}
 
-		log.info("기존 사용자 로그인 성공, AccessToken/TokenManager 발급 완료: {}", username);
+		log.info("기존 사용자 로그인 성공, AccessToken/TokenManager 발급 완료: {}", memberKey);
 		response.sendRedirect(redirectUrl);
 	}
 
