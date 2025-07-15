@@ -36,8 +36,8 @@ import lombok.Setter;
  */
 @Entity
 @Table(indexes = {
-	@Index(name = "idx_team_challenge_group_active", columnList = "groupBeginDateTime, groupEndDateTime"),
-	@Index(name = "idx_team_challenge_group_by_challenge", columnList = "teamChallengeNo")
+	@Index(name = "idx_team_challenge_group_active", columnList = "group_begin_date_time, group_end_date_time"),
+	@Index(name = "idx_team_challenge_group_by_challenge", columnList = "team_challenge_id")
 })
 @Getter
 @Setter(AccessLevel.PACKAGE) // 같은 패키지 내에서만 setter 사용 가능
