@@ -5,13 +5,12 @@ import static com.example.green.domain.pointshop.exception.deliveryaddress.Deliv
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.green.domain.pointshop.client.PhoneVerificationClient;
 import com.example.green.domain.pointshop.entity.delivery.DeliveryAddress;
-import com.example.green.domain.pointshop.entity.delivery.vo.Recipient;
 import com.example.green.domain.pointshop.entity.order.vo.DeliveryAddressSnapshot;
 import com.example.green.domain.pointshop.exception.deliveryaddress.DeliveryAddressException;
 import com.example.green.domain.pointshop.repository.DeliveryAddressRepository;
 import com.example.green.domain.pointshop.service.command.DeliveryAddressCreateCommand;
+import com.example.green.domain.pointshop.service.command.DeliveryAddressUpdateCommand;
 import com.example.green.domain.pointshop.service.result.DeliveryResult;
 
 import lombok.RequiredArgsConstructor;
@@ -22,23 +21,14 @@ import lombok.RequiredArgsConstructor;
 public class DeliveryAddressService {
 
 	private final DeliveryAddressRepository deliveryAddressRepository;
-	private final PhoneVerificationClient phoneVerificationClient;
 
 	@Transactional
 	public Long saveSingleAddress(DeliveryAddressCreateCommand command) {
 		validateExistsDeliveryAddress(command.recipientId());
 		DeliveryAddress deliveryAddress = command.toDeliveryAddress();
-
-		validateAuthenticate(command.recipient());
 		DeliveryAddress saved = deliveryAddressRepository.save(deliveryAddress);
 
 		return saved.getId();
-	}
-
-	private void validateAuthenticate(Recipient recipient) {
-		if (!phoneVerificationClient.isAuthenticated(recipient.getPhoneNumber())) {
-			throw new DeliveryAddressException(UN_AUTHORIZE_PHONE_NUMBER);
-		}
 	}
 
 	private void validateExistsDeliveryAddress(Long recipientId) {
@@ -75,5 +65,13 @@ public class DeliveryAddressService {
 		if (!deliveryAddressRepository.existsByIdAndRecipientId(deliveryAddressId, recipientId)) {
 			throw new DeliveryAddressException(INVALID_OWNERSHIP);
 		}
+	}
+
+	public void updateSingleAddress(DeliveryAddressUpdateCommand command) {
+		DeliveryAddress deliveryAddress = deliveryAddressRepository.findById(command.deliveryAddressId())
+			.orElseThrow(() -> new DeliveryAddressException(NOT_FOUND_DELIVERY_ADDRESS));
+
+		deliveryAddress.updateRecipient(command.recipient());
+		deliveryAddress.updateAddress(command.address());
 	}
 }

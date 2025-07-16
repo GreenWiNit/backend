@@ -1,8 +1,10 @@
 package com.example.green.domain.pointshop.controller.docs;
 
 import com.example.green.domain.pointshop.controller.dto.DeliveryAddressCreateDto;
+import com.example.green.domain.pointshop.controller.dto.DeliveryAddressUpdateDto;
 import com.example.green.domain.pointshop.service.result.DeliveryResult;
 import com.example.green.global.api.ApiTemplate;
+import com.example.green.global.api.NoContent;
 import com.example.green.global.error.dto.ExceptionResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,4 +31,12 @@ public interface DeliveryAddressControllerDocs {
 		content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
 	)
 	ApiTemplate<DeliveryResult> getDeliveryAddress();
+
+	@Operation(summary = "단일 배송지 수정", description = "단일 배송지를 수정합니다.")
+	@ApiResponse(responseCode = "200", description = "배송지 수정에 성공했습니다.")
+	@ApiResponse(
+		responseCode = "404", description = "배송지 정보를 찾을 수 없습니다.",
+		content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+	)
+	NoContent updateDeliveryAddress(DeliveryAddressUpdateDto dto, Long deliveryAddressId);
 }

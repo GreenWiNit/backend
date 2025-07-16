@@ -45,4 +45,14 @@ public class DeliveryAddress extends TimeBaseEntity {
 	public static DeliveryAddress create(Long recipientId, Recipient recipient, Address address) {
 		return new DeliveryAddress(recipientId, recipient, address);
 	}
+
+	public void updateRecipient(Recipient recipient) {
+		validateNullData(recipient, "물품 수령자 정보는 필수 값 입니다.");
+		this.recipient = recipient;
+	}
+
+	public void updateAddress(Address address) {
+		validateNullData(address, "물품 수령 주소 정보는 필수 값 입니다.");
+		this.address = address;
+	}
 }

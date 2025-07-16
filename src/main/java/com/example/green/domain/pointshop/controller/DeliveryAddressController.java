@@ -1,27 +1,32 @@
 package com.example.green.domain.pointshop.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.green.domain.pointshop.controller.docs.DeliveryAddressControllerDocs;
 import com.example.green.domain.pointshop.controller.dto.DeliveryAddressCreateDto;
+import com.example.green.domain.pointshop.controller.dto.DeliveryAddressUpdateDto;
 import com.example.green.domain.pointshop.controller.message.DeliveryAddressResponseMessage;
 import com.example.green.domain.pointshop.entity.delivery.vo.Address;
 import com.example.green.domain.pointshop.entity.delivery.vo.Recipient;
 import com.example.green.domain.pointshop.service.DeliveryAddressService;
 import com.example.green.domain.pointshop.service.command.DeliveryAddressCreateCommand;
+import com.example.green.domain.pointshop.service.command.DeliveryAddressUpdateCommand;
 import com.example.green.domain.pointshop.service.result.DeliveryResult;
 import com.example.green.global.api.ApiTemplate;
+import com.example.green.global.api.NoContent;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/deliveries/address")
+@RequestMapping("/api/deliveries/addresses")
 public class DeliveryAddressController implements DeliveryAddressControllerDocs {
 
 	private final DeliveryAddressService deliveryAddressService;
@@ -38,6 +43,16 @@ public class DeliveryAddressController implements DeliveryAddressControllerDocs 
 		Long result = deliveryAddressService.saveSingleAddress(command);
 
 		return ApiTemplate.ok(DeliveryAddressResponseMessage.DELIVERY_ADDRESS_ADD_SUCCESS, result);
+	}
+
+	@PutMapping("/{deliveryAddressId}")
+	public NoContent updateDeliveryAddress(
+		@Valid @RequestBody DeliveryAddressUpdateDto dto,
+		@PathVariable Long deliveryAddressId
+	) {
+		DeliveryAddressUpdateCommand command = DeliveryAddressUpdateCommand.of(1L, deliveryAddressId, dto);
+		deliveryAddressService.updateSingleAddress(command);
+		return NoContent.ok(DeliveryAddressResponseMessage.DELIVERY_ADDRESS_UPDATE_SUCCESS);
 	}
 
 	@GetMapping

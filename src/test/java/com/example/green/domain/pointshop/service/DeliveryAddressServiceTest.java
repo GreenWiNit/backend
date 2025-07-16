@@ -12,7 +12,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.example.green.domain.pointshop.client.PhoneVerificationClient;
 import com.example.green.domain.pointshop.entity.delivery.DeliveryAddress;
 import com.example.green.domain.pointshop.entity.delivery.vo.Address;
 import com.example.green.domain.pointshop.entity.delivery.vo.Recipient;
@@ -20,6 +19,7 @@ import com.example.green.domain.pointshop.entity.order.vo.DeliveryAddressSnapsho
 import com.example.green.domain.pointshop.exception.deliveryaddress.DeliveryAddressException;
 import com.example.green.domain.pointshop.repository.DeliveryAddressRepository;
 import com.example.green.domain.pointshop.service.command.DeliveryAddressCreateCommand;
+import com.example.green.domain.pointshop.service.command.DeliveryAddressUpdateCommand;
 import com.example.green.domain.pointshop.service.result.DeliveryResult;
 
 @ExtendWith(MockitoExtension.class)
@@ -27,8 +27,6 @@ class DeliveryAddressServiceTest {
 
 	@Mock
 	private DeliveryAddressRepository deliveryAddressRepository;
-	@Mock
-	private PhoneVerificationClient phoneVerificationClient;
 
 	@InjectMocks
 	private DeliveryAddressService deliveryAddressService;
@@ -41,7 +39,6 @@ class DeliveryAddressServiceTest {
 		DeliveryAddress mockDeliveryAddress = mock(DeliveryAddress.class);
 		when(deliveryAddressRepository.save(any(DeliveryAddress.class))).thenReturn(mockDeliveryAddress);
 		when(mockDeliveryAddress.getId()).thenReturn(1L);
-		when(phoneVerificationClient.isAuthenticated("010-1234-5678")).thenReturn(true);
 
 		// when
 		Long result = deliveryAddressService.saveSingleAddress(command);
@@ -60,19 +57,6 @@ class DeliveryAddressServiceTest {
 		assertThatThrownBy(() -> deliveryAddressService.saveSingleAddress(mockCommand))
 			.isInstanceOf(DeliveryAddressException.class)
 			.hasFieldOrPropertyWithValue("exceptionMessage", DELIVERY_ADDRESS_ALREADY_EXISTS);
-	}
-
-	@Test
-	void 휴대전화_인증을_하지_않고_배송지_저장을_할_경우_예외가_발생한다() {
-		// given
-		when(deliveryAddressRepository.existsByRecipientId(anyLong())).thenReturn(false);
-		DeliveryAddressCreateCommand command = getCommand();
-		when(phoneVerificationClient.isAuthenticated("010-1234-5678")).thenReturn(false);
-
-		// when & then
-		assertThatThrownBy(() -> deliveryAddressService.saveSingleAddress(command))
-			.isInstanceOf(DeliveryAddressException.class)
-			.hasFieldOrPropertyWithValue("exceptionMessage", UN_AUTHORIZE_PHONE_NUMBER);
 	}
 
 	@Test
@@ -145,6 +129,25 @@ class DeliveryAddressServiceTest {
 		assertThatThrownBy(() -> deliveryAddressService.validateAddressOwnership(1L, 1L))
 			.isInstanceOf(DeliveryAddressException.class)
 			.hasFieldOrPropertyWithValue("exceptionMessage", INVALID_OWNERSHIP);
+	}
+
+	@Test
+	void 배송지_수정_커맨드가_발생하면_배송지_도메인의_수정_메서드를_호출한다() {
+		// given
+		DeliveryAddress mock = mock(DeliveryAddress.class);
+		when(deliveryAddressRepository.findById(anyLong())).thenReturn(Optional.of(mock));
+		DeliveryAddressUpdateCommand command = new DeliveryAddressUpdateCommand(
+			1L,
+			1L,
+			Recipient.of("이름", "010-1234-5678"),
+			Address.of("도로명", "상세", "12345"));
+
+		// when
+		deliveryAddressService.updateSingleAddress(command);
+
+		// then
+		verify(mock).updateAddress(command.address());
+		verify(mock).updateRecipient(command.recipient());
 	}
 
 	@Test
