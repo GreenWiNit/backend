@@ -15,12 +15,6 @@ import jakarta.persistence.LockModeType;
 public interface PointTransactionRepository extends JpaRepository<PointTransaction, Long> {
 
 	@Lock(LockModeType.PESSIMISTIC_WRITE)
-	@Query("""
-		SELECT pt.balanceAfter 
-				FROM PointTransaction pt 
-						WHERE pt.memberId = :memberId 
-								ORDER BY pt.id DESC 
-										LIMIT 1
-		""")
+	@Query("SELECT pt.balanceAfter FROM PointTransaction pt WHERE pt.memberId = :memberId ORDER BY pt.id DESC LIMIT 1")
 	Optional<PointAmount> findLatestBalance(@Param("memberId") Long memberId);
 }

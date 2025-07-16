@@ -1,10 +1,10 @@
 package com.example.green.domain.pointshop.product.controller.docs;
 
 import com.example.green.domain.pointshop.product.controller.dto.PointProductCreateDto;
-import com.example.green.domain.pointshop.product.controller.dto.PointProductUpdateDto;
 import com.example.green.domain.pointshop.product.controller.dto.PointProductExcelCondition;
 import com.example.green.domain.pointshop.product.controller.dto.PointProductSearchCondition;
 import com.example.green.domain.pointshop.product.controller.dto.PointProductSearchResult;
+import com.example.green.domain.pointshop.product.controller.dto.PointProductUpdateDto;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.NoContent;
 import com.example.green.global.api.page.PageTemplate;

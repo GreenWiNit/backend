@@ -30,8 +30,8 @@ import lombok.RequiredArgsConstructor;
 @Transactional(readOnly = true)
 public class PointTransactionQueryImpl implements PointTransactionQueryRepository {
 
-	private final static int DEFAULT_CURSOR_VIEW_SIZE = 20;
-	private final static QPointTransaction qPointTransaction = QPointTransaction.pointTransaction;
+	private static final int DEFAULT_CURSOR_VIEW_SIZE = 20;
+	private static final QPointTransaction qPointTransaction = QPointTransaction.pointTransaction;
 	private final PointTransactionQueryExecutor queryExecutor;
 	private final EntityManager entityManager;
 
@@ -39,17 +39,17 @@ public class PointTransactionQueryImpl implements PointTransactionQueryRepositor
 	public MemberPointSummary findMemberPointSummary(Long memberId) {
 		return entityManager.createQuery("""
 				SELECT new com.example.green.domain.point.repository.dto.MemberPointSummary(
-				    COALESCE(
-				        (SELECT pt2.balanceAfter.amount 
-				         FROM PointTransaction pt2 
-				         WHERE pt2.memberId = :memberId 
-				         ORDER BY pt2.id DESC 
-				         LIMIT 1), 0
-				    ),
-				    COALESCE(SUM(CASE WHEN pt.type = 'EARN' THEN pt.pointAmount.amount ELSE 0 END), 0),
-				    COALESCE(SUM(CASE WHEN pt.type = 'SPEND' THEN pt.pointAmount.amount ELSE 0 END), 0)
+					COALESCE(
+						(SELECT pt2.balanceAfter.amount
+						 FROM PointTransaction pt2
+						 WHERE pt2.memberId = :memberId
+						 ORDER BY pt2.id DESC
+						 LIMIT 1), 0
+					),
+					COALESCE(SUM(CASE WHEN pt.type = 'EARN' THEN pt.pointAmount.amount ELSE 0 END), 0),
+					COALESCE(SUM(CASE WHEN pt.type = 'SPEND' THEN pt.pointAmount.amount ELSE 0 END), 0)
 				)
-				FROM PointTransaction pt 
+				FROM PointTransaction pt
 				WHERE pt.memberId = :memberId
 				""", MemberPointSummary.class)
 			.setParameter("memberId", memberId)

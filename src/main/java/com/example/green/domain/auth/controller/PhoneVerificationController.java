@@ -1,7 +1,5 @@
 package com.example.green.domain.auth.controller;
 
-import static com.example.green.domain.auth.controller.message.PhoneVerificationResponseMessage.*;
-
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,17 +23,19 @@ public class PhoneVerificationController implements PhoneVerificationControllerD
 
 	private final PhoneVerificationService phoneVerificationService;
 
+	@Deprecated
 	@PostMapping("/request")
 	public ApiTemplate<PhoneVerificationResult> request(@RequestBody @Valid PhoneVerificationRequest dto) {
 		PhoneNumber phoneNumber = PhoneNumber.of(dto.phoneNumber());
 		PhoneVerificationResult result = phoneVerificationService.request(phoneNumber);
-		return ApiTemplate.ok(PHONE_VERIFICATION_REQUEST_SUCCESS, result);
+		return null;
 	}
 
+	@Deprecated
 	@PostMapping("/verify")
 	public NoContent verify(@RequestBody @Valid PhoneVerificationRequest dto) {
 		PhoneNumber phoneNumber = PhoneNumber.of(dto.phoneNumber());
 		phoneVerificationService.verify(phoneNumber);
-		return NoContent.ok(PHONE_VERIFICATION_SUCCESS);
+		return null;
 	}
 }

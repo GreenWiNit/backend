@@ -30,19 +30,19 @@ import com.example.green.domain.point.repository.PointTransactionRepository;
 import com.example.green.domain.pointshop.delivery.entity.DeliveryAddress;
 import com.example.green.domain.pointshop.delivery.entity.vo.Address;
 import com.example.green.domain.pointshop.delivery.entity.vo.Recipient;
+import com.example.green.domain.pointshop.delivery.repository.DeliveryAddressRepository;
 import com.example.green.domain.pointshop.order.entity.Order;
 import com.example.green.domain.pointshop.order.entity.OrderItem;
 import com.example.green.domain.pointshop.order.entity.vo.DeliveryAddressSnapshot;
 import com.example.green.domain.pointshop.order.entity.vo.ItemSnapshot;
 import com.example.green.domain.pointshop.order.entity.vo.MemberSnapshot;
+import com.example.green.domain.pointshop.order.repository.OrderRepository;
 import com.example.green.domain.pointshop.product.entity.PointProduct;
 import com.example.green.domain.pointshop.product.entity.vo.BasicInfo;
 import com.example.green.domain.pointshop.product.entity.vo.Code;
 import com.example.green.domain.pointshop.product.entity.vo.Media;
 import com.example.green.domain.pointshop.product.entity.vo.Price;
 import com.example.green.domain.pointshop.product.entity.vo.Stock;
-import com.example.green.domain.pointshop.delivery.repository.DeliveryAddressRepository;
-import com.example.green.domain.pointshop.order.repository.OrderRepository;
 import com.example.green.domain.pointshop.product.repository.PointProductRepository;
 
 import io.swagger.v3.oas.annotations.Hidden;
@@ -168,9 +168,9 @@ public class DbInitializer {
 	public void initDeliveryAddresses() {
 		List<DeliveryAddress> deliveryAddresses = new ArrayList<>();
 		for (int i = 0; i < 100; i++) {
-			String name = firstName[random.nextInt(firstName.length)] +
-				" " +
-				secondName[random.nextInt(secondName.length)];
+			String name = firstName[random.nextInt(firstName.length)]
+				+ " "
+				+ secondName[random.nextInt(secondName.length)];
 			String phoneNumber = "010-" + random.nextInt(1000, 10000) + "-" + random.nextInt(1000, 10000);
 			Recipient recipient = Recipient.of(name, phoneNumber);
 			Address address = Address.of("랜덤 도로명" + i, "상세 주소" + i, String.valueOf(random.nextInt(10000, 100000)));
@@ -186,9 +186,9 @@ public class DbInitializer {
 	public void initOrders() {
 		List<Order> orders = new ArrayList<>();
 		for (int i = 0; i < 100; i++) {
-			String name = firstName[random.nextInt(firstName.length)] +
-				" " +
-				secondName[random.nextInt(secondName.length)];
+			String name = firstName[random.nextInt(firstName.length)]
+				+ " "
+				+ secondName[random.nextInt(secondName.length)];
 			String phoneNumber = "010-" + random.nextInt(1000, 10000) + "-" + random.nextInt(1000, 10000);
 			DeliveryAddressSnapshot deliveryAddressSnapshot = DeliveryAddressSnapshot.of(
 				i + 1L, name, phoneNumber, "랜덤 도로명" + i, "상세 주소" + i,
