@@ -1,8 +1,8 @@
 package com.example.green.infra.query.pointproduct;
 
-import com.example.green.domain.pointshop.entity.pointproduct.QPointProduct;
-import com.example.green.domain.pointshop.repository.dto.PointProductSearchResult;
-import com.example.green.domain.pointshop.repository.dto.PointProductView;
+import com.example.green.domain.pointshop.product.controller.dto.PointProductSearchResult;
+import com.example.green.domain.pointshop.product.controller.dto.PointProductView;
+import com.example.green.domain.pointshop.product.entity.QPointProduct;
 import com.querydsl.core.types.ConstructorExpression;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.QBean;

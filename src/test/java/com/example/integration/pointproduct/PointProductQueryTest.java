@@ -1,6 +1,6 @@
 package com.example.integration.pointproduct;
 
-import static com.example.green.domain.pointshop.entity.pointproduct.vo.SellingStatus.*;
+import static com.example.green.domain.pointshop.product.entity.vo.SellingStatus.*;
 import static java.time.LocalDateTime.*;
 import static org.assertj.core.api.Assertions.*;
 
@@ -18,18 +18,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.green.domain.pointshop.entity.pointproduct.PointProduct;
-import com.example.green.domain.pointshop.entity.pointproduct.vo.BasicInfo;
-import com.example.green.domain.pointshop.entity.pointproduct.vo.Code;
-import com.example.green.domain.pointshop.entity.pointproduct.vo.DisplayStatus;
-import com.example.green.domain.pointshop.entity.pointproduct.vo.Media;
-import com.example.green.domain.pointshop.entity.pointproduct.vo.Price;
-import com.example.green.domain.pointshop.entity.pointproduct.vo.SellingStatus;
-import com.example.green.domain.pointshop.entity.pointproduct.vo.Stock;
-import com.example.green.domain.pointshop.repository.PointProductQueryRepository;
-import com.example.green.domain.pointshop.repository.dto.PointProductExcelCondition;
-import com.example.green.domain.pointshop.repository.dto.PointProductSearchCondition;
-import com.example.green.domain.pointshop.repository.dto.PointProductSearchResult;
+import com.example.green.domain.pointshop.product.entity.PointProduct;
+import com.example.green.domain.pointshop.product.entity.vo.BasicInfo;
+import com.example.green.domain.pointshop.product.entity.vo.Code;
+import com.example.green.domain.pointshop.product.entity.vo.DisplayStatus;
+import com.example.green.domain.pointshop.product.entity.vo.Media;
+import com.example.green.domain.pointshop.product.entity.vo.Price;
+import com.example.green.domain.pointshop.product.entity.vo.SellingStatus;
+import com.example.green.domain.pointshop.product.entity.vo.Stock;
+import com.example.green.domain.pointshop.product.repository.PointProductQueryRepository;
+import com.example.green.domain.pointshop.product.controller.dto.PointProductExcelCondition;
+import com.example.green.domain.pointshop.product.controller.dto.PointProductSearchCondition;
+import com.example.green.domain.pointshop.product.controller.dto.PointProductSearchResult;
 import com.example.green.global.api.page.PageTemplate;
 import com.example.integration.common.ServiceIntegrationTest;
 

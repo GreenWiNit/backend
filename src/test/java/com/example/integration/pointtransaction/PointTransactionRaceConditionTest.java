@@ -17,7 +17,7 @@ import com.example.green.domain.point.entity.vo.TargetType;
 import com.example.green.domain.point.entity.vo.TransactionType;
 import com.example.green.domain.point.repository.PointTransactionRepository;
 import com.example.green.domain.point.service.PointTransactionService;
-import com.example.green.domain.pointshop.exception.point.PointException;
+import com.example.green.domain.point.exception.PointException;
 import com.example.integration.common.BaseIntegrationTest;
 import com.example.integration.common.concurrency.ConcurrencyTestResult;
 import com.example.integration.common.concurrency.ConcurrencyTestTemplate;

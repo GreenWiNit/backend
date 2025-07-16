@@ -6,8 +6,8 @@ import java.math.BigDecimal;
 
 import org.junit.jupiter.api.Test;
 
-import com.example.green.domain.pointshop.exception.point.PointException;
-import com.example.green.domain.pointshop.exception.point.PointExceptionMessage;
+import com.example.green.domain.point.exception.PointException;
+import com.example.green.domain.point.exception.PointExceptionMessage;
 
 class PointAmountTest {
 

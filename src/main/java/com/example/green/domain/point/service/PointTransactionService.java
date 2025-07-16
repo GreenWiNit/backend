@@ -10,8 +10,8 @@ import com.example.green.domain.point.entity.PointTransaction;
 import com.example.green.domain.point.entity.vo.PointAmount;
 import com.example.green.domain.point.entity.vo.PointSource;
 import com.example.green.domain.point.repository.PointTransactionRepository;
-import com.example.green.domain.pointshop.exception.point.PointException;
-import com.example.green.domain.pointshop.exception.point.PointExceptionMessage;
+import com.example.green.domain.point.exception.PointException;
+import com.example.green.domain.point.exception.PointExceptionMessage;
 
 import lombok.RequiredArgsConstructor;
 
