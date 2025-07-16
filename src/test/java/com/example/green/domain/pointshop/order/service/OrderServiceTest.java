@@ -21,7 +21,7 @@ import com.example.green.domain.pointshop.order.entity.vo.DeliveryAddressSnapsho
 import com.example.green.domain.pointshop.order.entity.vo.ItemSnapshot;
 import com.example.green.domain.pointshop.order.repository.OrderRepository;
 import com.example.green.domain.pointshop.order.service.command.SingleOrderCommand;
-import com.example.green.domain.pointshop.service.DeliveryAddressService;
+import com.example.green.domain.pointshop.delivery.service.DeliveryAddressService;
 import com.example.green.domain.pointshop.service.PointProductService;
 
 @ExtendWith(MockitoExtension.class)

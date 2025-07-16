@@ -8,8 +8,8 @@ import com.example.green.domain.common.TimeBaseEntity;
 import com.example.green.domain.pointshop.order.entity.vo.DeliveryAddressSnapshot;
 import com.example.green.domain.pointshop.order.entity.vo.MemberSnapshot;
 import com.example.green.domain.pointshop.order.entity.vo.OrderDeliveryStatus;
-import com.example.green.domain.pointshop.exception.OrderException;
-import com.example.green.domain.pointshop.exception.OrderExceptionMessage;
+import com.example.green.domain.pointshop.order.exception.OrderException;
+import com.example.green.domain.pointshop.order.exception.OrderExceptionMessage;
 import com.example.green.global.utils.EntityValidator;
 
 import jakarta.persistence.CascadeType;

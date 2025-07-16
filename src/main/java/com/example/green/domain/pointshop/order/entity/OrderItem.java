@@ -6,8 +6,8 @@ import java.math.BigDecimal;
 
 import com.example.green.domain.common.TimeBaseEntity;
 import com.example.green.domain.pointshop.order.entity.vo.ItemSnapshot;
-import com.example.green.domain.pointshop.exception.OrderException;
-import com.example.green.domain.pointshop.exception.OrderExceptionMessage;
+import com.example.green.domain.pointshop.order.exception.OrderException;
+import com.example.green.domain.pointshop.order.exception.OrderExceptionMessage;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;

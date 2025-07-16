@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component;
 
 import com.example.green.domain.auth.entity.verification.vo.PhoneNumber;
 import com.example.green.domain.auth.service.PhoneVerificationService;
-import com.example.green.domain.pointshop.client.PhoneVerificationClient;
+import com.example.green.domain.pointshop.delivery.client.PhoneVerificationClient;
 
 import lombok.RequiredArgsConstructor;
 

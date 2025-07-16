@@ -8,8 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import com.example.green.domain.pointshop.exception.OrderExceptionMessage;
 import com.example.green.domain.pointshop.order.entity.vo.ItemSnapshot;
+import com.example.green.domain.pointshop.order.exception.OrderExceptionMessage;
 import com.example.green.global.error.exception.BusinessException;
 
 class OrderItemTest {
