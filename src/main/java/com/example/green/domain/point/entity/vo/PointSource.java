@@ -1,5 +1,6 @@
 package com.example.green.domain.point.entity.vo;
 
+import static com.example.green.domain.point.exception.PointExceptionMessage.*;
 import static com.example.green.global.utils.EntityValidator.*;
 
 import jakarta.persistence.Column;
@@ -27,14 +28,14 @@ public class PointSource {
 	private TargetType targetType;
 
 	public static PointSource ofTarget(Long targetId, String description, TargetType targetType) {
-		validateAutoIncrementId(targetId, "포인트 출처의 Id 값은 필수 값 입니다.");
-		validateEmptyString(description, "포인트 출처의 상세 내용은 필수 값 입니다.");
-		validateNullData(targetType, "포인트 출처의 타입 정보는 필수 값 입니다.");
+		validateAutoIncrementId(targetId, REQUIRE_POINT_SOURCE_ID);
+		validateEmptyString(description, REQUIRE_POINT_SOURCE_DESCRIPTION);
+		validateNullData(targetType, REQUIRE_POINT_SOURCE_TYPE);
 		return new PointSource(targetId, description, targetType);
 	}
 
 	public static PointSource ofEvent(String description) {
-		validateEmptyString(description, "포인트 출처의 상세 내용은 필수 값 입니다.");
+		validateEmptyString(description, REQUIRE_POINT_SOURCE_DESCRIPTION);
 		return new PointSource(null, description, TargetType.EVENT);
 	}
 }
