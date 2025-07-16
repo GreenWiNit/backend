@@ -73,9 +73,9 @@ app:
     bucket: ${STORAGE_BUCKET}
     base-url: ${STORAGE_BASE_URL}
   frontend:
-    base-url: ${FRONTEND_URL:https://www.greenwinit.store}
+    base-url: ${FRONTEND_URL:http://localhost:3000}
   backend:
-    base-url: ${BACKEND_URL:https://api.greenwinit.store}
+    base-url: ${BACKEND_URL:http://localhost:8080}
 
 jwt:
   secret: ${JWT_SECRET}
