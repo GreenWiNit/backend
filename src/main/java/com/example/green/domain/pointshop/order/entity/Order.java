@@ -1,5 +1,8 @@
 package com.example.green.domain.pointshop.order.entity;
 
+import static com.example.green.domain.pointshop.order.exception.OrderExceptionMessage.*;
+import static com.example.green.global.utils.EntityValidator.*;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +13,6 @@ import com.example.green.domain.pointshop.order.entity.vo.MemberSnapshot;
 import com.example.green.domain.pointshop.order.entity.vo.OrderDeliveryStatus;
 import com.example.green.domain.pointshop.order.exception.OrderException;
 import com.example.green.domain.pointshop.order.exception.OrderExceptionMessage;
-import com.example.green.global.utils.EntityValidator;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -92,9 +94,9 @@ public class Order extends TimeBaseEntity {
 		MemberSnapshot memberSnapshot,
 		List<OrderItem> orderItems
 	) {
-		EntityValidator.validateNullData(deliveryAddressSnapshot, "상품 주문 시 배송지 정보는 필수 값입니다.");
-		EntityValidator.validateNullData(memberSnapshot, "상품 주문 시 주문자 정보는 필수 값 입니다.");
-		EntityValidator.validateEmptyList(orderItems, "상품 주문시 상품 정보는 1개 이상 필요합니다.");
+		validateNullData(deliveryAddressSnapshot, REQUIRE_DELIVERY_ADDRESS);
+		validateNullData(memberSnapshot, REQUIRE_MEMBER_SNAPSHOT);
+		validateEmptyList(orderItems, REQUIRE_ORDER_ITEM);
 	}
 
 	public void addOrderItem(OrderItem orderItem) {
