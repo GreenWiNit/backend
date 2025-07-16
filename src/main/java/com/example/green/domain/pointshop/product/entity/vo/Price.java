@@ -1,5 +1,6 @@
 package com.example.green.domain.pointshop.product.entity.vo;
 
+import static com.example.green.domain.pointshop.product.exception.PointProductExceptionMessage.*;
 import static com.example.green.global.utils.EntityValidator.*;
 
 import java.math.BigDecimal;

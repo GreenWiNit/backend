@@ -20,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 @Transactional
 public class PointProductService {
 
-	private final PointProductDomainService pointProductDomainService;
+	private final PointProductQueryService pointProductQueryService;
 	private final PointProductRepository pointProductRepository;
 	private final FileManager fileManager;
 
@@ -45,9 +45,9 @@ public class PointProductService {
 	}
 
 	public void update(PointProductUpdateCommand command, Long pointProductId) {
-		pointProductDomainService.validateUniqueCodeForUpdate(command.code(), pointProductId);
+		pointProductQueryService.validateUniqueCodeForUpdate(command.code(), pointProductId);
 
-		PointProduct pointProduct = pointProductDomainService.getPointProduct(pointProductId);
+		PointProduct pointProduct = pointProductQueryService.getPointProduct(pointProductId);
 		pointProduct.updateCode(command.code());
 		pointProduct.updateBasicInfo(command.basicInfo());
 		pointProduct.updatePrice(command.price());
@@ -65,19 +65,19 @@ public class PointProductService {
 	}
 
 	public void delete(Long pointProductId) {
-		pointProductDomainService.getPointProduct(pointProductId).markDeleted();
+		pointProductQueryService.getPointProduct(pointProductId).markDeleted();
 	}
 
 	public void showDisplay(Long pointProductId) {
-		pointProductDomainService.getPointProduct(pointProductId).showDisplay();
+		pointProductQueryService.getPointProduct(pointProductId).showDisplay();
 	}
 
 	public void hideDisplay(Long pointProductId) {
-		pointProductDomainService.getPointProduct(pointProductId).hideDisplay();
+		pointProductQueryService.getPointProduct(pointProductId).hideDisplay();
 	}
 
 	public ItemSnapshot getItemSnapshot(Long pointProductId) {
-		PointProduct pointProduct = pointProductDomainService.getPointProduct(pointProductId);
+		PointProduct pointProduct = pointProductQueryService.getPointProduct(pointProductId);
 		return new ItemSnapshot(
 			pointProduct.getId(),
 			pointProduct.getBasicInfo().getName(),
@@ -87,6 +87,6 @@ public class PointProductService {
 	}
 
 	public void decreaseSingleItemStock(Long pointProductId, int amount) {
-		pointProductDomainService.getPointProduct(pointProductId).decreaseStock(amount);
+		pointProductQueryService.getPointProduct(pointProductId).decreaseStock(amount);
 	}
 }

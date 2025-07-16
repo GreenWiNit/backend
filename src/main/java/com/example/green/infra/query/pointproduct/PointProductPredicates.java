@@ -5,13 +5,13 @@ import java.util.Objects;
 
 import org.springframework.util.StringUtils;
 
-import com.example.green.domain.pointshop.entity.pointproduct.QPointProduct;
+import com.example.green.domain.pointshop.product.controller.dto.PointProductExcelCondition;
+import com.example.green.domain.pointshop.product.controller.dto.PointProductSearchCondition;
+import com.example.green.domain.pointshop.product.entity.QPointProduct;
 import com.example.green.domain.pointshop.product.entity.vo.DisplayStatus;
 import com.example.green.domain.pointshop.product.entity.vo.SellingStatus;
 import com.example.green.domain.pointshop.product.exception.PointProductException;
 import com.example.green.domain.pointshop.product.exception.PointProductExceptionMessage;
-import com.example.green.domain.pointshop.product.controller.dto.PointProductExcelCondition;
-import com.example.green.domain.pointshop.product.controller.dto.PointProductSearchCondition;
 import com.querydsl.core.types.dsl.BooleanExpression;
 
 import lombok.AccessLevel;

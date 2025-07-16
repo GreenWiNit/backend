@@ -8,10 +8,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.green.domain.pointshop.product.controller.docs.PointProductControllerDocs;
 import com.example.green.domain.pointshop.product.controller.dto.PointProductDetail;
+import com.example.green.domain.pointshop.product.controller.dto.PointProductView;
 import com.example.green.domain.pointshop.product.entity.PointProduct;
 import com.example.green.domain.pointshop.product.repository.PointProductQueryRepository;
-import com.example.green.domain.pointshop.product.controller.dto.PointProductView;
-import com.example.green.domain.pointshop.product.service.PointProductDomainService;
+import com.example.green.domain.pointshop.product.service.PointProductQueryService;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.page.CursorTemplate;
 
@@ -22,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class PointProductController implements PointProductControllerDocs {
 
-	private final PointProductDomainService pointProductDomainService;
+	private final PointProductQueryService pointProductQueryService;
 	private final PointProductQueryRepository pointProductQueryRepository;
 
 	@GetMapping
@@ -35,7 +35,7 @@ public class PointProductController implements PointProductControllerDocs {
 
 	@GetMapping("/{pointProductId}")
 	public ApiTemplate<PointProductDetail> getProductById(@PathVariable Long pointProductId) {
-		PointProduct pointProduct = pointProductDomainService.getPointProduct(pointProductId);
+		PointProduct pointProduct = pointProductQueryService.getPointProduct(pointProductId);
 		PointProductDetail result = PointProductDetail.from(pointProduct);
 		return ApiTemplate.ok(PointProductResponseMessage.POINT_PRODUCT_DETAIL_INQUIRY_SUCCESS, result);
 	}

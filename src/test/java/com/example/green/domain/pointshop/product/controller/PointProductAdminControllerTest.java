@@ -1,5 +1,6 @@
 package com.example.green.domain.pointshop.product.controller;
 
+import static com.example.green.domain.pointshop.product.controller.PointProductResponseMessage.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -10,12 +11,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import com.example.green.domain.pointshop.product.controller.dto.PointProductCreateDto;
-import com.example.green.domain.pointshop.product.controller.dto.PointProductUpdateDto;
-import com.example.green.domain.pointshop.product.entity.vo.SellingStatus;
-import com.example.green.domain.pointshop.product.repository.PointProductQueryRepository;
 import com.example.green.domain.pointshop.product.controller.dto.PointProductExcelCondition;
 import com.example.green.domain.pointshop.product.controller.dto.PointProductSearchCondition;
 import com.example.green.domain.pointshop.product.controller.dto.PointProductSearchResult;
+import com.example.green.domain.pointshop.product.controller.dto.PointProductUpdateDto;
+import com.example.green.domain.pointshop.product.entity.vo.SellingStatus;
+import com.example.green.domain.pointshop.product.repository.PointProductQueryRepository;
 import com.example.green.domain.pointshop.product.service.PointProductService;
 import com.example.green.domain.pointshop.product.service.command.PointProductCreateCommand;
 import com.example.green.domain.pointshop.product.service.command.PointProductUpdateCommand;

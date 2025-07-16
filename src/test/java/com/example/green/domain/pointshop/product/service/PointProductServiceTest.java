@@ -1,5 +1,6 @@
 package com.example.green.domain.pointshop.product.service;
 
+import static com.example.green.domain.pointshop.product.exception.PointProductExceptionMessage.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -28,7 +29,7 @@ import com.example.green.domain.pointshop.product.service.command.PointProductUp
 class PointProductServiceTest {
 
 	@Mock
-	private PointProductDomainService pointProductDomainService;
+	private PointProductQueryService pointProductQueryService;
 	@Mock
 	private PointProductRepository pointProductRepository;
 	@Mock
@@ -70,14 +71,14 @@ class PointProductServiceTest {
 		// given
 		PointProductUpdateCommand command = getUpdateCommand();
 		PointProduct mockPointProduct = mock(PointProduct.class);
-		when(pointProductDomainService.getPointProduct(anyLong())).thenReturn(mockPointProduct);
+		when(pointProductQueryService.getPointProduct(anyLong())).thenReturn(mockPointProduct);
 		when(mockPointProduct.isNewImage(command.media())).thenReturn(false);
 
 		// when
 		pointProductService.update(command, 1L);
 
 		// then
-		verify(pointProductDomainService).validateUniqueCodeForUpdate(command.code(), 1L);
+		verify(pointProductQueryService).validateUniqueCodeForUpdate(command.code(), 1L);
 		verify(mockPointProduct).updateBasicInfo(command.basicInfo());
 		verify(mockPointProduct).updatePrice(command.price());
 		verify(mockPointProduct).updateStock(command.stock());
@@ -89,7 +90,7 @@ class PointProductServiceTest {
 		PointProductUpdateCommand command = getUpdateCommand();
 		PointProduct mockPointProduct = mock(PointProduct.class);
 		String oldImageUrl = "oldImageUrl";
-		when(pointProductDomainService.getPointProduct(anyLong())).thenReturn(mockPointProduct);
+		when(pointProductQueryService.getPointProduct(anyLong())).thenReturn(mockPointProduct);
 		when(mockPointProduct.isNewImage(command.media())).thenReturn(true);
 		when(mockPointProduct.getThumbnailUrl()).thenReturn(oldImageUrl)
 			.thenReturn(command.media().getThumbnailUrl());
@@ -107,7 +108,7 @@ class PointProductServiceTest {
 	void 포인트_상품을_삭제한다() {
 		// given
 		PointProduct mockPointProduct = mock(PointProduct.class);
-		when(pointProductDomainService.getPointProduct(anyLong())).thenReturn(mockPointProduct);
+		when(pointProductQueryService.getPointProduct(anyLong())).thenReturn(mockPointProduct);
 
 		// when
 		pointProductService.delete(1L);
@@ -120,7 +121,7 @@ class PointProductServiceTest {
 	void 포인트_상품을_전시한다() {
 		// given
 		PointProduct mockPointProduct = mock(PointProduct.class);
-		when(pointProductDomainService.getPointProduct(anyLong())).thenReturn(mockPointProduct);
+		when(pointProductQueryService.getPointProduct(anyLong())).thenReturn(mockPointProduct);
 
 		// when
 		pointProductService.showDisplay(1L);
@@ -133,7 +134,7 @@ class PointProductServiceTest {
 	void 포인트_상품을_미전시_처리한다() {
 		// given
 		PointProduct mockPointProduct = mock(PointProduct.class);
-		when(pointProductDomainService.getPointProduct(anyLong())).thenReturn(mockPointProduct);
+		when(pointProductQueryService.getPointProduct(anyLong())).thenReturn(mockPointProduct);
 
 		// when
 		pointProductService.hideDisplay(1L);
@@ -152,7 +153,7 @@ class PointProductServiceTest {
 		when(mockBasicInfo.getName()).thenReturn("name");
 		when(mockPrice.getPrice()).thenReturn(new BigDecimal("100"));
 		when(mockCode.getCode()).thenReturn("code");
-		when(pointProductDomainService.getPointProduct(anyLong())).thenReturn(mockPointProduct);
+		when(pointProductQueryService.getPointProduct(anyLong())).thenReturn(mockPointProduct);
 		when(mockPointProduct.getId()).thenReturn(1L);
 		when(mockPointProduct.getBasicInfo()).thenReturn(mockBasicInfo);
 		when(mockPointProduct.getCode()).thenReturn(mockCode);
@@ -172,7 +173,7 @@ class PointProductServiceTest {
 	void 포인트_상품_아이디와_수량으로_재고를_감소한다() {
 		// given
 		PointProduct mockPointProduct = mock(PointProduct.class);
-		when(pointProductDomainService.getPointProduct(anyLong())).thenReturn(mockPointProduct);
+		when(pointProductQueryService.getPointProduct(anyLong())).thenReturn(mockPointProduct);
 
 		// when
 		pointProductService.decreaseSingleItemStock(1L, 10);

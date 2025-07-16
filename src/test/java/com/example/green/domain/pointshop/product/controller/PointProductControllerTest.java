@@ -1,5 +1,6 @@
 package com.example.green.domain.pointshop.product.controller;
 
+import static com.example.green.domain.pointshop.product.controller.PointProductResponseMessage.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -11,13 +12,13 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import com.example.green.domain.pointshop.product.controller.dto.PointProductDetail;
+import com.example.green.domain.pointshop.product.controller.dto.PointProductView;
 import com.example.green.domain.pointshop.product.entity.PointProduct;
 import com.example.green.domain.pointshop.product.entity.vo.BasicInfo;
 import com.example.green.domain.pointshop.product.entity.vo.Price;
 import com.example.green.domain.pointshop.product.entity.vo.Stock;
 import com.example.green.domain.pointshop.product.repository.PointProductQueryRepository;
-import com.example.green.domain.pointshop.product.controller.dto.PointProductView;
-import com.example.green.domain.pointshop.product.service.PointProductDomainService;
+import com.example.green.domain.pointshop.product.service.PointProductQueryService;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.page.CursorTemplate;
 import com.example.green.template.base.BaseControllerUnitTest;
@@ -26,7 +27,7 @@ import com.example.green.template.base.BaseControllerUnitTest;
 class PointProductControllerTest extends BaseControllerUnitTest {
 
 	@MockitoBean
-	private PointProductDomainService pointProductDomainService;
+	private PointProductQueryService pointProductQueryService;
 	@MockitoBean
 	private PointProductQueryRepository pointProductQueryRepository;
 
@@ -49,7 +50,7 @@ class PointProductControllerTest extends BaseControllerUnitTest {
 	void 포인트_아이디가_주어지면_포인트_상품_상세_조회에_성공한다() {
 		// given
 		PointProduct mock = getMockPointProductWithStub();
-		when(pointProductDomainService.getPointProduct(anyLong())).thenReturn(mock);
+		when(pointProductQueryService.getPointProduct(anyLong())).thenReturn(mock);
 		PointProductDetail result = PointProductDetail.from(mock);
 
 		// when

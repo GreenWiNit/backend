@@ -1,5 +1,6 @@
 package com.example.green.domain.pointshop.product.service;
 
+import static com.example.green.domain.pointshop.product.exception.PointProductExceptionMessage.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -17,12 +18,12 @@ import com.example.green.domain.pointshop.product.exception.PointProductExceptio
 import com.example.green.domain.pointshop.product.repository.PointProductRepository;
 
 @ExtendWith(MockitoExtension.class)
-class PointProductDomainServiceTest {
+class PointProductQueryServiceTest {
 
 	@Mock
 	private PointProductRepository pointProductRepository;
 	@InjectMocks
-	private PointProductDomainService pointProductDomainService;
+	private PointProductQueryService pointProductQueryService;
 
 	@Test
 	void 포인트_상품을_가져온다() {
@@ -31,7 +32,7 @@ class PointProductDomainServiceTest {
 		when(pointProductRepository.findById(anyLong())).thenReturn(Optional.of(mockPointProduct));
 
 		// when
-		PointProduct pointProduct = pointProductDomainService.getPointProduct(1L);
+		PointProduct pointProduct = pointProductQueryService.getPointProduct(1L);
 
 		// then
 		assertThat(pointProduct).isEqualTo(mockPointProduct);
@@ -43,7 +44,7 @@ class PointProductDomainServiceTest {
 		when(pointProductRepository.findById(anyLong())).thenReturn(Optional.empty());
 
 		// when & then
-		assertThatThrownBy(() -> pointProductDomainService.getPointProduct(1L))
+		assertThatThrownBy(() -> pointProductQueryService.getPointProduct(1L))
 			.isInstanceOf(PointProductException.class)
 			.hasFieldOrPropertyWithValue("exceptionMessage", NOT_FOUND_POINT_PRODUCT);
 	}
@@ -55,7 +56,7 @@ class PointProductDomainServiceTest {
 		when(pointProductRepository.existsByCodeAndIdNot(any(Code.class), anyLong())).thenReturn(true);
 
 		// when & then
-		assertThatThrownBy(() -> pointProductDomainService.validateUniqueCodeForUpdate(mockCode, 1L))
+		assertThatThrownBy(() -> pointProductQueryService.validateUniqueCodeForUpdate(mockCode, 1L))
 			.isInstanceOf(PointProductException.class)
 			.hasFieldOrPropertyWithValue("exceptionMessage", DUPLICATE_POINT_PRODUCT_CODE);
 	}
@@ -67,7 +68,7 @@ class PointProductDomainServiceTest {
 		when(pointProductRepository.existsByCodeAndIdNot(any(Code.class), anyLong())).thenReturn(false);
 
 		// when & then
-		assertThatCode(() -> pointProductDomainService.validateUniqueCodeForUpdate(mockCode, 1L))
+		assertThatCode(() -> pointProductQueryService.validateUniqueCodeForUpdate(mockCode, 1L))
 			.doesNotThrowAnyException();
 	}
 }

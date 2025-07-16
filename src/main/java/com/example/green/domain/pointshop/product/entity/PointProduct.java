@@ -1,5 +1,6 @@
 package com.example.green.domain.pointshop.product.entity;
 
+import static com.example.green.domain.pointshop.product.exception.PointProductExceptionMessage.*;
 import static com.example.green.global.utils.EntityValidator.*;
 
 import com.example.green.domain.common.BaseEntity;

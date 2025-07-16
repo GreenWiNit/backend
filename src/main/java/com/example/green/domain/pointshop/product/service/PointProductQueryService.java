@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class PointProductDomainService {
+public class PointProductQueryService {
 
 	private final PointProductRepository pointProductRepository;
 
