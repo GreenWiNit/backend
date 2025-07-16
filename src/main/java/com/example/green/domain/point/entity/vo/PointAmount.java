@@ -1,5 +1,6 @@
 package com.example.green.domain.point.entity.vo;
 
+import static com.example.green.domain.point.exception.PointExceptionMessage.*;
 import static com.example.green.global.utils.EntityValidator.*;
 
 import java.math.BigDecimal;
@@ -25,11 +26,11 @@ public class PointAmount {
 	private BigDecimal amount;
 
 	private PointAmount(BigDecimal amount) {
+		validateNullData(amount, REQUIRE_POINT_AMOUNT);
 		this.amount = amount.setScale(2, RoundingMode.DOWN);
 	}
 
 	public static PointAmount of(BigDecimal value) {
-		validateNullData(value, "포인트 금액은 필수 값입니다.");
 		if (value.compareTo(BigDecimal.ZERO) < 0) {
 			throw new PointException(PointExceptionMessage.INVALID_POINT_AMOUNT);
 		}
@@ -37,7 +38,6 @@ public class PointAmount {
 	}
 
 	public static PointAmount of(long value) {
-		validateNullData(value, "포인트 금액은 필수 값입니다.");
 		if (value < 0) {
 			throw new PointException(PointExceptionMessage.INVALID_POINT_AMOUNT);
 		}

@@ -1,5 +1,6 @@
 package com.example.green.domain.point.entity;
 
+import static com.example.green.domain.point.exception.PointExceptionMessage.*;
 import static com.example.green.global.utils.EntityValidator.*;
 
 import com.example.green.domain.common.TimeBaseEntity;
@@ -86,9 +87,9 @@ public class PointTransaction extends TimeBaseEntity {
 	}
 
 	private static PointTransactionBuilder buildDefault(Long memberId, PointSource source, PointAmount pointAmount) {
-		validateAutoIncrementId(memberId, "포인트 이력에서 사용자 ID는 필수 값 입니다.");
-		validateNullData(source, "포인트 이력 출처는 필수 값 입니다. ");
-		validateNullData(pointAmount, "포인트 이력 금액은 필수 값 입니다. ");
+		validateAutoIncrementId(memberId, REQUIRE_MEMBER_ID);
+		validateNullData(source, REQUIRE_POINT_SOURCE);
+		validateNullData(pointAmount, REQUIRE_POINT_AMOUNT);
 		return PointTransaction.builder()
 			.memberId(memberId)
 			.pointSource(source)

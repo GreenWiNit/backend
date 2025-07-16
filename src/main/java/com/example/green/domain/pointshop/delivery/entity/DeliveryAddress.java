@@ -1,5 +1,6 @@
 package com.example.green.domain.pointshop.delivery.entity;
 
+import static com.example.green.domain.pointshop.delivery.exception.DeliveryAddressExceptionMessage.*;
 import static com.example.green.global.utils.EntityValidator.*;
 
 import com.example.green.domain.common.TimeBaseEntity;
@@ -34,9 +35,9 @@ public class DeliveryAddress extends TimeBaseEntity {
 	private Address address;
 
 	private DeliveryAddress(Long recipientId, Recipient recipient, Address address) {
-		validateAutoIncrementId(recipientId, "물품 수령자 ID는 필수 값 입니다.");
-		validateNullData(recipient, "물품 수령자 정보는 필수 값 입니다.");
-		validateNullData(address, "물품 수령 주소 정보는 필수 값 입니다.");
+		validateAutoIncrementId(recipientId, REQUIRE_RECIPIENT_ID);
+		validateNullData(recipient, REQUIRE_RECIPIENT);
+		validateNullData(address, REQUIRE_ADDRESS);
 		this.recipientId = recipientId;
 		this.recipient = recipient;
 		this.address = address;
@@ -47,12 +48,12 @@ public class DeliveryAddress extends TimeBaseEntity {
 	}
 
 	public void updateRecipient(Recipient recipient) {
-		validateNullData(recipient, "물품 수령자 정보는 필수 값 입니다.");
+		validateNullData(recipient, REQUIRE_RECIPIENT);
 		this.recipient = recipient;
 	}
 
 	public void updateAddress(Address address) {
-		validateNullData(address, "물품 수령 주소 정보는 필수 값 입니다.");
+		validateNullData(address, REQUIRE_ADDRESS);
 		this.address = address;
 	}
 }

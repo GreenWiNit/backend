@@ -1,18 +1,17 @@
 package com.example.green.domain.pointshop.order.entity.vo;
 
+import static com.example.green.domain.pointshop.order.exception.OrderExceptionMessage.*;
 import static com.example.green.global.utils.EntityValidator.*;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Embeddable
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class DeliveryAddressSnapshot {
 
 	private static final String FULL_ADDRESS_FORMAT = "%s (%s), %s";
@@ -30,23 +29,33 @@ public class DeliveryAddressSnapshot {
 	@Column(nullable = false)
 	private String zipCode;
 
-	public static DeliveryAddressSnapshot of(
-		Long deliveryAddressId,
-		String recipientName,
-		String phoneNumber,
-		String roadAddress,
-		String detailAddress,
-		String zipCode
+	private DeliveryAddressSnapshot(
+		Long id, String name, String phoneNumber, String road, String detail, String zipCode
 	) {
-		validateAutoIncrementId(deliveryAddressId, "배송지 ID는 필수 값 입니다.");
-		validateEmptyString(recipientName, "수령자 정보는 필수 값 입니다.");
-		validateEmptyString(phoneNumber, "배송자 전화번호 정보는 필수 값 입니다.");
-		validateEmptyString(roadAddress, "도로명 주소는 필수 값 입니다.");
-		validateEmptyString(detailAddress, "상세 주소는 필수 값 입니다.");
-		validateEmptyString(zipCode, "우편 번호는 필수 값 입니다.");
-		return new DeliveryAddressSnapshot(
-			deliveryAddressId, recipientName, phoneNumber, roadAddress, detailAddress, zipCode
-		);
+		validateConstruction(id, name, phoneNumber, road, detail, zipCode);
+		this.deliveryAddressId = id;
+		this.recipientName = name;
+		this.phoneNumber = phoneNumber;
+		this.roadAddress = road;
+		this.detailAddress = detail;
+		this.zipCode = zipCode;
+	}
+
+	private static void validateConstruction(
+		Long id, String name, String phoneNumber, String road, String detail, String zipCode
+	) {
+		validateAutoIncrementId(id, REQUIRE_DELIVERY_ADDRESS_ID);
+		validateEmptyString(name, REQUIRE_RECIPIENT_NAME);
+		validateEmptyString(phoneNumber, REQUIRE_RECIPIENT_PHONE_NUMBER);
+		validateEmptyString(road, REQUIRE_ROAD_ADDRESS);
+		validateEmptyString(detail, REQUIRE_DETAIL_ADDRESS);
+		validateEmptyString(zipCode, REQUIRE_ZIP_CODE);
+	}
+
+	public static DeliveryAddressSnapshot of(
+		Long id, String name, String phoneNumber, String road, String detail, String zipCode
+	) {
+		return new DeliveryAddressSnapshot(id, name, phoneNumber, road, detail, zipCode);
 	}
 
 	public String getFullAddress() {
