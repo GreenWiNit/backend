@@ -17,7 +17,7 @@ import com.example.green.domain.pointshop.order.exception.OrderExceptionMessage;
 import com.example.green.domain.pointshop.order.repository.OrderRepository;
 import com.example.green.domain.pointshop.order.service.command.SingleOrderCommand;
 import com.example.green.domain.pointshop.delivery.service.DeliveryAddressService;
-import com.example.green.domain.pointshop.service.PointProductService;
+import com.example.green.domain.pointshop.product.service.PointProductService;
 
 import lombok.RequiredArgsConstructor;
 

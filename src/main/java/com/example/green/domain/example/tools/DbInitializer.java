@@ -1,7 +1,7 @@
 package com.example.green.domain.example.tools;
 
-import static com.example.green.domain.pointshop.entity.pointproduct.vo.DisplayStatus.*;
-import static com.example.green.domain.pointshop.entity.pointproduct.vo.SellingStatus.*;
+import static com.example.green.domain.pointshop.product.entity.vo.DisplayStatus.*;
+import static com.example.green.domain.pointshop.product.entity.vo.SellingStatus.*;
 
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
@@ -35,15 +35,15 @@ import com.example.green.domain.pointshop.order.entity.OrderItem;
 import com.example.green.domain.pointshop.order.entity.vo.DeliveryAddressSnapshot;
 import com.example.green.domain.pointshop.order.entity.vo.ItemSnapshot;
 import com.example.green.domain.pointshop.order.entity.vo.MemberSnapshot;
-import com.example.green.domain.pointshop.entity.pointproduct.PointProduct;
-import com.example.green.domain.pointshop.entity.pointproduct.vo.BasicInfo;
-import com.example.green.domain.pointshop.entity.pointproduct.vo.Code;
-import com.example.green.domain.pointshop.entity.pointproduct.vo.Media;
-import com.example.green.domain.pointshop.entity.pointproduct.vo.Price;
-import com.example.green.domain.pointshop.entity.pointproduct.vo.Stock;
+import com.example.green.domain.pointshop.product.entity.PointProduct;
+import com.example.green.domain.pointshop.product.entity.vo.BasicInfo;
+import com.example.green.domain.pointshop.product.entity.vo.Code;
+import com.example.green.domain.pointshop.product.entity.vo.Media;
+import com.example.green.domain.pointshop.product.entity.vo.Price;
+import com.example.green.domain.pointshop.product.entity.vo.Stock;
 import com.example.green.domain.pointshop.delivery.repository.DeliveryAddressRepository;
 import com.example.green.domain.pointshop.order.repository.OrderRepository;
-import com.example.green.domain.pointshop.repository.PointProductRepository;
+import com.example.green.domain.pointshop.product.repository.PointProductRepository;
 
 import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
