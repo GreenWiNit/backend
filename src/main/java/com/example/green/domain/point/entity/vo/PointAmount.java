@@ -5,8 +5,8 @@ import static com.example.green.global.utils.EntityValidator.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-import com.example.green.domain.pointshop.exception.point.PointException;
-import com.example.green.domain.pointshop.exception.point.PointExceptionMessage;
+import com.example.green.domain.point.exception.PointException;
+import com.example.green.domain.point.exception.PointExceptionMessage;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;

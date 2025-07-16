@@ -15,7 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.example.green.domain.pointshop.entity.delivery.DeliveryAddress;
 import com.example.green.domain.pointshop.entity.delivery.vo.Address;
 import com.example.green.domain.pointshop.entity.delivery.vo.Recipient;
-import com.example.green.domain.pointshop.entity.order.vo.DeliveryAddressSnapshot;
+import com.example.green.domain.pointshop.order.entity.vo.DeliveryAddressSnapshot;
 import com.example.green.domain.pointshop.exception.deliveryaddress.DeliveryAddressException;
 import com.example.green.domain.pointshop.repository.DeliveryAddressRepository;
 import com.example.green.domain.pointshop.service.command.DeliveryAddressCreateCommand;

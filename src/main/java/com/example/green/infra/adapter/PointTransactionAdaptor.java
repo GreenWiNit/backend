@@ -15,8 +15,8 @@ import com.example.green.domain.point.entity.vo.PointSource;
 import com.example.green.domain.point.entity.vo.TargetType;
 import com.example.green.domain.point.repository.PointTransactionQueryRepository;
 import com.example.green.domain.point.service.PointTransactionService;
-import com.example.green.domain.pointshop.client.PointSpendClient;
-import com.example.green.domain.pointshop.client.dto.PointSpendRequest;
+import com.example.green.domain.pointshop.order.client.PointSpendClient;
+import com.example.green.domain.pointshop.order.client.dto.PointSpendRequest;
 
 import lombok.RequiredArgsConstructor;
 

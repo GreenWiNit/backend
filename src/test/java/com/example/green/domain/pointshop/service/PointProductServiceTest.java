@@ -13,7 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.example.green.domain.common.service.FileManager;
-import com.example.green.domain.pointshop.entity.order.vo.ItemSnapshot;
+import com.example.green.domain.pointshop.order.entity.vo.ItemSnapshot;
 import com.example.green.domain.pointshop.entity.pointproduct.PointProduct;
 import com.example.green.domain.pointshop.entity.pointproduct.vo.BasicInfo;
 import com.example.green.domain.pointshop.entity.pointproduct.vo.Code;
