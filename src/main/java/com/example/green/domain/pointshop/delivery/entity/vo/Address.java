@@ -10,13 +10,11 @@ import com.example.green.domain.pointshop.delivery.exception.DeliveryAddressExce
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 public class Address {
 
@@ -30,13 +28,20 @@ public class Address {
 	@Column(nullable = false)
 	private String zipCode;
 
-	public static Address of(String roadAddress, String detailAddress, String zipCode) {
-		validateEmptyString(roadAddress, "도로명 주소는 필수 값 입니다.");
-		validateEmptyString(detailAddress, "상세 주소는 필수 값 입니다.");
-		validateEmptyString(zipCode, "우편 번호는 필수 값 입니다.");
+	private Address(String roadAddress, String detailAddress, String zipCode) {
+		validateEmptyString(roadAddress, REQUIRE_ROAD_ADDRESS);
+		validateEmptyString(detailAddress, REQUIRE_DETAIL_ADDRESS);
+		validateEmptyString(zipCode, REQUIRE_ZIP_CODE);
 		if (!ZIP_CODE_PATTERN.matcher(zipCode).matches()) {
 			throw new DeliveryAddressException(INVALID_ZIP_CODE);
 		}
+
+		this.roadAddress = roadAddress;
+		this.detailAddress = detailAddress;
+		this.zipCode = zipCode;
+	}
+
+	public static Address of(String roadAddress, String detailAddress, String zipCode) {
 		return new Address(roadAddress, detailAddress, zipCode);
 	}
 }

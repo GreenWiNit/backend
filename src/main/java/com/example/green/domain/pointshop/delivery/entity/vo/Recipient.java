@@ -10,13 +10,11 @@ import com.example.green.domain.pointshop.delivery.exception.DeliveryAddressExce
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Getter
 public class Recipient {
 
@@ -28,12 +26,17 @@ public class Recipient {
 	@Column(nullable = false)
 	private String phoneNumber;
 
-	public static Recipient of(String recipientName, String phoneNumber) {
-		validateEmptyString(recipientName, "물품 수령자 이름은 필수 값 입니다.");
-		validateEmptyString(phoneNumber, "물품 수령자 전화 번호는 필수 값 입니다.");
+	private Recipient(String recipientName, String phoneNumber) {
+		validateEmptyString(recipientName, REQUIRE_RECIPIENT_NAME);
+		validateEmptyString(phoneNumber, REQUIRE_RECIPIENT_PHONE_NUMBER);
 		if (!PHONE_NUMBER_PATTERN.matcher(phoneNumber).matches()) {
 			throw new DeliveryAddressException(INVALID_PHONE_NUMBER);
 		}
+		this.recipientName = recipientName;
+		this.phoneNumber = phoneNumber;
+	}
+
+	public static Recipient of(String recipientName, String phoneNumber) {
 		return new Recipient(recipientName, phoneNumber);
 	}
 }
