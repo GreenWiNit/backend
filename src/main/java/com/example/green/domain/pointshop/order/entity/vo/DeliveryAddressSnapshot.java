@@ -32,7 +32,7 @@ public class DeliveryAddressSnapshot {
 	private DeliveryAddressSnapshot(
 		Long id, String name, String phoneNumber, String road, String detail, String zipCode
 	) {
-		validateConstruction(deliveryAddressId, recipientName, phoneNumber, roadAddress, detailAddress, zipCode);
+		validateConstruction(id, name, phoneNumber, road, detail, zipCode);
 		this.deliveryAddressId = id;
 		this.recipientName = name;
 		this.phoneNumber = phoneNumber;
