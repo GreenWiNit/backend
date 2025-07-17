@@ -1,7 +1,5 @@
 package com.example.green.domain.challenge.service;
 
-import java.util.List;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -70,46 +68,16 @@ public class ChallengeService {
 	public CursorTemplate<Long, ChallengeListResponseDto> getMyPersonalChallenges(Long cursor,
 		PrincipalDetails currentUser) {
 		Member member = getMemberById(currentUser.getMemberId());
-		List<PersonalChallengeParticipation> participations = personalChallengeParticipationRepository
+		return personalChallengeParticipationRepository
 			.findMyParticipationsByCursor(member, cursor, DEFAULT_PAGE_SIZE);
-
-		if (participations.isEmpty()) {
-			return CursorTemplate.ofEmpty();
-		}
-
-		List<ChallengeListResponseDto> dtos = participations.stream()
-			.map(p -> toChallengeListDto(p.getPersonalChallenge()))
-			.toList();
-
-		Long nextCursor = participations.get(participations.size() - 1).getId();
-		boolean hasNext = personalChallengeParticipationRepository.existsNextParticipation(member, nextCursor);
-
-		return hasNext
-			? CursorTemplate.ofWithNextCursor(nextCursor, dtos)
-			: CursorTemplate.of(dtos);
 	}
 
 	// 내가 참여한 팀 챌린지 목록 조회
 	public CursorTemplate<Long, ChallengeListResponseDto> getMyTeamChallenges(Long cursor,
 		PrincipalDetails currentUser) {
 		Member member = getMemberById(currentUser.getMemberId());
-		List<TeamChallengeParticipation> participations = teamChallengeParticipationRepository
+		return teamChallengeParticipationRepository
 			.findMyParticipationsByCursor(member, cursor, DEFAULT_PAGE_SIZE);
-
-		if (participations.isEmpty()) {
-			return CursorTemplate.ofEmpty();
-		}
-
-		List<ChallengeListResponseDto> dtos = participations.stream()
-			.map(p -> toChallengeListDto(p.getTeamChallenge()))
-			.toList();
-
-		Long nextCursor = participations.get(participations.size() - 1).getId();
-		boolean hasNext = teamChallengeParticipationRepository.existsNextParticipation(member, nextCursor);
-
-		return hasNext
-			? CursorTemplate.ofWithNextCursor(nextCursor, dtos)
-			: CursorTemplate.of(dtos);
 	}
 
 	// 챌린지 상세 조회
@@ -147,12 +115,11 @@ public class ChallengeService {
 	}
 
 	private BaseChallenge findChallengeById(Long challengeId) {
-		BaseChallenge challenge = personalChallengeRepository.findById(challengeId)
+		return personalChallengeRepository.findById(challengeId)
 			.map(pc -> (BaseChallenge)pc)
 			.orElseGet(() -> teamChallengeRepository.findById(challengeId)
 				.map(tc -> (BaseChallenge)tc)
 				.orElseThrow(() -> new ChallengeException(ChallengeExceptionMessage.CHALLENGE_NOT_FOUND)));
-		return challenge;
 	}
 
 	private Member getMemberById(Long memberId) {
@@ -261,4 +228,4 @@ public class ChallengeService {
 			challenge.getChallengePoint().getAmount().intValue()
 		);
 	}
-} 
+}
