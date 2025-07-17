@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.green.domain.common.idempotency.Idempotent;
 import com.example.green.domain.pointshop.order.controller.docs.OrderControllerDocs;
 import com.example.green.domain.pointshop.order.controller.dto.SingleOrderRequest;
 import com.example.green.domain.pointshop.order.service.OrderService;
@@ -22,6 +23,7 @@ public class OrderController implements OrderControllerDocs {
 
 	private final OrderService orderService;
 
+	@Idempotent
 	@PostMapping("/point-products/single")
 	public ApiTemplate<Long> exchangeSinglePointProduct(@RequestBody SingleOrderRequest dto) {
 		// TODO: 인증 시스템 구현 후 실제 사용자 정보로 변경
