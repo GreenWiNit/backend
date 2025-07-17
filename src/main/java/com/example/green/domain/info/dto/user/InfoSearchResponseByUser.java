@@ -21,14 +21,21 @@ public record InfoSearchResponseByUser(
 		description = "정보 제목",
 		example = "그린의 새로운 이벤트"
 	)
-	String title
+	String title,
+
+	@Schema(
+		description = "정보 본문 내용 (30자 이내)",
+		example = "그린의 새로운 이벤트에 대해 자세히 알아보세요."
+	)
+	String content
 
 ) {
 	public static InfoSearchResponseByUser from(InfoEntity e) {
 		return new InfoSearchResponseByUser(
 			e.getId(),
 			e.getInfoCategory().getDescription(),// @JsonValue 대신 명시적인 방법으로 사용
-			e.getTitle()
+			e.getTitle(),
+			e.getContent()
 		);
 	}
 }
