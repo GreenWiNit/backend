@@ -141,7 +141,7 @@ class TeamChallengeTest {
 
     @Test
     void 그룹_추가_시_챌린지_그룹_리스트에_추가되고_팀_카운트가_증가한다() {
-        // given
+        // given & when
         LocalDateTime testNow = now;
         TeamChallengeGroup group = TeamChallengeGroup.create(
             "테스트 그룹 1",
@@ -150,11 +150,9 @@ class TeamChallengeTest {
             10,
             "서울시 강남구",
             "테스트 그룹 설명",
-            "https://openchat.example.com"
+            "https://openchat.example.com",
+            teamChallenge
         );
-
-        // when
-        teamChallenge.addChallengeGroup(group);
 
         // then
         assertThat(teamChallenge.getChallengeGroups()).contains(group);
@@ -164,34 +162,32 @@ class TeamChallengeTest {
 
     @Test
     void 여러_그룹_추가_시_팀_카운트가_올바르게_증가한다() {
-        // given
+        // given & when
         LocalDateTime testNow = now;
         TeamChallengeGroup group1 = TeamChallengeGroup.create(
             "테스트 그룹 1",
             testNow.plusDays(1),
             testNow.plusDays(8),
             10,
-            null, null, null
+            null, null, null,
+            teamChallenge
         );
         TeamChallengeGroup group2 = TeamChallengeGroup.create(
             "테스트 그룹 2",
             testNow.plusDays(1),
             testNow.plusDays(8),
             10,
-            null, null, null
+            null, null, null,
+            teamChallenge
         );
         TeamChallengeGroup group3 = TeamChallengeGroup.create(
             "테스트 그룹 3",
             testNow.plusDays(1),
             testNow.plusDays(8),
             10,
-            null, null, null
+            null, null, null,
+            teamChallenge
         );
-
-        // when
-        teamChallenge.addChallengeGroup(group1);
-        teamChallenge.addChallengeGroup(group2);
-        teamChallenge.addChallengeGroup(group3);
 
         // then
         assertThat(teamChallenge.getCurrentGroupCount()).isEqualTo(3);
@@ -207,10 +203,11 @@ class TeamChallengeTest {
             testNow.plusDays(1),
             testNow.plusDays(8),
             10,
-            null, null, null
+            null, null, null,
+            teamChallenge
         );
-        teamChallenge.addChallengeGroup(group);
-
+        // TeamChallengeGroup.create()에서 이미 addChallengeGroup()이 호출됨
+        
         // when
         teamChallenge.removeChallengeGroup(group);
 
@@ -275,9 +272,9 @@ class TeamChallengeTest {
                 LocalDateTime.now().plusDays(1),
                 LocalDateTime.now().plusDays(8),
                 10,
-                null, null, null
+                null, null, null,
+                challenge
             );
-            challenge.addChallengeGroup(group);
         }
 
         // when
@@ -309,9 +306,9 @@ class TeamChallengeTest {
                 LocalDateTime.now().plusDays(1),
                 LocalDateTime.now().plusDays(8),
                 10,
-                null, null, null
+                null, null, null,
+                challenge
             );
-            challenge.addChallengeGroup(group);
         }
 
         // when

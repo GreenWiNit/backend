@@ -3,23 +3,43 @@ package com.example.green.domain.challenge.entity;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.example.green.domain.challenge.enums.ChallengeStatus;
+import com.example.green.domain.challenge.enums.ChallengeType;
 import com.example.green.domain.challenge.enums.GroupStatus;
 import com.example.green.domain.challenge.exception.ChallengeException;
 import com.example.green.domain.challenge.exception.ChallengeExceptionMessage;
+import com.example.green.domain.challenge.utils.ChallengeCodeGenerator;
+import com.example.green.domain.point.entity.vo.PointAmount;
 
 class TeamChallengeGroupTest {
 
     private TeamChallengeGroup teamChallengeGroup;
+    private TeamChallenge teamChallenge;
     private LocalDateTime now;
 
     @BeforeEach
     void setUp() {
         now = LocalDateTime.now();
+        
+        // TeamChallenge 먼저 생성
+        teamChallenge = TeamChallenge.create(
+            ChallengeCodeGenerator.generate(ChallengeType.TEAM, now),
+            "테스트 팀 챌린지",
+            ChallengeStatus.PROCEEDING,
+            PointAmount.of(BigDecimal.valueOf(2000)),
+            now.minusDays(1),
+            now.plusDays(7),
+            5,
+            "challenge-image.jpg",
+            "팀 챌린지 설명"
+        );
+        
         teamChallengeGroup = TeamChallengeGroup.create(
             "테스트 그룹",
             now.minusHours(1),  // 1시간 전 시작
@@ -27,12 +47,13 @@ class TeamChallengeGroupTest {
             10,  // 최대 10명
             "서울시 강남구",
             "테스트 그룹 설명",
-            "https://openchat.example.com"
+            "https://openchat.example.com",
+            teamChallenge
         );
 
         // 현재 참가자 수를 5명으로 설정
         for (int i = 0; i < 5; i++) {
-            teamChallengeGroup.increaseParticipants();
+            teamChallengeGroup.addParticipant();
         }
     }
 
@@ -42,7 +63,7 @@ class TeamChallengeGroupTest {
         int initialCount = teamChallengeGroup.getCurrentParticipants();
 
         // when
-        teamChallengeGroup.increaseParticipants();
+        teamChallengeGroup.addParticipant();
 
         // then
         assertThat(teamChallengeGroup.getCurrentParticipants()).isEqualTo(initialCount + 1);
@@ -54,7 +75,7 @@ class TeamChallengeGroupTest {
         int initialCount = teamChallengeGroup.getCurrentParticipants();
 
         // when
-        teamChallengeGroup.decreaseParticipants();
+        teamChallengeGroup.removeParticipant();
 
         // then
         assertThat(teamChallengeGroup.getCurrentParticipants()).isEqualTo(initialCount - 1);
@@ -69,12 +90,13 @@ class TeamChallengeGroupTest {
             testNow.minusHours(1),
             testNow.plusHours(1),
             10,
-            null, null, null
+            null, null, null,
+            teamChallenge
         );
         // currentParticipants는 생성 시 0으로 초기화됨
 
         // when
-        group.decreaseParticipants();
+        group.removeParticipant();
 
         // then
         assertThat(group.getCurrentParticipants()).isEqualTo(0);
@@ -89,12 +111,13 @@ class TeamChallengeGroupTest {
             testNow.minusHours(1),
             testNow.plusHours(1),
             5,   // 최대 5명
-            null, null, null
+            null, null, null,
+            teamChallenge
         );
 
         // 5명을 추가하여 만석으로 만듦
         for (int i = 0; i < 5; i++) {
-            group.increaseParticipants();
+            group.addParticipant();
         }
 
         // when
@@ -113,12 +136,13 @@ class TeamChallengeGroupTest {
             testNow.minusHours(1),
             testNow.plusHours(1),
             null, // 제한 없음
-            null, null, null
+            null, null, null,
+            teamChallenge
         );
 
         // 100명을 추가
         for (int i = 0; i < 100; i++) {
-            group.increaseParticipants();
+            group.addParticipant();
         }
 
         // when
@@ -137,12 +161,13 @@ class TeamChallengeGroupTest {
             testNow.minusHours(1),
             testNow.plusHours(1),  // 종료시간 전
             10,  // 최대 10명
-            null, null, null
+            null, null, null,
+            teamChallenge
         );
 
         // 5명만 추가 (여유 있음)
         for (int i = 0; i < 5; i++) {
-            group.increaseParticipants();
+            group.addParticipant();
         }
 
         // when
@@ -161,12 +186,13 @@ class TeamChallengeGroupTest {
             testNow.minusHours(1),
             testNow.plusHours(1),
             5,   // 최대 5명
-            null, null, null
+            null, null, null,
+            teamChallenge
         );
 
         // 5명을 추가하여 만석으로 만듦
         for (int i = 0; i < 5; i++) {
-            group.increaseParticipants();
+            group.addParticipant();
         }
 
         // when
@@ -185,7 +211,8 @@ class TeamChallengeGroupTest {
             testNow.minusHours(2),
             testNow.minusHours(1),  // 1시간 전 종료
             10,
-            null, null, null
+            null, null, null,
+            teamChallenge
         );
 
         // when
@@ -204,7 +231,8 @@ class TeamChallengeGroupTest {
             testNow.minusHours(1),  // 1시간 전 시작
             testNow.plusHours(1),   // 1시간 후 종료
             10,
-            null, null, null
+            null, null, null,
+            teamChallenge
         );
 
         // when
@@ -223,7 +251,8 @@ class TeamChallengeGroupTest {
             testNow.plusHours(1),  // 1시간 후 시작
             testNow.plusHours(2),
             10,
-            null, null, null
+            null, null, null,
+            teamChallenge
         );
 
         // when
@@ -242,7 +271,8 @@ class TeamChallengeGroupTest {
             testNow.minusHours(2),
             testNow.minusHours(1),  // 1시간 전 종료
             10,
-            null, null, null
+            null, null, null,
+            teamChallenge
         );
 
         // when
@@ -260,7 +290,8 @@ class TeamChallengeGroupTest {
             LocalDateTime.now().minusHours(1),
             LocalDateTime.now().plusHours(1),
             0,  // 잘못된 값
-            null, null, null
+            null, null, null,
+            teamChallenge
         ))
             .isInstanceOf(ChallengeException.class)
             .hasFieldOrPropertyWithValue("exceptionMessage", ChallengeExceptionMessage.INVALID_MAX_PARTICIPANTS_COUNT);
@@ -274,7 +305,8 @@ class TeamChallengeGroupTest {
             LocalDateTime.now().minusHours(1),
             LocalDateTime.now().plusHours(1),
             -10,  // 잘못된 값
-            null, null, null
+            null, null, null,
+            teamChallenge
         ))
             .isInstanceOf(ChallengeException.class)
             .hasFieldOrPropertyWithValue("exceptionMessage", ChallengeExceptionMessage.INVALID_MAX_PARTICIPANTS_COUNT);
@@ -289,13 +321,14 @@ class TeamChallengeGroupTest {
             testNow.minusHours(1),
             testNow.plusHours(1),
             5,   // 최대 5명
-            null, null, null
+            null, null, null,
+            teamChallenge
         );
 
         // when
         // 5명을 추가하여 만석으로 만듦
         for (int i = 0; i < 5; i++) {
-            group.increaseParticipants();
+            group.addParticipant();
         }
 
         // then
@@ -311,16 +344,40 @@ class TeamChallengeGroupTest {
             testNow.minusHours(1),
             testNow.plusHours(1),
             10,   // 최대 10명
-            null, null, null
+            null, null, null,
+            teamChallenge
         );
 
         // when
         // 5명만 추가
         for (int i = 0; i < 5; i++) {
-            group.increaseParticipants();
+            group.addParticipant();
         }
 
         // then
         assertThat(group.getGroupStatus()).isEqualTo(GroupStatus.RECRUITING);
+    }
+
+    @Test
+    void 최대_인원_초과_시_참가자_추가에서_예외가_발생한다() {
+        // given
+        LocalDateTime testNow = now;
+        TeamChallengeGroup group = TeamChallengeGroup.create(
+            "제한된 그룹",
+            testNow.minusHours(1),
+            testNow.plusHours(1),
+            2,   // 최대 2명
+            null, null, null,
+            teamChallenge
+        );
+
+        // 2명을 추가하여 만석으로 만듦
+        group.addParticipant();
+        group.addParticipant();
+
+        // when & then
+        assertThatThrownBy(() -> group.addParticipant())
+            .isInstanceOf(ChallengeException.class)
+            .hasFieldOrPropertyWithValue("exceptionMessage", ChallengeExceptionMessage.GROUP_IS_FULL);
     }
 }
