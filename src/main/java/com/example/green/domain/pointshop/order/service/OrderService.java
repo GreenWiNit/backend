@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.green.domain.pointshop.delivery.service.DeliveryAddressService;
 import com.example.green.domain.pointshop.order.client.PointSpendClient;
 import com.example.green.domain.pointshop.order.client.dto.PointSpendRequest;
 import com.example.green.domain.pointshop.order.entity.Order;
@@ -16,7 +17,6 @@ import com.example.green.domain.pointshop.order.exception.OrderException;
 import com.example.green.domain.pointshop.order.exception.OrderExceptionMessage;
 import com.example.green.domain.pointshop.order.repository.OrderRepository;
 import com.example.green.domain.pointshop.order.service.command.SingleOrderCommand;
-import com.example.green.domain.pointshop.delivery.service.DeliveryAddressService;
 import com.example.green.domain.pointshop.product.service.PointProductService;
 
 import lombok.RequiredArgsConstructor;

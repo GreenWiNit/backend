@@ -84,12 +84,15 @@ public class GmailPhoneVerificationEmail implements PhoneVerificationEmail {
 				Date dateA = a.getReceivedDate();
 				Date dateB = b.getReceivedDate();
 
-				if (dateA == null && dateB == null)
+				if (dateA == null && dateB == null) {
 					return 0;
-				if (dateA == null)
+				}
+				if (dateA == null) {
 					return 1;
-				if (dateB == null)
+				}
+				if (dateB == null) {
 					return -1;
+				}
 
 				return dateB.compareTo(dateA);
 			} catch (MessagingException e) {
@@ -124,8 +127,9 @@ public class GmailPhoneVerificationEmail implements PhoneVerificationEmail {
 	private boolean isFromPhoneNumber(Message message, PhoneNumber phoneNumber) {
 		try {
 			Address[] from = message.getFrom();
-			if (from == null || from.length == 0)
+			if (from == null || from.length == 0) {
 				return false;
+			}
 
 			String fromAddress = from[0].toString();
 			String cleanPhone = phoneNumber.getNumber().replaceAll("-", "");

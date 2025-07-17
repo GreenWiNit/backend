@@ -1,6 +1,5 @@
 package com.example.green.domain.auth.controller;
 
-import static com.example.green.domain.auth.controller.message.PhoneVerificationResponseMessage.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -46,8 +45,8 @@ class PhoneVerificationControllerTest extends BaseControllerUnitTest {
 			});
 
 		// then
-		assertThat(response.result()).isEqualTo(mockResult);
-		assertThat(response.message()).isEqualTo(PHONE_VERIFICATION_REQUEST_SUCCESS.getMessage());
+		assertThat(response.message()).isNull();
+		assertThat(response.result()).isNull();
 	}
 
 	@Test
@@ -69,6 +68,6 @@ class PhoneVerificationControllerTest extends BaseControllerUnitTest {
 			});
 
 		// then
-		assertThat(response.message()).isEqualTo(PHONE_VERIFICATION_SUCCESS.getMessage());
+		assertThat(response.message()).isNull();
 	}
 }

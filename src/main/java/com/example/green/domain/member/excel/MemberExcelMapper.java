@@ -60,4 +60,4 @@ public class MemberExcelMapper implements ExcelDataMapper<MemberListResponseDto>
 	public String getSheetName() {
 		return "회원목록";
 	}
-} 
+}

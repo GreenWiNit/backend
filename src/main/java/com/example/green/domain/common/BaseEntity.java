@@ -27,7 +27,7 @@ public class BaseEntity {
 	@CreatedBy
 	private String createdBy;
 
-	// 수정자 정보 (JWT 인증으로 현재 사용자 자동 설정)  
+	// 수정자 정보 (JWT 인증으로 현재 사용자 자동 설정)
 	@LastModifiedBy
 	private String lastModifiedBy;
 
