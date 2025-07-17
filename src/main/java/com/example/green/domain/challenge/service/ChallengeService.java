@@ -1,6 +1,5 @@
 package com.example.green.domain.challenge.service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -12,16 +11,13 @@ import com.example.green.domain.challenge.controller.dto.ChallengeParticipationS
 import com.example.green.domain.challenge.entity.BaseChallenge;
 import com.example.green.domain.challenge.entity.PersonalChallenge;
 import com.example.green.domain.challenge.entity.TeamChallenge;
-import com.example.green.domain.challenge.entity.TeamChallengeGroup;
 import com.example.green.domain.challenge.enums.ChallengeStatus;
 import com.example.green.domain.challenge.exception.ChallengeException;
 import com.example.green.domain.challenge.exception.ChallengeExceptionMessage;
 import com.example.green.domain.challenge.repository.PersonalChallengeRepository;
 import com.example.green.domain.challenge.repository.TeamChallengeRepository;
 import com.example.green.domain.challengecert.entity.PersonalChallengeParticipation;
-import com.example.green.domain.challengecert.entity.TeamChallengeGroupParticipation;
 import com.example.green.domain.challengecert.entity.TeamChallengeParticipation;
-import com.example.green.domain.challengecert.entity.enums.GroupRoleType;
 import com.example.green.domain.challengecert.repository.PersonalChallengeParticipationRepository;
 import com.example.green.domain.challengecert.repository.TeamChallengeGroupParticipationRepository;
 import com.example.green.domain.challengecert.repository.TeamChallengeParticipationRepository;
@@ -217,7 +213,6 @@ public class ChallengeService {
 	}
 
 	private void joinTeamChallenge(TeamChallenge challenge, Member member) {
-		// TeamChallengeParticipation 생성 (그룹 참여는 선택사항)
 		TeamChallengeParticipation participation = TeamChallengeParticipation.create(
 			challenge,
 			member,
