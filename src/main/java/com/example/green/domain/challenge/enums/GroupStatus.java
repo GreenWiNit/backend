@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 @Getter
 public enum GroupStatus {
 	RECRUITING("모집중"),
-	PROCEEDING("진행중"),
 	COMPLETED("완료");
 
 	private final String description;

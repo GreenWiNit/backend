@@ -3,20 +3,14 @@ package com.example.green.domain.challenge.entity;
 import static com.example.green.global.utils.EntityValidator.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 import com.example.green.domain.challenge.enums.GroupStatus;
 import com.example.green.domain.challenge.exception.ChallengeException;
 import com.example.green.domain.challenge.exception.ChallengeExceptionMessage;
-import com.example.green.domain.challengecert.entity.TeamChallengeParticipation;
 import com.example.green.domain.common.BaseEntity;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -24,27 +18,18 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-/**
- * 팀 챌린지 그룹 엔티티
- * 하나의 팀 챌린지 안에서 운영되는 세부 팀 그룹
- */
 @Entity
 @Table(indexes = {
-	@Index(name = "idx_team_challenge_group_active", columnList = "groupStatus, groupBeginDateTime, groupEndDateTime"),
-	@Index(name = "idx_team_challenge_group_by_challenge", columnList = "teamChallengeNo, groupStatus")
+	@Index(name = "idx_team_challenge_group_active", columnList = "group_begin_date_time, group_end_date_time"),
+	@Index(name = "idx_team_challenge_group_by_challenge", columnList = "team_challenge_id")
 })
 @Getter
-@Setter(AccessLevel.PACKAGE) // 같은 패키지 내에서만 setter 사용 가능
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class TeamChallengeGroup extends BaseEntity {
 
 	@Id
@@ -53,10 +38,6 @@ public class TeamChallengeGroup extends BaseEntity {
 
 	@Column(length = 100, nullable = false)
 	private String groupName;
-
-	@Enumerated(EnumType.STRING)
-	@Column(length = 20, nullable = false)
-	private GroupStatus groupStatus;
 
 	@Column(length = 200)
 	private String groupLocation;
@@ -80,57 +61,20 @@ public class TeamChallengeGroup extends BaseEntity {
 	private Integer currentParticipants = 0;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "team_challenge_id", insertable = false, updatable = false)
+	@JoinColumn(name = "team_challenge_id")
 	private TeamChallenge teamChallenge;
-
-	@OneToMany(mappedBy = "teamChallengeGroup", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	private List<TeamChallengeParticipation> participations = new ArrayList<>();
-
-	public static TeamChallengeGroup create(
-		String groupName,
-		GroupStatus groupStatus,
-		LocalDateTime groupBeginDateTime,
-		LocalDateTime groupEndDateTime,
-		Integer maxParticipants,
-		String groupLocation,
-		String groupDescription,
-		String openChatUrl
-	) {
-		// 필수 값 validate
-		validateEmptyString(groupName, "그룹명은 필수값입니다.");
-		validateNullData(groupStatus, "그룹 상태는 필수값입니다.");
-		validateNullData(groupBeginDateTime, "그룹 시작일시는 필수값입니다.");
-		validateNullData(groupEndDateTime, "그룹 종료일시는 필수값입니다.");
-		validateDateRange(groupBeginDateTime, groupEndDateTime, "그룹 시작일시는 종료일시보다 이전이어야 합니다.");
-
-		if (maxParticipants != null && maxParticipants <= 0) {
-			throw new ChallengeException(ChallengeExceptionMessage.INVALID_MAX_PARTICIPANTS_COUNT);
-		}
-
-		return new TeamChallengeGroup(
-			groupName,
-			groupStatus,
-			groupBeginDateTime,
-			groupEndDateTime,
-			maxParticipants,
-			groupLocation,
-			groupDescription,
-			openChatUrl
-		);
-	}
 
 	private TeamChallengeGroup(
 		String groupName,
-		GroupStatus groupStatus,
 		LocalDateTime groupBeginDateTime,
 		LocalDateTime groupEndDateTime,
 		Integer maxParticipants,
 		String groupLocation,
 		String groupDescription,
-		String openChatUrl
+		String openChatUrl,
+		TeamChallenge teamChallenge
 	) {
 		this.groupName = groupName;
-		this.groupStatus = groupStatus;
 		this.groupBeginDateTime = groupBeginDateTime;
 		this.groupEndDateTime = groupEndDateTime;
 		this.maxParticipants = maxParticipants;
@@ -138,31 +82,60 @@ public class TeamChallengeGroup extends BaseEntity {
 		this.groupLocation = groupLocation;
 		this.groupDescription = groupDescription;
 		this.openChatUrl = openChatUrl;
-		this.participations = new ArrayList<>();
+		this.teamChallenge = teamChallenge;
 	}
 
-	/**
-	 * 참가자 증가
-	 */
-	public void increaseParticipants() {
+	public static TeamChallengeGroup create(
+		String groupName,
+		LocalDateTime groupBeginDateTime,
+		LocalDateTime groupEndDateTime,
+		Integer maxParticipants,
+		String groupLocation,
+		String groupDescription,
+		String openChatUrl,
+		TeamChallenge teamChallenge
+	) {
+		validateEmptyString(groupName, "그룹명은 필수값입니다.");
+		validateNullData(groupBeginDateTime, "그룹 시작일시는 필수값입니다.");
+		validateNullData(groupEndDateTime, "그룹 종료일시는 필수값입니다.");
+		validateDateRange(groupBeginDateTime, groupEndDateTime, "그룹 시작일시는 종료일시보다 이전이어야 합니다.");
+		validateNullData(teamChallenge, "팀 챌린지는 필수값입니다.");
+
+		if (maxParticipants != null && maxParticipants <= 0) {
+			throw new ChallengeException(ChallengeExceptionMessage.INVALID_MAX_PARTICIPANTS_COUNT);
+		}
+
+		TeamChallengeGroup group = new TeamChallengeGroup(
+			groupName,
+			groupBeginDateTime,
+			groupEndDateTime,
+			maxParticipants,
+			groupLocation,
+			groupDescription,
+			openChatUrl,
+			teamChallenge
+		);
+
+		teamChallenge.addChallengeGroup(group);
+		return group;
+	}
+
+	public void addParticipant() {
+		if (isMaxParticipantsReached()) {
+			throw new ChallengeException(ChallengeExceptionMessage.GROUP_IS_FULL);
+		}
 		if (currentParticipants == null) {
 			currentParticipants = 0;
 		}
 		currentParticipants++;
 	}
 
-	/**
-	 * 참가자 감소
-	 */
-	public void decreaseParticipants() {
+	public void removeParticipant() {
 		if (currentParticipants != null && currentParticipants > 0) {
 			currentParticipants--;
 		}
 	}
 
-	/**
-	 * 최대 인원 확인
-	 */
 	public boolean isMaxParticipantsReached() {
 		if (maxParticipants == null || currentParticipants == null) {
 			return false;
@@ -170,37 +143,22 @@ public class TeamChallengeGroup extends BaseEntity {
 		return currentParticipants >= maxParticipants;
 	}
 
-	/**
-	 * 참가 가능 여부 확인
-	 */
+	public GroupStatus getGroupStatus() {
+		return isMaxParticipantsReached() ? GroupStatus.COMPLETED : GroupStatus.RECRUITING;
+	}
+
 	public boolean canParticipate(LocalDateTime now) {
-		return !isMaxParticipantsReached()
-			&& groupStatus == GroupStatus.RECRUITING
-			&& now.isBefore(groupEndDateTime);
+		return !isMaxParticipantsReached() && now.isBefore(groupEndDateTime);
 	}
 
-	/**
-	 * 그룹이 활성 상태인지 확인
-	 */
 	public boolean isActive(LocalDateTime now) {
-		return groupStatus == GroupStatus.PROCEEDING
-			&& now.isAfter(groupBeginDateTime)
-			&& now.isBefore(groupEndDateTime);
+		return now.isAfter(groupBeginDateTime) && now.isBefore(groupEndDateTime);
 	}
 
 	/**
-	 * 참여자 추가
+	 * TeamChallenge와의 연관관계를 해제합니다.
 	 */
-	public void addParticipation(TeamChallengeParticipation participation) {
-		participations.add(participation);
-		increaseParticipants();
-	}
-
-	/**
-	 * 참여자 제거
-	 */
-	public void removeParticipation(TeamChallengeParticipation participation) {
-		participations.remove(participation);
-		decreaseParticipants();
+	protected void disconnectFromTeamChallenge() {
+		this.teamChallenge = null;
 	}
 }
