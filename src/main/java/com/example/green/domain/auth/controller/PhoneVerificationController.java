@@ -28,7 +28,7 @@ public class PhoneVerificationController implements PhoneVerificationControllerD
 	public ApiTemplate<PhoneVerificationResult> request(@RequestBody @Valid PhoneVerificationRequest dto) {
 		PhoneNumber phoneNumber = PhoneNumber.of(dto.phoneNumber());
 		PhoneVerificationResult result = phoneVerificationService.request(phoneNumber);
-		return null;
+		return ApiTemplate.ok(() -> null, null);
 	}
 
 	@Deprecated
@@ -36,6 +36,6 @@ public class PhoneVerificationController implements PhoneVerificationControllerD
 	public NoContent verify(@RequestBody @Valid PhoneVerificationRequest dto) {
 		PhoneNumber phoneNumber = PhoneNumber.of(dto.phoneNumber());
 		phoneVerificationService.verify(phoneNumber);
-		return null;
+		return NoContent.ok(() -> null);
 	}
 }
