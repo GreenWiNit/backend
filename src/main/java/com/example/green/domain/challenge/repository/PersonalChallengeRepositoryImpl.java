@@ -49,7 +49,7 @@ public class PersonalChallengeRepositoryImpl implements PersonalChallengeReposit
 			.map(this::toChallengeListDto)
 			.toList();
 
-		Long nextCursor = challenges.get(challenges.size() - 1).getId();
+		Long nextCursor = challenges.getLast().getId();
 		boolean hasNext = hasNextPersonalChallenge(nextCursor, status, now);
 
 		return hasNext
@@ -86,4 +86,4 @@ public class PersonalChallengeRepositoryImpl implements PersonalChallengeReposit
 			challenge.getChallengePoint().getAmount().intValue()
 		);
 	}
-} 
+}

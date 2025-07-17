@@ -26,4 +26,4 @@ public interface TeamChallengeRepositoryCustom {
 		ChallengeStatus status,
 		LocalDateTime now
 	);
-} 
+}

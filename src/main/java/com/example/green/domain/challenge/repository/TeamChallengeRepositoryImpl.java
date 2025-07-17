@@ -49,7 +49,7 @@ public class TeamChallengeRepositoryImpl implements TeamChallengeRepositoryCusto
 			.map(this::toChallengeListDto)
 			.toList();
 
-		Long nextCursor = challenges.get(challenges.size() - 1).getId();
+		Long nextCursor = challenges.getLast().getId();
 		boolean hasNext = hasNextTeamChallenge(nextCursor, status, now);
 
 		return hasNext
@@ -86,4 +86,4 @@ public class TeamChallengeRepositoryImpl implements TeamChallengeRepositoryCusto
 			challenge.getChallengePoint().getAmount().intValue()
 		);
 	}
-} 
+}
