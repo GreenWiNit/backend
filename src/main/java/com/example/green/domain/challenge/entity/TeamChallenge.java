@@ -15,13 +15,11 @@ import com.example.green.domain.point.entity.vo.PointAmount;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.Index;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -39,7 +37,6 @@ import lombok.NoArgsConstructor;
 )
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class TeamChallenge extends BaseChallenge {
 
 	@Column
@@ -48,8 +45,27 @@ public class TeamChallenge extends BaseChallenge {
 	@Column
 	private Integer currentGroupCount;
 
-	@OneToMany(mappedBy = "teamChallenge", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "teamChallenge", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<TeamChallengeGroup> challengeGroups = new ArrayList<>();
+
+	private TeamChallenge(
+		String challengeCode,
+		String challengeName,
+		ChallengeStatus challengeStatus,
+		PointAmount challengePoint,
+		ChallengeType challengeType,
+		LocalDateTime beginDateTime,
+		LocalDateTime endDateTime,
+		String challengeImage,
+		String challengeContent,
+		Integer maxGroupCount
+	) {
+		super(challengeCode, challengeName, challengeStatus, challengePoint, challengeType,
+			beginDateTime, endDateTime, challengeImage, challengeContent);
+		this.maxGroupCount = maxGroupCount;
+		this.currentGroupCount = 0;
+		this.challengeGroups = new ArrayList<>();
+	}
 
 	public static TeamChallenge create(
 		String challengeCode,
@@ -89,35 +105,19 @@ public class TeamChallenge extends BaseChallenge {
 		);
 	}
 
-	private TeamChallenge(
-		String challengeCode,
-		String challengeName,
-		ChallengeStatus challengeStatus,
-		PointAmount challengePoint,
-		ChallengeType challengeType,
-		LocalDateTime beginDateTime,
-		LocalDateTime endDateTime,
-		String challengeImage,
-		String challengeContent,
-		Integer maxGroupCount
-	) {
-		super(challengeCode, challengeName, challengeStatus, challengePoint, challengeType,
-			beginDateTime, endDateTime, challengeImage, challengeContent);
-		this.maxGroupCount = maxGroupCount;
-		this.currentGroupCount = 0;
-		this.challengeGroups = new ArrayList<>();
-	}
-
 	public void addChallengeGroup(TeamChallengeGroup group) {
+		if (!canAddGroup()) {
+			throw new ChallengeException(ChallengeExceptionMessage.INVALID_MAX_GROUP_COUNT);
+		}
 		challengeGroups.add(group);
-		group.setTeamChallenge(this);
 		increaseGroupCount();
 	}
 
 	public void removeChallengeGroup(TeamChallengeGroup group) {
-		challengeGroups.remove(group);
-		group.setTeamChallenge(null);
-		decreaseGroupCount();
+		if (challengeGroups.remove(group)) {
+			group.disconnectFromTeamChallenge();
+			decreaseGroupCount();
+		}
 	}
 
 	private void increaseGroupCount() {
