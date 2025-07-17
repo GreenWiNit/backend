@@ -33,10 +33,10 @@ public interface MypageControllerDocs {
 					name = "NotNullForUserTotalPoints",
 					summary = "마이페이지 레벨 계산 시 포인트가 NULL인 경우",
 					value = """
-						{
-						  "success": false,
-						  "message": "사용자의 총 포인트는 NULL 일 수 없습니다",
-						}
+							{
+								"success": false,
+								"message": "사용자의 총 포인트는 NULL 일 수 없습니다."
+							}
 						"""
 				)
 			)
