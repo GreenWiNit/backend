@@ -32,6 +32,7 @@ public class OrderService {
 	private final OrderRepository orderRepository;
 
 	// todo: 통합 테스트
+	@Transactional
 	public Long orderSingleItem(SingleOrderCommand command) {
 		deliveryAddressService.validateAddressOwnership(command.deliveryAddressId(), command.memberId());
 
