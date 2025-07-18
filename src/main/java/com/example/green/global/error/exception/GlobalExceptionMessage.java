@@ -36,7 +36,8 @@ public enum GlobalExceptionMessage implements ExceptionMessage {
 	// ULID 관련
 	ULID_INVALID_FORMAT(BAD_REQUEST, "유효하지 않은 ULID 형식입니다."),
 	ULID_INVALID_CHARACTER(BAD_REQUEST, "ULID에 유효하지 않은 문자가 포함되어 있습니다."),
-	ULID_INVALID_LENGTH(BAD_REQUEST, "ULID의 길이가 올바르지 않습니다.");
+	ULID_INVALID_LENGTH(BAD_REQUEST, "ULID의 길이가 올바르지 않습니다."),
+	;
 
 	private final HttpStatus httpStatus;
 	private final String message;

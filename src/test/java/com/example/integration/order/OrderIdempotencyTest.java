@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.example.green.domain.pointshop.order.controller.dto.SingleOrderRequest;
 import com.example.green.domain.pointshop.order.entity.Order;
@@ -24,7 +23,6 @@ import io.restassured.http.ContentType;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 
 @Import(OrderTestConfig.class)
-@Transactional
 class OrderIdempotencyTest extends BaseIntegrationTest {
 
 	@Autowired
