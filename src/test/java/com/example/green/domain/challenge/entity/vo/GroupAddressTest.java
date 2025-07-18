@@ -1,7 +1,6 @@
 package com.example.green.domain.challenge.entity.vo;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
@@ -111,4 +110,4 @@ class GroupAddressTest {
 		// then
 		assertThat(result).isEqualTo(roadAddress + " " + detailAddress);
 	}
-} 
+}

@@ -19,7 +19,7 @@ public class GroupAddress {
 
 	@Column(nullable = false)
 	private String roadAddress;
-	
+
 	@Column
 	private String detailAddress;
 
@@ -40,12 +40,16 @@ public class GroupAddress {
 	}
 
 	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-		GroupAddress that = (GroupAddress) o;
-		return Objects.equals(roadAddress, that.roadAddress) &&
-			Objects.equals(detailAddress, that.detailAddress);
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null || getClass() != obj.getClass()) {
+			return false;
+		}
+		GroupAddress that = (GroupAddress)obj;
+		return Objects.equals(roadAddress, that.roadAddress)
+			&& Objects.equals(detailAddress, that.detailAddress);
 	}
 
 	@Override
@@ -57,4 +61,4 @@ public class GroupAddress {
 	public String toString() {
 		return getFullAddress();
 	}
-} 
+}
