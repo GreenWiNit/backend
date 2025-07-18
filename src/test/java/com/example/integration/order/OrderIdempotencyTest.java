@@ -8,20 +8,23 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.green.domain.pointshop.order.controller.dto.SingleOrderRequest;
 import com.example.green.domain.pointshop.order.entity.Order;
 import com.example.green.domain.pointshop.order.repository.OrderRepository;
 import com.example.green.global.api.ApiTemplate;
 import com.example.integration.common.BaseIntegrationTest;
+import com.example.integration.common.concurrency.ConcurrencyTestResult;
+import com.example.integration.common.concurrency.ConcurrencyTestTemplate;
 
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.http.ContentType;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 
 @Import(OrderTestConfig.class)
+@Transactional
 class OrderIdempotencyTest extends BaseIntegrationTest {
 
 	@Autowired
@@ -31,11 +34,19 @@ class OrderIdempotencyTest extends BaseIntegrationTest {
 	private OrderRepository orderRepository;
 
 	@Autowired
-	private JdbcTemplate jdbcTemplate;
+	private OrderDataSource dataSource;
 
 	@BeforeEach
 	void setUp() {
 		RestAssuredMockMvc.mockMvc(mockMvc);
+
+		dataSource.deleteOrderItems();
+		dataSource.deleteOrder();
+		dataSource.deleteIdempotency();
+
+		dataSource.createOrder();
+		dataSource.createOrderItems();
+		dataSource.createIdempotency();
 	}
 
 	@Test
@@ -54,6 +65,25 @@ class OrderIdempotencyTest extends BaseIntegrationTest {
 		assertThat(firstResponse.result()).isOne();
 		assertThat(secondResponse.result()).isOne();
 		assertThat(thirdResponse.result()).isOne();
+	}
+
+	@Test
+	void 동일한_멱등키로_동시_주문_요청_세_번을_할_경우_한_건만_처리된다() throws InterruptedException {
+		// given
+		SingleOrderRequest orderRequest = new SingleOrderRequest(1L, 1L, 1);
+
+		// when & then
+		ConcurrencyTestResult result = ConcurrencyTestTemplate.build()
+			.threadCount(3)
+			.timeout(10)
+			.execute(() -> {
+				ApiTemplate<Long> response = requestOrder(orderRequest);
+				assertThat(response.result()).isOne();
+			});
+
+		List<Order> all = orderRepository.findAll();
+		assertThat(all).hasSize(1);
+		assertThat(result.allSucceeded()).isTrue();
 	}
 
 	private static ApiTemplate<Long> requestOrder(SingleOrderRequest orderRequest) {
