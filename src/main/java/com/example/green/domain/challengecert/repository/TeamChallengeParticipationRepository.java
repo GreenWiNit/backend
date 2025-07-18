@@ -23,4 +23,10 @@ public interface TeamChallengeParticipationRepository
 	 * 회원의 팀 챌린지 참여 정보를 조회합니다.
 	 */
 	Optional<TeamChallengeParticipation> findByMemberAndTeamChallenge(Member member, TeamChallenge challenge);
+
+	/**
+	 * 팀 챌린지와 회원으로 참여 정보를 조회합니다.
+	 */
+	Optional<TeamChallengeParticipation> findByTeamChallengeAndMember(TeamChallenge teamChallenge, Member member);
 }
+

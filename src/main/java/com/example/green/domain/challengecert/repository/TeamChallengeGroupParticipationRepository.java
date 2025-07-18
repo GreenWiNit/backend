@@ -1,7 +1,5 @@
 package com.example.green.domain.challengecert.repository;
 
-import java.util.Optional;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.example.green.domain.challenge.entity.TeamChallengeGroup;
@@ -13,35 +11,37 @@ public interface TeamChallengeGroupParticipationRepository
 	extends JpaRepository<TeamChallengeGroupParticipation, Long> {
 
 	/**
-	 * 특정 팀 챌린지 참여에 대한 그룹 참여 정보 조회
-	 */
-	Optional<TeamChallengeGroupParticipation> findByTeamChallengeParticipation(
-		TeamChallengeParticipation teamChallengeParticipation
-	);
-
-	/**
-	 * 특정 그룹의 특정 역할을 가진 참여 정보 조회
-	 */
-	Optional<TeamChallengeGroupParticipation> findByTeamChallengeGroupAndGroupRoleType(
-		TeamChallengeGroup teamChallengeGroup,
-		GroupRoleType groupRoleType
-	);
-
-	/**
-	 * 특정 그룹의 참여자 수 조회
-	 */
-	long countByTeamChallengeGroup(TeamChallengeGroup teamChallengeGroup);
-
-	/**
 	 * 특정 팀 챌린지 참여에 대한 그룹 참여 정보 존재 여부 확인
 	 */
 	boolean existsByTeamChallengeParticipation(TeamChallengeParticipation teamChallengeParticipation);
 
 	/**
-	 * 특정 그룹에 특정 역할을 가진 참여자가 존재하는지 확인
+	 * 특정 팀 챌린지 참여와 그룹에 대한 참여 정보 존재 여부 확인
 	 */
-	boolean existsByTeamChallengeGroupAndGroupRoleType(
-		TeamChallengeGroup teamChallengeGroup,
+	boolean existsByTeamChallengeParticipationAndTeamChallengeGroup(
+		TeamChallengeParticipation teamChallengeParticipation,
+		TeamChallengeGroup teamChallengeGroup
+	);
+
+	/**
+	 * 특정 그룹과 사용자에 대한 특정 역할 참여 정보 존재 여부 확인
+	 */
+	boolean existsByTeamChallengeGroupIdAndTeamChallengeParticipationMemberIdAndGroupRoleType(
+		Long groupId,
+		Long memberId,
 		GroupRoleType groupRoleType
 	);
+
+	/**
+	 * 특정 그룹과 사용자에 대한 참여 정보 존재 여부 확인
+	 */
+	boolean existsByTeamChallengeGroupIdAndTeamChallengeParticipationMemberId(
+		Long groupId,
+		Long memberId
+	);
+
+	/**
+	 * 특정 그룹의 모든 참여 정보 삭제
+	 */
+	void deleteByTeamChallengeGroup(TeamChallengeGroup teamChallengeGroup);
 }
