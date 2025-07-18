@@ -4,12 +4,14 @@ import static com.example.green.global.utils.EntityValidator.*;
 
 import java.time.LocalDateTime;
 
+import com.example.green.domain.challenge.entity.vo.GroupAddress;
 import com.example.green.domain.challenge.enums.GroupStatus;
 import com.example.green.domain.challenge.exception.ChallengeException;
 import com.example.green.domain.challenge.exception.ChallengeExceptionMessage;
 import com.example.green.domain.common.BaseEntity;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -39,8 +41,8 @@ public class TeamChallengeGroup extends BaseEntity {
 	@Column(length = 100, nullable = false)
 	private String groupName;
 
-	@Column(length = 200)
-	private String groupLocation;
+	@Embedded
+	private GroupAddress groupAddress;
 
 	@Column(columnDefinition = "TEXT")
 	private String groupDescription;
@@ -69,7 +71,7 @@ public class TeamChallengeGroup extends BaseEntity {
 		LocalDateTime groupBeginDateTime,
 		LocalDateTime groupEndDateTime,
 		Integer maxParticipants,
-		String groupLocation,
+		GroupAddress groupAddress,
 		String groupDescription,
 		String openChatUrl,
 		TeamChallenge teamChallenge
@@ -79,7 +81,7 @@ public class TeamChallengeGroup extends BaseEntity {
 		this.groupEndDateTime = groupEndDateTime;
 		this.maxParticipants = maxParticipants;
 		this.currentParticipants = 0;
-		this.groupLocation = groupLocation;
+		this.groupAddress = groupAddress;
 		this.groupDescription = groupDescription;
 		this.openChatUrl = openChatUrl;
 		this.teamChallenge = teamChallenge;
@@ -90,7 +92,7 @@ public class TeamChallengeGroup extends BaseEntity {
 		LocalDateTime groupBeginDateTime,
 		LocalDateTime groupEndDateTime,
 		Integer maxParticipants,
-		String groupLocation,
+		GroupAddress groupAddress,
 		String groupDescription,
 		String openChatUrl,
 		TeamChallenge teamChallenge
@@ -99,6 +101,7 @@ public class TeamChallengeGroup extends BaseEntity {
 		validateNullData(groupBeginDateTime, "그룹 시작일시는 필수값입니다.");
 		validateNullData(groupEndDateTime, "그룹 종료일시는 필수값입니다.");
 		validateDateRange(groupBeginDateTime, groupEndDateTime, "그룹 시작일시는 종료일시보다 이전이어야 합니다.");
+		validateNullData(groupAddress, "그룹 주소는 필수값입니다.");
 		validateNullData(teamChallenge, "팀 챌린지는 필수값입니다.");
 
 		if (maxParticipants != null && maxParticipants <= 0) {
@@ -110,7 +113,7 @@ public class TeamChallengeGroup extends BaseEntity {
 			groupBeginDateTime,
 			groupEndDateTime,
 			maxParticipants,
-			groupLocation,
+			groupAddress,
 			groupDescription,
 			openChatUrl,
 			teamChallenge
@@ -118,6 +121,53 @@ public class TeamChallengeGroup extends BaseEntity {
 
 		teamChallenge.addChallengeGroup(group);
 		return group;
+	}
+
+	/**
+	 * 그룹 정보를 수정합니다.
+	 * 
+	 * @param groupName 수정할 그룹명
+	 * @param groupAddress 수정할 그룹 주소
+	 * @param groupDescription 수정할 그룹 설명
+	 * @param openChatUrl 수정할 오픈채팅 URL
+	 * @param groupBeginDateTime 수정할 그룹 시작일시
+	 * @param groupEndDateTime 수정할 그룹 종료일시
+	 * @param maxParticipants 수정할 최대 참가자 수
+	 */
+	public void update(
+		String groupName,
+		GroupAddress groupAddress,
+		String groupDescription,
+		String openChatUrl,
+		LocalDateTime groupBeginDateTime,
+		LocalDateTime groupEndDateTime,
+		Integer maxParticipants
+	) {
+		// 필수값 검증
+		validateEmptyString(groupName, "그룹명은 필수값입니다.");
+		validateNullData(groupBeginDateTime, "그룹 시작일시는 필수값입니다.");
+		validateNullData(groupEndDateTime, "그룹 종료일시는 필수값입니다.");
+		validateDateRange(groupBeginDateTime, groupEndDateTime, "그룹 시작일시는 종료일시보다 이전이어야 합니다.");
+		validateNullData(groupAddress, "그룹 주소는 필수값입니다.");
+
+		// maxParticipants 검증
+		if (maxParticipants != null && maxParticipants <= 0) {
+			throw new ChallengeException(ChallengeExceptionMessage.INVALID_MAX_PARTICIPANTS_COUNT);
+		}
+
+		// 현재 참가자 수보다 작은 최대 참가자 수로 변경 불가
+		if (maxParticipants != null && currentParticipants != null && maxParticipants < currentParticipants) {
+			throw new ChallengeException(ChallengeExceptionMessage.MAX_PARTICIPANTS_LESS_THAN_CURRENT);
+		}
+
+		// 필드 업데이트
+		this.groupName = groupName;
+		this.groupAddress = groupAddress;
+		this.groupDescription = groupDescription;
+		this.openChatUrl = openChatUrl;
+		this.groupBeginDateTime = groupBeginDateTime;
+		this.groupEndDateTime = groupEndDateTime;
+		this.maxParticipants = maxParticipants;
 	}
 
 	public void addParticipant() {
@@ -144,7 +194,11 @@ public class TeamChallengeGroup extends BaseEntity {
 	}
 
 	public GroupStatus getGroupStatus() {
-		return isMaxParticipantsReached() ? GroupStatus.COMPLETED : GroupStatus.RECRUITING;
+		if (isMaxParticipantsReached()) {
+			return GroupStatus.COMPLETED;
+		} else {
+			return GroupStatus.RECRUITING;
+		}
 	}
 
 	public boolean canParticipate(LocalDateTime now) {
