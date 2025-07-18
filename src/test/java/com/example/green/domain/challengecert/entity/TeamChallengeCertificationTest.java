@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import com.example.green.domain.challenge.entity.TeamChallenge;
 import com.example.green.domain.challenge.entity.TeamChallengeGroup;
+import com.example.green.domain.challenge.entity.vo.GroupAddress;
 import com.example.green.domain.challenge.enums.ChallengeStatus;
 import com.example.green.domain.challenge.enums.ChallengeType;
 import com.example.green.domain.challenge.utils.ChallengeCodeGenerator;
@@ -17,9 +18,6 @@ import com.example.green.domain.member.entity.Member;
 import com.example.green.domain.point.entity.vo.PointAmount;
 import com.example.green.global.error.exception.BusinessException;
 
-/**
- * TeamChallengeCertification 테스트
- */
 class TeamChallengeCertificationTest {
 
 	private TeamChallengeCertification certification;
@@ -55,7 +53,7 @@ class TeamChallengeCertificationTest {
 			now.minusHours(2),
 			now.plusDays(6),
 			10,
-			"서울시 강남구",
+			GroupAddress.of("서울시 강남구"),
 			"테스트 그룹 설명",
 			"https://openchat.example.com",
 			teamChallenge
