@@ -10,6 +10,7 @@ import java.time.format.DateTimeFormatter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.example.green.domain.challenge.entity.vo.GroupAddress;
 import com.example.green.domain.challenge.enums.ChallengeStatus;
 import com.example.green.domain.challenge.enums.ChallengeType;
 import com.example.green.domain.challenge.exception.ChallengeException;
@@ -148,7 +149,7 @@ class TeamChallengeTest {
             testNow.plusDays(1),
             testNow.plusDays(8),
             10,
-            "서울시 강남구",
+            GroupAddress.of("서울시 강남구"),
             "테스트 그룹 설명",
             "https://openchat.example.com",
             teamChallenge
@@ -169,7 +170,7 @@ class TeamChallengeTest {
             testNow.plusDays(1),
             testNow.plusDays(8),
             10,
-            null, null, null,
+            GroupAddress.of("서울시 강남구"), null, null,
             teamChallenge
         );
         TeamChallengeGroup group2 = TeamChallengeGroup.create(
@@ -177,7 +178,7 @@ class TeamChallengeTest {
             testNow.plusDays(1),
             testNow.plusDays(8),
             10,
-            null, null, null,
+            GroupAddress.of("서울시 강남구"), null, null,
             teamChallenge
         );
         TeamChallengeGroup group3 = TeamChallengeGroup.create(
@@ -185,7 +186,7 @@ class TeamChallengeTest {
             testNow.plusDays(1),
             testNow.plusDays(8),
             10,
-            null, null, null,
+            GroupAddress.of("서울시 강남구"), null, null,
             teamChallenge
         );
 
@@ -203,7 +204,7 @@ class TeamChallengeTest {
             testNow.plusDays(1),
             testNow.plusDays(8),
             10,
-            null, null, null,
+            GroupAddress.of("서울시 강남구"), null, null,
             teamChallenge
         );
         // TeamChallengeGroup.create()에서 이미 addChallengeGroup()이 호출됨
@@ -272,7 +273,7 @@ class TeamChallengeTest {
                 LocalDateTime.now().plusDays(1),
                 LocalDateTime.now().plusDays(8),
                 10,
-                null, null, null,
+                GroupAddress.of("서울시 강남구"), null, null,
                 challenge
             );
         }
@@ -306,7 +307,7 @@ class TeamChallengeTest {
                 LocalDateTime.now().plusDays(1),
                 LocalDateTime.now().plusDays(8),
                 10,
-                null, null, null,
+                GroupAddress.of("서울시 강남구"), null, null,
                 challenge
             );
         }
