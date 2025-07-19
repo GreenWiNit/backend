@@ -27,7 +27,13 @@ public record InfoSearchResponseByUser(
 		description = "정보 본문 내용 (30자 이내)",
 		example = "그린의 새로운 이벤트에 대해 자세히 알아보세요."
 	)
-	String content
+	String content,
+
+	@Schema(
+		description = "첨부 이미지 URL (이미지 등록 후에 생성됨) 해당 경로를 통해 S3에서 이미지 반환",
+		example = "https://static.greenwinit.store/images-image123.png"
+	)
+	String imageurl
 
 ) {
 	public static InfoSearchResponseByUser from(InfoEntity e) {
@@ -35,7 +41,8 @@ public record InfoSearchResponseByUser(
 			e.getId(),
 			e.getInfoCategory().getDescription(),// @JsonValue 대신 명시적인 방법으로 사용
 			e.getTitle(),
-			e.getContent()
+			e.getContent(),
+			e.getImageUrl()
 		);
 	}
 }
