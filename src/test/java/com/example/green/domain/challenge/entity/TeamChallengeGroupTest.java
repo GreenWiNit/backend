@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.example.green.domain.challenge.entity.vo.GroupAddress;
 import com.example.green.domain.challenge.enums.ChallengeStatus;
 import com.example.green.domain.challenge.enums.ChallengeType;
 import com.example.green.domain.challenge.enums.GroupStatus;
@@ -16,6 +17,7 @@ import com.example.green.domain.challenge.exception.ChallengeException;
 import com.example.green.domain.challenge.exception.ChallengeExceptionMessage;
 import com.example.green.domain.challenge.utils.ChallengeCodeGenerator;
 import com.example.green.domain.point.entity.vo.PointAmount;
+import com.example.green.global.error.exception.BusinessException;
 
 class TeamChallengeGroupTest {
 
@@ -45,7 +47,7 @@ class TeamChallengeGroupTest {
             now.minusHours(1),  // 1시간 전 시작
             now.plusHours(1),   // 1시간 후 종료
             10,  // 최대 10명
-            "서울시 강남구",
+            GroupAddress.of("서울시 강남구"),
             "테스트 그룹 설명",
             "https://openchat.example.com",
             teamChallenge
@@ -90,7 +92,7 @@ class TeamChallengeGroupTest {
             testNow.minusHours(1),
             testNow.plusHours(1),
             10,
-            null, null, null,
+            GroupAddress.of("서울시 강남구"), null, null,
             teamChallenge
         );
         // currentParticipants는 생성 시 0으로 초기화됨
@@ -111,7 +113,7 @@ class TeamChallengeGroupTest {
             testNow.minusHours(1),
             testNow.plusHours(1),
             5,   // 최대 5명
-            null, null, null,
+            GroupAddress.of("서울시 강남구"), null, null,
             teamChallenge
         );
 
@@ -136,7 +138,7 @@ class TeamChallengeGroupTest {
             testNow.minusHours(1),
             testNow.plusHours(1),
             null, // 제한 없음
-            null, null, null,
+            GroupAddress.of("서울시 강남구"), null, null,
             teamChallenge
         );
 
@@ -161,7 +163,7 @@ class TeamChallengeGroupTest {
             testNow.minusHours(1),
             testNow.plusHours(1),  // 종료시간 전
             10,  // 최대 10명
-            null, null, null,
+            GroupAddress.of("서울시 강남구"), null, null,
             teamChallenge
         );
 
@@ -186,7 +188,7 @@ class TeamChallengeGroupTest {
             testNow.minusHours(1),
             testNow.plusHours(1),
             5,   // 최대 5명
-            null, null, null,
+            GroupAddress.of("서울시 강남구"), null, null,
             teamChallenge
         );
 
@@ -211,7 +213,7 @@ class TeamChallengeGroupTest {
             testNow.minusHours(2),
             testNow.minusHours(1),  // 1시간 전 종료
             10,
-            null, null, null,
+            GroupAddress.of("서울시 강남구"), null, null,
             teamChallenge
         );
 
@@ -231,7 +233,7 @@ class TeamChallengeGroupTest {
             testNow.minusHours(1),  // 1시간 전 시작
             testNow.plusHours(1),   // 1시간 후 종료
             10,
-            null, null, null,
+            GroupAddress.of("서울시 강남구"), null, null,
             teamChallenge
         );
 
@@ -251,7 +253,7 @@ class TeamChallengeGroupTest {
             testNow.plusHours(1),  // 1시간 후 시작
             testNow.plusHours(2),
             10,
-            null, null, null,
+            GroupAddress.of("서울시 강남구"), null, null,
             teamChallenge
         );
 
@@ -271,7 +273,7 @@ class TeamChallengeGroupTest {
             testNow.minusHours(2),
             testNow.minusHours(1),  // 1시간 전 종료
             10,
-            null, null, null,
+            GroupAddress.of("서울시 강남구"), null, null,
             teamChallenge
         );
 
@@ -290,10 +292,10 @@ class TeamChallengeGroupTest {
             LocalDateTime.now().minusHours(1),
             LocalDateTime.now().plusHours(1),
             0,  // 잘못된 값
-            null, null, null,
+            GroupAddress.of("서울시 강남구"), null, null,
             teamChallenge
         ))
-            .isInstanceOf(ChallengeException.class)
+            .isInstanceOf(BusinessException.class)
             .hasFieldOrPropertyWithValue("exceptionMessage", ChallengeExceptionMessage.INVALID_MAX_PARTICIPANTS_COUNT);
     }
 
@@ -305,10 +307,10 @@ class TeamChallengeGroupTest {
             LocalDateTime.now().minusHours(1),
             LocalDateTime.now().plusHours(1),
             -10,  // 잘못된 값
-            null, null, null,
+            GroupAddress.of("서울시 강남구"), null, null,
             teamChallenge
         ))
-            .isInstanceOf(ChallengeException.class)
+            .isInstanceOf(BusinessException.class)
             .hasFieldOrPropertyWithValue("exceptionMessage", ChallengeExceptionMessage.INVALID_MAX_PARTICIPANTS_COUNT);
     }
 
@@ -321,7 +323,7 @@ class TeamChallengeGroupTest {
             testNow.minusHours(1),
             testNow.plusHours(1),
             5,   // 최대 5명
-            null, null, null,
+            GroupAddress.of("서울시 강남구"), null, null,
             teamChallenge
         );
 
@@ -344,7 +346,7 @@ class TeamChallengeGroupTest {
             testNow.minusHours(1),
             testNow.plusHours(1),
             10,   // 최대 10명
-            null, null, null,
+            GroupAddress.of("서울시 강남구"), null, null,
             teamChallenge
         );
 
@@ -367,7 +369,7 @@ class TeamChallengeGroupTest {
             testNow.minusHours(1),
             testNow.plusHours(1),
             2,   // 최대 2명
-            null, null, null,
+            GroupAddress.of("서울시 강남구"), null, null,
             teamChallenge
         );
 
@@ -377,7 +379,131 @@ class TeamChallengeGroupTest {
 
         // when & then
         assertThatThrownBy(() -> group.addParticipant())
-            .isInstanceOf(ChallengeException.class)
+            .isInstanceOf(BusinessException.class)
             .hasFieldOrPropertyWithValue("exceptionMessage", ChallengeExceptionMessage.GROUP_IS_FULL);
+    }
+
+    @Test
+    void 그룹_정보를_정상적으로_수정할_수_있다() {
+        // given
+        String newGroupName = "수정된 그룹명";
+        GroupAddress newGroupAddress = GroupAddress.of("서울시 서초구 강남대로 456", "서초동 타워 3층");
+        String newDescription = "수정된 그룹 설명";
+        String newOpenChatUrl = "https://updated-chat.com";
+        LocalDateTime newBeginDateTime = now.plusHours(2);
+        LocalDateTime newEndDateTime = now.plusHours(4);
+        Integer newMaxParticipants = 15;
+
+        // when
+        teamChallengeGroup.update(
+            newGroupName,
+            newGroupAddress,
+            newDescription,
+            newOpenChatUrl,
+            newBeginDateTime,
+            newEndDateTime,
+            newMaxParticipants
+        );
+
+        // then
+        assertThat(teamChallengeGroup.getGroupName()).isEqualTo(newGroupName);
+        assertThat(teamChallengeGroup.getGroupAddress()).isEqualTo(newGroupAddress);
+        assertThat(teamChallengeGroup.getGroupDescription()).isEqualTo(newDescription);
+        assertThat(teamChallengeGroup.getOpenChatUrl()).isEqualTo(newOpenChatUrl);
+        assertThat(teamChallengeGroup.getGroupBeginDateTime()).isEqualTo(newBeginDateTime);
+        assertThat(teamChallengeGroup.getGroupEndDateTime()).isEqualTo(newEndDateTime);
+        assertThat(teamChallengeGroup.getMaxParticipants()).isEqualTo(newMaxParticipants);
+    }
+
+    @Test
+    void 그룹명이_빈_문자열인_경우_수정_시_예외가_발생한다() {
+        // given
+        String invalidGroupName = "";
+
+        // when & then
+        assertThatThrownBy(() -> teamChallengeGroup.update(
+            invalidGroupName,
+            GroupAddress.of("서울시 서초구"),
+            "설명",
+            "https://chat.com",
+            now.plusHours(1),
+            now.plusHours(2),
+            10
+        )).isInstanceOf(BusinessException.class);
+    }
+
+    @Test
+    void 그룹_시작일시가_종료일시보다_늦은_경우_수정_시_예외가_발생한다() {
+        // given
+        LocalDateTime invalidBeginDateTime = now.plusHours(3);
+        LocalDateTime endDateTime = now.plusHours(2);
+
+        // when & then
+        assertThatThrownBy(() -> teamChallengeGroup.update(
+            "그룹명",
+            GroupAddress.of("서울시 서초구"),
+            "설명",
+            "https://chat.com",
+            invalidBeginDateTime,
+            endDateTime,
+            10
+        )).isInstanceOf(BusinessException.class);
+    }
+
+    @Test
+    void 최대_참가자_수가_0_이하인_경우_수정_시_예외가_발생한다() {
+        // given
+        Integer invalidMaxParticipants = 0;
+
+        // when & then
+        assertThatThrownBy(() -> teamChallengeGroup.update(
+            "그룹명",
+            GroupAddress.of("서울시 서초구"),
+            "설명",
+            "https://chat.com",
+            now.plusHours(1),
+            now.plusHours(2),
+            invalidMaxParticipants
+        ))
+        .isInstanceOf(BusinessException.class)
+        .hasFieldOrPropertyWithValue("exceptionMessage", ChallengeExceptionMessage.INVALID_MAX_PARTICIPANTS_COUNT);
+    }
+
+    @Test
+    void 현재_참가자_수보다_작은_최대_참가자_수로_수정_시_예외가_발생한다() {
+        // given
+        // 현재 참가자 3명 추가
+        teamChallengeGroup.addParticipant();
+        teamChallengeGroup.addParticipant();
+        teamChallengeGroup.addParticipant();
+        
+        Integer invalidMaxParticipants = 2; // 현재 참가자 3명보다 작음
+
+        // when & then
+        assertThatThrownBy(() -> teamChallengeGroup.update(
+            "그룹명",
+            GroupAddress.of("서울시 서초구"),
+            "설명",
+            "https://chat.com",
+            now.plusHours(1),
+            now.plusHours(2),
+            invalidMaxParticipants
+        ))
+        .isInstanceOf(BusinessException.class)
+        .hasFieldOrPropertyWithValue("exceptionMessage", ChallengeExceptionMessage.MAX_PARTICIPANTS_LESS_THAN_CURRENT);
+    }
+
+    @Test
+    void 그룹_주소가_null인_경우_수정_시_예외가_발생한다() {
+        // when & then
+        assertThatThrownBy(() -> teamChallengeGroup.update(
+            "그룹명",
+            null,
+            "설명",
+            "https://chat.com",
+            now.plusHours(1),
+            now.plusHours(2),
+            10
+        )).isInstanceOf(BusinessException.class);
     }
 }

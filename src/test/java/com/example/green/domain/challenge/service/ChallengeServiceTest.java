@@ -1,11 +1,8 @@
 package com.example.green.domain.challenge.service;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
-import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.lenient;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -24,6 +21,7 @@ import com.example.green.domain.challenge.controller.dto.ChallengeParticipationS
 import com.example.green.domain.challenge.entity.PersonalChallenge;
 import com.example.green.domain.challenge.entity.TeamChallenge;
 import com.example.green.domain.challenge.entity.TeamChallengeGroup;
+import com.example.green.domain.challenge.entity.vo.GroupAddress;
 import com.example.green.domain.challenge.enums.ChallengeStatus;
 import com.example.green.domain.challenge.enums.ChallengeType;
 import com.example.green.domain.challenge.exception.ChallengeException;
@@ -33,7 +31,6 @@ import com.example.green.domain.challenge.repository.TeamChallengeRepository;
 import com.example.green.domain.challenge.utils.ChallengeCodeGenerator;
 import com.example.green.domain.challengecert.entity.TeamChallengeGroupParticipation;
 import com.example.green.domain.challengecert.entity.TeamChallengeParticipation;
-import com.example.green.domain.challengecert.entity.enums.GroupRoleType;
 import com.example.green.domain.challengecert.repository.PersonalChallengeParticipationRepository;
 import com.example.green.domain.challengecert.repository.TeamChallengeGroupParticipationRepository;
 import com.example.green.domain.challengecert.repository.TeamChallengeParticipationRepository;
@@ -230,7 +227,7 @@ class ChallengeServiceTest {
 			LocalDateTime.now().minusHours(2),
 			LocalDateTime.now().plusDays(6),
 			10,
-			"서울시 강남구",
+			GroupAddress.of("서울시 강남구"),
 			"테스트 그룹 설명",
 			"https://openchat.example.com",
 			testTeamChallenge
@@ -241,4 +238,4 @@ class ChallengeServiceTest {
 		return new PrincipalDetails(memberId, "memberKey", MemberRole.USER.getDescription(), "testuser",
 			"testuser@gmail.com");
 	}
-} 
+}
