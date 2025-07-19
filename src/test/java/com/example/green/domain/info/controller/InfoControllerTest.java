@@ -435,7 +435,9 @@ class InfoControllerTest {
 				"P000001",
 				"테스트 제목",
 				"공지사항",
-				"테스트 내용 10자 이상 테스트 작성"
+				"테스트 내용 10자 이상 테스트 작성",
+				"http://example.com/image.jpg"
+				
 			);
 
 			when(infoService.getInfoDetailForUser(eq("P000001")))
