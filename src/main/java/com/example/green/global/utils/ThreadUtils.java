@@ -1,5 +1,7 @@
 package com.example.green.global.utils;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
@@ -8,18 +10,13 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ThreadUtils {
 
-	public boolean sleepQuietly(long millis) {
+	public void waitWithBackoff(long baseDelayMs, int attempt) {
+		long delay = baseDelayMs * attempt + ThreadLocalRandom.current().nextLong(baseDelayMs);
 		try {
-			Thread.sleep(millis);
-			return true;
+			Thread.sleep(delay);
 		} catch (InterruptedException e) {
 			log.error("스레드 대기 중 인터럽트 발생", e);
 			Thread.currentThread().interrupt();
-			return false;
 		}
-	}
-
-	public String getCurrentThreadName() {
-		return Thread.currentThread().getName();
 	}
 }

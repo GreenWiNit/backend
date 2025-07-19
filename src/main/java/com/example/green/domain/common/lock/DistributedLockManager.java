@@ -1,15 +1,11 @@
 package com.example.green.domain.common.lock;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.time.Duration;
 import java.util.function.Supplier;
 
-import javax.sql.DataSource;
-
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,59 +15,44 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class DistributedLockManager {
 
-	private static final int DEFAULT_LOCK_TIMEOUT_SECONDS = 3;
-
-	private final DataSource dataSource;
+	private final DistributedLockRepository lockRepository;
+	private final PlatformTransactionManager transactionManager;
 
 	public <T> T executeWithLock(String lockKey, Supplier<T> supplier) {
-		return executeWithLock(lockKey, Duration.ofSeconds(DEFAULT_LOCK_TIMEOUT_SECONDS), supplier);
-	}
-
-	public <T> T executeWithLock(String lockKey, Duration timeout, Supplier<T> supplier) {
-		try (Connection conn = dataSource.getConnection()) {
-			log.debug("임계구역 진입 시도: lockKey={}, connection={}", lockKey, conn);
-			return enterCriticalZone(conn, lockKey, timeout, supplier);
-		} catch (SQLException e) {
-			throw new IllegalStateException("락 처리 중 SQL 오류 발생: lockKey=" + lockKey, e);
-		}
-	}
-
-	private <T> T enterCriticalZone(
-		Connection conn,
-		String lockKey,
-		Duration timeout,
-		Supplier<T> supplier
-	) throws SQLException {
-		try (PreparedStatement preparedStatement = conn.prepareStatement("SELECT GET_LOCK(?, ?)")) {
-			preparedStatement.setString(1, lockKey);
-			preparedStatement.setInt(2, (int)timeout.getSeconds());
-			validateEnteredLock(preparedStatement.executeQuery(), lockKey, conn);
-		}
-		return executeImmediately(conn, lockKey, supplier);
-	}
-
-	private static void validateEnteredLock(ResultSet resultSet, String lockKey, Connection conn) throws SQLException {
-		if (!resultSet.next() || resultSet.getInt(1) == 0) {
-			final String exceptionMessage = String.format("임계구역 진입 실패 lockKey=%s, connection=%s", lockKey, conn);
-			throw new IllegalStateException(exceptionMessage);
-		}
-	}
-
-	private <T> T executeImmediately(Connection conn, String lockKey, Supplier<T> supplier) throws SQLException {
-		log.debug("임계구역 진입 완료: {} (진행)", lockKey);
 		try {
+			enterCriticalZone(lockKey);
 			return supplier.get();
+		} catch (Exception e) {
+			log.debug("임계 구역 진입 실패: {} (대기중)", lockKey);
+			throw new IllegalStateException();
 		} finally {
-			log.debug("임계구역 종료 시도: lockKey={}, connection={}", lockKey, conn);
-			exitCriticalZone(conn, lockKey);
-			log.debug("임계구역 종료 완료: {}", lockKey);
+			exitCriticalZone(lockKey);
 		}
 	}
 
-	private void exitCriticalZone(Connection conn, String lockKey) throws SQLException {
-		try (PreparedStatement preparedStatement = conn.prepareStatement("SELECT RELEASE_LOCK(?)")) {
-			preparedStatement.setString(1, lockKey);
-			preparedStatement.executeQuery();
+	private void enterCriticalZone(String lockKey) {
+		executeInNewTransaction(() -> {
+			DistributedLock lock = new DistributedLock(lockKey);
+			lockRepository.save(lock);
+		});
+		log.debug("임계구역 진입 완료 : {} (진행)", lockKey);
+	}
+
+	private void exitCriticalZone(String lockKey) {
+		try {
+			executeInNewTransaction(() -> lockRepository.deleteById(lockKey));
+			log.debug("임계 구역 종료: {}", lockKey);
+		} catch (Exception e) {
+			log.debug("락이 이미 삭제됨: {}", lockKey);
 		}
+	}
+
+	private void executeInNewTransaction(Runnable runnable) {
+		TransactionTemplate template = new TransactionTemplate(transactionManager);
+		template.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+		template.execute(status -> {
+			runnable.run();
+			return null;
+		});
 	}
 }
