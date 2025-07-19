@@ -1,17 +1,15 @@
 package com.example.green.domain.common.lock;
 
-import java.time.Clock;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.function.Supplier;
 
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.support.TransactionTemplate;
+import javax.sql.DataSource;
 
-import com.example.green.global.utils.ThreadUtils;
+import org.springframework.stereotype.Component;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,79 +19,59 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class DistributedLockManager {
 
-	private static final int MAX_RETRY_COUNT = 3;
-	private static final Duration DEFAULT_LOCK_TIMEOUT = Duration.ofSeconds(10);
-	private static final long RETRY_DELAY_MS = 100L;
-	private static final String FAILED_FORMAT = "%d회 재시도 후 락 획득 실패: %s";
+	private static final int DEFAULT_LOCK_TIMEOUT_SECONDS = 3;
 
-	private final DistributedLockRepository lockRepository;
-	private final PlatformTransactionManager transactionManager;
-	private final ThreadUtils threadUtils;
-	private final Clock clock;
+	private final DataSource dataSource;
 
 	public <T> T executeWithLock(String lockKey, Supplier<T> supplier) {
-		return executeWithLock(lockKey, DEFAULT_LOCK_TIMEOUT, supplier);
+		return executeWithLock(lockKey, Duration.ofSeconds(DEFAULT_LOCK_TIMEOUT_SECONDS), supplier);
 	}
 
-	public <T> T executeWithLock(String lockKey, Duration lockTimeout, Supplier<T> supplier) {
-		if (enterCriticalZone(lockKey, lockTimeout)) {
-			return executeImmediately(lockKey, supplier);
+	public <T> T executeWithLock(String lockKey, Duration timeout, Supplier<T> supplier) {
+		try (Connection conn = dataSource.getConnection()) {
+			log.debug("임계구역 진입 시도: lockKey={}, connection={}", lockKey, conn);
+			return enterCriticalZone(conn, lockKey, timeout, supplier);
+		} catch (SQLException e) {
+			throw new IllegalStateException("락 처리 중 SQL 오류 발생: lockKey=" + lockKey, e);
 		}
-		return executeWithRetry(lockKey, supplier);
 	}
 
-	private <T> T executeWithRetry(String lockKey, Supplier<T> supplier) {
-		for (int attempt = 1; attempt <= MAX_RETRY_COUNT; attempt++) {
-			if (!threadUtils.sleepQuietly(RETRY_DELAY_MS)) {
-				break;
-			}
-			if (enterCriticalZone(lockKey, DEFAULT_LOCK_TIMEOUT)) {
-				return executeImmediately(lockKey, supplier);
-			}
+	private <T> T enterCriticalZone(
+		Connection conn,
+		String lockKey,
+		Duration timeout,
+		Supplier<T> supplier
+	) throws SQLException {
+		try (PreparedStatement preparedStatement = conn.prepareStatement("SELECT GET_LOCK(?, ?)")) {
+			preparedStatement.setString(1, lockKey);
+			preparedStatement.setInt(2, (int)timeout.getSeconds());
+			validateEnteredLock(preparedStatement.executeQuery(), lockKey, conn);
 		}
-
-		throw new IllegalStateException(String.format(FAILED_FORMAT, MAX_RETRY_COUNT, lockKey));
+		return executeImmediately(conn, lockKey, supplier);
 	}
 
-	private <T> T executeImmediately(String lockKey, Supplier<T> supplier) {
+	private static void validateEnteredLock(ResultSet resultSet, String lockKey, Connection conn) throws SQLException {
+		if (!resultSet.next() || resultSet.getInt(1) == 0) {
+			final String exceptionMessage = String.format("임계구역 진입 실패 lockKey=%s, connection=%s", lockKey, conn);
+			throw new IllegalStateException(exceptionMessage);
+		}
+	}
+
+	private <T> T executeImmediately(Connection conn, String lockKey, Supplier<T> supplier) throws SQLException {
+		log.debug("임계구역 진입 완료: {} (진행)", lockKey);
 		try {
 			return supplier.get();
 		} finally {
-			exitCriticalZone(lockKey);
+			log.debug("임계구역 종료 시도: lockKey={}, connection={}", lockKey, conn);
+			exitCriticalZone(conn, lockKey);
+			log.debug("임계구역 종료 완료: {}", lockKey);
 		}
 	}
 
-	private boolean enterCriticalZone(String lockKey, Duration timeout) {
-		try {
-			return executeInNewTransaction(() -> {
-				String owner = threadUtils.getCurrentThreadName();
-				DistributedLock lock = DistributedLock.create(lockKey, LocalDateTime.now(clock), timeout, owner);
-				lockRepository.save(lock);
-				log.debug("임계구역 진입 완료 : {} (진행)", lockKey);
-				return true;
-			});
-		} catch (DataIntegrityViolationException e) {
-			log.debug("임계 구역 진입 실패: {} (대기중)", lockKey);
-			return false;
-		}
-	}
-
-	private void exitCriticalZone(String lockKey) {
-		executeInNewTransaction(() -> {
-			lockRepository.deleteById(lockKey);
-			log.debug("임계 구역 종료: {}", lockKey);
-			return null;
-		});
-	}
-
-	private <T> T executeInNewTransaction(Supplier<T> supplier) {
-		try {
-			TransactionTemplate template = new TransactionTemplate(transactionManager);
-			template.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
-			return template.execute(status -> supplier.get());
-		} catch (Exception e) {
-			log.warn("락 획득 중 예상치 못한 오류: ", e);
-			throw e;
+	private void exitCriticalZone(Connection conn, String lockKey) throws SQLException {
+		try (PreparedStatement preparedStatement = conn.prepareStatement("SELECT RELEASE_LOCK(?)")) {
+			preparedStatement.setString(1, lockKey);
+			preparedStatement.executeQuery();
 		}
 	}
 }
