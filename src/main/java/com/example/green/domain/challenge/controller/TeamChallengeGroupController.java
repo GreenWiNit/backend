@@ -22,6 +22,7 @@ import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.NoContent;
 import com.example.green.global.api.page.CursorTemplate;
 import com.example.green.global.security.PrincipalDetails;
+import com.example.green.global.security.annotation.AuthenticatedApi;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +36,7 @@ public class TeamChallengeGroupController implements TeamChallengeGroupControlle
 
 	@Override
 	@GetMapping("/{challengeId}/groups")
+	@AuthenticatedApi(reason = "팀 챌린지 그룹 목록 조회는 로그인한 사용자만 가능합니다")
 	public ApiTemplate<CursorTemplate<Long, TeamChallengeGroupListResponseDto>> getTeamChallengeGroups(
 		@PathVariable Long challengeId,
 		@RequestParam(required = false) Long cursor,
@@ -55,6 +57,7 @@ public class TeamChallengeGroupController implements TeamChallengeGroupControlle
 
 	@Override
 	@PostMapping("/{challengeId}/groups")
+	@AuthenticatedApi(reason = "팀 챌린지 그룹 생성은 로그인한 사용자만 가능합니다")
 	public ApiTemplate<Long> createTeamChallengeGroup(
 		@PathVariable Long challengeId,
 		@Valid @RequestBody TeamChallengeGroupCreateRequestDto request,
@@ -76,6 +79,7 @@ public class TeamChallengeGroupController implements TeamChallengeGroupControlle
 
 	@Override
 	@GetMapping("/groups/{groupId}")
+	@AuthenticatedApi(reason = "팀 챌린지 그룹 상세 조회는 로그인한 사용자만 가능합니다")
 	public ApiTemplate<TeamChallengeGroupDetailResponseDto> getTeamChallengeGroupDetail(
 		@PathVariable Long groupId,
 		@AuthenticationPrincipal PrincipalDetails principalDetails
@@ -95,6 +99,7 @@ public class TeamChallengeGroupController implements TeamChallengeGroupControlle
 
 	@Override
 	@PostMapping("/groups/{groupId}")
+	@AuthenticatedApi(reason = "팀 챌린지 그룹 참가는 로그인한 사용자만 가능합니다")
 	public NoContent joinTeamChallengeGroup(
 		@PathVariable Long groupId,
 		@AuthenticationPrincipal PrincipalDetails principalDetails
@@ -113,6 +118,7 @@ public class TeamChallengeGroupController implements TeamChallengeGroupControlle
 
 	@Override
 	@PutMapping("/groups/{groupId}")
+	@AuthenticatedApi(reason = "팀 챌린지 그룹 수정은 로그인한 사용자만 가능합니다")
 	public NoContent updateTeamChallengeGroup(
 		@PathVariable Long groupId,
 		@Valid @RequestBody TeamChallengeGroupUpdateRequestDto request,
@@ -132,6 +138,7 @@ public class TeamChallengeGroupController implements TeamChallengeGroupControlle
 
 	@Override
 	@DeleteMapping("/groups/{groupId}")
+	@AuthenticatedApi(reason = "팀 챌린지 그룹 삭제는 로그인한 사용자만 가능합니다")
 	public NoContent deleteTeamChallengeGroup(
 		@PathVariable Long groupId,
 		@AuthenticationPrincipal PrincipalDetails principalDetails
