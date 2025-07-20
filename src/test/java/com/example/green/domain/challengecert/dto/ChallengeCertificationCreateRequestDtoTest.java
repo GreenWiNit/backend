@@ -194,4 +194,4 @@ class ChallengeCertificationCreateRequestDtoTest {
 		// then
 		assertThat(violations).isEmpty();
 	}
-} 
+}

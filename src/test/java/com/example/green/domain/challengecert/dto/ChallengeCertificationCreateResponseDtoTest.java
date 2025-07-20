@@ -64,4 +64,4 @@ class ChallengeCertificationCreateResponseDtoTest {
 		assertThat(toString).contains("ChallengeCertificationCreateResponseDto");
 		assertThat(toString).contains("certificationId=100");
 	}
-} 
+}

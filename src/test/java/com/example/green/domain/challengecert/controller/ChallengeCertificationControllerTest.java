@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,10 +23,13 @@ import com.example.green.domain.challenge.exception.ChallengeException;
 import com.example.green.domain.challenge.exception.ChallengeExceptionMessage;
 import com.example.green.domain.challengecert.dto.ChallengeCertificationCreateRequestDto;
 import com.example.green.domain.challengecert.dto.ChallengeCertificationCreateResponseDto;
+import com.example.green.domain.challengecert.dto.ChallengeCertificationDetailResponseDto;
+import com.example.green.domain.challengecert.dto.ChallengeCertificationListResponseDto;
 import com.example.green.domain.challengecert.exception.ChallengeCertException;
 import com.example.green.domain.challengecert.exception.ChallengeCertExceptionMessage;
 import com.example.green.domain.challengecert.service.ChallengeCertificationService;
 import com.example.green.domain.member.exception.MemberExceptionMessage;
+import com.example.green.global.api.page.CursorTemplate;
 import com.example.green.global.error.exception.BusinessException;
 import com.example.green.global.security.PrincipalDetails;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -351,4 +355,172 @@ class ChallengeCertificationControllerTest {
 
 		then(challengeCertificationService).shouldHaveNoInteractions();
 	}
-} 
+
+	@Test
+	void 개인_챌린지_인증_목록을_성공적으로_조회한다() throws Exception {
+		// given
+		Long cursor = null;
+		CursorTemplate<Long, ChallengeCertificationListResponseDto> response = CursorTemplate.ofWithNextCursor(
+			10L,
+			List.of(
+				ChallengeCertificationListResponseDto.builder()
+					.certificationId(1L)
+					.challengeId(1L)
+					.challengeTitle("30일 런닝 챌린지")
+					.certifiedDate(LocalDate.of(2024, 1, 15))
+					.approved(true)
+					.build(),
+				ChallengeCertificationListResponseDto.builder()
+					.certificationId(2L)
+					.challengeId(2L)
+					.challengeTitle("홈트 챌린지")
+					.certifiedDate(LocalDate.of(2024, 1, 14))
+					.approved(false)
+					.build()
+			)
+		);
+
+		given(challengeCertificationService.getPersonalChallengeCertifications(eq(cursor), any()))
+			.willReturn(response);
+
+		// when & then
+		mockMvc.perform(get("/api/my/challenges/certifications/personal")
+				.with(csrf())
+				.with(authentication(createAuthenticatedUser())))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.success").value(true))
+			.andExpect(jsonPath("$.message").value("개인 챌린지 인증 목록이 성공적으로 조회되었습니다."))
+			.andExpect(jsonPath("$.result.hasNext").value(true))
+			.andExpect(jsonPath("$.result.nextCursor").value(10L))
+			.andExpect(jsonPath("$.result.content").isArray())
+			.andExpect(jsonPath("$.result.content[0].certificationId").value(1L))
+			.andExpect(jsonPath("$.result.content[0].challengeTitle").value("30일 런닝 챌린지"))
+			.andExpect(jsonPath("$.result.content[0].approved").value(true))
+			.andExpect(jsonPath("$.result.content[1].certificationId").value(2L))
+			.andExpect(jsonPath("$.result.content[1].approved").value(false));
+
+		then(challengeCertificationService).should().getPersonalChallengeCertifications(eq(cursor), any());
+	}
+
+	@Test
+	void 팀_챌린지_인증_목록을_성공적으로_조회한다() throws Exception {
+		// given
+		Long cursor = 5L;
+		CursorTemplate<Long, ChallengeCertificationListResponseDto> response = CursorTemplate.of(
+			List.of(
+				ChallengeCertificationListResponseDto.builder()
+					.certificationId(3L)
+					.challengeId(3L)
+					.challengeTitle("팀 러닝 챌린지")
+					.certifiedDate(LocalDate.of(2024, 1, 15))
+					.approved(true)
+					.build()
+			)
+		);
+
+		given(challengeCertificationService.getTeamChallengeCertifications(eq(cursor), any()))
+			.willReturn(response);
+
+		// when & then
+		mockMvc.perform(get("/api/my/challenges/certifications/team")
+				.param("cursor", cursor.toString())
+				.with(csrf())
+				.with(authentication(createAuthenticatedUser())))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.success").value(true))
+			.andExpect(jsonPath("$.message").value("팀 챌린지 인증 목록이 성공적으로 조회되었습니다."))
+			.andExpect(jsonPath("$.result.hasNext").value(false))
+			.andExpect(jsonPath("$.result.nextCursor").doesNotExist())
+			.andExpect(jsonPath("$.result.content").isArray())
+			.andExpect(jsonPath("$.result.content[0].certificationId").value(3L))
+			.andExpect(jsonPath("$.result.content[0].challengeTitle").value("팀 러닝 챌린지"))
+			.andExpect(jsonPath("$.result.content[0].approved").value(true));
+
+		then(challengeCertificationService).should().getTeamChallengeCertifications(eq(cursor), any());
+	}
+
+	@Test
+	void 챌린지_인증_상세_정보를_성공적으로_조회한다() throws Exception {
+		// given
+		Long certificationId = 100L;
+		ChallengeCertificationDetailResponseDto detailResponse = ChallengeCertificationDetailResponseDto.builder()
+			.certificationId(certificationId)
+			.challengeId(1L)
+			.challengeTitle("30일 런닝 챌린지")
+			.challengeType("PERSONAL")
+			.certificationImageUrl(TEST_IMAGE_URL)
+			.certificationReview(TEST_REVIEW)
+			.certifiedDate(LocalDate.of(2024, 1, 15))
+			.approved(true)
+			.build();
+
+		given(challengeCertificationService.getChallengeCertificationDetail(eq(certificationId), any()))
+			.willReturn(detailResponse);
+
+		// when & then
+		mockMvc.perform(get("/api/my/challenges/certifications/{certId}", certificationId)
+				.with(csrf())
+				.with(authentication(createAuthenticatedUser())))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.success").value(true))
+			.andExpect(jsonPath("$.message").value("챌린지 인증 상세 정보가 성공적으로 조회되었습니다."))
+			.andExpect(jsonPath("$.result.certificationId").value(certificationId))
+			.andExpect(jsonPath("$.result.challengeTitle").value("30일 런닝 챌린지"))
+			.andExpect(jsonPath("$.result.challengeType").value("PERSONAL"))
+			.andExpect(jsonPath("$.result.certificationImageUrl").value(TEST_IMAGE_URL))
+			.andExpect(jsonPath("$.result.certificationReview").value(TEST_REVIEW))
+			.andExpect(jsonPath("$.result.approved").value(true));
+
+		then(challengeCertificationService).should().getChallengeCertificationDetail(eq(certificationId), any());
+	}
+
+	@Test
+	void 존재하지_않는_인증_조회시_404_에러가_발생한다() throws Exception {
+		// given
+		Long nonExistentCertificationId = 999L;
+
+		given(challengeCertificationService.getChallengeCertificationDetail(eq(nonExistentCertificationId), any()))
+			.willThrow(new ChallengeCertException(ChallengeCertExceptionMessage.CERTIFICATION_NOT_FOUND));
+
+		// when & then
+		mockMvc.perform(get("/api/my/challenges/certifications/{certId}", nonExistentCertificationId)
+				.with(csrf())
+				.with(authentication(createAuthenticatedUser())))
+			.andExpect(status().isNotFound())
+			.andExpect(jsonPath("$.success").value(false))
+			.andExpect(jsonPath("$.message").value("인증을 찾을 수 없습니다."));
+
+		then(challengeCertificationService).should()
+			.getChallengeCertificationDetail(eq(nonExistentCertificationId), any());
+	}
+
+	@Test
+	@WithAnonymousUser
+	void 인증되지_않은_사용자가_개인_인증_목록_조회시_403_에러가_발생한다() throws Exception {
+		// when & then
+		mockMvc.perform(get("/api/my/challenges/certifications/personal"))
+			.andExpect(status().is3xxRedirection());
+
+		then(challengeCertificationService).shouldHaveNoInteractions();
+	}
+
+	@Test
+	@WithAnonymousUser
+	void 인증되지_않은_사용자가_팀_인증_목록_조회시_403_에러가_발생한다() throws Exception {
+		// when & then
+		mockMvc.perform(get("/api/my/challenges/certifications/team"))
+			.andExpect(status().is3xxRedirection());
+
+		then(challengeCertificationService).shouldHaveNoInteractions();
+	}
+
+	@Test
+	@WithAnonymousUser
+	void 인증되지_않은_사용자가_인증_상세_조회시_403_에러가_발생한다() throws Exception {
+		// when & then
+		mockMvc.perform(get("/api/my/challenges/certifications/123"))
+			.andExpect(status().is3xxRedirection());
+
+		then(challengeCertificationService).shouldHaveNoInteractions();
+	}
+}
