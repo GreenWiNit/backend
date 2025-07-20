@@ -8,7 +8,7 @@ import lombok.Getter;
 public enum Purpose {
 
 	CHALLENGE("challenge"),
-	CHALLENGE_AUTH("challenge-auth"),
+	CHALLENGE_CERT("challenge-cert"),
 	INFO("info"),
 	PRODUCT("product"),
 	PROFILE("profile");

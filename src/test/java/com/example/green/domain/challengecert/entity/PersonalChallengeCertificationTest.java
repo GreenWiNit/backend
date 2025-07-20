@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -13,11 +14,11 @@ import com.example.green.domain.challenge.entity.PersonalChallenge;
 import com.example.green.domain.challenge.enums.ChallengeStatus;
 import com.example.green.domain.challenge.enums.ChallengeType;
 import com.example.green.domain.challenge.utils.ChallengeCodeGenerator;
+import com.example.green.domain.challengecert.exception.ChallengeCertException;
+import com.example.green.domain.challengecert.exception.ChallengeCertExceptionMessage;
 import com.example.green.domain.member.entity.Member;
 import com.example.green.domain.point.entity.vo.PointAmount;
 import com.example.green.global.error.exception.BusinessException;
-import com.example.green.domain.challengecert.exception.ChallengeCertException;
-import com.example.green.domain.challengecert.exception.ChallengeCertExceptionMessage;
 
 /**
  * PersonalChallengeCertification 테스트
@@ -62,7 +63,7 @@ class PersonalChallengeCertificationTest {
 			"https://example.com/cert-image.jpg",
 			"인증 후기입니다.",
 			now.minusHours(1),
-			"2025-01-09"
+			LocalDate.of(2025, 1, 9)
 		);
 	}
 
@@ -72,7 +73,7 @@ class PersonalChallengeCertificationTest {
 		String imageUrl = "https://example.com/new-cert.jpg";
 		String review = "새로운 인증 후기";
 		LocalDateTime certifiedAt = now.minusMinutes(30);
-		String certifiedDate = "2025-01-10";
+		LocalDate certifiedDate = LocalDate.of(2025, 1, 10);
 
 		// when
 		PersonalChallengeCertification newCertification = PersonalChallengeCertification.create(
@@ -102,7 +103,7 @@ class PersonalChallengeCertificationTest {
 			"https://example.com/image.jpg",
 			"후기",
 			now,
-			"2025-01-09"
+			LocalDate.of(2025, 1, 9)
 		))
 			.isInstanceOf(BusinessException.class);
 	}
@@ -115,7 +116,7 @@ class PersonalChallengeCertificationTest {
 			null,
 			"후기",
 			now,
-			"2025-01-09"
+			LocalDate.of(2025, 1, 9)
 		))
 			.isInstanceOf(BusinessException.class);
 
@@ -124,7 +125,7 @@ class PersonalChallengeCertificationTest {
 			"",
 			"후기",
 			now,
-			"2025-01-09"
+			LocalDate.of(2025, 1, 9)
 		))
 			.isInstanceOf(BusinessException.class);
 
@@ -138,7 +139,7 @@ class PersonalChallengeCertificationTest {
 			"https://example.com/image.jpg",
 			"후기",
 			null,
-			"2025-01-09"
+			LocalDate.of(2025, 1, 9)
 		))
 			.isInstanceOf(BusinessException.class);
 
@@ -161,7 +162,7 @@ class PersonalChallengeCertificationTest {
 			"https://example.com/image.jpg",
 			"후기",
 			now,
-			""
+			null
 		))
 			.isInstanceOf(BusinessException.class);
 
@@ -175,7 +176,7 @@ class PersonalChallengeCertificationTest {
 			"https://example.com/image.jpg",
 			null,
 			now,
-			"2025-01-09"
+			LocalDate.of(2025, 1, 9)
 		));
 	}
 

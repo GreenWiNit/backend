@@ -2,6 +2,7 @@ package com.example.green.domain.challengecert.entity;
 
 import static com.example.green.global.utils.EntityValidator.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import com.example.green.domain.challengecert.exception.ChallengeCertException;
@@ -46,11 +47,11 @@ public abstract class BaseChallengeCertification extends BaseEntity {
 	private LocalDateTime certifiedAt;
 
 	/**
-	 * 인증 날짜 (YYYY-MM-DD 형식)
+	 * 인증 날짜
 	 * 하루 한 번 인증 제약조건을 위한 날짜 값
 	 */
 	@Column(nullable = false)
-	private String certifiedDate;
+	private LocalDate certifiedDate;
 
 	@Column(nullable = false)
 	private Boolean approved = false;
@@ -63,7 +64,7 @@ public abstract class BaseChallengeCertification extends BaseEntity {
 		String certificationImageUrl,
 		String certificationReview,
 		LocalDateTime certifiedAt,
-		String certifiedDate
+		LocalDate certifiedDate
 	) {
 		this.member = member;
 		this.certificationImageUrl = certificationImageUrl;
@@ -117,6 +118,6 @@ public abstract class BaseChallengeCertification extends BaseEntity {
 		validateNullData(member, "회원은 필수값입니다.");
 		validateEmptyString(certificationImageUrl, "인증 이미지는 필수값입니다.");
 		validateNullData(certifiedAt, "인증 시각은 필수값입니다.");
-		validateEmptyString(certifiedDate, "인증 날짜는 필수값입니다.");
+		validateNullData(certifiedDate, "인증 날짜는 필수값입니다.");
 	}
 }
