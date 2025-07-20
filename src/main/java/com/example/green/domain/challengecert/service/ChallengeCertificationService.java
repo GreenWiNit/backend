@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.green.domain.challenge.entity.BaseChallenge;
 import com.example.green.domain.challenge.entity.PersonalChallenge;
 import com.example.green.domain.challenge.entity.TeamChallenge;
-import com.example.green.domain.challenge.enums.ChallengeType;
 import com.example.green.domain.challenge.exception.ChallengeException;
 import com.example.green.domain.challenge.exception.ChallengeExceptionMessage;
 import com.example.green.domain.challenge.repository.PersonalChallengeRepository;
@@ -129,14 +128,14 @@ public class ChallengeCertificationService {
 		var personalCertification = personalChallengeCertificationRepository
 			.findByIdAndMember(certificationId, member);
 		if (personalCertification.isPresent()) {
-			return convertToDetailDto(personalCertification.get());
+			return ChallengeCertificationDetailResponseDto.from(personalCertification.get());
 		}
 
 		// 팀 챌린지 인증 확인
 		var teamCertification = teamChallengeCertificationRepository
 			.findByIdAndMember(certificationId, member);
 		if (teamCertification.isPresent()) {
-			return convertToDetailDto(teamCertification.get());
+			return ChallengeCertificationDetailResponseDto.from(teamCertification.get());
 		}
 
 		throw new ChallengeCertException(ChallengeCertExceptionMessage.CERTIFICATION_NOT_FOUND);
@@ -238,37 +237,5 @@ public class ChallengeCertificationService {
 		}
 	}
 
-	/**
-	 * 개인 챌린지 인증을 상세용 DTO로 변환
-	 */
-	private ChallengeCertificationDetailResponseDto convertToDetailDto(
-		PersonalChallengeCertification certification) {
-		return ChallengeCertificationDetailResponseDto.builder()
-			.certificationId(certification.getId())
-			.challengeId(certification.getParticipation().getPersonalChallenge().getId())
-			.challengeTitle(certification.getParticipation().getPersonalChallenge().getChallengeName())
-			.challengeType(ChallengeType.PERSONAL.name())
-			.certificationImageUrl(certification.getCertificationImageUrl())
-			.certificationReview(certification.getCertificationReview())
-			.certifiedDate(certification.getCertifiedDate())
-			.approved(certification.getApproved())
-			.build();
-	}
 
-	/**
-	 * 팀 챌린지 인증을 상세용 DTO로 변환
-	 */
-	private ChallengeCertificationDetailResponseDto convertToDetailDto(
-		TeamChallengeCertification certification) {
-		return ChallengeCertificationDetailResponseDto.builder()
-			.certificationId(certification.getId())
-			.challengeId(certification.getParticipation().getTeamChallenge().getId())
-			.challengeTitle(certification.getParticipation().getTeamChallenge().getChallengeName())
-			.challengeType(ChallengeType.TEAM.name())
-			.certificationImageUrl(certification.getCertificationImageUrl())
-			.certificationReview(certification.getCertificationReview())
-			.certifiedDate(certification.getCertifiedDate())
-			.approved(certification.getApproved())
-			.build();
-	}
 }
