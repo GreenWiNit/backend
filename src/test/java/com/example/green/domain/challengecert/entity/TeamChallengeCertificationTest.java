@@ -3,6 +3,7 @@ package com.example.green.domain.challengecert.entity;
 import static org.assertj.core.api.Assertions.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -72,7 +73,7 @@ class TeamChallengeCertificationTest {
 			"https://example.com/team-cert-image.jpg",
 			"팀 챌린지 인증 후기입니다.",
 			now.minusMinutes(30),
-			"2025-01-09"
+			LocalDate.of(2025, 1, 9)
 		);
 	}
 
@@ -82,7 +83,7 @@ class TeamChallengeCertificationTest {
 		String imageUrl = "https://example.com/new-team-cert.jpg";
 		String review = "새로운 팀 인증 후기";
 		LocalDateTime certifiedAt = now.minusMinutes(15);
-		String certifiedDate = "2025-01-10";
+		LocalDate certifiedDate = LocalDate.of(2025, 1, 10);
 
 		// when
 		TeamChallengeCertification newCertification = TeamChallengeCertification.create(
@@ -112,7 +113,7 @@ class TeamChallengeCertificationTest {
 			"https://example.com/image.jpg",
 			"후기",
 			now,
-			"2025-01-09"
+			LocalDate.of(2025, 1, 9)
 		))
 			.isInstanceOf(BusinessException.class);
 	}
@@ -125,7 +126,7 @@ class TeamChallengeCertificationTest {
 			null,
 			"후기",
 			now,
-			"2025-01-09"
+			LocalDate.of(2025, 1, 9)
 		))
 			.isInstanceOf(BusinessException.class);
 
@@ -134,7 +135,7 @@ class TeamChallengeCertificationTest {
 			"",
 			"후기",
 			now,
-			"2025-01-09"
+			LocalDate.of(2025, 1, 9)
 		))
 			.isInstanceOf(BusinessException.class);
 	}
