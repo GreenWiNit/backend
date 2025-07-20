@@ -24,4 +24,4 @@ public record ChallengeCertificationCreateRequestDto(
 	@Size(max = 45, message = "인증 후기는 최대 45자까지 입력 가능합니다.")
 	String certificationReview
 ) {
-} 
+}

@@ -9,4 +9,4 @@ public record ChallengeCertificationCreateResponseDto(
 	@Schema(description = "생성된 인증 ID", example = "1")
 	Long certificationId
 ) {
-} 
+}
