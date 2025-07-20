@@ -2,6 +2,7 @@ package com.example.green.domain.challengecert.entity;
 
 import static com.example.green.global.utils.EntityValidator.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Entity;
@@ -46,13 +47,13 @@ public class PersonalChallengeCertification extends BaseChallengeCertification {
 		String certificationImageUrl,
 		String certificationReview,
 		LocalDateTime certifiedAt,
-		String certifiedDate
+		LocalDate certifiedDate
 	) {
 		// 필수 값 validate
 		validateNullData(participation, "챌린지 참여 정보는 필수값입니다.");
 		validateEmptyString(certificationImageUrl, "인증 이미지는 필수값입니다.");
 		validateNullData(certifiedAt, "인증 시각은 필수값입니다.");
-		validateEmptyString(certifiedDate, "인증 날짜는 필수값입니다.");
+		validateNullData(certifiedDate, "인증 날짜는 필수값입니다.");
 
 		return new PersonalChallengeCertification(
 			participation,
@@ -68,7 +69,7 @@ public class PersonalChallengeCertification extends BaseChallengeCertification {
 		String certificationImageUrl,
 		String certificationReview,
 		LocalDateTime certifiedAt,
-		String certifiedDate
+		LocalDate certifiedDate
 	) {
 		super(participation.getMember(), certificationImageUrl, certificationReview, certifiedAt, certifiedDate);
 		this.participation = participation;
