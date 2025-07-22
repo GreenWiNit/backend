@@ -4,6 +4,7 @@ import static com.example.green.global.utils.EntityValidator.*;
 
 import java.time.LocalDateTime;
 
+import com.example.green.domain.challenge.enums.ChallengeDisplayStatus;
 import com.example.green.domain.challenge.enums.ChallengeStatus;
 import com.example.green.domain.challenge.enums.ChallengeType;
 import com.example.green.domain.point.entity.vo.PointAmount;
@@ -22,7 +23,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(
 	indexes = {
-		@Index(name = "idx_personal_challenge_active", columnList = "challengeStatus, beginDateTime, endDateTime")
+		@Index(name = "idx_personal_challenge_active", columnList = "challengeStatus, displayStatus, beginDateTime, endDateTime")
 	},
 	uniqueConstraints = {
 		@UniqueConstraint(name = "uk_personal_challenge_code", columnNames = "challenge_code")
@@ -40,7 +41,8 @@ public class PersonalChallenge extends BaseChallenge {
 		LocalDateTime beginDateTime,
 		LocalDateTime endDateTime,
 		String challengeImage,
-		String challengeContent
+		String challengeContent,
+		ChallengeDisplayStatus displayStatus
 	) {
 		// 필수 값 validate
 		validateEmptyString(challengeCode, "챌린지 코드는 필수값입니다.");
@@ -50,6 +52,7 @@ public class PersonalChallenge extends BaseChallenge {
 		validateNullData(beginDateTime, "시작일시는 필수값입니다.");
 		validateNullData(endDateTime, "종료일시는 필수값입니다.");
 		validateDateRange(beginDateTime, endDateTime, "시작일시는 종료일시보다 이전이어야 합니다.");
+		validateNullData(displayStatus, "챌린지 전시 상태는 필수값입니다.");
 
 		return new PersonalChallenge(
 			challengeCode,
@@ -60,7 +63,8 @@ public class PersonalChallenge extends BaseChallenge {
 			beginDateTime,
 			endDateTime,
 			challengeImage,
-			challengeContent
+			challengeContent,
+			displayStatus
 		);
 	}
 
@@ -73,9 +77,38 @@ public class PersonalChallenge extends BaseChallenge {
 		LocalDateTime beginDateTime,
 		LocalDateTime endDateTime,
 		String challengeImage,
-		String challengeContent
+		String challengeContent,
+		ChallengeDisplayStatus displayStatus
 	) {
 		super(challengeCode, challengeName, challengeStatus, challengePoint, challengeType,
-			beginDateTime, endDateTime, challengeImage, challengeContent);
+			beginDateTime, endDateTime, challengeImage, challengeContent, displayStatus);
+	}
+
+	/**
+	 * 챌린지 데이터 업데이트
+	 */
+	public void update(
+		String challengeName,
+		PointAmount challengePoint,
+		LocalDateTime beginDateTime,
+		LocalDateTime endDateTime,
+		String challengeContent,
+		ChallengeDisplayStatus displayStatus
+	) {
+		super.update(challengeName, challengePoint, beginDateTime, endDateTime, challengeContent, displayStatus);
+	}
+
+	/**
+	 * 챌린지 이미지 업데이트
+	 */
+	public void updateImage(String challengeImageUrl) {
+		super.updateChallengeImage(challengeImageUrl);
+	}
+
+	/**
+	 * 챌린지 전시 상태 업데이트
+	 */
+	public void updateDisplayStatus(ChallengeDisplayStatus displayStatus) {
+		super.updateDisplayStatus(displayStatus);
 	}
 }

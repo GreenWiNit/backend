@@ -38,6 +38,9 @@ public class TeamChallengeGroup extends BaseEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@Column(name = "team_code", length = 30, nullable = false)
+	private String teamCode;
+
 	@Column(length = 100, nullable = false)
 	private String groupName;
 
@@ -67,6 +70,7 @@ public class TeamChallengeGroup extends BaseEntity {
 	private TeamChallenge teamChallenge;
 
 	private TeamChallengeGroup(
+		String teamCode,
 		String groupName,
 		LocalDateTime groupBeginDateTime,
 		LocalDateTime groupEndDateTime,
@@ -76,6 +80,7 @@ public class TeamChallengeGroup extends BaseEntity {
 		String openChatUrl,
 		TeamChallenge teamChallenge
 	) {
+		this.teamCode = teamCode;
 		this.groupName = groupName;
 		this.groupBeginDateTime = groupBeginDateTime;
 		this.groupEndDateTime = groupEndDateTime;
@@ -88,6 +93,7 @@ public class TeamChallengeGroup extends BaseEntity {
 	}
 
 	public static TeamChallengeGroup create(
+		String teamCode,
 		String groupName,
 		LocalDateTime groupBeginDateTime,
 		LocalDateTime groupEndDateTime,
@@ -97,6 +103,7 @@ public class TeamChallengeGroup extends BaseEntity {
 		String openChatUrl,
 		TeamChallenge teamChallenge
 	) {
+		validateEmptyString(teamCode, "팀 코드는 필수값입니다.");
 		validateEmptyString(groupName, "그룹명은 필수값입니다.");
 		validateNullData(groupBeginDateTime, "그룹 시작일시는 필수값입니다.");
 		validateNullData(groupEndDateTime, "그룹 종료일시는 필수값입니다.");
@@ -109,6 +116,7 @@ public class TeamChallengeGroup extends BaseEntity {
 		}
 
 		TeamChallengeGroup group = new TeamChallengeGroup(
+			teamCode,
 			groupName,
 			groupBeginDateTime,
 			groupEndDateTime,
@@ -191,6 +199,13 @@ public class TeamChallengeGroup extends BaseEntity {
 			return false;
 		}
 		return currentParticipants >= maxParticipants;
+	}
+
+	/**
+	 * 현재 참가자 수를 반환합니다.
+	 */
+	public Integer getCurrentParticipants() {
+		return currentParticipants;
 	}
 
 	public GroupStatus getGroupStatus() {
