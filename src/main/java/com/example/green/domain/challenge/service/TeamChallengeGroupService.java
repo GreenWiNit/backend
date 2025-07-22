@@ -16,6 +16,7 @@ import com.example.green.domain.challenge.exception.ChallengeException;
 import com.example.green.domain.challenge.exception.ChallengeExceptionMessage;
 import com.example.green.domain.challenge.repository.TeamChallengeGroupRepository;
 import com.example.green.domain.challenge.repository.TeamChallengeRepository;
+import com.example.green.domain.challenge.utils.CodeGenerator;
 import com.example.green.domain.challengecert.entity.TeamChallengeGroupParticipation;
 import com.example.green.domain.challengecert.entity.TeamChallengeParticipation;
 import com.example.green.domain.challengecert.entity.enums.GroupRoleType;
@@ -114,8 +115,12 @@ public class TeamChallengeGroupService {
 		// 그룹 주소 생성
 		GroupAddress groupAddress = GroupAddress.of(request.roadAddress(), request.detailAddress());
 
+		// 팀 코드 생성
+		String teamCode = CodeGenerator.generateTeamGroupCode(LocalDateTime.now());
+
 		// 그룹 생성
 		TeamChallengeGroup group = TeamChallengeGroup.create(
+			teamCode,
 			request.groupName(),
 			request.groupBeginDateTime(),
 			request.groupEndDateTime(),
