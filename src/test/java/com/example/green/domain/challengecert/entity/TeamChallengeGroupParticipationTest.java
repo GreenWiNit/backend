@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import com.example.green.domain.challenge.entity.TeamChallenge;
 import com.example.green.domain.challenge.entity.TeamChallengeGroup;
 import com.example.green.domain.challenge.entity.vo.GroupAddress;
+import com.example.green.domain.challenge.enums.ChallengeDisplayStatus;
 import com.example.green.domain.challenge.enums.ChallengeStatus;
 import com.example.green.domain.challenge.enums.ChallengeType;
 import com.example.green.domain.challenge.utils.ChallengeCodeGenerator;
@@ -45,11 +46,13 @@ class TeamChallengeGroupParticipationTest {
 			now.plusDays(7),
 			5,
 			"challenge-image.jpg",
-			"팀 챌린지 설명"
+			"팀 챌린지 설명",
+			ChallengeDisplayStatus.VISIBLE
 		);
 
 		// 테스트용 TeamChallengeGroup 생성
 		teamChallengeGroup = TeamChallengeGroup.create(
+			"team code",
 			"테스트 그룹",
 			now.minusHours(2),
 			now.plusDays(6),

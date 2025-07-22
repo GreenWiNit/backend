@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.example.green.domain.challenge.entity.PersonalChallenge;
+import com.example.green.domain.challenge.enums.ChallengeDisplayStatus;
 import com.example.green.domain.challenge.enums.ChallengeStatus;
 import com.example.green.domain.challenge.enums.ChallengeType;
 import com.example.green.domain.challenge.utils.ChallengeCodeGenerator;
@@ -47,7 +48,8 @@ class PersonalChallengeCertificationTest {
 			now.minusDays(1),
 			now.plusDays(7),
 			"challenge-image.jpg",
-			"챌린지 설명"
+			"챌린지 설명",
+			ChallengeDisplayStatus.VISIBLE
 		);
 
 		// 테스트용 PersonalChallengeParticipation 생성

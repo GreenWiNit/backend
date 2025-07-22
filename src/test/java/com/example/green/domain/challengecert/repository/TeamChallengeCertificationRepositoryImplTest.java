@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.green.domain.challenge.entity.TeamChallenge;
+import com.example.green.domain.challenge.enums.ChallengeDisplayStatus;
 import com.example.green.domain.challenge.enums.ChallengeStatus;
 import com.example.green.domain.challenge.enums.ChallengeType;
 import com.example.green.domain.challenge.repository.TeamChallengeRepository;
@@ -68,7 +69,8 @@ class TeamChallengeCertificationRepositoryImplTest extends BaseIntegrationTest {
 			testNow.plusDays(7),
 			5,
 			"team-challenge-image.jpg",
-			"팀 챌린지 설명"
+			"팀 챌린지 설명",
+			ChallengeDisplayStatus.VISIBLE
 		);
 		testChallenge = teamChallengeRepository.save(testChallenge);
 

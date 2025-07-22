@@ -22,6 +22,7 @@ import com.example.green.domain.challenge.entity.PersonalChallenge;
 import com.example.green.domain.challenge.entity.TeamChallenge;
 import com.example.green.domain.challenge.entity.TeamChallengeGroup;
 import com.example.green.domain.challenge.entity.vo.GroupAddress;
+import com.example.green.domain.challenge.enums.ChallengeDisplayStatus;
 import com.example.green.domain.challenge.enums.ChallengeStatus;
 import com.example.green.domain.challenge.enums.ChallengeType;
 import com.example.green.domain.challenge.exception.ChallengeException;
@@ -203,7 +204,8 @@ class ChallengeServiceTest {
 			LocalDateTime.now().minusDays(1),
 			LocalDateTime.now().plusDays(7),
 			"challenge-image.jpg",
-			"챌린지 설명"
+			"챌린지 설명",
+			ChallengeDisplayStatus.VISIBLE
 		);
 	}
 
@@ -217,12 +219,14 @@ class ChallengeServiceTest {
 			LocalDateTime.now().plusDays(7),
 			5,
 			"challenge-image.jpg",
-			"팀 챌린지 설명"
+			"팀 챌린지 설명",
+			ChallengeDisplayStatus.VISIBLE
 		);
 	}
 
 	private TeamChallengeGroup createTestTeamChallengeGroup() {
 		return TeamChallengeGroup.create(
+			"team code",
 			"테스트 그룹",
 			LocalDateTime.now().minusHours(2),
 			LocalDateTime.now().plusDays(6),

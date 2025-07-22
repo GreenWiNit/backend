@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.example.green.domain.challenge.controller.dto.ChallengeListResponseDto;
 import com.example.green.domain.challenge.entity.TeamChallenge;
+import com.example.green.domain.challenge.enums.ChallengeDisplayStatus;
 import com.example.green.domain.challenge.enums.ChallengeStatus;
 import com.example.green.domain.challenge.enums.ChallengeType;
 import com.example.green.domain.challenge.utils.ChallengeCodeGenerator;
@@ -45,7 +46,8 @@ class TeamChallengeRepositoryTest extends ServiceIntegrationTest {
 			now.plusDays(7),
 			5,
 			"challenge1-image.jpg",
-			"진행 중인 팀 챌린지 설명"
+			"진행 중인 팀 챌린지 설명",
+			ChallengeDisplayStatus.VISIBLE
 		);
 
 		// 완료된 팀 챌린지
@@ -58,7 +60,8 @@ class TeamChallengeRepositoryTest extends ServiceIntegrationTest {
 			now.minusDays(7),
 			10,
 			"challenge2-image.jpg",
-			"완료된 팀 챌린지 설명"
+			"완료된 팀 챌린지 설명",
+			ChallengeDisplayStatus.VISIBLE
 		);
 
 		repository.save(teamChallenge1);
@@ -123,7 +126,8 @@ class TeamChallengeRepositoryTest extends ServiceIntegrationTest {
 			now.plusDays(7),
 			3,
 			"additional-image.jpg",
-			"추가 팀 챌린지 설명"
+			"추가 팀 챌린지 설명",
+			ChallengeDisplayStatus.VISIBLE
 		);
 		repository.save(additionalChallenge);
 

@@ -15,6 +15,7 @@ import com.example.green.domain.challenge.controller.dto.TeamChallengeGroupListR
 import com.example.green.domain.challenge.entity.TeamChallenge;
 import com.example.green.domain.challenge.entity.TeamChallengeGroup;
 import com.example.green.domain.challenge.entity.vo.GroupAddress;
+import com.example.green.domain.challenge.enums.ChallengeDisplayStatus;
 import com.example.green.domain.challenge.enums.ChallengeStatus;
 import com.example.green.domain.challenge.enums.ChallengeType;
 import com.example.green.domain.challenge.repository.TeamChallengeGroupRepository;
@@ -75,7 +76,8 @@ class TeamChallengeGroupRepositoryTest extends BaseIntegrationTest {
 			testNow.plusDays(7),
 			5,
 			"challenge-image.jpg",
-			"팀 챌린지 설명"
+			"팀 챌린지 설명",
+			ChallengeDisplayStatus.VISIBLE
 		);
 		testTeamChallenge = teamChallengeRepository.save(testTeamChallenge);
 	}
@@ -207,6 +209,7 @@ class TeamChallengeGroupRepositoryTest extends BaseIntegrationTest {
 
 	private TeamChallengeGroup createTestGroup(String groupName, String address) {
 		TeamChallengeGroup group = TeamChallengeGroup.create(
+			"team code",
 			groupName,
 			testNow.minusHours(1),
 			testNow.plusHours(1),
