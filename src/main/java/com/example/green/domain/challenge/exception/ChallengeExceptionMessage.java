@@ -28,7 +28,14 @@ public enum ChallengeExceptionMessage implements ExceptionMessage {
 	NOT_PARTICIPATING_IN_CHALLENGE("해당 챌린지에 참여하지 않았습니다.", 400),
 	ALREADY_PARTICIPATING_IN_GROUP("이미 해당 그룹에 참여 중입니다.", 400),
 	CANNOT_PARTICIPATE_IN_GROUP("그룹에 참여할 수 없습니다.", 400),
-	NOT_GROUP_LEADER("그룹 리더가 아닙니다.", 403);
+	NOT_GROUP_LEADER("그룹 리더가 아닙니다.", 403),
+
+	// Admin 전용 예외 메시지
+	ADMIN_CHALLENGE_NOT_FOUND("관리자 - 챌린지를 찾을 수 없습니다.", 404),
+	ADMIN_TEAM_CHALLENGE_GROUP_NOT_FOUND("관리자 - 팀 챌린지 그룹을 찾을 수 없습니다.", 404),
+	ADMIN_INVALID_CHALLENGE_TYPE("관리자 - 지원하지 않는 챌린지 유형입니다.", 400),
+	ADMIN_CHALLENGE_CREATE_FAILED("관리자 - 챌린지 생성에 실패했습니다.", 500),
+	ADMIN_CHALLENGE_UPDATE_FAILED("관리자 - 챌린지 수정에 실패했습니다.", 500);
 
 	private final String message;
 	private final int status;
