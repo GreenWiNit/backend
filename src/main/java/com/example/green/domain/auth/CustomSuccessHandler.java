@@ -116,12 +116,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 			return;
 		}
 
-		String redirectUrl;
-		if (redirectBase.startsWith("http://localhost")) {
-			redirectUrl = "/signup.html?tempToken=" + encodedToken;
-		} else {
-			redirectUrl = redirectBase + "/signup?tempToken=" + encodedToken;
-		}
+		String redirectUrl = redirectBase + "/signup?tempToken=" + encodedToken;
 
 		log.info("신규 사용자 임시 토큰 생성 완료, 회원가입 페이지로 리다이렉트: {} -> {}", oauth2UserInfoDto.email(), redirectUrl);
 		response.sendRedirect(redirectUrl);
@@ -145,7 +140,6 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 		String accessTokenString = tokenService.createAccessToken(memberKey, role);
 		AccessToken accessToken = AccessToken.from(accessTokenString, tokenService);
 
-		// localhost 여부를 판단해서 secure flag 설정
 		boolean isLocalhost = redirectBase.startsWith("http://localhost");
 		boolean secureFlag = !isLocalhost;
 
@@ -159,16 +153,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 		String encodedAccessToken = URLEncoder.encode(accessToken.getValue(), StandardCharsets.UTF_8);
 		String encodedUserInfo = URLEncoder.encode(user.getName(), StandardCharsets.UTF_8);
 
-		String redirectUrl;
-		if (isLocalhost) {
-			redirectUrl = "/oauth-test.html?success=true"
-				+ "&accessToken=" + encodedAccessToken
-				+ "&userName=" + encodedUserInfo;
-		} else {
-			redirectUrl = redirectBase
-				+ "/?accessToken=" + encodedAccessToken
-				+ "&userName=" + encodedUserInfo;
-		}
+		String redirectUrl = redirectBase + "/?accessToken=" + encodedAccessToken + "&userName=" + encodedUserInfo;
 
 		log.info("기존 사용자 로그인 성공, AccessToken/TokenManager 발급 완료: {} -> {}", memberKey, redirectUrl);
 		response.sendRedirect(redirectUrl);

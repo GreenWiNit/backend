@@ -84,8 +84,6 @@ public class SecurityConfig {
 				"/webjars/**",
 				"/favicon.ico",
 				"/actuator/health",
-				"/oauth-test.html",
-				"/signup.html",
 				"/"
 			)
 			// CSRF disable

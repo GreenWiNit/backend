@@ -1,6 +1,8 @@
 package com.example.green.domain.auth;
 
 import java.io.IOException;
+import java.net.URI;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.AuthenticationException;
@@ -35,17 +37,49 @@ public class OAuth2FailureHandler extends SimpleUrlAuthenticationFailureHandler 
 
 		log.info("OAuth2 인증 실패: {}", exception.getMessage());
 
-		// 환경별 리다이렉트 분기
+		String redirectBase = getSafeRedirectBase(request);
+		
 		String redirectUrl;
-		if (WebUtils.isLocalDevelopment(frontendBaseUrl)) {
-			// 개발 환경: 백엔드 테스트 페이지
-			redirectUrl = "/oauth-test.html?error=auth_failed";
+		if (redirectBase == null) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid origin or referer");
+			return;
 		} else {
-			// 프로덕션 환경: 실제 프론트엔드
-			redirectUrl = frontendBaseUrl + "/login?error=auth_failed";
+			redirectUrl = redirectBase + "/login?error=auth_failed";
 		}
 
 		response.sendRedirect(redirectUrl);
+	}
+
+	private String getSafeRedirectBase(HttpServletRequest request) {
+		List<String> allowedOrigins = List.of(
+			"https://greenwinit.pages.dev",
+			"https://www.greenwinit.store",
+			"http://localhost:5173",
+			"http://localhost:5174",
+			"http://localhost:3000"
+		);
+
+		String origin = request.getHeader("Origin");
+		String referer = request.getHeader("Referer");
+
+		if (origin != null && allowedOrigins.contains(origin)) {
+			return origin;
+		}
+
+		if (referer != null) {
+			try {
+				URI refererUri = URI.create(referer);
+				String refererOrigin = refererUri.getScheme() + "://" + refererUri.getHost()
+					+ (refererUri.getPort() != -1 ? ":" + refererUri.getPort() : "");
+				if (allowedOrigins.contains(refererOrigin)) {
+					return refererOrigin;
+				}
+			} catch (IllegalArgumentException ignored) {
+				// 잘못된 URI 형식인 경우 무시
+			}
+		}
+
+		return null;
 	}
 }
 
