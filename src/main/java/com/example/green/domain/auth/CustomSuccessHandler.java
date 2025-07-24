@@ -1,10 +1,12 @@
 package com.example.green.domain.auth;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
@@ -32,16 +34,19 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 	private final TokenService tokenService;
 	private final String frontendBaseUrl;
 
-	public CustomSuccessHandler(TokenService tokenService, @Value("${app.frontend.base-url}") String frontendBaseUrl) {
+	public CustomSuccessHandler(TokenService tokenService,
+		@Value("${app.frontend.base-url}") String frontendBaseUrl) {
 		this.tokenService = tokenService;
 		this.frontendBaseUrl = frontendBaseUrl;
 	}
 
 	@Override
-	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-		Authentication authentication) throws IOException, ServletException {
+	public void onAuthenticationSuccess(HttpServletRequest request,
+		HttpServletResponse response,
+		Authentication authentication)
+		throws IOException, ServletException {
 
-		CustomOAuth2UserDto customUserDetails = (CustomOAuth2UserDto)authentication.getPrincipal();
+		CustomOAuth2UserDto customUserDetails = (CustomOAuth2UserDto) authentication.getPrincipal();
 		String memberKey = customUserDetails.getMemberKey();
 
 		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
@@ -49,79 +54,123 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 		GrantedAuthority auth = iterator.next();
 		String role = auth.getAuthority();
 
-		// 신규 사용자인지 확인
 		if (customUserDetails.getUserDto().isNewUser()) {
-			handleNewUser(customUserDetails, response);
+			handleNewUser(customUserDetails, response, request);
 		} else {
-			handleExistingUser(customUserDetails, role, response);
+			handleExistingUser(customUserDetails, role, response, request);
 		}
 	}
 
-	// 신규 사용자 처리 - 임시 토큰 생성 후 회원가입 페이지로 리다이렉트
-	private void handleNewUser(CustomOAuth2UserDto user, HttpServletResponse response) throws IOException {
-		OAuth2UserInfoDto oauth2UserInfoDto = user.getUserDto().oauth2UserInfoDto();
+	private String getSafeRedirectBase(HttpServletRequest request) {
+		List<String> allowedOrigins = List.of(
+			"https://greenwinit.pages.dev",
+			"https://www.greenwinit.store",
+			"http://localhost:5173",
+			"http://localhost:5174",
+			"http://localhost:3000"
+		);
 
-		// TempToken VO 생성
-		String tempTokenString = tokenService.createTemporaryToken(oauth2UserInfoDto.email(), oauth2UserInfoDto.name(),
-			oauth2UserInfoDto.profileImageUrl(), oauth2UserInfoDto.provider(), oauth2UserInfoDto.providerId());
-		TempToken tempToken = TempToken.from(tempTokenString, tokenService);
+		String origin = request.getHeader("Origin");
+		String referer = request.getHeader("Referer");
 
-		// URL 인코딩
-		String encodedToken = URLEncoder.encode(tempToken.getValue(), StandardCharsets.UTF_8);
-
-		// 환경별 리다이렉트 분기
-		String redirectUrl;
-		if (WebUtils.isLocalDevelopment(frontendBaseUrl)) {
-			// 개발 환경: 백엔드 테스트 페이지
-			redirectUrl = "/signup.html?tempToken=" + encodedToken;
-		} else {
-			// 프로덕션 환경: 실제 프론트엔드
-			redirectUrl = frontendBaseUrl + "/signup?tempToken=" + encodedToken;
+		if (origin != null && allowedOrigins.contains(origin)) {
+			return origin;
 		}
 
-		log.info("신규 사용자 임시 토큰 생성 완료, 회원가입 페이지로 리다이렉트: {}", oauth2UserInfoDto.email());
+		if (referer != null) {
+			try {
+				URI refererUri = URI.create(referer);
+				String refererOrigin = refererUri.getScheme() + "://" + refererUri.getHost()
+					+ (refererUri.getPort() != -1 ? ":" + refererUri.getPort() : "");
+				if (allowedOrigins.contains(refererOrigin)) {
+					return refererOrigin;
+				}
+			} catch (IllegalArgumentException ignored) {
+				// 잘못된 URI 형식인 경우 무시
+			}
+		}
+
+		return null;
+	}
+
+	private void handleNewUser(CustomOAuth2UserDto user,
+		HttpServletResponse response,
+		HttpServletRequest request)
+		throws IOException {
+		OAuth2UserInfoDto oauth2UserInfoDto = user.getUserDto().oauth2UserInfoDto();
+
+		String tempTokenString = tokenService.createTemporaryToken(
+			oauth2UserInfoDto.email(),
+			oauth2UserInfoDto.name(),
+			oauth2UserInfoDto.profileImageUrl(),
+			oauth2UserInfoDto.provider(),
+			oauth2UserInfoDto.providerId()
+		);
+		TempToken tempToken = TempToken.from(tempTokenString, tokenService);
+
+		String encodedToken = URLEncoder.encode(tempToken.getValue(), StandardCharsets.UTF_8);
+		String redirectBase = getSafeRedirectBase(request);
+
+		if (redirectBase == null) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid origin or referer");
+			return;
+		}
+
+		String redirectUrl;
+		if (redirectBase.startsWith("http://localhost")) {
+			redirectUrl = "/signup.html?tempToken=" + encodedToken;
+		} else {
+			redirectUrl = redirectBase + "/signup?tempToken=" + encodedToken;
+		}
+
+		log.info("신규 사용자 임시 토큰 생성 완료, 회원가입 페이지로 리다이렉트: {} -> {}", oauth2UserInfoDto.email(), redirectUrl);
 		response.sendRedirect(redirectUrl);
 	}
 
-	// 기존 사용자 처리 - AccessToken/TokenManager 발급
-	private void handleExistingUser(CustomOAuth2UserDto user, String role, HttpServletResponse response) throws
-		IOException {
+	private void handleExistingUser(CustomOAuth2UserDto user,
+		String role,
+		HttpServletResponse response,
+		HttpServletRequest request)
+		throws IOException {
 
 		String memberKey = user.getMemberKey();
+		String redirectBase = getSafeRedirectBase(request);
 
-		// TokenManager 먼저 생성 (기존 토큰 정리 + tokenVersion 증가)
-		String refreshTokenString = tokenService.createRefreshToken(memberKey, "Web Browser",
-			// 디바이스 정보 (추후 User-Agent에서 추출 가능)
-			"Unknown IP"   // IP 주소 (추후 HttpServletRequest에서 추출 가능)
-		);
+		if (redirectBase == null) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid origin or referer");
+			return;
+		}
 
-		// AccessToken 나중 생성 (새로운 tokenVersion으로)
+		String refreshTokenString = tokenService.createRefreshToken(memberKey, "Web Browser", "Unknown IP");
 		String accessTokenString = tokenService.createAccessToken(memberKey, role);
 		AccessToken accessToken = AccessToken.from(accessTokenString, tokenService);
 
-		// RefreshToken을 HTTP-Only 쿠키에 저장
-		Cookie refreshCookie = WebUtils.createRefreshTokenCookie(refreshTokenString,
-			WebUtils.isLocalDevelopment(frontendBaseUrl) ? false : true, 7 * 24 * 60 * 60 // 7일
+		// localhost 여부를 판단해서 secure flag 설정
+		boolean isLocalhost = redirectBase.startsWith("http://localhost");
+		boolean secureFlag = !isLocalhost;
+
+		Cookie refreshCookie = WebUtils.createRefreshTokenCookie(
+			refreshTokenString,
+			secureFlag,
+			7 * 24 * 60 * 60
 		);
 		response.addCookie(refreshCookie);
 
-		// AccessToken과 사용자 정보를 쿼리 파라미터로 전달
 		String encodedAccessToken = URLEncoder.encode(accessToken.getValue(), StandardCharsets.UTF_8);
 		String encodedUserInfo = URLEncoder.encode(user.getName(), StandardCharsets.UTF_8);
 
-		// 환경별 리다이렉트 분기
 		String redirectUrl;
-		if (WebUtils.isLocalDevelopment(frontendBaseUrl)) {
-			// 개발 환경: 백엔드 테스트 페이지
-			redirectUrl =
-				"/oauth-test.html?success=true&accessToken=" + encodedAccessToken + "&userName=" + encodedUserInfo;
+		if (isLocalhost) {
+			redirectUrl = "/oauth-test.html?success=true"
+				+ "&accessToken=" + encodedAccessToken
+				+ "&userName=" + encodedUserInfo;
 		} else {
-			// 프로덕션 환경: 실제 프론트엔드 홈 화면
-			redirectUrl =
-				frontendBaseUrl + "/?accessToken=" + encodedAccessToken + "&userName=" + encodedUserInfo;
+			redirectUrl = redirectBase
+				+ "/?accessToken=" + encodedAccessToken
+				+ "&userName=" + encodedUserInfo;
 		}
 
-		log.info("기존 사용자 로그인 성공, AccessToken/TokenManager 발급 완료: {}", memberKey);
+		log.info("기존 사용자 로그인 성공, AccessToken/TokenManager 발급 완료: {} -> {}", memberKey, redirectUrl);
 		response.sendRedirect(redirectUrl);
 	}
 
