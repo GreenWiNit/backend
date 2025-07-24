@@ -55,6 +55,10 @@ logging:
   level:
     org.springframework: ${LOG_LEVEL_SPRING:INFO}
     org.hibernate.SQL: ${LOG_LEVEL_SQL:DEBUG}
+    # OAuth2 디버그 로깅 추가
+    org.springframework.security.oauth2: DEBUG
+    org.springframework.security.web.authentication: DEBUG
+    com.example.green.domain.auth: DEBUG
 
 decorator:
   datasource:

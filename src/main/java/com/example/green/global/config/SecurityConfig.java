@@ -28,7 +28,7 @@ import com.example.green.domain.auth.service.TokenService;
 import jakarta.servlet.http.HttpServletRequest;
 
 /**
- * 
+ *
  * 1. OAuth2/정적 리소스용 FilterChain (JWT 필터 없음)
  * 2. API용 FilterChain (JWT 필터 있음, @PreAuthorize로 세부 권한 제어)
  *
@@ -75,14 +75,14 @@ public class SecurityConfig {
 		return http
 			// 특정 경로에만 이 필터체인 적용
 			.securityMatcher(
-				"/oauth2/**", 
+				"/oauth2/**",
 				"/login/**",
-				"/swagger-ui/**", 
-				"/v3/api-docs/**", 
+				"/swagger-ui/**",
+				"/v3/api-docs/**",
 				"/swagger-ui.html",
-				"/swagger-resources/**", 
-				"/webjars/**", 
-				"/favicon.ico", 
+				"/swagger-resources/**",
+				"/webjars/**",
+				"/favicon.ico",
 				"/actuator/health",
 				"/"
 			)
@@ -149,8 +149,21 @@ public class SecurityConfig {
 			public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
 				CorsConfiguration configuration = new CorsConfiguration();
 
-				configuration.setAllowedOrigins(Arrays.asList(frontendBaseUrl, backendBaseUrl));
-				configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"));
+				configuration.setAllowedOrigins(Arrays.asList(
+					frontendBaseUrl,
+					backendBaseUrl,
+					"https://greenwinit.pages.dev",
+					"https://greenwinit-admin-panel.pages.dev",
+					"https://internal-a-panel.greenwinit.store"
+				));
+
+				// 와일드카드 패턴 도메인들은 setAllowedOriginPatterns로 분리해야한다.
+				configuration.setAllowedOriginPatterns(Arrays.asList(
+					"https://*.greenwinit.pages.dev",
+					"https://*.greenwinit-admin-panel.pages.dev"
+				));
+				configuration.setAllowedMethods(
+					Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"));
 				configuration.setAllowedHeaders(Arrays.asList(
 					"Authorization",
 					"Content-Type",
