@@ -114,7 +114,7 @@ class AdminChallengeServiceTest {
 		given(personalChallengeRepository.save(any(PersonalChallenge.class)))
 			.willAnswer(invocation -> {
 				PersonalChallenge challenge = invocation.getArgument(0);
-				// 실제 환경에서는 JPA가 ID를 자동 생성하지만, 테스트에서는 임의로 설정
+				// 실제 환경에서는 ID를 자동 생성하지만, 테스트에서는 임의로 설정
 				try {
 					java.lang.reflect.Field idField = challenge.getClass().getSuperclass().getDeclaredField("id");
 					idField.setAccessible(true);

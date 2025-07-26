@@ -5,7 +5,9 @@ import static org.mockito.BDDMockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,7 @@ import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeDet
 import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeDisplayStatusUpdateRequestDto;
 import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeImageUpdateRequestDto;
 import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeUpdateRequestDto;
+import com.example.green.domain.challenge.controller.dto.admin.AdminTeamChallengeGroupDetailResponseDto;
 import com.example.green.domain.challenge.enums.ChallengeDisplayStatus;
 import com.example.green.domain.challenge.enums.ChallengeStatus;
 import com.example.green.domain.challenge.enums.ChallengeType;
@@ -288,14 +291,28 @@ class AdminChallengeControllerTest {
 	void 그룹_상세_정보를_조회할_수_있다() throws Exception {
 		// given
 		Long groupId = 1L;
-		// AdminTeamChallengeGroupDetailResponseDto는 record이므로 직접 생성
+		AdminTeamChallengeGroupDetailResponseDto mockDto
+			= new AdminTeamChallengeGroupDetailResponseDto(
+			"T-20250109-143523-C8NQ",
+			"google_4523",
+			"google_2349, naver_1938",
+			"함께 플로길 해요~",
+			LocalDate.of(2025, 6, 8),
+			LocalTime.of(20, 0),
+			LocalTime.of(21, 0),
+			"서울시 종로구 00강 입구",
+			"1시간 동안 함께; 플로길 하는 코스입니다.",
+			"https://open.kakao.com/o/sAczYWth"
+		);
+
 		given(adminChallengeService.getGroupDetail(groupId))
-			.willReturn(null); // 실제 응답 객체 생성 생략
+			.willReturn(mockDto); // 실제 응답 객체 생성 생략
 
 		// when & then
 		mockMvc.perform(get("/api/admin/challenges/groups/{groupId}", groupId))
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.success").value(true));
+			.andExpect(jsonPath("$.success").value(true))
+			.andExpect(jsonPath("$.result.teamCode").value("T-20250109-143523-C8NQ"));
 
 		verify(adminChallengeService).getGroupDetail(groupId);
 	}
