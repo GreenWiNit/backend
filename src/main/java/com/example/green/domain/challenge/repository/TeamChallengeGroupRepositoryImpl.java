@@ -9,6 +9,7 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 
 import com.example.green.domain.challenge.controller.dto.TeamChallengeGroupListResponseDto;
+import com.example.green.domain.challenge.controller.dto.admin.AdminTeamChallengeGroupListResponseDto;
 import com.example.green.domain.challenge.entity.TeamChallengeGroup;
 import com.example.green.domain.challengecert.entity.enums.GroupRoleType;
 import com.example.green.global.api.page.CursorTemplate;
@@ -51,6 +52,36 @@ public class TeamChallengeGroupRepositoryImpl implements TeamChallengeGroupRepos
 
 		List<TeamChallengeGroupListResponseDto> dtos = groups.stream()
 			.map(group -> toGroupListDto(group, memberId))
+			.toList();
+
+		if (hasNext) {
+			Long nextCursor = groups.getLast().getId();
+			return CursorTemplate.ofWithNextCursor(nextCursor, dtos);
+		} else {
+			return CursorTemplate.of(dtos);
+		}
+	}
+
+	@Override
+	public CursorTemplate<Long, AdminTeamChallengeGroupListResponseDto> findAllForAdminByCursor(Long cursor, int size) {
+		List<TeamChallengeGroup> groups = queryFactory
+			.selectFrom(teamChallengeGroup)
+			.where(cursorCondition(cursor))
+			.orderBy(teamChallengeGroup.id.desc())
+			.limit(size + 1)
+			.fetch();
+
+		if (groups.isEmpty()) {
+			return CursorTemplate.ofEmpty();
+		}
+
+		boolean hasNext = groups.size() > size;
+		if (hasNext) {
+			groups = groups.subList(0, size);
+		}
+
+		List<AdminTeamChallengeGroupListResponseDto> dtos = groups.stream()
+			.map(AdminTeamChallengeGroupListResponseDto::from)
 			.toList();
 
 		if (hasNext) {

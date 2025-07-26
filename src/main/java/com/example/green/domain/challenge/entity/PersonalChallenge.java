@@ -85,17 +85,16 @@ public class PersonalChallenge extends BaseChallenge {
 	}
 
 	/**
-	 * 챌린지 데이터 업데이트
+	 * 챌린지 기본 정보 업데이트
 	 */
 	public void update(
 		String challengeName,
 		PointAmount challengePoint,
 		LocalDateTime beginDateTime,
 		LocalDateTime endDateTime,
-		String challengeContent,
-		ChallengeDisplayStatus displayStatus
+		String challengeContent
 	) {
-		super.update(challengeName, challengePoint, beginDateTime, endDateTime, challengeContent, displayStatus);
+		super.updateBasicInfo(challengeName, challengePoint, beginDateTime, endDateTime, challengeContent);
 	}
 
 	/**

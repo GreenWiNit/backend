@@ -3,6 +3,7 @@ package com.example.green.domain.challenge.repository;
 import java.time.LocalDateTime;
 
 import com.example.green.domain.challenge.controller.dto.ChallengeListResponseDto;
+import com.example.green.domain.challenge.controller.dto.admin.AdminPersonalChallengeListResponseDto;
 import com.example.green.domain.challenge.enums.ChallengeStatus;
 import com.example.green.global.api.page.CursorTemplate;
 
@@ -26,4 +27,6 @@ public interface PersonalChallengeRepositoryCustom {
 		ChallengeStatus status,
 		LocalDateTime now
 	);
+
+	CursorTemplate<Long, AdminPersonalChallengeListResponseDto> findAllForAdminByCursor(Long cursor, int size);
 }
