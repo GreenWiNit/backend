@@ -68,7 +68,7 @@ class TeamChallengeGroupRepositoryTest extends BaseIntegrationTest {
 
 		// 테스트용 TeamChallenge 생성
 		testTeamChallenge = TeamChallenge.create(
-			CodeGenerator.generate(ChallengeType.TEAM, testNow),
+			CodeGenerator.generateChallengeCode(ChallengeType.TEAM, testNow),
 			"테스트 팀 챌린지",
 			ChallengeStatus.PROCEEDING,
 			PointAmount.of(BigDecimal.valueOf(2000)),
