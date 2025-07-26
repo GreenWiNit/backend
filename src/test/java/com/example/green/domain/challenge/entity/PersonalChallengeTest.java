@@ -9,9 +9,10 @@ import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.example.green.domain.challenge.enums.ChallengeDisplayStatus;
 import com.example.green.domain.challenge.enums.ChallengeStatus;
 import com.example.green.domain.challenge.enums.ChallengeType;
-import com.example.green.domain.challenge.utils.ChallengeCodeGenerator;
+import com.example.green.domain.challenge.utils.CodeGenerator;
 import com.example.green.domain.point.entity.vo.PointAmount;
 
 /**
@@ -27,16 +28,17 @@ class PersonalChallengeTest {
 	void setUp() {
 		now = LocalDateTime.now();
 		challengePoint = PointAmount.of(BigDecimal.valueOf(1000));
-		
+
 		personalChallenge = PersonalChallenge.create(
-			ChallengeCodeGenerator.generate(ChallengeType.PERSONAL, now),
+			CodeGenerator.generate(ChallengeType.PERSONAL, now),
 			"개인 챌린지",
 			ChallengeStatus.PROCEEDING,
 			challengePoint,
 			now.minusDays(1), // 어제 시작
 			now.plusDays(1),   // 내일 종료
 			"challenge-image.jpg",
-			"챌린지 설명"
+			"챌린지 설명",
+			ChallengeDisplayStatus.VISIBLE
 		);
 	}
 
@@ -45,14 +47,15 @@ class PersonalChallengeTest {
 		// given
 		LocalDateTime testNow = now;
 		PersonalChallenge activeChallenge = PersonalChallenge.create(
-			ChallengeCodeGenerator.generate(ChallengeType.PERSONAL, testNow),
+			CodeGenerator.generate(ChallengeType.PERSONAL, testNow),
 			"활성 챌린지",
 			ChallengeStatus.PROCEEDING,
 			challengePoint,
 			testNow.minusHours(1), // 1시간 전 시작
 			testNow.plusHours(1),   // 1시간 후 종료
 			"challenge-image.jpg",
-			"챌린지 설명"
+			"챌린지 설명",
+			ChallengeDisplayStatus.VISIBLE
 		);
 
 		// when
@@ -67,14 +70,15 @@ class PersonalChallengeTest {
 		// given
 		LocalDateTime testNow = now;
 		PersonalChallenge completedChallenge = PersonalChallenge.create(
-			ChallengeCodeGenerator.generate(ChallengeType.PERSONAL, testNow),
+			CodeGenerator.generate(ChallengeType.PERSONAL, testNow),
 			"완료된 챌린지",
 			ChallengeStatus.COMPLETED,
 			challengePoint,
 			testNow.minusDays(2),
 			testNow.plusDays(1),
 			"challenge-image.jpg",
-			"챌린지 설명"
+			"챌린지 설명",
+			ChallengeDisplayStatus.VISIBLE
 		);
 
 		// when
@@ -89,14 +93,15 @@ class PersonalChallengeTest {
 		// given
 		LocalDateTime testNow = now;
 		PersonalChallenge futureChallenge = PersonalChallenge.create(
-			ChallengeCodeGenerator.generate(ChallengeType.PERSONAL, testNow),
+			CodeGenerator.generate(ChallengeType.PERSONAL, testNow),
 			"미래 챌린지",
 			ChallengeStatus.PROCEEDING,
 			challengePoint,
 			testNow.plusHours(1), // 1시간 후 시작
 			testNow.plusDays(1),
 			"challenge-image.jpg",
-			"챌린지 설명"
+			"챌린지 설명",
+			ChallengeDisplayStatus.VISIBLE
 		);
 
 		// when
@@ -111,14 +116,15 @@ class PersonalChallengeTest {
 		// given
 		LocalDateTime testNow = now;
 		PersonalChallenge expiredChallenge = PersonalChallenge.create(
-			ChallengeCodeGenerator.generate(ChallengeType.PERSONAL, testNow),
+			CodeGenerator.generate(ChallengeType.PERSONAL, testNow),
 			"만료된 챌린지",
 			ChallengeStatus.PROCEEDING,
 			challengePoint,
 			testNow.minusDays(2),
 			testNow.minusHours(1), // 1시간 전 종료
 			"challenge-image.jpg",
-			"챌린지 설명"
+			"챌린지 설명",
+			ChallengeDisplayStatus.VISIBLE
 		);
 
 		// when
@@ -133,14 +139,15 @@ class PersonalChallengeTest {
 		// given
 		LocalDateTime testNow = now;
 		PersonalChallenge participableChallenge = PersonalChallenge.create(
-			ChallengeCodeGenerator.generate(ChallengeType.PERSONAL, testNow),
+			CodeGenerator.generate(ChallengeType.PERSONAL, testNow),
 			"참여 가능한 챌린지",
 			ChallengeStatus.PROCEEDING,
 			challengePoint,
 			testNow.minusDays(1),
 			testNow.plusHours(1), // 1시간 후 종료
 			"challenge-image.jpg",
-			"챌린지 설명"
+			"챌린지 설명",
+			ChallengeDisplayStatus.VISIBLE
 		);
 
 		// when
@@ -155,14 +162,15 @@ class PersonalChallengeTest {
 		// given
 		LocalDateTime testNow = now;
 		PersonalChallenge deadlineChallenge = PersonalChallenge.create(
-			ChallengeCodeGenerator.generate(ChallengeType.PERSONAL, testNow),
+			CodeGenerator.generate(ChallengeType.PERSONAL, testNow),
 			"마감된 챌린지",
 			ChallengeStatus.DEADLINE,
 			challengePoint,
 			testNow.minusDays(1),
 			testNow.plusHours(1),
 			"challenge-image.jpg",
-			"챌린지 설명"
+			"챌린지 설명",
+			ChallengeDisplayStatus.VISIBLE
 		);
 
 		// when
@@ -177,14 +185,15 @@ class PersonalChallengeTest {
 		// given
 		LocalDateTime testNow = now;
 		PersonalChallenge expiredChallenge = PersonalChallenge.create(
-			ChallengeCodeGenerator.generate(ChallengeType.PERSONAL, testNow),
+			CodeGenerator.generate(ChallengeType.PERSONAL, testNow),
 			"만료된 챌린지",
 			ChallengeStatus.PROCEEDING,
 			challengePoint,
 			testNow.minusDays(2),
 			testNow.minusHours(1), // 1시간 전 종료
 			"challenge-image.jpg",
-			"챌린지 설명"
+			"챌린지 설명",
+			ChallengeDisplayStatus.VISIBLE
 		);
 
 		// when
@@ -198,14 +207,15 @@ class PersonalChallengeTest {
 	void PersonalChallenge는_PERSONAL_타입을_가진다() {
 		// given
 		PersonalChallenge challenge = PersonalChallenge.create(
-			ChallengeCodeGenerator.generate(ChallengeType.PERSONAL, LocalDateTime.now()),
+			CodeGenerator.generate(ChallengeType.PERSONAL, LocalDateTime.now()),
 			"개인 챌린지",
 			ChallengeStatus.PROCEEDING,
 			challengePoint,
 			LocalDateTime.now(),
 			LocalDateTime.now().plusDays(1),
 			"challenge-image.jpg",
-			"챌린지 설명"
+			"챌린지 설명",
+			ChallengeDisplayStatus.VISIBLE
 		);
 
 		// when
@@ -234,27 +244,29 @@ class PersonalChallengeTest {
 		LocalDateTime now1 = LocalDateTime.now();
 		Thread.sleep(1); // 시간 차이를 만들기 위해
 		LocalDateTime now2 = LocalDateTime.now();
-		
+
 		PersonalChallenge challenge1 = PersonalChallenge.create(
-			ChallengeCodeGenerator.generate(ChallengeType.PERSONAL, now1),
+			CodeGenerator.generate(ChallengeType.PERSONAL, now1),
 			"첫 번째 챌린지",
 			ChallengeStatus.PROCEEDING,
 			challengePoint,
 			LocalDateTime.now(),
 			LocalDateTime.now().plusDays(1),
 			"challenge-image.jpg",
-			"첫 번째 챌린지 설명"
+			"첫 번째 챌린지 설명",
+			ChallengeDisplayStatus.VISIBLE
 		);
 
 		PersonalChallenge challenge2 = PersonalChallenge.create(
-			ChallengeCodeGenerator.generate(ChallengeType.PERSONAL, now2),
+			CodeGenerator.generate(ChallengeType.PERSONAL, now2),
 			"두 번째 챌린지",
 			ChallengeStatus.PROCEEDING,
 			challengePoint,
 			LocalDateTime.now(),
 			LocalDateTime.now().plusDays(1),
 			"challenge-image.jpg",
-			"두 번째 챌린지 설명"
+			"두 번째 챌린지 설명",
+			ChallengeDisplayStatus.VISIBLE
 		);
 
 		// when
@@ -276,7 +288,7 @@ class PersonalChallengeTest {
 		// ULID는 Crockford Base32를 사용 (0123456789ABCDEFGHJKMNPQRSTVWXYZ, I,L,O,U 제외)
 		String ulidPart = challengeCode.substring(21); // 뒷 4자리
 		assertThat(ulidPart).matches("[0-9A-HJKMNP-TV-Z]{4}");
-		
+
 		// I, L, O, U가 포함되지 않는지 확인
 		assertThat(ulidPart).doesNotContain("I", "L", "O", "U");
 	}

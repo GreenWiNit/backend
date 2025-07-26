@@ -15,11 +15,12 @@ import com.example.green.domain.challenge.controller.dto.TeamChallengeGroupListR
 import com.example.green.domain.challenge.entity.TeamChallenge;
 import com.example.green.domain.challenge.entity.TeamChallengeGroup;
 import com.example.green.domain.challenge.entity.vo.GroupAddress;
+import com.example.green.domain.challenge.enums.ChallengeDisplayStatus;
 import com.example.green.domain.challenge.enums.ChallengeStatus;
 import com.example.green.domain.challenge.enums.ChallengeType;
 import com.example.green.domain.challenge.repository.TeamChallengeGroupRepository;
 import com.example.green.domain.challenge.repository.TeamChallengeRepository;
-import com.example.green.domain.challenge.utils.ChallengeCodeGenerator;
+import com.example.green.domain.challenge.utils.CodeGenerator;
 import com.example.green.domain.challengecert.entity.TeamChallengeGroupParticipation;
 import com.example.green.domain.challengecert.entity.TeamChallengeParticipation;
 import com.example.green.domain.challengecert.entity.enums.GroupRoleType;
@@ -67,7 +68,7 @@ class TeamChallengeGroupRepositoryTest extends BaseIntegrationTest {
 
 		// 테스트용 TeamChallenge 생성
 		testTeamChallenge = TeamChallenge.create(
-			ChallengeCodeGenerator.generate(ChallengeType.TEAM, testNow),
+			CodeGenerator.generate(ChallengeType.TEAM, testNow),
 			"테스트 팀 챌린지",
 			ChallengeStatus.PROCEEDING,
 			PointAmount.of(BigDecimal.valueOf(2000)),
@@ -75,7 +76,8 @@ class TeamChallengeGroupRepositoryTest extends BaseIntegrationTest {
 			testNow.plusDays(7),
 			5,
 			"challenge-image.jpg",
-			"팀 챌린지 설명"
+			"팀 챌린지 설명",
+			ChallengeDisplayStatus.VISIBLE
 		);
 		testTeamChallenge = teamChallengeRepository.save(testTeamChallenge);
 	}
@@ -207,6 +209,7 @@ class TeamChallengeGroupRepositoryTest extends BaseIntegrationTest {
 
 	private TeamChallengeGroup createTestGroup(String groupName, String address) {
 		TeamChallengeGroup group = TeamChallengeGroup.create(
+			"team code",
 			groupName,
 			testNow.minusHours(1),
 			testNow.plusHours(1),

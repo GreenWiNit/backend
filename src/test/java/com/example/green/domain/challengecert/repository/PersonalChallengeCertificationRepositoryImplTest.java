@@ -13,10 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.green.domain.challenge.entity.PersonalChallenge;
+import com.example.green.domain.challenge.enums.ChallengeDisplayStatus;
 import com.example.green.domain.challenge.enums.ChallengeStatus;
 import com.example.green.domain.challenge.enums.ChallengeType;
 import com.example.green.domain.challenge.repository.PersonalChallengeRepository;
-import com.example.green.domain.challenge.utils.ChallengeCodeGenerator;
+import com.example.green.domain.challenge.utils.CodeGenerator;
 import com.example.green.domain.challengecert.dto.ChallengeCertificationListResponseDto;
 import com.example.green.domain.challengecert.entity.PersonalChallengeCertification;
 import com.example.green.domain.challengecert.entity.PersonalChallengeParticipation;
@@ -60,14 +61,15 @@ class PersonalChallengeCertificationRepositoryImplTest extends BaseIntegrationTe
 
 		// 테스트용 PersonalChallenge 생성
 		testChallenge = PersonalChallenge.create(
-			ChallengeCodeGenerator.generate(ChallengeType.PERSONAL, testNow),
+			CodeGenerator.generate(ChallengeType.PERSONAL, testNow),
 			"테스트 개인 챌린지",
 			ChallengeStatus.PROCEEDING,
 			PointAmount.of(BigDecimal.valueOf(1000)),
 			testNow.minusDays(7),
 			testNow.plusDays(7),
 			"challenge-image.jpg",
-			"개인 챌린지 설명"
+			"개인 챌린지 설명",
+			ChallengeDisplayStatus.VISIBLE
 		);
 		testChallenge = personalChallengeRepository.save(testChallenge);
 

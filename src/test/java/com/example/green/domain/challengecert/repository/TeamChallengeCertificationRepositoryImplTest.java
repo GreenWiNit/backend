@@ -13,10 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.green.domain.challenge.entity.TeamChallenge;
+import com.example.green.domain.challenge.enums.ChallengeDisplayStatus;
 import com.example.green.domain.challenge.enums.ChallengeStatus;
 import com.example.green.domain.challenge.enums.ChallengeType;
 import com.example.green.domain.challenge.repository.TeamChallengeRepository;
-import com.example.green.domain.challenge.utils.ChallengeCodeGenerator;
+import com.example.green.domain.challenge.utils.CodeGenerator;
 import com.example.green.domain.challengecert.dto.ChallengeCertificationListResponseDto;
 import com.example.green.domain.challengecert.entity.TeamChallengeCertification;
 import com.example.green.domain.challengecert.entity.TeamChallengeParticipation;
@@ -60,7 +61,7 @@ class TeamChallengeCertificationRepositoryImplTest extends BaseIntegrationTest {
 
 		// 테스트용 TeamChallenge 생성
 		testChallenge = TeamChallenge.create(
-			ChallengeCodeGenerator.generate(ChallengeType.TEAM, testNow),
+			CodeGenerator.generate(ChallengeType.TEAM, testNow),
 			"테스트 팀 챌린지",
 			ChallengeStatus.PROCEEDING,
 			PointAmount.of(BigDecimal.valueOf(2000)),
@@ -68,7 +69,8 @@ class TeamChallengeCertificationRepositoryImplTest extends BaseIntegrationTest {
 			testNow.plusDays(7),
 			5,
 			"team-challenge-image.jpg",
-			"팀 챌린지 설명"
+			"팀 챌린지 설명",
+			ChallengeDisplayStatus.VISIBLE
 		);
 		testChallenge = teamChallengeRepository.save(testChallenge);
 

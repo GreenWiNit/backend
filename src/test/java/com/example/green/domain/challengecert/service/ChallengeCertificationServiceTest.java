@@ -20,6 +20,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import com.example.green.domain.challenge.entity.PersonalChallenge;
 import com.example.green.domain.challenge.entity.TeamChallenge;
+import com.example.green.domain.challenge.enums.ChallengeDisplayStatus;
 import com.example.green.domain.challenge.enums.ChallengeStatus;
 import com.example.green.domain.challenge.exception.ChallengeException;
 import com.example.green.domain.challenge.exception.ChallengeExceptionMessage;
@@ -102,7 +103,8 @@ class ChallengeCertificationServiceTest {
 			testNow.minusDays(1),
 			testNow.plusDays(30),
 			"challenge.jpg",
-			"챌린지 설명"
+			"챌린지 설명",
+			ChallengeDisplayStatus.VISIBLE
 		);
 		ReflectionTestUtils.setField(testPersonalChallenge, "id", TEST_CHALLENGE_ID);
 
@@ -115,7 +117,8 @@ class ChallengeCertificationServiceTest {
 			testNow.plusDays(30),
 			5,
 			"team-challenge.jpg",
-			"팀 챌린지 설명"
+			"팀 챌린지 설명",
+			ChallengeDisplayStatus.VISIBLE
 		);
 		ReflectionTestUtils.setField(testTeamChallenge, "id", TEST_CHALLENGE_ID + 1);
 

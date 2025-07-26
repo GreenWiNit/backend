@@ -22,13 +22,14 @@ import com.example.green.domain.challenge.entity.PersonalChallenge;
 import com.example.green.domain.challenge.entity.TeamChallenge;
 import com.example.green.domain.challenge.entity.TeamChallengeGroup;
 import com.example.green.domain.challenge.entity.vo.GroupAddress;
+import com.example.green.domain.challenge.enums.ChallengeDisplayStatus;
 import com.example.green.domain.challenge.enums.ChallengeStatus;
 import com.example.green.domain.challenge.enums.ChallengeType;
 import com.example.green.domain.challenge.exception.ChallengeException;
 import com.example.green.domain.challenge.exception.ChallengeExceptionMessage;
 import com.example.green.domain.challenge.repository.PersonalChallengeRepository;
 import com.example.green.domain.challenge.repository.TeamChallengeRepository;
-import com.example.green.domain.challenge.utils.ChallengeCodeGenerator;
+import com.example.green.domain.challenge.utils.CodeGenerator;
 import com.example.green.domain.challengecert.entity.TeamChallengeGroupParticipation;
 import com.example.green.domain.challengecert.entity.TeamChallengeParticipation;
 import com.example.green.domain.challengecert.repository.PersonalChallengeParticipationRepository;
@@ -196,20 +197,21 @@ class ChallengeServiceTest {
 
 	private PersonalChallenge createTestPersonalChallenge() {
 		return PersonalChallenge.create(
-			ChallengeCodeGenerator.generate(ChallengeType.PERSONAL, LocalDateTime.now()),
+			CodeGenerator.generate(ChallengeType.PERSONAL, LocalDateTime.now()),
 			"테스트 개인 챌린지",
 			ChallengeStatus.PROCEEDING,
 			PointAmount.of(BigDecimal.valueOf(1000)),
 			LocalDateTime.now().minusDays(1),
 			LocalDateTime.now().plusDays(7),
 			"challenge-image.jpg",
-			"챌린지 설명"
+			"챌린지 설명",
+			ChallengeDisplayStatus.VISIBLE
 		);
 	}
 
 	private TeamChallenge createTestTeamChallenge() {
 		return TeamChallenge.create(
-			ChallengeCodeGenerator.generate(ChallengeType.TEAM, LocalDateTime.now()),
+			CodeGenerator.generate(ChallengeType.TEAM, LocalDateTime.now()),
 			"테스트 팀 챌린지",
 			ChallengeStatus.PROCEEDING,
 			PointAmount.of(BigDecimal.valueOf(2000)),
@@ -217,12 +219,14 @@ class ChallengeServiceTest {
 			LocalDateTime.now().plusDays(7),
 			5,
 			"challenge-image.jpg",
-			"팀 챌린지 설명"
+			"팀 챌린지 설명",
+			ChallengeDisplayStatus.VISIBLE
 		);
 	}
 
 	private TeamChallengeGroup createTestTeamChallengeGroup() {
 		return TeamChallengeGroup.create(
+			"team code",
 			"테스트 그룹",
 			LocalDateTime.now().minusHours(2),
 			LocalDateTime.now().plusDays(6),

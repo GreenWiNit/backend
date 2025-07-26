@@ -12,9 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.example.green.domain.challenge.controller.dto.ChallengeListResponseDto;
 import com.example.green.domain.challenge.entity.TeamChallenge;
+import com.example.green.domain.challenge.enums.ChallengeDisplayStatus;
 import com.example.green.domain.challenge.enums.ChallengeStatus;
 import com.example.green.domain.challenge.enums.ChallengeType;
-import com.example.green.domain.challenge.utils.ChallengeCodeGenerator;
+import com.example.green.domain.challenge.utils.CodeGenerator;
 import com.example.green.domain.point.entity.vo.PointAmount;
 import com.example.green.global.api.page.CursorTemplate;
 import com.example.integration.common.ServiceIntegrationTest;
@@ -37,7 +38,7 @@ class TeamChallengeRepositoryTest extends ServiceIntegrationTest {
 
 		// 진행 중인 팀 챌린지
 		teamChallenge1 = TeamChallenge.create(
-			ChallengeCodeGenerator.generate(ChallengeType.TEAM, now),
+			CodeGenerator.generate(ChallengeType.TEAM, now),
 			"진행 중인 팀 챌린지",
 			ChallengeStatus.PROCEEDING,
 			PointAmount.of(BigDecimal.valueOf(2000)),
@@ -45,12 +46,13 @@ class TeamChallengeRepositoryTest extends ServiceIntegrationTest {
 			now.plusDays(7),
 			5,
 			"challenge1-image.jpg",
-			"진행 중인 팀 챌린지 설명"
+			"진행 중인 팀 챌린지 설명",
+			ChallengeDisplayStatus.VISIBLE
 		);
 
 		// 완료된 팀 챌린지
 		teamChallenge2 = TeamChallenge.create(
-			ChallengeCodeGenerator.generate(ChallengeType.TEAM, now.plusMinutes(1)),
+			CodeGenerator.generate(ChallengeType.TEAM, now.plusMinutes(1)),
 			"완료된 팀 챌린지",
 			ChallengeStatus.COMPLETED,
 			PointAmount.of(BigDecimal.valueOf(3000)),
@@ -58,7 +60,8 @@ class TeamChallengeRepositoryTest extends ServiceIntegrationTest {
 			now.minusDays(7),
 			10,
 			"challenge2-image.jpg",
-			"완료된 팀 챌린지 설명"
+			"완료된 팀 챌린지 설명",
+			ChallengeDisplayStatus.VISIBLE
 		);
 
 		repository.save(teamChallenge1);
@@ -115,7 +118,7 @@ class TeamChallengeRepositoryTest extends ServiceIntegrationTest {
 		// given
 		// 추가 팀 챌린지 생성
 		TeamChallenge additionalChallenge = TeamChallenge.create(
-			ChallengeCodeGenerator.generate(ChallengeType.TEAM, now.plusMinutes(2)),
+			CodeGenerator.generate(ChallengeType.TEAM, now.plusMinutes(2)),
 			"추가 팀 챌린지",
 			ChallengeStatus.PROCEEDING,
 			PointAmount.of(BigDecimal.valueOf(1500)),
@@ -123,7 +126,8 @@ class TeamChallengeRepositoryTest extends ServiceIntegrationTest {
 			now.plusDays(7),
 			3,
 			"additional-image.jpg",
-			"추가 팀 챌린지 설명"
+			"추가 팀 챌린지 설명",
+			ChallengeDisplayStatus.VISIBLE
 		);
 		repository.save(additionalChallenge);
 
