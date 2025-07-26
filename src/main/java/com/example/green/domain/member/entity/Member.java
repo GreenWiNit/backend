@@ -42,9 +42,6 @@ public class Member extends BaseEntity {
 	@Column(nullable = false)
 	private String email;
 
-	/**
-	 * 전화번호 컬럼 추가 (nullable = true)
-	 */
 	@Column(name = "phone_number", nullable = true, length = 20)
 	private String phoneNumber;
 

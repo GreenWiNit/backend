@@ -14,11 +14,10 @@ import com.example.green.domain.common.service.FileManager;
 import com.example.green.domain.member.entity.Member;
 import com.example.green.domain.member.exception.MemberExceptionMessage;
 import com.example.green.domain.member.repository.MemberRepository;
+import com.example.green.domain.pointshop.delivery.client.PhoneVerificationClient;
 import com.example.green.global.error.exception.BusinessException;
 
 import jakarta.persistence.OptimisticLockException;
-
-
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,12 +30,13 @@ public class MemberService {
 
 	private final MemberRepository memberRepository;
 	private final FileManager fileManager;
+	private final PhoneVerificationClient phoneVerificationClient;
 
 	// 재시도 설정 상수들
 	private static final int SIGNUP_MAX_ATTEMPTS = 3;
 	private static final int SIGNUP_DELAY = 50;
 	private static final double SIGNUP_MULTIPLIER = 2.0;
-	
+
 	private static final int GENERAL_MAX_ATTEMPTS = 3;
 	private static final int GENERAL_DELAY = 100;
 	private static final double GENERAL_MULTIPLIER = 2.0;
@@ -198,7 +198,6 @@ public class MemberService {
 			});
 	}
 
-
 	private void processProfileImageUpdate(String oldProfileImageUrl, String newProfileImageUrl) {
 
 		confirmNewProfileImage(newProfileImageUrl);
@@ -208,14 +207,12 @@ public class MemberService {
 		}
 	}
 
-
 	private void confirmNewProfileImage(String profileImageUrl) {
 		if (StringUtils.hasText(profileImageUrl)) {
 			fileManager.confirmUsingImage(profileImageUrl);
 			log.info("새 프로필 이미지 사용 확정: {}", profileImageUrl);
 		}
 	}
-
 
 	private void unUseProfileImage(String profileImageUrl) {
 		if (StringUtils.hasText(profileImageUrl)) {
@@ -261,7 +258,7 @@ public class MemberService {
 	/**
 	 * 관리자에 의한 회원 강제 삭제 처리
 	 * 관리자가 회원을 강퇴하거나 삭제 시 사용.
-	 * 
+	 *
 	 * @param memberId 삭제할 회원 ID
 	 * @throws BusinessException 회원을 찾을 수 없거나 이미 탈퇴한 경우
 	 */
@@ -322,6 +319,54 @@ public class MemberService {
 	public void withdrawMemberByMemberKey(String memberKey) {
 		Member member = findMemberByMemberKey(memberKey, "회원 탈퇴");
 		withdrawMember(member.getId());
+	}
+
+	/**
+	 * 사용자 휴대폰 정보 조회
+	 *
+	 * 사용자의 휴대폰 번호와 인증 상태를 조회.
+	 * 휴대폰 번호가 등록되어 있지 않은 경우 null을 반환하고
+	 * 등록된 경우 휴대폰 인증 상태를 함께 확인하여 반환.
+	 *
+	 * @param memberId 회원 ID
+	 * @return Member 엔티티와 인증 상태
+	 */
+	@Transactional(readOnly = true)
+	public PhoneInfoResult getPhoneInfo(Long memberId) {
+		Member member = findMemberById(memberId, "휴대폰 정보 조회");
+
+		String phoneNumber = member.getPhoneNumber();
+		boolean isAuthenticated = false;
+
+		if (phoneNumber != null && !phoneNumber.trim().isEmpty()) {
+			try {
+				isAuthenticated = phoneVerificationClient.isAuthenticated(phoneNumber);
+			} catch (Exception e) {
+				log.warn("휴대폰 인증 상태 확인 실패: memberId={}, phoneNumber={}, error={}",
+					memberId, phoneNumber, e.getMessage());
+				isAuthenticated = false;
+			}
+		}
+
+		return new PhoneInfoResult(member, isAuthenticated);
+	}
+	
+	public static class PhoneInfoResult {
+		private final Member member;
+		private final boolean isAuthenticated;
+
+		public PhoneInfoResult(Member member, boolean isAuthenticated) {
+			this.member = member;
+			this.isAuthenticated = isAuthenticated;
+		}
+
+		public Member getMember() {
+			return member;
+		}
+
+		public boolean isAuthenticated() {
+			return isAuthenticated;
+		}
 	}
 
 	/**
