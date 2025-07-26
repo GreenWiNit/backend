@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 import com.example.green.domain.challenge.enums.ChallengeDisplayStatus;
 import com.example.green.domain.challenge.enums.ChallengeStatus;
 import com.example.green.domain.challenge.enums.ChallengeType;
-import com.example.green.domain.challenge.utils.ChallengeCodeGenerator;
+import com.example.green.domain.challenge.utils.CodeGenerator;
 import com.example.green.domain.point.entity.vo.PointAmount;
 
 /**
@@ -30,7 +30,7 @@ class PersonalChallengeTest {
 		challengePoint = PointAmount.of(BigDecimal.valueOf(1000));
 
 		personalChallenge = PersonalChallenge.create(
-			ChallengeCodeGenerator.generate(ChallengeType.PERSONAL, now),
+			CodeGenerator.generate(ChallengeType.PERSONAL, now),
 			"개인 챌린지",
 			ChallengeStatus.PROCEEDING,
 			challengePoint,
@@ -47,7 +47,7 @@ class PersonalChallengeTest {
 		// given
 		LocalDateTime testNow = now;
 		PersonalChallenge activeChallenge = PersonalChallenge.create(
-			ChallengeCodeGenerator.generate(ChallengeType.PERSONAL, testNow),
+			CodeGenerator.generate(ChallengeType.PERSONAL, testNow),
 			"활성 챌린지",
 			ChallengeStatus.PROCEEDING,
 			challengePoint,
@@ -70,7 +70,7 @@ class PersonalChallengeTest {
 		// given
 		LocalDateTime testNow = now;
 		PersonalChallenge completedChallenge = PersonalChallenge.create(
-			ChallengeCodeGenerator.generate(ChallengeType.PERSONAL, testNow),
+			CodeGenerator.generate(ChallengeType.PERSONAL, testNow),
 			"완료된 챌린지",
 			ChallengeStatus.COMPLETED,
 			challengePoint,
@@ -93,7 +93,7 @@ class PersonalChallengeTest {
 		// given
 		LocalDateTime testNow = now;
 		PersonalChallenge futureChallenge = PersonalChallenge.create(
-			ChallengeCodeGenerator.generate(ChallengeType.PERSONAL, testNow),
+			CodeGenerator.generate(ChallengeType.PERSONAL, testNow),
 			"미래 챌린지",
 			ChallengeStatus.PROCEEDING,
 			challengePoint,
@@ -116,7 +116,7 @@ class PersonalChallengeTest {
 		// given
 		LocalDateTime testNow = now;
 		PersonalChallenge expiredChallenge = PersonalChallenge.create(
-			ChallengeCodeGenerator.generate(ChallengeType.PERSONAL, testNow),
+			CodeGenerator.generate(ChallengeType.PERSONAL, testNow),
 			"만료된 챌린지",
 			ChallengeStatus.PROCEEDING,
 			challengePoint,
@@ -139,7 +139,7 @@ class PersonalChallengeTest {
 		// given
 		LocalDateTime testNow = now;
 		PersonalChallenge participableChallenge = PersonalChallenge.create(
-			ChallengeCodeGenerator.generate(ChallengeType.PERSONAL, testNow),
+			CodeGenerator.generate(ChallengeType.PERSONAL, testNow),
 			"참여 가능한 챌린지",
 			ChallengeStatus.PROCEEDING,
 			challengePoint,
@@ -162,7 +162,7 @@ class PersonalChallengeTest {
 		// given
 		LocalDateTime testNow = now;
 		PersonalChallenge deadlineChallenge = PersonalChallenge.create(
-			ChallengeCodeGenerator.generate(ChallengeType.PERSONAL, testNow),
+			CodeGenerator.generate(ChallengeType.PERSONAL, testNow),
 			"마감된 챌린지",
 			ChallengeStatus.DEADLINE,
 			challengePoint,
@@ -185,7 +185,7 @@ class PersonalChallengeTest {
 		// given
 		LocalDateTime testNow = now;
 		PersonalChallenge expiredChallenge = PersonalChallenge.create(
-			ChallengeCodeGenerator.generate(ChallengeType.PERSONAL, testNow),
+			CodeGenerator.generate(ChallengeType.PERSONAL, testNow),
 			"만료된 챌린지",
 			ChallengeStatus.PROCEEDING,
 			challengePoint,
@@ -207,7 +207,7 @@ class PersonalChallengeTest {
 	void PersonalChallenge는_PERSONAL_타입을_가진다() {
 		// given
 		PersonalChallenge challenge = PersonalChallenge.create(
-			ChallengeCodeGenerator.generate(ChallengeType.PERSONAL, LocalDateTime.now()),
+			CodeGenerator.generate(ChallengeType.PERSONAL, LocalDateTime.now()),
 			"개인 챌린지",
 			ChallengeStatus.PROCEEDING,
 			challengePoint,
@@ -246,7 +246,7 @@ class PersonalChallengeTest {
 		LocalDateTime now2 = LocalDateTime.now();
 
 		PersonalChallenge challenge1 = PersonalChallenge.create(
-			ChallengeCodeGenerator.generate(ChallengeType.PERSONAL, now1),
+			CodeGenerator.generate(ChallengeType.PERSONAL, now1),
 			"첫 번째 챌린지",
 			ChallengeStatus.PROCEEDING,
 			challengePoint,
@@ -258,7 +258,7 @@ class PersonalChallengeTest {
 		);
 
 		PersonalChallenge challenge2 = PersonalChallenge.create(
-			ChallengeCodeGenerator.generate(ChallengeType.PERSONAL, now2),
+			CodeGenerator.generate(ChallengeType.PERSONAL, now2),
 			"두 번째 챌린지",
 			ChallengeStatus.PROCEEDING,
 			challengePoint,

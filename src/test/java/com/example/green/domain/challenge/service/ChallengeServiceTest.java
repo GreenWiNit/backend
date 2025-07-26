@@ -29,7 +29,7 @@ import com.example.green.domain.challenge.exception.ChallengeException;
 import com.example.green.domain.challenge.exception.ChallengeExceptionMessage;
 import com.example.green.domain.challenge.repository.PersonalChallengeRepository;
 import com.example.green.domain.challenge.repository.TeamChallengeRepository;
-import com.example.green.domain.challenge.utils.ChallengeCodeGenerator;
+import com.example.green.domain.challenge.utils.CodeGenerator;
 import com.example.green.domain.challengecert.entity.TeamChallengeGroupParticipation;
 import com.example.green.domain.challengecert.entity.TeamChallengeParticipation;
 import com.example.green.domain.challengecert.repository.PersonalChallengeParticipationRepository;
@@ -197,7 +197,7 @@ class ChallengeServiceTest {
 
 	private PersonalChallenge createTestPersonalChallenge() {
 		return PersonalChallenge.create(
-			ChallengeCodeGenerator.generate(ChallengeType.PERSONAL, LocalDateTime.now()),
+			CodeGenerator.generate(ChallengeType.PERSONAL, LocalDateTime.now()),
 			"테스트 개인 챌린지",
 			ChallengeStatus.PROCEEDING,
 			PointAmount.of(BigDecimal.valueOf(1000)),
@@ -211,7 +211,7 @@ class ChallengeServiceTest {
 
 	private TeamChallenge createTestTeamChallenge() {
 		return TeamChallenge.create(
-			ChallengeCodeGenerator.generate(ChallengeType.TEAM, LocalDateTime.now()),
+			CodeGenerator.generate(ChallengeType.TEAM, LocalDateTime.now()),
 			"테스트 팀 챌린지",
 			ChallengeStatus.PROCEEDING,
 			PointAmount.of(BigDecimal.valueOf(2000)),

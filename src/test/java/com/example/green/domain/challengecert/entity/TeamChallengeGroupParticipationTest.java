@@ -14,7 +14,7 @@ import com.example.green.domain.challenge.entity.vo.GroupAddress;
 import com.example.green.domain.challenge.enums.ChallengeDisplayStatus;
 import com.example.green.domain.challenge.enums.ChallengeStatus;
 import com.example.green.domain.challenge.enums.ChallengeType;
-import com.example.green.domain.challenge.utils.ChallengeCodeGenerator;
+import com.example.green.domain.challenge.utils.CodeGenerator;
 import com.example.green.domain.challengecert.entity.enums.GroupRoleType;
 import com.example.green.domain.member.entity.Member;
 import com.example.green.domain.point.entity.vo.PointAmount;
@@ -38,7 +38,7 @@ class TeamChallengeGroupParticipationTest {
 
 		// 테스트용 TeamChallenge 생성
 		teamChallenge = TeamChallenge.create(
-			ChallengeCodeGenerator.generate(ChallengeType.TEAM, now),
+			CodeGenerator.generate(ChallengeType.TEAM, now),
 			"팀 챌린지",
 			ChallengeStatus.PROCEEDING,
 			PointAmount.of(BigDecimal.valueOf(2000)),

@@ -15,7 +15,7 @@ import com.example.green.domain.challenge.enums.ChallengeStatus;
 import com.example.green.domain.challenge.enums.ChallengeType;
 import com.example.green.domain.challenge.enums.GroupStatus;
 import com.example.green.domain.challenge.exception.ChallengeExceptionMessage;
-import com.example.green.domain.challenge.utils.ChallengeCodeGenerator;
+import com.example.green.domain.challenge.utils.CodeGenerator;
 import com.example.green.domain.point.entity.vo.PointAmount;
 import com.example.green.global.error.exception.BusinessException;
 
@@ -31,7 +31,7 @@ class TeamChallengeGroupTest {
 
 		// TeamChallenge 먼저 생성
 		teamChallenge = TeamChallenge.create(
-			ChallengeCodeGenerator.generate(ChallengeType.TEAM, now),
+			CodeGenerator.generate(ChallengeType.TEAM, now),
 			"테스트 팀 챌린지",
 			ChallengeStatus.PROCEEDING,
 			PointAmount.of(BigDecimal.valueOf(2000)),

@@ -56,4 +56,12 @@ public class CodeGenerator {
 			timeCode,
 			ulidSuffix);
 	}
+
+	/**
+	 * 기존 호환성을 위한 메서드
+	 */
+	@Deprecated
+	public static String generate(ChallengeType challengeType, LocalDateTime now) {
+		return generateChallengeCode(challengeType, now);
+	}
 }

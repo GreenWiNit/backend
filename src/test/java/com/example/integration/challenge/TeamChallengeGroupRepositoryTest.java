@@ -20,7 +20,7 @@ import com.example.green.domain.challenge.enums.ChallengeStatus;
 import com.example.green.domain.challenge.enums.ChallengeType;
 import com.example.green.domain.challenge.repository.TeamChallengeGroupRepository;
 import com.example.green.domain.challenge.repository.TeamChallengeRepository;
-import com.example.green.domain.challenge.utils.ChallengeCodeGenerator;
+import com.example.green.domain.challenge.utils.CodeGenerator;
 import com.example.green.domain.challengecert.entity.TeamChallengeGroupParticipation;
 import com.example.green.domain.challengecert.entity.TeamChallengeParticipation;
 import com.example.green.domain.challengecert.entity.enums.GroupRoleType;
@@ -68,7 +68,7 @@ class TeamChallengeGroupRepositoryTest extends BaseIntegrationTest {
 
 		// 테스트용 TeamChallenge 생성
 		testTeamChallenge = TeamChallenge.create(
-			ChallengeCodeGenerator.generate(ChallengeType.TEAM, testNow),
+			CodeGenerator.generate(ChallengeType.TEAM, testNow),
 			"테스트 팀 챌린지",
 			ChallengeStatus.PROCEEDING,
 			PointAmount.of(BigDecimal.valueOf(2000)),

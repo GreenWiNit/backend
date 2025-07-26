@@ -14,7 +14,7 @@ import com.example.green.domain.challenge.entity.PersonalChallenge;
 import com.example.green.domain.challenge.enums.ChallengeDisplayStatus;
 import com.example.green.domain.challenge.enums.ChallengeStatus;
 import com.example.green.domain.challenge.enums.ChallengeType;
-import com.example.green.domain.challenge.utils.ChallengeCodeGenerator;
+import com.example.green.domain.challenge.utils.CodeGenerator;
 import com.example.green.domain.challengecert.exception.ChallengeCertException;
 import com.example.green.domain.challengecert.exception.ChallengeCertExceptionMessage;
 import com.example.green.domain.member.entity.Member;
@@ -41,7 +41,7 @@ class PersonalChallengeCertificationTest {
 
 		// 테스트용 PersonalChallenge 생성
 		personalChallenge = PersonalChallenge.create(
-			ChallengeCodeGenerator.generate(ChallengeType.PERSONAL, now),
+			CodeGenerator.generate(ChallengeType.PERSONAL, now),
 			"개인 챌린지",
 			ChallengeStatus.PROCEEDING,
 			PointAmount.of(BigDecimal.valueOf(1000)),

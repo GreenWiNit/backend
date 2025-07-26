@@ -16,7 +16,7 @@ import com.example.green.domain.challenge.enums.ChallengeStatus;
 import com.example.green.domain.challenge.enums.ChallengeType;
 import com.example.green.domain.challenge.exception.ChallengeException;
 import com.example.green.domain.challenge.exception.ChallengeExceptionMessage;
-import com.example.green.domain.challenge.utils.ChallengeCodeGenerator;
+import com.example.green.domain.challenge.utils.CodeGenerator;
 import com.example.green.domain.point.entity.vo.PointAmount;
 
 class TeamChallengeTest {
@@ -31,7 +31,7 @@ class TeamChallengeTest {
 		challengePoint = PointAmount.of(BigDecimal.valueOf(2000));
 
 		teamChallenge = TeamChallenge.create(
-			ChallengeCodeGenerator.generate(ChallengeType.TEAM, now),
+			CodeGenerator.generate(ChallengeType.TEAM, now),
 			"팀 챌린지",
 			ChallengeStatus.PROCEEDING,
 			challengePoint,
@@ -74,7 +74,7 @@ class TeamChallengeTest {
 		LocalDateTime testNow2 = LocalDateTime.now();
 
 		TeamChallenge challenge1 = TeamChallenge.create(
-			ChallengeCodeGenerator.generate(ChallengeType.TEAM, testNow1),
+			CodeGenerator.generate(ChallengeType.TEAM, testNow1),
 			"첫 번째 팀 챌린지",
 			ChallengeStatus.PROCEEDING,
 			challengePoint,
@@ -87,7 +87,7 @@ class TeamChallengeTest {
 		);
 
 		TeamChallenge challenge2 = TeamChallenge.create(
-			ChallengeCodeGenerator.generate(ChallengeType.TEAM, testNow2),
+			CodeGenerator.generate(ChallengeType.TEAM, testNow2),
 			"두 번째 팀 챌린지",
 			ChallengeStatus.PROCEEDING,
 			challengePoint,
@@ -116,7 +116,7 @@ class TeamChallengeTest {
 
 		// when
 		TeamChallenge challenge = TeamChallenge.create(
-			ChallengeCodeGenerator.generate(ChallengeType.TEAM, testNow),
+			CodeGenerator.generate(ChallengeType.TEAM, testNow),
 			"시간 기반 팀 챌린지",
 			ChallengeStatus.PROCEEDING,
 			challengePoint,
@@ -232,7 +232,7 @@ class TeamChallengeTest {
 	void maxTeamCount가_null이면_항상_팀_추가_가능하다() {
 		// given
 		TeamChallenge challenge = TeamChallenge.create(
-			ChallengeCodeGenerator.generate(ChallengeType.TEAM, LocalDateTime.now()),
+			CodeGenerator.generate(ChallengeType.TEAM, LocalDateTime.now()),
 			"무제한 챌린지",
 			ChallengeStatus.PROCEEDING,
 			challengePoint,
@@ -266,7 +266,7 @@ class TeamChallengeTest {
 	void 현재_팀_수가_최대_팀_수와_같으면_팀_추가_불가능하다() {
 		// given - 3개 그룹을 미리 추가
 		TeamChallenge challenge = TeamChallenge.create(
-			ChallengeCodeGenerator.generate(ChallengeType.TEAM, LocalDateTime.now()),
+			CodeGenerator.generate(ChallengeType.TEAM, LocalDateTime.now()),
 			"만석 챌린지",
 			ChallengeStatus.PROCEEDING,
 			challengePoint,
@@ -302,7 +302,7 @@ class TeamChallengeTest {
 	void 최대_팀_수에_도달했는지_올바르게_확인한다() {
 		// given
 		TeamChallenge challenge = TeamChallenge.create(
-			ChallengeCodeGenerator.generate(ChallengeType.TEAM, LocalDateTime.now()),
+			CodeGenerator.generate(ChallengeType.TEAM, LocalDateTime.now()),
 			"만석 챌린지",
 			ChallengeStatus.PROCEEDING,
 			challengePoint,
@@ -338,7 +338,7 @@ class TeamChallengeTest {
 	void maxTeamCount가_null이면_최대_팀_수에_도달하지_않은_것으로_판단한다() {
 		// given
 		TeamChallenge challenge = TeamChallenge.create(
-			ChallengeCodeGenerator.generate(ChallengeType.TEAM, LocalDateTime.now()),
+			CodeGenerator.generate(ChallengeType.TEAM, LocalDateTime.now()),
 			"무제한 챌린지",
 			ChallengeStatus.PROCEEDING,
 			challengePoint,
@@ -361,7 +361,7 @@ class TeamChallengeTest {
 	void 최대_그룹_수가_0_이하이면_ChallengeException이_발생한다() {
 		// when & then
 		assertThatThrownBy(() -> TeamChallenge.create(
-			ChallengeCodeGenerator.generate(ChallengeType.TEAM, LocalDateTime.now()),
+			CodeGenerator.generate(ChallengeType.TEAM, LocalDateTime.now()),
 			"잘못된 챌린지",
 			ChallengeStatus.PROCEEDING,
 			challengePoint,
@@ -380,7 +380,7 @@ class TeamChallengeTest {
 	void 최대_그룹_수가_음수이면_ChallengeException이_발생한다() {
 		// when & then
 		assertThatThrownBy(() -> TeamChallenge.create(
-			ChallengeCodeGenerator.generate(ChallengeType.TEAM, LocalDateTime.now()),
+			CodeGenerator.generate(ChallengeType.TEAM, LocalDateTime.now()),
 			"잘못된 챌린지",
 			ChallengeStatus.PROCEEDING,
 			challengePoint,
