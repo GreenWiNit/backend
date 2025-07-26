@@ -2,6 +2,8 @@ package com.example.green.domain.challenge.controller.dto.admin;
 
 import java.time.LocalDate;
 
+import com.example.green.domain.challengecert.repository.dao.ChallengeParticipantDao;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "어드민 챌린지 참가자 목록 응답")
@@ -24,4 +26,14 @@ public record AdminChallengeParticipantListResponseDto(
 	@Schema(description = "인증 횟수(개인 챌린지만)", example = "4")
 	Integer certificationCount
 ) {
+	public static AdminChallengeParticipantListResponseDto from(ChallengeParticipantDao dao) {
+		return new AdminChallengeParticipantListResponseDto(
+			dao.memberId(),
+			dao.memberKey(),
+			dao.getParticipatedDate(),
+			dao.teamCode(),
+			dao.getTeamSelectionDate(),
+			dao.certificationCount()
+		);
+	}
 }
