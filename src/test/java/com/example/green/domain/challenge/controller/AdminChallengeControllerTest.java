@@ -10,10 +10,10 @@ import java.time.LocalDateTime;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeCreateRequestDto;
@@ -37,7 +37,7 @@ class AdminChallengeControllerTest {
 	@Autowired
 	private ObjectMapper objectMapper;
 
-	@MockBean
+	@MockitoBean
 	private AdminChallengeService adminChallengeService;
 
 	@Test
@@ -299,4 +299,4 @@ class AdminChallengeControllerTest {
 
 		verify(adminChallengeService).getGroupDetail(groupId);
 	}
-} 
+}
