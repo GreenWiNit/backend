@@ -218,9 +218,16 @@ public class AdminChallengeService {
 	 * 챌린지 상세 정보를 조회합니다.
 	 */
 	public AdminChallengeDetailResponseDto getChallengeDetail(Long challengeId) {
-		return personalChallengeRepository.findById(challengeId)
-			.map(AdminChallengeDetailResponseDto::from)
-			.orElseThrow(() -> new ChallengeException(ChallengeExceptionMessage.ADMIN_CHALLENGE_NOT_FOUND));
+		var personalChallenge = personalChallengeRepository.findById(challengeId);
+		if (personalChallenge.isPresent()) {
+			return AdminChallengeDetailResponseDto.from(personalChallenge.get());
+		}
+		var teamChallenge = teamChallengeRepository.findById(challengeId);
+		if (teamChallenge.isPresent()) {
+			return AdminChallengeDetailResponseDto.from(teamChallenge.get());
+		}
+
+		throw new ChallengeException(ChallengeExceptionMessage.ADMIN_CHALLENGE_NOT_FOUND);
 	}
 
 	/**
@@ -264,11 +271,9 @@ public class AdminChallengeService {
 		TeamChallengeGroup group = teamChallengeGroupRepository.findById(groupId)
 			.orElseThrow(() -> new ChallengeException(ChallengeExceptionMessage.ADMIN_TEAM_CHALLENGE_GROUP_NOT_FOUND));
 
-		List<TeamChallengeGroupParticipation> participants = teamChallengeGroupParticipationRepository.findAll()
-			.stream()
-			.filter(p -> p.getTeamChallengeGroup().equals(group))
-			.toList();
+		List<TeamChallengeGroupParticipation> participants
+			= teamChallengeGroupParticipationRepository.findByTeamChallengeGroup(group);
 
 		return AdminTeamChallengeGroupDetailResponseDto.from(group, participants);
 	}
-} 
+}

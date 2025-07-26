@@ -39,7 +39,7 @@ public record AdminTeamChallengeGroupListResponseDto(
 			group.getId(),
 			group.getTeamCode(),
 			group.getGroupName(),
-			group.getCreatedDate().toLocalDate(),
+			group.getCreatedDate() != null ? group.getCreatedDate().toLocalDate() : null,
 			group.getMaxParticipants(),
 			group.getCurrentParticipants(),
 			group.getGroupStatus()

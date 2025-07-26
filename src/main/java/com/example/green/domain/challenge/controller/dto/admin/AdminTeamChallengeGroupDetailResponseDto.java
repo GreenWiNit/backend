@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.example.green.domain.challenge.entity.TeamChallengeGroup;
 import com.example.green.domain.challengecert.entity.TeamChallengeGroupParticipation;
+import com.example.green.domain.challengecert.entity.enums.GroupRoleType;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -49,14 +50,14 @@ public record AdminTeamChallengeGroupDetailResponseDto(
 		List<TeamChallengeGroupParticipation> participants) {
 		// 팀장 찾기
 		String leaderMemberKey = participants.stream()
-			.filter(p -> p.getGroupRoleType().name().equals("LEADER"))
+			.filter(p -> p.getGroupRoleType() == GroupRoleType.LEADER)
 			.findFirst()
 			.map(p -> p.getTeamChallengeParticipation().getMember().getMemberKey())
 			.orElse("");
 
 		// 참여자 MemberKey 목록 생성
 		String participantMemberKeys = participants.stream()
-			.filter(p -> !p.getGroupRoleType().name().equals("LEADER"))
+			.filter(p -> p.getGroupRoleType() == GroupRoleType.MEMBER)
 			.map(p -> p.getTeamChallengeParticipation().getMember().getMemberKey())
 			.reduce((a, b) -> a + ", " + b)
 			.orElse("");

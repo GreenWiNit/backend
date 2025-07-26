@@ -1,5 +1,7 @@
 package com.example.green.domain.challengecert.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.example.green.domain.challenge.entity.TeamChallengeGroup;
@@ -39,6 +41,11 @@ public interface TeamChallengeGroupParticipationRepository
 		Long groupId,
 		Long memberId
 	);
+
+	/**
+	 * 특정 그룹의 모든 참여자 목록 조회
+	 */
+	List<TeamChallengeGroupParticipation> findByTeamChallengeGroup(TeamChallengeGroup teamChallengeGroup);
 
 	/**
 	 * 특정 그룹의 모든 참여 정보 삭제

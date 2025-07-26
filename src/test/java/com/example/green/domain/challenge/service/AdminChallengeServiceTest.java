@@ -337,7 +337,7 @@ class AdminChallengeServiceTest {
 
 		given(teamChallengeGroupRepository.findById(groupId))
 			.willReturn(Optional.of(mockTeamChallengeGroup));
-		given(teamChallengeGroupParticipationRepository.findAll())
+		given(teamChallengeGroupParticipationRepository.findByTeamChallengeGroup(mockTeamChallengeGroup))
 			.willReturn(Arrays.asList()); // 빈 참가자 목록
 
 		// when
@@ -346,7 +346,7 @@ class AdminChallengeServiceTest {
 		// then
 		assertThat(result).isNotNull();
 		verify(teamChallengeGroupRepository).findById(groupId);
-		verify(teamChallengeGroupParticipationRepository).findAll();
+		verify(teamChallengeGroupParticipationRepository).findByTeamChallengeGroup(mockTeamChallengeGroup);
 	}
 
 	@Test
