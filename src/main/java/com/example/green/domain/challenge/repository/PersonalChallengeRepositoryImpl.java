@@ -8,6 +8,7 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 
 import com.example.green.domain.challenge.controller.dto.ChallengeListResponseDto;
+import com.example.green.domain.challenge.controller.dto.admin.AdminPersonalChallengeListResponseDto;
 import com.example.green.domain.challenge.entity.PersonalChallenge;
 import com.example.green.domain.challenge.enums.ChallengeStatus;
 import com.example.green.global.api.page.CursorTemplate;
@@ -52,9 +53,41 @@ public class PersonalChallengeRepositoryImpl implements PersonalChallengeReposit
 		Long nextCursor = challenges.getLast().getId();
 		boolean hasNext = hasNextPersonalChallenge(nextCursor, status, now);
 
-		return hasNext
-			? CursorTemplate.ofWithNextCursor(nextCursor, dtos)
-			: CursorTemplate.of(dtos);
+		if (hasNext) {
+			return CursorTemplate.ofWithNextCursor(nextCursor, dtos);
+		} else {
+			return CursorTemplate.of(dtos);
+		}
+	}
+
+	@Override
+	public CursorTemplate<Long, AdminPersonalChallengeListResponseDto> findAllForAdminByCursor(Long cursor, int size) {
+		List<PersonalChallenge> challenges = queryFactory
+			.selectFrom(personalChallenge)
+			.where(cursorCondition(cursor))
+			.orderBy(personalChallenge.id.desc())
+			.limit(size + 1)
+			.fetch();
+
+		if (challenges.isEmpty()) {
+			return CursorTemplate.ofEmpty();
+		}
+
+		boolean hasNext = challenges.size() > size;
+		if (hasNext) {
+			challenges = challenges.subList(0, size);
+		}
+
+		List<AdminPersonalChallengeListResponseDto> dtos = challenges.stream()
+			.map(AdminPersonalChallengeListResponseDto::from)
+			.toList();
+
+		if (hasNext) {
+			Long nextCursor = challenges.getLast().getId();
+			return CursorTemplate.ofWithNextCursor(nextCursor, dtos);
+		} else {
+			return CursorTemplate.of(dtos);
+		}
 	}
 
 	private BooleanExpression cursorCondition(Long cursor) {

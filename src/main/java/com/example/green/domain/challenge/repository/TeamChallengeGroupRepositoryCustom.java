@@ -1,6 +1,7 @@
 package com.example.green.domain.challenge.repository;
 
 import com.example.green.domain.challenge.controller.dto.TeamChallengeGroupListResponseDto;
+import com.example.green.domain.challenge.controller.dto.admin.AdminTeamChallengeGroupListResponseDto;
 import com.example.green.global.api.page.CursorTemplate;
 
 /**
@@ -23,4 +24,6 @@ public interface TeamChallengeGroupRepositoryCustom {
 		int size,
 		Long memberId
 	);
+
+	CursorTemplate<Long, AdminTeamChallengeGroupListResponseDto> findAllForAdminByCursor(Long cursor, int size);
 }

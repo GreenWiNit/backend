@@ -1,13 +1,10 @@
 package com.example.green.domain.challengecert.repository;
 
 import com.example.green.domain.challenge.controller.dto.ChallengeListResponseDto;
+import com.example.green.domain.challengecert.repository.dao.ChallengeParticipantDao;
 import com.example.green.domain.member.entity.Member;
 import com.example.green.global.api.page.CursorTemplate;
 
-/**
- * 팀 챌린지 참여 정보 조회를 위한 커스텀 레포지토리
- * QueryDSL을 사용하여 커서 기반 페이지네이션을 구현합니다.
- */
 public interface TeamChallengeParticipationRepositoryCustom {
 
 	/**
@@ -19,6 +16,12 @@ public interface TeamChallengeParticipationRepositoryCustom {
 	 */
 	CursorTemplate<Long, ChallengeListResponseDto> findMyParticipationsByCursor(
 		Member member,
+		Long cursor,
+		int size
+	);
+
+	CursorTemplate<Long, ChallengeParticipantDao> findParticipantsByChallengeIdCursor(
+		Long challengeId,
 		Long cursor,
 		int size
 	);
