@@ -111,7 +111,7 @@ public class TeamChallenge extends BaseChallenge {
 	}
 
 	/**
-	 * 챌린지 데이터 업데이트
+	 * 챌린지 기본 정보 업데이트
 	 */
 	public void update(
 		String challengeName,
@@ -119,10 +119,9 @@ public class TeamChallenge extends BaseChallenge {
 		LocalDateTime beginDateTime,
 		LocalDateTime endDateTime,
 		String challengeContent,
-		ChallengeDisplayStatus displayStatus,
 		Integer maxGroupCount
 	) {
-		super.update(challengeName, challengePoint, beginDateTime, endDateTime, challengeContent, displayStatus);
+		super.updateBasicInfo(challengeName, challengePoint, beginDateTime, endDateTime, challengeContent);
 		if (maxGroupCount != null && maxGroupCount <= 0) {
 			throw new ChallengeException(ChallengeExceptionMessage.INVALID_MAX_GROUP_COUNT);
 		}
@@ -130,6 +129,20 @@ public class TeamChallenge extends BaseChallenge {
 			throw new ChallengeException(ChallengeExceptionMessage.INVALID_MAX_GROUP_COUNT);
 		}
 		this.maxGroupCount = maxGroupCount;
+	}
+
+	/**
+	 * 챌린지 이미지 업데이트
+	 */
+	public void updateImage(String challengeImageUrl) {
+		super.updateChallengeImage(challengeImageUrl);
+	}
+
+	/**
+	 * 챌린지 전시 상태 업데이트
+	 */
+	public void updateDisplayStatus(ChallengeDisplayStatus displayStatus) {
+		super.updateDisplayStatus(displayStatus);
 	}
 
 	public void addChallengeGroup(TeamChallengeGroup group) {

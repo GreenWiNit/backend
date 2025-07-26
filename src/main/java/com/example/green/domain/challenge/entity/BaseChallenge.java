@@ -110,8 +110,8 @@ public abstract class BaseChallenge extends BaseEntity {
 	 * 챌린지 참여 가능 여부 확인
 	 */
 	public boolean canParticipate(LocalDateTime now) {
-		return challengeStatus == ChallengeStatus.PROCEEDING 
-			&& displayStatus == ChallengeDisplayStatus.VISIBLE 
+		return challengeStatus == ChallengeStatus.PROCEEDING
+			&& displayStatus == ChallengeDisplayStatus.VISIBLE
 			&& now.isBefore(endDateTime);
 	}
 
@@ -124,7 +124,7 @@ public abstract class BaseChallenge extends BaseEntity {
 	}
 
 	/**
-	 * 전시 상태 변경 (도메인 서비스에서만 호출)
+	 * 전시 상태 변경
 	 */
 	protected void updateDisplayStatus(ChallengeDisplayStatus newDisplayStatus) {
 		validateNullData(newDisplayStatus, "챌린지 전시 상태는 필수값입니다.");
@@ -132,7 +132,7 @@ public abstract class BaseChallenge extends BaseEntity {
 	}
 
 	/**
-	 * 챌린지 이미지 변경 (도메인 서비스에서만 호출)
+	 * 챌린지 이미지 변경
 	 */
 	protected void updateChallengeImage(String newImageUrl) {
 		validateEmptyString(newImageUrl, "챌린지 이미지 URL은 필수값입니다.");
@@ -140,28 +140,26 @@ public abstract class BaseChallenge extends BaseEntity {
 	}
 
 	/**
-	 * 공통 필드 업데이트
+	 * 챌린지 기본 정보 업데이트 (전시상태, 이미지, 생성일시, 수정일시, ID, challengeCode 제외)
 	 */
-	protected void update(
+	protected void updateBasicInfo(
 		String challengeName,
 		PointAmount challengePoint,
 		LocalDateTime beginDateTime,
 		LocalDateTime endDateTime,
-		String challengeContent,
-		ChallengeDisplayStatus displayStatus
+		String challengeContent
 	) {
 		validateEmptyString(challengeName, "챌린지명은 필수값입니다.");
 		validateNullData(challengePoint, "챌린지 포인트는 필수값입니다.");
 		validateNullData(beginDateTime, "시작일시는 필수값입니다.");
 		validateNullData(endDateTime, "종료일시는 필수값입니다.");
 		validateDateRange(beginDateTime, endDateTime, "시작일시는 종료일시보다 이전이어야 합니다.");
-		validateNullData(displayStatus, "챌린지 전시 상태는 필수값입니다.");
+
 		this.challengeName = challengeName;
 		this.challengePoint = challengePoint;
 		this.beginDateTime = beginDateTime;
 		this.endDateTime = endDateTime;
 		this.challengeContent = challengeContent;
-		this.displayStatus = displayStatus;
 	}
 
 	protected void validateChallengeData() {
