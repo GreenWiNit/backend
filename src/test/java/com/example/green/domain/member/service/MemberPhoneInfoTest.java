@@ -10,11 +10,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.example.green.domain.common.service.FileManager;
+import com.example.green.domain.member.dto.PhoneInfoResultDto;
 import com.example.green.domain.member.entity.Member;
 import com.example.green.domain.member.exception.MemberExceptionMessage;
 import com.example.green.domain.member.repository.MemberRepository;
-import com.example.green.domain.member.dto.PhoneInfoResultDto;
-import com.example.green.domain.pointshop.delivery.client.PhoneVerificationClient;
 import com.example.green.global.error.exception.BusinessException;
 
 import java.util.Optional;
@@ -29,7 +28,7 @@ class MemberPhoneInfoTest {
 	private FileManager fileManager;
 	
 	@Mock
-	private PhoneVerificationClient phoneVerificationClient;
+	private PhoneAuthenticationService phoneAuthenticationService;
 	
 	@InjectMocks
 	private MemberService memberService;
@@ -42,7 +41,7 @@ class MemberPhoneInfoTest {
 		Member member = createMemberWithPhoneNumber(memberId, phoneNumber);
 		
 		when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
-		when(phoneVerificationClient.isAuthenticated(phoneNumber)).thenReturn(true);
+		when(phoneAuthenticationService.isPhoneAuthenticated(phoneNumber, memberId)).thenReturn(true);
 		
 		// when
 		PhoneInfoResultDto result = memberService.getPhoneInfo(memberId);
@@ -50,7 +49,7 @@ class MemberPhoneInfoTest {
 		// then
 		assertThat(result.getMember()).isEqualTo(member);
 		assertThat(result.isAuthenticated()).isTrue();
-		verify(phoneVerificationClient).isAuthenticated(phoneNumber);
+		verify(phoneAuthenticationService).isPhoneAuthenticated(phoneNumber, memberId);
 	}
 
 	@Test
@@ -61,7 +60,7 @@ class MemberPhoneInfoTest {
 		Member member = createMemberWithPhoneNumber(memberId, phoneNumber);
 		
 		when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
-		when(phoneVerificationClient.isAuthenticated(phoneNumber)).thenReturn(false);
+		when(phoneAuthenticationService.isPhoneAuthenticated(phoneNumber, memberId)).thenReturn(false);
 		
 		// when
 		PhoneInfoResultDto result = memberService.getPhoneInfo(memberId);
@@ -69,7 +68,7 @@ class MemberPhoneInfoTest {
 		// then
 		assertThat(result.getMember()).isEqualTo(member);
 		assertThat(result.isAuthenticated()).isFalse();
-		verify(phoneVerificationClient).isAuthenticated(phoneNumber);
+		verify(phoneAuthenticationService).isPhoneAuthenticated(phoneNumber, memberId);
 	}
 
 	@Test
@@ -79,6 +78,7 @@ class MemberPhoneInfoTest {
 		Member member = createMemberWithoutPhoneNumber(memberId);
 		
 		when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
+		when(phoneAuthenticationService.isPhoneAuthenticated(null, memberId)).thenReturn(false);
 		
 		// when
 		PhoneInfoResultDto result = memberService.getPhoneInfo(memberId);
@@ -86,7 +86,7 @@ class MemberPhoneInfoTest {
 		// then
 		assertThat(result.getMember()).isEqualTo(member);
 		assertThat(result.isAuthenticated()).isFalse();
-		verify(phoneVerificationClient, never()).isAuthenticated(any());
+		verify(phoneAuthenticationService).isPhoneAuthenticated(null, memberId);
 	}
 
 	@Test
@@ -97,8 +97,7 @@ class MemberPhoneInfoTest {
 		Member member = createMemberWithPhoneNumber(memberId, phoneNumber);
 		
 		when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
-		when(phoneVerificationClient.isAuthenticated(phoneNumber))
-			.thenThrow(new RuntimeException("인증 서비스 오류"));
+		when(phoneAuthenticationService.isPhoneAuthenticated(phoneNumber, memberId)).thenReturn(false);
 		
 		// when
 		PhoneInfoResultDto result = memberService.getPhoneInfo(memberId);
@@ -128,6 +127,7 @@ class MemberPhoneInfoTest {
 
 	private Member createMemberWithoutPhoneNumber(Long id) {
 		Member member = Member.create("test provider123", "테스트사용자", "test@example.com");
+		// phoneNumber는 null 상태로 유지
 		return member;
 	}
 } 

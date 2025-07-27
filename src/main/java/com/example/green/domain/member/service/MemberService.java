@@ -15,7 +15,6 @@ import com.example.green.domain.member.entity.Member;
 import com.example.green.domain.member.exception.MemberExceptionMessage;
 import com.example.green.domain.member.repository.MemberRepository;
 import com.example.green.domain.member.dto.PhoneInfoResultDto;
-import com.example.green.domain.pointshop.delivery.client.PhoneVerificationClient;
 import com.example.green.global.error.exception.BusinessException;
 
 import jakarta.persistence.OptimisticLockException;
@@ -31,7 +30,7 @@ public class MemberService {
 
 	private final MemberRepository memberRepository;
 	private final FileManager fileManager;
-	private final PhoneVerificationClient phoneVerificationClient;
+	private final PhoneAuthenticationService phoneAuthenticationService;
 
 	// 재시도 설정 상수들
 	private static final int SIGNUP_MAX_ATTEMPTS = 3;
@@ -322,32 +321,14 @@ public class MemberService {
 		withdrawMember(member.getId());
 	}
 
-	/**
-	 * 사용자 휴대폰 정보 조회
-	 *
-	 * 사용자의 휴대폰 번호와 인증 상태를 조회.
-	 * 휴대폰 번호가 등록되어 있지 않은 경우 null을 반환하고
-	 * 등록된 경우 휴대폰 인증 상태를 함께 확인하여 반환.
-	 *
-	 * @param memberId 회원 ID
-	 * @return Member 엔티티와 인증 상태
-	 */
+
 	@Transactional(readOnly = true)
 	public PhoneInfoResultDto getPhoneInfo(Long memberId) {
+
 		Member member = findMemberById(memberId, "휴대폰 정보 조회");
-
+		
 		String phoneNumber = member.getPhoneNumber();
-		boolean isAuthenticated = false;
-
-		if (phoneNumber != null && !phoneNumber.trim().isEmpty()) {
-			try {
-				isAuthenticated = phoneVerificationClient.isAuthenticated(phoneNumber);
-			} catch (Exception e) {
-				log.warn("휴대폰 인증 상태 확인 실패: memberId={}, phoneNumber={}, error={}",
-					memberId, phoneNumber, e.getMessage());
-				isAuthenticated = false;
-			}
-		}
+		boolean isAuthenticated = phoneAuthenticationService.isPhoneAuthenticated(phoneNumber, memberId);
 
 		return new PhoneInfoResultDto(member, isAuthenticated);
 	}

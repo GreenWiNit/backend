@@ -8,11 +8,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.green.domain.member.dto.PhoneInfoResponseDto;
+import com.example.green.domain.member.dto.PhoneInfoResultDto;
 import com.example.green.domain.member.dto.ProfileUpdateRequestDto;
 import com.example.green.domain.member.dto.ProfileUpdateResponseDto;
 import com.example.green.domain.member.entity.Member;
 import com.example.green.domain.member.service.MemberService;
-import com.example.green.domain.member.dto.PhoneInfoResultDto;
 
 import jakarta.validation.Valid;
 import com.example.green.global.api.ApiTemplate;
