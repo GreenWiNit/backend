@@ -2,20 +2,12 @@ package com.example.green.domain.member.dto;
 
 import com.example.green.domain.member.entity.Member;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+@Getter
+@RequiredArgsConstructor
 public class PhoneInfoResultDto {
 	private final Member member;
-	private final boolean isAuthenticated;
-
-	public PhoneInfoResultDto(Member member, boolean isAuthenticated) {
-		this.member = member;
-		this.isAuthenticated = isAuthenticated;
-	}
-
-	public Member getMember() {
-		return member;
-	}
-
-	public boolean isAuthenticated() {
-		return isAuthenticated;
-	}
-} 
+	private final boolean authenticated;
+}

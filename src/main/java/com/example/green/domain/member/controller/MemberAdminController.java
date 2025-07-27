@@ -88,11 +88,9 @@ public class MemberAdminController implements MemberManagementControllerDocs {
 	@Override
 	public NoContent deleteMember(@RequestBody @Valid MemberDeleteRequestDto request) {
 		log.info("[ADMIN] 회원 강제 삭제 요청: memberKey={}", request.memberKey());
-		
-		// 회원 존재 여부 먼저 확인
+
 		memberAdminService.validateMemberExistsByMemberKey(request.memberKey());
-		
-		// 회원 강제 삭제 처리
+
 		memberAdminService.deleteMemberByMemberKey(request.memberKey());
 		
 		return NoContent.ok(() -> "회원 삭제가 완료되었습니다.");
