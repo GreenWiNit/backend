@@ -12,6 +12,7 @@ import com.example.green.domain.member.dto.ProfileUpdateRequestDto;
 import com.example.green.domain.member.dto.ProfileUpdateResponseDto;
 import com.example.green.domain.member.entity.Member;
 import com.example.green.domain.member.service.MemberService;
+import com.example.green.domain.member.dto.PhoneInfoResultDto;
 
 import jakarta.validation.Valid;
 import com.example.green.global.api.ApiTemplate;
@@ -104,7 +105,7 @@ public class MemberController {
 
 		Long memberId = currentUser.getMemberId();
 
-		MemberService.PhoneInfoResult result = memberService.getPhoneInfo(memberId);
+		PhoneInfoResultDto result = memberService.getPhoneInfo(memberId);
 		PhoneInfoResponseDto response = PhoneInfoResponseDto.of(result.getMember(), result.isAuthenticated());
 
 		log.info("[MEMBER] 휴대폰 정보 조회 성공: memberId={} phoneNumber={} isAuthenticated={}", 

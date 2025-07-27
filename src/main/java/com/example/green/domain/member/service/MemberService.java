@@ -14,6 +14,7 @@ import com.example.green.domain.common.service.FileManager;
 import com.example.green.domain.member.entity.Member;
 import com.example.green.domain.member.exception.MemberExceptionMessage;
 import com.example.green.domain.member.repository.MemberRepository;
+import com.example.green.domain.member.dto.PhoneInfoResultDto;
 import com.example.green.domain.pointshop.delivery.client.PhoneVerificationClient;
 import com.example.green.global.error.exception.BusinessException;
 
@@ -332,7 +333,7 @@ public class MemberService {
 	 * @return Member 엔티티와 인증 상태
 	 */
 	@Transactional(readOnly = true)
-	public PhoneInfoResult getPhoneInfo(Long memberId) {
+	public PhoneInfoResultDto getPhoneInfo(Long memberId) {
 		Member member = findMemberById(memberId, "휴대폰 정보 조회");
 
 		String phoneNumber = member.getPhoneNumber();
@@ -348,26 +349,10 @@ public class MemberService {
 			}
 		}
 
-		return new PhoneInfoResult(member, isAuthenticated);
+		return new PhoneInfoResultDto(member, isAuthenticated);
 	}
-	
-	public static class PhoneInfoResult {
-		private final Member member;
-		private final boolean isAuthenticated;
 
-		public PhoneInfoResult(Member member, boolean isAuthenticated) {
-			this.member = member;
-			this.isAuthenticated = isAuthenticated;
-		}
 
-		public Member getMember() {
-			return member;
-		}
-
-		public boolean isAuthenticated() {
-			return isAuthenticated;
-		}
-	}
 
 	/**
 	 * 사용자명으로 회원 조회

@@ -13,6 +13,7 @@ import com.example.green.domain.common.service.FileManager;
 import com.example.green.domain.member.entity.Member;
 import com.example.green.domain.member.exception.MemberExceptionMessage;
 import com.example.green.domain.member.repository.MemberRepository;
+import com.example.green.domain.member.dto.PhoneInfoResultDto;
 import com.example.green.domain.pointshop.delivery.client.PhoneVerificationClient;
 import com.example.green.global.error.exception.BusinessException;
 
@@ -44,7 +45,7 @@ class MemberPhoneInfoTest {
 		when(phoneVerificationClient.isAuthenticated(phoneNumber)).thenReturn(true);
 		
 		// when
-		MemberService.PhoneInfoResult result = memberService.getPhoneInfo(memberId);
+		PhoneInfoResultDto result = memberService.getPhoneInfo(memberId);
 		
 		// then
 		assertThat(result.getMember()).isEqualTo(member);
@@ -63,7 +64,7 @@ class MemberPhoneInfoTest {
 		when(phoneVerificationClient.isAuthenticated(phoneNumber)).thenReturn(false);
 		
 		// when
-		MemberService.PhoneInfoResult result = memberService.getPhoneInfo(memberId);
+		PhoneInfoResultDto result = memberService.getPhoneInfo(memberId);
 		
 		// then
 		assertThat(result.getMember()).isEqualTo(member);
@@ -80,7 +81,7 @@ class MemberPhoneInfoTest {
 		when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
 		
 		// when
-		MemberService.PhoneInfoResult result = memberService.getPhoneInfo(memberId);
+		PhoneInfoResultDto result = memberService.getPhoneInfo(memberId);
 		
 		// then
 		assertThat(result.getMember()).isEqualTo(member);
@@ -100,7 +101,7 @@ class MemberPhoneInfoTest {
 			.thenThrow(new RuntimeException("인증 서비스 오류"));
 		
 		// when
-		MemberService.PhoneInfoResult result = memberService.getPhoneInfo(memberId);
+		PhoneInfoResultDto result = memberService.getPhoneInfo(memberId);
 		
 		// then
 		assertThat(result.getMember()).isEqualTo(member);
