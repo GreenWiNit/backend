@@ -153,14 +153,14 @@ public class SecurityConfig {
 					frontendBaseUrl,
 					backendBaseUrl,
 					"https://greenwinit.pages.dev",
-					"https://greenwinit-admin-panel.pages.dev",
-					"https://internal-a-panel.greenwinit.store"
+					"https://greenwinit-admin-panel.pages.dev"
 				));
 
 				// 와일드카드 패턴 도메인들은 setAllowedOriginPatterns로 분리해야한다.
 				configuration.setAllowedOriginPatterns(Arrays.asList(
 					"https://*.greenwinit.pages.dev",
-					"https://*.greenwinit-admin-panel.pages.dev"
+					"https://*.greenwinit-admin-panel.pages.dev",
+					"https://*.greenwinit.store"
 				));
 				configuration.setAllowedMethods(
 					Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"));
