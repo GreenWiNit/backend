@@ -21,6 +21,7 @@ import com.example.green.domain.challenge.utils.CodeGenerator;
 import com.example.green.domain.challengecert.dto.ChallengeCertificationListResponseDto;
 import com.example.green.domain.challengecert.entity.PersonalChallengeCertification;
 import com.example.green.domain.challengecert.entity.PersonalChallengeParticipation;
+import com.example.green.domain.challengecert.enums.CertificationStatus;
 import com.example.green.domain.member.entity.Member;
 import com.example.green.domain.member.repository.MemberRepository;
 import com.example.green.domain.point.entity.vo.PointAmount;
@@ -107,7 +108,7 @@ class PersonalChallengeCertificationRepositoryImplTest extends BaseIntegrationTe
 		ChallengeCertificationListResponseDto firstDto = result.content().get(0);
 		assertThat(firstDto.challengeId()).isEqualTo(testChallenge.getId());
 		assertThat(firstDto.challengeTitle()).isEqualTo("테스트 개인 챌린지");
-		assertThat(firstDto.approved()).isFalse(); // 기본값
+		assertThat(firstDto.status()).isEqualTo(CertificationStatus.REQUESTED); // 기본값
 	}
 
 	@Test
