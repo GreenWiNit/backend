@@ -47,9 +47,11 @@ public interface TeamChallengeCertificationRepositoryCustom {
 	/**
 	 * 관리자용 팀 챌린지 인증 목록을 복합 조건으로 조회합니다. (커서 기반 페이징)
 	 * @param searchRequest 검색 조건
+	 * @param pageSize 페이지 크기
 	 * @return 커서 템플릿에 담긴 팀 챌린지 인증 목록
 	 */
 	CursorTemplate<Long, ChallengeCertificationListResponseDto> findTeamCertificationsWithFilters(
-		AdminTeamCertificationSearchRequestDto searchRequest
+		AdminTeamCertificationSearchRequestDto searchRequest,
+		int pageSize
 	);
 }

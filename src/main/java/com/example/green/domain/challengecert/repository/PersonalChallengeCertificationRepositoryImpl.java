@@ -108,7 +108,7 @@ public class PersonalChallengeCertificationRepositoryImpl implements PersonalCha
 
 	@Override
 	public CursorTemplate<Long, ChallengeCertificationListResponseDto> findPersonalCertificationsWithFilters(
-		AdminPersonalCertificationSearchRequestDto searchRequest) {
+		AdminPersonalCertificationSearchRequestDto searchRequest, int pageSize) {
 		
 		List<PersonalChallengeCertification> certifications = queryFactory
 			.selectFrom(personalChallengeCertification)
@@ -122,16 +122,16 @@ public class PersonalChallengeCertificationRepositoryImpl implements PersonalCha
 				cursorCondition(searchRequest.cursor())
 			)
 			.orderBy(personalChallengeCertification.id.desc())
-			.limit(searchRequest.size() + 1)
+			.limit(pageSize + 1)
 			.fetch();
 
 		if (certifications.isEmpty()) {
 			return CursorTemplate.ofEmpty();
 		}
 
-		boolean hasNext = certifications.size() > searchRequest.size();
+		boolean hasNext = certifications.size() > pageSize;
 		if (hasNext) {
-			certifications = certifications.subList(0, searchRequest.size());
+			certifications = certifications.subList(0, pageSize);
 		}
 
 		List<ChallengeCertificationListResponseDto> dtos = certifications.stream()

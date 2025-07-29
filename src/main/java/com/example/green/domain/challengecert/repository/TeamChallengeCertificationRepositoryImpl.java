@@ -108,7 +108,7 @@ public class TeamChallengeCertificationRepositoryImpl implements TeamChallengeCe
 
 	@Override
 	public CursorTemplate<Long, ChallengeCertificationListResponseDto> findTeamCertificationsWithFilters(
-		AdminTeamCertificationSearchRequestDto searchRequest) {
+		AdminTeamCertificationSearchRequestDto searchRequest, int pageSize) {
 		
 		List<TeamChallengeCertification> certifications = queryFactory
 			.selectFrom(teamChallengeCertification)
@@ -124,16 +124,16 @@ public class TeamChallengeCertificationRepositoryImpl implements TeamChallengeCe
 				cursorCondition(searchRequest.cursor())
 			)
 			.orderBy(teamChallengeCertification.id.desc())
-			.limit(searchRequest.size() + 1)
+			.limit(pageSize + 1)
 			.fetch();
 
 		if (certifications.isEmpty()) {
 			return CursorTemplate.ofEmpty();
 		}
 
-		boolean hasNext = certifications.size() > searchRequest.size();
+		boolean hasNext = certifications.size() > pageSize;
 		if (hasNext) {
-			certifications = certifications.subList(0, searchRequest.size());
+			certifications = certifications.subList(0, pageSize);
 		}
 
 		List<ChallengeCertificationListResponseDto> dtos = certifications.stream()

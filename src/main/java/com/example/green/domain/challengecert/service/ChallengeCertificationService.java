@@ -49,6 +49,7 @@ import lombok.RequiredArgsConstructor;
 public class ChallengeCertificationService {
 
 	private static final int DEFAULT_PAGE_SIZE = 20;
+	private static final int ADMIN_PAGE_SIZE = 10;
 
 	private final PersonalChallengeRepository personalChallengeRepository;
 	private final TeamChallengeRepository teamChallengeRepository;
@@ -295,7 +296,7 @@ public class ChallengeCertificationService {
 			findPersonalChallengeById(searchRequest.challengeId());
 		}
 
-		return personalChallengeCertificationRepository.findPersonalCertificationsWithFilters(searchRequest);
+		return personalChallengeCertificationRepository.findPersonalCertificationsWithFilters(searchRequest, ADMIN_PAGE_SIZE);
 	}
 
 	/**
@@ -309,7 +310,7 @@ public class ChallengeCertificationService {
 			findTeamChallengeById(searchRequest.challengeId());
 		}
 
-		return teamChallengeCertificationRepository.findTeamCertificationsWithFilters(searchRequest);
+		return teamChallengeCertificationRepository.findTeamCertificationsWithFilters(searchRequest, ADMIN_PAGE_SIZE);
 	}
 
 	/**
@@ -340,21 +341,31 @@ public class ChallengeCertificationService {
 	 */
 	private void updateCertificationStatusInternal(Object certification, String status) {
 		switch (status.toUpperCase()) {
-			case "PAID" -> {
-				if (certification instanceof PersonalChallengeCertification personal) {
-					personal.approve();
-				} else if (certification instanceof TeamChallengeCertification team) {
-					team.approve();
-				}
-			}
-			case "REJECTED" -> {
-				if (certification instanceof PersonalChallengeCertification personal) {
-					personal.reject();
-				} else if (certification instanceof TeamChallengeCertification team) {
-					team.reject();
-				}
-			}
+			case "PAID" -> approveCertification(certification);
+			case "REJECTED" -> rejectCertification(certification);
 			default -> throw new ChallengeCertException(ChallengeCertExceptionMessage.INVALID_CERTIFICATION_STATUS);
+		}
+	}
+
+	/**
+	 * 인증을 승인합니다.
+	 */
+	private void approveCertification(Object certification) {
+		if (certification instanceof PersonalChallengeCertification personal) {
+			personal.approve();
+		} else if (certification instanceof TeamChallengeCertification team) {
+			team.approve();
+		}
+	}
+
+	/**
+	 * 인증을 거절합니다.
+	 */
+	private void rejectCertification(Object certification) {
+		if (certification instanceof PersonalChallengeCertification personal) {
+			personal.reject();
+		} else if (certification instanceof TeamChallengeCertification team) {
+			team.reject();
 		}
 	}
 

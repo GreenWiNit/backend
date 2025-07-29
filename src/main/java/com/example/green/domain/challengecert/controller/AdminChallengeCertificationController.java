@@ -68,7 +68,7 @@ public class AdminChallengeCertificationController implements AdminChallengeCert
 		@RequestParam(required = false) Long cursor
 	) {
 		AdminPersonalCertificationSearchRequestDto searchRequest =
-			new AdminPersonalCertificationSearchRequestDto(challengeId, memberKey, statuses, cursor, null);
+			new AdminPersonalCertificationSearchRequestDto(challengeId, memberKey, statuses, cursor);
 
 		CursorTemplate<Long, ChallengeCertificationListResponseDto> response =
 			challengeCertificationService.getPersonalCertificationsWithFilters(searchRequest);
@@ -94,7 +94,7 @@ public class AdminChallengeCertificationController implements AdminChallengeCert
 		@RequestParam(required = false) Long cursor
 	) {
 		AdminTeamCertificationSearchRequestDto searchRequest =
-			new AdminTeamCertificationSearchRequestDto(challengeId, groupCode, statuses, cursor, null);
+			new AdminTeamCertificationSearchRequestDto(challengeId, groupCode, statuses, cursor);
 
 		CursorTemplate<Long, ChallengeCertificationListResponseDto> response =
 			challengeCertificationService.getTeamCertificationsWithFilters(searchRequest);
