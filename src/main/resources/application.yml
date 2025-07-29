@@ -37,6 +37,17 @@ spring:
     multipart:
       max-file-size: ${MAX_FILE_SIZE:10MB}
       max-request-size: ${MAX_REQUEST_SIZE:35MB}
+  # 세션 설정 (OAuth2 Cross-domain 지원)
+  session:
+    store-type: memory
+    timeout: 30m
+    cookie:
+      name: JSESSIONID
+      http-only: true
+      secure: true
+      same-site: none
+      max-age: 1800
+      path: /
 
   security:
     oauth2:

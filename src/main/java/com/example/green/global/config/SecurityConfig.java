@@ -2,7 +2,6 @@ package com.example.green.global.config;
 
 import java.util.Arrays;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,20 +41,17 @@ public class SecurityConfig {
 	private final CustomSuccessHandler customSuccessHandler;
 	private final OAuth2FailureHandler oauth2FailureHandler;
 	private final TokenService tokenService;
-	private final String frontendBaseUrl;
-	private final String backendBaseUrl;
+	private final AllowedDomainsPolicy allowedDomainsPolicy;
 
 	public SecurityConfig(CustomOAuth2UserService customOAuth2UserService, CustomSuccessHandler customSuccessHandler,
 		OAuth2FailureHandler oauth2FailureHandler, TokenService tokenService,
-		@Value("${app.frontend.base-url}") String frontendBaseUrl,
-		@Value("${app.backend.base-url}") String backendBaseUrl) {
+		AllowedDomainsPolicy allowedDomainsPolicy) {
 
 		this.customOAuth2UserService = customOAuth2UserService;
 		this.customSuccessHandler = customSuccessHandler;
 		this.oauth2FailureHandler = oauth2FailureHandler;
 		this.tokenService = tokenService;
-		this.frontendBaseUrl = frontendBaseUrl;
-		this.backendBaseUrl = backendBaseUrl;
+		this.allowedDomainsPolicy = allowedDomainsPolicy;
 	}
 
 	@Bean
@@ -106,7 +102,11 @@ public class SecurityConfig {
 				.anyRequest().permitAll())
 			// 세션 설정: OAuth2에서는 세션 사용
 			.sessionManagement(session -> session
-				.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
+				.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+				.sessionConcurrency(concurrency -> concurrency
+					.maximumSessions(1)
+					.maxSessionsPreventsLogin(false))
+				.sessionFixation().migrateSession())
 			.build();
 	}
 
@@ -149,19 +149,10 @@ public class SecurityConfig {
 			public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
 				CorsConfiguration configuration = new CorsConfiguration();
 
-				configuration.setAllowedOrigins(Arrays.asList(
-					frontendBaseUrl,
-					backendBaseUrl,
-					"https://greenwinit.pages.dev",
-					"https://greenwinit-admin-panel.pages.dev"
-				));
+				configuration.setAllowedOrigins(allowedDomainsPolicy.getAllAllowedOrigins());
 
 				// 와일드카드 패턴 도메인들은 setAllowedOriginPatterns로 분리해야한다.
-				configuration.setAllowedOriginPatterns(Arrays.asList(
-					"https://*.greenwinit.pages.dev",
-					"https://*.greenwinit-admin-panel.pages.dev",
-					"https://*.greenwinit.store"
-				));
+				configuration.setAllowedOriginPatterns(allowedDomainsPolicy.getAllowedOriginPatterns());
 				configuration.setAllowedMethods(
 					Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"));
 				configuration.setAllowedHeaders(Arrays.asList(
