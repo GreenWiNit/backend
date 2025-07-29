@@ -4,6 +4,7 @@ import java.net.URI;
 
 import org.springframework.stereotype.Component;
 
+import com.example.green.domain.auth.security.CustomAuthorizationRequestResolver;
 import com.example.green.global.config.AllowedDomainsPolicy;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -34,7 +35,17 @@ public class OAuth2RedirectValidator {
 
 		log.info("OAuth2 리다이렉트 검증 시작 - Origin: {}, Referer: {}", origin, referer);
 
-		// Origin 헤더 확인
+		// 1. 세션에서 원본 도메인 복원 시도 (OAuth2 콜백의 경우)
+		String sessionOrigin = CustomAuthorizationRequestResolver.getAndRemoveOriginFromSession(request);
+		if (sessionOrigin != null) {
+			boolean isAllowed = allowedDomainsPolicy.isAllowedOrigin(sessionOrigin);
+			log.info("세션에서 원본 도메인 복원 - URL: {}, 허용 여부: {}", sessionOrigin, isAllowed);
+			if (isAllowed) {
+				return sessionOrigin;
+			}
+		}
+
+		// 2. Origin 헤더 확인
 		if (origin != null) {
 			boolean isAllowed = allowedDomainsPolicy.isAllowedOrigin(origin);
 			log.info("Origin 검증 - URL: {}, 허용 여부: {}", origin, isAllowed);
@@ -43,16 +54,22 @@ public class OAuth2RedirectValidator {
 			}
 		}
 
-		// Referer 헤더 확인
+		// 3. Referer 헤더 확인
 		if (referer != null) {
 			try {
 				URI refererUri = URI.create(referer);
 				String refererOrigin = refererUri.getScheme() + "://" + refererUri.getHost()
 					+ (refererUri.getPort() != -1 ? ":" + refererUri.getPort() : "");
-				boolean isAllowed = allowedDomainsPolicy.isAllowedOrigin(refererOrigin);
-				log.info("Referer 검증 - 원본 URL: {}, 추출된 Origin: {}, 허용 여부: {}", referer, refererOrigin, isAllowed);
-				if (isAllowed) {
-					return refererOrigin;
+				
+				// Google OAuth 콜백인 경우 스킵 (이미 세션에서 확인함)
+				if ("https://accounts.google.com".equals(refererOrigin)) {
+					log.info("Google OAuth 콜백 감지 - 세션에서 원본 도메인을 찾지 못했으므로 실패");
+				} else {
+					boolean isAllowed = allowedDomainsPolicy.isAllowedOrigin(refererOrigin);
+					log.info("Referer 검증 - 원본 URL: {}, 추출된 Origin: {}, 허용 여부: {}", referer, refererOrigin, isAllowed);
+					if (isAllowed) {
+						return refererOrigin;
+					}
 				}
 			} catch (IllegalArgumentException e) {
 				log.warn("잘못된 Referer URI 형식: {}", referer, e);
