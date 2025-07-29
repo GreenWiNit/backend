@@ -34,6 +34,7 @@ import com.example.green.domain.challengecert.entity.PersonalChallengeCertificat
 import com.example.green.domain.challengecert.entity.PersonalChallengeParticipation;
 import com.example.green.domain.challengecert.entity.TeamChallengeCertification;
 import com.example.green.domain.challengecert.entity.TeamChallengeParticipation;
+import com.example.green.domain.challengecert.enums.CertificationStatus;
 import com.example.green.domain.challengecert.exception.ChallengeCertException;
 import com.example.green.domain.challengecert.exception.ChallengeCertExceptionMessage;
 import com.example.green.domain.challengecert.repository.PersonalChallengeCertificationRepository;
@@ -390,11 +391,14 @@ class ChallengeCertificationServiceTest {
 		CursorTemplate<Long, ChallengeCertificationListResponseDto> mockCursorTemplate =
 			CursorTemplate.ofWithNextCursor(5L, List.of(
 				ChallengeCertificationListResponseDto.builder()
-					.certificationId(1L)
-					.challengeId(TEST_CHALLENGE_ID)
-					.challengeTitle("개인 챌린지")
+					.id(1L)
+					.memberId(TEST_MEMBER_ID)
+					.memberNickname("테스트사용자")
+					.memberEmail("test@example.com")
+					.certificationImageUrl(TEST_IMAGE_URL)
+					.certificationReview(TEST_REVIEW)
 					.certifiedDate(LocalDate.of(2024, 1, 15))
-					.approved(true)
+					.status(CertificationStatus.PENDING)
 					.build()
 			));
 
@@ -410,10 +414,10 @@ class ChallengeCertificationServiceTest {
 		assertThat(result.hasNext()).isTrue();
 		assertThat(result.nextCursor()).isEqualTo(5L);
 		assertThat(result.content()).hasSize(1);
-		assertThat(result.content().get(0).certificationId()).isEqualTo(1L);
-		assertThat(result.content().get(0).challengeId()).isEqualTo(TEST_CHALLENGE_ID);
-		assertThat(result.content().get(0).challengeTitle()).isEqualTo("개인 챌린지");
-		assertThat(result.content().get(0).approved()).isTrue();
+		assertThat(result.content().get(0).id()).isEqualTo(1L);
+		assertThat(result.content().get(0).memberId()).isEqualTo(TEST_MEMBER_ID);
+		assertThat(result.content().get(0).memberNickname()).isEqualTo("테스트사용자");
+		assertThat(result.content().get(0).status()).isEqualTo(CertificationStatus.PENDING);
 	}
 
 	@Test
@@ -423,11 +427,14 @@ class ChallengeCertificationServiceTest {
 		CursorTemplate<Long, ChallengeCertificationListResponseDto> mockCursorTemplate =
 			CursorTemplate.of(List.of(
 				ChallengeCertificationListResponseDto.builder()
-					.certificationId(3L)
-					.challengeId(TEST_CHALLENGE_ID + 1)
-					.challengeTitle("팀 챌린지")
+					.id(3L)
+					.memberId(TEST_MEMBER_ID)
+					.memberNickname("테스트사용자")
+					.memberEmail("test@example.com")
+					.certificationImageUrl(TEST_IMAGE_URL)
+					.certificationReview(TEST_REVIEW)
 					.certifiedDate(LocalDate.of(2024, 1, 15))
-					.approved(true)
+					.status(CertificationStatus.PAID)
 					.build()
 			));
 
@@ -443,10 +450,10 @@ class ChallengeCertificationServiceTest {
 		assertThat(result.hasNext()).isFalse();
 		assertThat(result.nextCursor()).isNull();
 		assertThat(result.content()).hasSize(1);
-		assertThat(result.content().get(0).certificationId()).isEqualTo(3L);
-		assertThat(result.content().get(0).challengeId()).isEqualTo(TEST_CHALLENGE_ID + 1);
-		assertThat(result.content().get(0).challengeTitle()).isEqualTo("팀 챌린지");
-		assertThat(result.content().get(0).approved()).isTrue();
+		assertThat(result.content().get(0).id()).isEqualTo(3L);
+		assertThat(result.content().get(0).memberId()).isEqualTo(TEST_MEMBER_ID);
+		assertThat(result.content().get(0).memberNickname()).isEqualTo("테스트사용자");
+		assertThat(result.content().get(0).status()).isEqualTo(CertificationStatus.PAID);
 	}
 
 	@Test
@@ -461,24 +468,24 @@ class ChallengeCertificationServiceTest {
 
 		// certification mock 설정
 		given(certification.getId()).willReturn(certificationId);
-		given(certification.getParticipation()).willReturn(testPersonalParticipation);
+		given(certification.getMember()).willReturn(testMember);
 		given(certification.getCertificationImageUrl()).willReturn(TEST_IMAGE_URL);
 		given(certification.getCertificationReview()).willReturn(TEST_REVIEW);
+		given(certification.getCertifiedAt()).willReturn(testNow);
 		given(certification.getCertifiedDate()).willReturn(LocalDate.of(2024, 1, 15));
-		given(certification.getApproved()).willReturn(true);
+		given(certification.getStatus()).willReturn(CertificationStatus.PENDING);
 
 		// when
 		ChallengeCertificationDetailResponseDto result =
 			challengeCertificationService.getChallengeCertificationDetail(certificationId, principalDetails);
 
 		// then
-		assertThat(result.certificationId()).isEqualTo(certificationId);
-		assertThat(result.challengeId()).isEqualTo(TEST_CHALLENGE_ID);
-		assertThat(result.challengeTitle()).isEqualTo("개인 챌린지");
-		assertThat(result.challengeType()).isEqualTo("PERSONAL");
+		assertThat(result.id()).isEqualTo(certificationId);
+		assertThat(result.memberId()).isEqualTo(TEST_MEMBER_ID);
+		assertThat(result.memberNickname()).isEqualTo("테스트사용자");
 		assertThat(result.certificationImageUrl()).isEqualTo(TEST_IMAGE_URL);
 		assertThat(result.certificationReview()).isEqualTo(TEST_REVIEW);
-		assertThat(result.approved()).isTrue();
+		assertThat(result.status()).isEqualTo(CertificationStatus.PENDING);
 	}
 
 	@Test
@@ -495,24 +502,24 @@ class ChallengeCertificationServiceTest {
 
 		// certification mock 설정
 		given(certification.getId()).willReturn(certificationId);
-		given(certification.getParticipation()).willReturn(testTeamParticipation);
+		given(certification.getMember()).willReturn(testMember);
 		given(certification.getCertificationImageUrl()).willReturn(TEST_IMAGE_URL);
 		given(certification.getCertificationReview()).willReturn(TEST_REVIEW);
+		given(certification.getCertifiedAt()).willReturn(testNow);
 		given(certification.getCertifiedDate()).willReturn(LocalDate.of(2024, 1, 15));
-		given(certification.getApproved()).willReturn(true);
+		given(certification.getStatus()).willReturn(CertificationStatus.PAID);
 
 		// when
 		ChallengeCertificationDetailResponseDto result =
 			challengeCertificationService.getChallengeCertificationDetail(certificationId, principalDetails);
 
 		// then
-		assertThat(result.certificationId()).isEqualTo(certificationId);
-		assertThat(result.challengeId()).isEqualTo(TEST_CHALLENGE_ID + 1); // 팀 챌린지 ID는 2L
-		assertThat(result.challengeTitle()).isEqualTo("팀 챌린지");
-		assertThat(result.challengeType()).isEqualTo("TEAM");
+		assertThat(result.id()).isEqualTo(certificationId);
+		assertThat(result.memberId()).isEqualTo(TEST_MEMBER_ID);
+		assertThat(result.memberNickname()).isEqualTo("테스트사용자");
 		assertThat(result.certificationImageUrl()).isEqualTo(TEST_IMAGE_URL);
 		assertThat(result.certificationReview()).isEqualTo(TEST_REVIEW);
-		assertThat(result.approved()).isTrue();
+		assertThat(result.status()).isEqualTo(CertificationStatus.PAID);
 	}
 
 	@Test

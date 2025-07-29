@@ -101,14 +101,14 @@ class PersonalChallengeCertificationRepositoryImplTest extends BaseIntegrationTe
 		assertThat(result.content()).hasSize(2);
 
 		// ID 기준 내림차순 정렬 확인
-		assertThat(result.content().get(0).certificationId()).isEqualTo(cert3.getId());
-		assertThat(result.content().get(1).certificationId()).isEqualTo(cert2.getId());
+		assertThat(result.content().get(0).id()).isEqualTo(cert3.getId());
+		assertThat(result.content().get(1).id()).isEqualTo(cert2.getId());
 
 		// DTO 필드 검증
 		ChallengeCertificationListResponseDto firstDto = result.content().get(0);
-		assertThat(firstDto.challengeId()).isEqualTo(testChallenge.getId());
-		assertThat(firstDto.challengeTitle()).isEqualTo("테스트 개인 챌린지");
-		assertThat(firstDto.status()).isEqualTo(CertificationStatus.REQUESTED); // 기본값
+		assertThat(firstDto.memberId()).isEqualTo(testMember1.getId());
+		assertThat(firstDto.memberNickname()).isEqualTo(testMember1.getProfile().getNickname());
+		assertThat(firstDto.status()).isEqualTo(CertificationStatus.PENDING); // 기본값
 	}
 
 	@Test
@@ -129,7 +129,7 @@ class PersonalChallengeCertificationRepositoryImplTest extends BaseIntegrationTe
 		assertThat(result.hasNext()).isFalse();
 		assertThat(result.nextCursor()).isNull();
 		assertThat(result.content()).hasSize(1);
-		assertThat(result.content().get(0).certificationId()).isEqualTo(cert1.getId());
+		assertThat(result.content().get(0).id()).isEqualTo(cert1.getId());
 	}
 
 	@Test
@@ -174,7 +174,7 @@ class PersonalChallengeCertificationRepositoryImplTest extends BaseIntegrationTe
 
 		// then
 		assertThat(result.content()).hasSize(1);
-		assertThat(result.content().get(0).challengeTitle()).isEqualTo("테스트 개인 챌린지");
+		assertThat(result.content().get(0).memberNickname()).isEqualTo(testMember1.getProfile().getNickname());
 	}
 
 	@Test
