@@ -16,6 +16,7 @@ import com.example.green.domain.challenge.enums.ChallengeDisplayStatus;
 import com.example.green.domain.challenge.enums.ChallengeStatus;
 import com.example.green.domain.challenge.enums.ChallengeType;
 import com.example.green.domain.challenge.utils.CodeGenerator;
+import com.example.green.domain.challengecert.enums.CertificationStatus;
 import com.example.green.domain.member.entity.Member;
 import com.example.green.domain.point.entity.vo.PointAmount;
 import com.example.green.global.error.exception.BusinessException;
@@ -104,8 +105,7 @@ class TeamChallengeCertificationTest {
 		assertThat(newCertification.getCertificationReview()).isEqualTo(review);
 		assertThat(newCertification.getCertifiedAt()).isEqualTo(certifiedAt);
 		assertThat(newCertification.getCertifiedDate()).isEqualTo(certifiedDate);
-		assertThat(newCertification.getApproved()).isFalse();
-		assertThat(newCertification.getApprovedAt()).isNull();
+		assertThat(newCertification.getStatus()).isEqualTo(CertificationStatus.PENDING);
 	}
 
 	@Test

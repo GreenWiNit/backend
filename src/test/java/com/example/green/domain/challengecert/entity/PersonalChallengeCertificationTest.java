@@ -15,6 +15,7 @@ import com.example.green.domain.challenge.enums.ChallengeDisplayStatus;
 import com.example.green.domain.challenge.enums.ChallengeStatus;
 import com.example.green.domain.challenge.enums.ChallengeType;
 import com.example.green.domain.challenge.utils.CodeGenerator;
+import com.example.green.domain.challengecert.enums.CertificationStatus;
 import com.example.green.domain.challengecert.exception.ChallengeCertException;
 import com.example.green.domain.challengecert.exception.ChallengeCertExceptionMessage;
 import com.example.green.domain.member.entity.Member;
@@ -93,8 +94,7 @@ class PersonalChallengeCertificationTest {
 		assertThat(newCertification.getCertificationReview()).isEqualTo(review);
 		assertThat(newCertification.getCertifiedAt()).isEqualTo(certifiedAt);
 		assertThat(newCertification.getCertifiedDate()).isEqualTo(certifiedDate);
-		assertThat(newCertification.getApproved()).isFalse();
-		assertThat(newCertification.getApprovedAt()).isNull();
+		assertThat(newCertification.getStatus()).isEqualTo(CertificationStatus.PENDING);
 	}
 
 	@Test
@@ -184,15 +184,12 @@ class PersonalChallengeCertificationTest {
 
 	@Test
 	void 인증을_승인할_수_있다() {
-		// given
-		LocalDateTime approveTime = now;
-
 		// when
-		certification.approve(approveTime);
+		certification.approve();
 
 		// then
-		assertThat(certification.getApproved()).isTrue();
-		assertThat(certification.getApprovedAt()).isEqualTo(approveTime);
+		assertThat(certification.isApproved()).isTrue();
+		assertThat(certification.getStatus()).isEqualTo(CertificationStatus.PAID);
 		assertThat(certification.canApprove()).isFalse();
 		assertThat(certification.canUpdate()).isFalse();
 	}
@@ -214,25 +211,29 @@ class PersonalChallengeCertificationTest {
 	@Test
 	void 이미_승인된_인증을_다시_승인하면_예외가_발생한다() {
 		// given
-		certification.approve(now);
+		certification.approve();
 
 		// when & then
-		assertThatThrownBy(() -> certification.approve(now.plusMinutes(1)))
+		assertThatThrownBy(() -> certification.approve())
 			.isInstanceOf(ChallengeCertException.class)
-			.hasMessage(ChallengeCertExceptionMessage.CERTIFICATION_ALREADY_APPROVED.getMessage());
+			.hasMessage(ChallengeCertExceptionMessage.CERTIFICATION_ALREADY_PROCESSED.getMessage());
 	}
 
 	@Test
-	void 승인_시각이_null이면_예외가_발생한다() {
+	void 거절된_인증을_다시_승인하면_예외가_발생한다() {
+		// given
+		certification.reject();
+
 		// when & then
-		assertThatThrownBy(() -> certification.approve(null))
-			.isInstanceOf(BusinessException.class);
+		assertThatThrownBy(() -> certification.approve())
+			.isInstanceOf(ChallengeCertException.class)
+			.hasMessage(ChallengeCertExceptionMessage.CERTIFICATION_ALREADY_PROCESSED.getMessage());
 	}
 
 	@Test
 	void 이미_승인된_인증을_수정하면_예외가_발생한다() {
 		// given
-		certification.approve(now);
+		certification.approve();
 
 		// when & then
 		assertThatThrownBy(() -> certification.updateCertification(
@@ -240,6 +241,6 @@ class PersonalChallengeCertificationTest {
 			"수정된 후기"
 		))
 			.isInstanceOf(ChallengeCertException.class)
-			.hasMessage(ChallengeCertExceptionMessage.CERTIFICATION_ALREADY_APPROVED.getMessage());
+			.hasMessage(ChallengeCertExceptionMessage.CERTIFICATION_ALREADY_PROCESSED.getMessage());
 	}
 }

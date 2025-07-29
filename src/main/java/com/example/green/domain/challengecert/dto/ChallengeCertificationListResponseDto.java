@@ -4,6 +4,7 @@ import java.time.LocalDate;
 
 import com.example.green.domain.challengecert.entity.PersonalChallengeCertification;
 import com.example.green.domain.challengecert.entity.TeamChallengeCertification;
+import com.example.green.domain.challengecert.enums.CertificationStatus;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
@@ -12,44 +13,63 @@ import lombok.Builder;
 @Builder
 public record ChallengeCertificationListResponseDto(
 	@Schema(description = "인증 ID", example = "123")
-	Long certificationId,
+	Long id,
 
-	@Schema(description = "챌린지 ID", example = "1")
-	Long challengeId,
+	@Schema(description = "회원 ID", example = "1")
+	Long memberId,
 
-	@Schema(description = "챌린지 제목", example = "30일 런닝 챌린지")
-	String challengeTitle,
+	@Schema(description = "회원 닉네임", example = "홍길동")
+	String memberNickname,
+
+	@Schema(description = "회원 이메일", example = "test@example.com")
+	String memberEmail,
+
+	@Schema(description = "인증 이미지 URL", example = "https://example.com/image.jpg")
+	String certificationImageUrl,
+
+	@Schema(description = "인증 후기", example = "오늘도 열심히 운동했습니다!")
+	String certificationReview,
 
 	@Schema(description = "인증 날짜", example = "2024-01-15")
 	LocalDate certifiedDate,
 
-	@Schema(description = "승인 여부", example = "true")
-	Boolean approved
+	@Schema(description = "인증 상태", example = "REQUESTED")
+	CertificationStatus status
 ) {
 
 	/**
 	 * 개인 챌린지 인증 Entity로부터 ListResponseDto를 생성합니다.
 	 */
-	public static ChallengeCertificationListResponseDto from(PersonalChallengeCertification certification) {
-		return ChallengeCertificationListResponseDto.builder()
-			.certificationId(certification.getId())
-			.challengeId(certification.getParticipation().getPersonalChallenge().getId())
-			.challengeTitle(certification.getParticipation().getPersonalChallenge().getChallengeName())
-			.certifiedDate(certification.getCertifiedDate())
-			.approved(certification.getApproved())
-			.build();
+	public static ChallengeCertificationListResponseDto fromPersonalChallengeCertification(
+		PersonalChallengeCertification certification) {
+
+		return new ChallengeCertificationListResponseDto(
+			certification.getId(),
+			certification.getMember().getId(),
+			certification.getMember().getProfile().getNickname(),
+			certification.getMember().getEmail(),
+			certification.getCertificationImageUrl(),
+			certification.getCertificationReview(),
+			certification.getCertifiedDate(),
+			certification.getStatus()
+		);
 	}
 
 	/**
 	 * 팀 챌린지 인증 Entity로부터 ListResponseDto를 생성합니다.
 	 */
-	public static ChallengeCertificationListResponseDto from(TeamChallengeCertification certification) {
-		return ChallengeCertificationListResponseDto.builder()
-			.certificationId(certification.getId())
-			.challengeId(certification.getParticipation().getTeamChallenge().getId())
-			.challengeTitle(certification.getParticipation().getTeamChallenge().getChallengeName())
-			.certifiedDate(certification.getCertifiedDate())
-			.approved(certification.getApproved())
-			.build();
+	public static ChallengeCertificationListResponseDto fromTeamChallengeCertification(
+		TeamChallengeCertification certification) {
+
+		return new ChallengeCertificationListResponseDto(
+			certification.getId(),
+			certification.getMember().getId(),
+			certification.getMember().getProfile().getNickname(),
+			certification.getMember().getEmail(),
+			certification.getCertificationImageUrl(),
+			certification.getCertificationReview(),
+			certification.getCertifiedDate(),
+			certification.getStatus()
+		);
 	}
 }

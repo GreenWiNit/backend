@@ -1,7 +1,10 @@
 package com.example.green.domain.challengecert.repository;
 
+import java.util.List;
 import java.util.Optional;
 
+import com.example.green.domain.challengecert.dto.AdminParticipantMemberKeyResponseDto;
+import com.example.green.domain.challengecert.dto.AdminPersonalCertificationSearchRequestDto;
 import com.example.green.domain.challengecert.dto.ChallengeCertificationListResponseDto;
 import com.example.green.domain.challengecert.entity.PersonalChallengeCertification;
 import com.example.green.domain.member.entity.Member;
@@ -33,4 +36,22 @@ public interface PersonalChallengeCertificationRepositoryCustom {
 	 * @return 개인 챌린지 인증 정보
 	 */
 	Optional<PersonalChallengeCertification> findByIdAndMember(Long id, Member member);
+
+	/**
+	 * 개인 챌린지의 참여자 memberKey 목록을 조회합니다. (관리자용)
+	 * @param challengeId 챌린지 ID
+	 * @return 참여자 memberKey 목록
+	 */
+	List<AdminParticipantMemberKeyResponseDto> findParticipantMemberKeysByChallengeId(Long challengeId);
+
+	/**
+	 * 관리자용 개인 챌린지 인증 목록을 복합 조건으로 조회합니다. (커서 기반 페이징)
+	 * @param searchRequest 검색 조건
+	 * @param pageSize 페이지 크기
+	 * @return 커서 템플릿에 담긴 개인 챌린지 인증 목록
+	 */
+	CursorTemplate<Long, ChallengeCertificationListResponseDto> findPersonalCertificationsWithFilters(
+		AdminPersonalCertificationSearchRequestDto searchRequest,
+		int pageSize
+	);
 }

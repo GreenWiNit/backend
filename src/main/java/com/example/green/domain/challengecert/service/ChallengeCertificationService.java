@@ -2,6 +2,7 @@ package com.example.green.domain.challengecert.service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +14,11 @@ import com.example.green.domain.challenge.exception.ChallengeException;
 import com.example.green.domain.challenge.exception.ChallengeExceptionMessage;
 import com.example.green.domain.challenge.repository.PersonalChallengeRepository;
 import com.example.green.domain.challenge.repository.TeamChallengeRepository;
+import com.example.green.domain.challengecert.dto.AdminChallengeTitleResponseDto;
+import com.example.green.domain.challengecert.dto.AdminGroupCodeResponseDto;
+import com.example.green.domain.challengecert.dto.AdminParticipantMemberKeyResponseDto;
+import com.example.green.domain.challengecert.dto.AdminPersonalCertificationSearchRequestDto;
+import com.example.green.domain.challengecert.dto.AdminTeamCertificationSearchRequestDto;
 import com.example.green.domain.challengecert.dto.ChallengeCertificationCreateRequestDto;
 import com.example.green.domain.challengecert.dto.ChallengeCertificationCreateResponseDto;
 import com.example.green.domain.challengecert.dto.ChallengeCertificationDetailResponseDto;
@@ -43,6 +49,7 @@ import lombok.RequiredArgsConstructor;
 public class ChallengeCertificationService {
 
 	private static final int DEFAULT_PAGE_SIZE = 20;
+	private static final int ADMIN_PAGE_SIZE = 10;
 
 	private final PersonalChallengeRepository personalChallengeRepository;
 	private final TeamChallengeRepository teamChallengeRepository;
@@ -128,14 +135,15 @@ public class ChallengeCertificationService {
 		var personalCertification = personalChallengeCertificationRepository
 			.findByIdAndMember(certificationId, member);
 		if (personalCertification.isPresent()) {
-			return ChallengeCertificationDetailResponseDto.from(personalCertification.get());
+			return ChallengeCertificationDetailResponseDto.fromPersonalChallengeCertification(
+				personalCertification.get());
 		}
 
 		// 팀 챌린지 인증 확인
 		var teamCertification = teamChallengeCertificationRepository
 			.findByIdAndMember(certificationId, member);
 		if (teamCertification.isPresent()) {
-			return ChallengeCertificationDetailResponseDto.from(teamCertification.get());
+			return ChallengeCertificationDetailResponseDto.fromTeamChallengeCertification(teamCertification.get());
 		}
 
 		throw new ChallengeCertException(ChallengeCertExceptionMessage.CERTIFICATION_NOT_FOUND);
@@ -237,5 +245,143 @@ public class ChallengeCertificationService {
 		}
 	}
 
+	// ================= 관리자용 메서드들 =================
 
+	/**
+	 * 개인 챌린지 제목 목록을 조회합니다. (관리자용)
+	 */
+	public List<AdminChallengeTitleResponseDto> getPersonalChallengeTitles() {
+		List<PersonalChallenge> challenges = personalChallengeRepository.findAll();
+		return challenges.stream()
+			.map(AdminChallengeTitleResponseDto::from)
+			.toList();
+	}
+
+	/**
+	 * 팀 챌린지 제목 목록을 조회합니다. (관리자용)
+	 */
+	public List<AdminChallengeTitleResponseDto> getTeamChallengeTitles() {
+		List<TeamChallenge> challenges = teamChallengeRepository.findAll();
+		return challenges.stream()
+			.map(AdminChallengeTitleResponseDto::from)
+			.toList();
+	}
+
+	/**
+	 * 개인 챌린지 참여자 memberKey 목록을 조회합니다. (관리자용)
+	 */
+	public List<AdminParticipantMemberKeyResponseDto> getPersonalChallengeParticipantMemberKeys(Long challengeId) {
+		// 챌린지 존재 여부 확인
+		findPersonalChallengeById(challengeId);
+		return personalChallengeCertificationRepository.findParticipantMemberKeysByChallengeId(challengeId);
+	}
+
+	/**
+	 * 팀 챌린지 그룹 코드 목록을 조회합니다. (관리자용)
+	 */
+	public List<AdminGroupCodeResponseDto> getTeamChallengeGroupCodes(Long challengeId) {
+		// 챌린지 존재 여부 확인
+		findTeamChallengeById(challengeId);
+		return teamChallengeCertificationRepository.findGroupCodesByChallengeId(challengeId);
+	}
+
+	/**
+	 * 관리자용 개인 챌린지 인증 목록을 복합 조건으로 조회합니다. (커서 기반 페이징)
+	 */
+	public CursorTemplate<Long, ChallengeCertificationListResponseDto> getPersonalCertificationsWithFilters(
+		AdminPersonalCertificationSearchRequestDto searchRequest) {
+
+		// 특정 챌린지가 지정된 경우 존재 여부 확인
+		if (!searchRequest.isAllChallenges()) {
+			findPersonalChallengeById(searchRequest.challengeId());
+		}
+
+		return personalChallengeCertificationRepository.findPersonalCertificationsWithFilters(searchRequest, ADMIN_PAGE_SIZE);
+	}
+
+	/**
+	 * 관리자용 팀 챌린지 인증 목록을 복합 조건으로 조회합니다. (커서 기반 페이징)
+	 */
+	public CursorTemplate<Long, ChallengeCertificationListResponseDto> getTeamCertificationsWithFilters(
+		AdminTeamCertificationSearchRequestDto searchRequest) {
+
+		// 특정 챌린지가 지정된 경우 존재 여부 확인
+		if (!searchRequest.isAllChallenges()) {
+			findTeamChallengeById(searchRequest.challengeId());
+		}
+
+		return teamChallengeCertificationRepository.findTeamCertificationsWithFilters(searchRequest, ADMIN_PAGE_SIZE);
+	}
+
+	/**
+	 * 인증 상태를 업데이트합니다. (관리자용)
+	 */
+	@Transactional
+	public void updateCertificationStatus(Long certificationId, String status) {
+		// 먼저 개인 챌린지 인증에서 찾아보기
+		PersonalChallengeCertification personalCertification = personalChallengeCertificationRepository
+			.findById(certificationId)
+			.orElse(null);
+
+		if (personalCertification != null) {
+			updateCertificationStatusInternal(personalCertification, status);
+			return;
+		}
+
+		// 팀 챌린지 인증에서 찾아보기
+		TeamChallengeCertification teamCertification = teamChallengeCertificationRepository
+			.findById(certificationId)
+			.orElseThrow(() -> new ChallengeCertException(ChallengeCertExceptionMessage.CERTIFICATION_NOT_FOUND));
+
+		updateCertificationStatusInternal(teamCertification, status);
+	}
+
+	/**
+	 * 인증 상태 업데이트 내부 로직
+	 */
+	private void updateCertificationStatusInternal(Object certification, String status) {
+		switch (status.toUpperCase()) {
+			case "PAID" -> approveCertification(certification);
+			case "REJECTED" -> rejectCertification(certification);
+			default -> throw new ChallengeCertException(ChallengeCertExceptionMessage.INVALID_CERTIFICATION_STATUS);
+		}
+	}
+
+	/**
+	 * 인증을 승인합니다.
+	 */
+	private void approveCertification(Object certification) {
+		if (certification instanceof PersonalChallengeCertification personal) {
+			personal.approve();
+		} else if (certification instanceof TeamChallengeCertification team) {
+			team.approve();
+		}
+	}
+
+	/**
+	 * 인증을 거절합니다.
+	 */
+	private void rejectCertification(Object certification) {
+		if (certification instanceof PersonalChallengeCertification personal) {
+			personal.reject();
+		} else if (certification instanceof TeamChallengeCertification team) {
+			team.reject();
+		}
+	}
+
+	/**
+	 * 개인 챌린지를 ID로 조회합니다.
+	 */
+	private PersonalChallenge findPersonalChallengeById(Long challengeId) {
+		return personalChallengeRepository.findById(challengeId)
+			.orElseThrow(() -> new ChallengeException(ChallengeExceptionMessage.CHALLENGE_NOT_FOUND));
+	}
+
+	/**
+	 * 팀 챌린지를 ID로 조회합니다.
+	 */
+	private TeamChallenge findTeamChallengeById(Long challengeId) {
+		return teamChallengeRepository.findById(challengeId)
+			.orElseThrow(() -> new ChallengeException(ChallengeExceptionMessage.CHALLENGE_NOT_FOUND));
+	}
 }

@@ -5,12 +5,15 @@ import static com.example.green.global.utils.EntityValidator.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import com.example.green.domain.challengecert.enums.CertificationStatus;
 import com.example.green.domain.challengecert.exception.ChallengeCertException;
 import com.example.green.domain.challengecert.exception.ChallengeCertExceptionMessage;
 import com.example.green.domain.common.BaseEntity;
 import com.example.green.domain.member.entity.Member;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -53,10 +56,9 @@ public abstract class BaseChallengeCertification extends BaseEntity {
 	@Column(nullable = false)
 	private LocalDate certifiedDate;
 
+	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
-	private Boolean approved = false;
-
-	private LocalDateTime approvedAt;
+	private CertificationStatus status = CertificationStatus.PENDING;
 
 	// 하위 클래스를 위한 protected 생성자
 	protected BaseChallengeCertification(
@@ -71,28 +73,35 @@ public abstract class BaseChallengeCertification extends BaseEntity {
 		this.certificationReview = certificationReview;
 		this.certifiedAt = certifiedAt;
 		this.certifiedDate = certifiedDate;
-		this.approved = false;
+		this.status = CertificationStatus.PENDING;
 	}
 
 	/**
 	 * 관리자 승인 처리
 	 */
-	public void approve(LocalDateTime approvedAt) {
-		validateNullData(approvedAt, "승인 시각은 필수값입니다.");
-
-		if (this.approved) {
-			throw new ChallengeCertException(ChallengeCertExceptionMessage.CERTIFICATION_ALREADY_APPROVED);
+	public void approve() {
+		if (this.status != CertificationStatus.PENDING) {
+			throw new ChallengeCertException(ChallengeCertExceptionMessage.CERTIFICATION_ALREADY_PROCESSED);
 		}
-		this.approved = true;
-		this.approvedAt = approvedAt;
+		this.status = CertificationStatus.PAID;
+	}
+
+	/**
+	 * 관리자 거절 처리
+	 */
+	public void reject() {
+		if (this.status != CertificationStatus.PENDING) {
+			throw new ChallengeCertException(ChallengeCertExceptionMessage.CERTIFICATION_ALREADY_PROCESSED);
+		}
+		this.status = CertificationStatus.REJECTED;
 	}
 
 	/**
 	 * 인증 내용 수정
 	 */
 	public void updateCertification(String certificationImageUrl, String certificationReview) {
-		if (this.approved) {
-			throw new ChallengeCertException(ChallengeCertExceptionMessage.CERTIFICATION_ALREADY_APPROVED);
+		if (this.status != CertificationStatus.PENDING) {
+			throw new ChallengeCertException(ChallengeCertExceptionMessage.CERTIFICATION_ALREADY_PROCESSED);
 		}
 
 		validateEmptyString(certificationImageUrl, "인증 이미지는 필수값입니다.");
@@ -104,14 +113,35 @@ public abstract class BaseChallengeCertification extends BaseEntity {
 	 * 승인 가능 여부 확인
 	 */
 	public boolean canApprove() {
-		return !this.approved;
+		return this.status == CertificationStatus.PENDING;
+	}
+
+	/**
+	 * 거절 가능 여부 확인
+	 */
+	public boolean canReject() {
+		return this.status == CertificationStatus.PENDING;
 	}
 
 	/**
 	 * 수정 가능 여부 확인
 	 */
 	public boolean canUpdate() {
-		return !this.approved;
+		return this.status == CertificationStatus.PENDING;
+	}
+
+	/**
+	 * 승인된 상태인지 확인
+	 */
+	public boolean isApproved() {
+		return this.status == CertificationStatus.PAID;
+	}
+
+	/**
+	 * 거절된 상태인지 확인
+	 */
+	public boolean isRejected() {
+		return this.status == CertificationStatus.REJECTED;
 	}
 
 	protected void validateCertificationData() {

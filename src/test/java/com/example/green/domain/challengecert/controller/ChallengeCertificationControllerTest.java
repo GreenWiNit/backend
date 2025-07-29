@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -25,6 +26,7 @@ import com.example.green.domain.challengecert.dto.ChallengeCertificationCreateRe
 import com.example.green.domain.challengecert.dto.ChallengeCertificationCreateResponseDto;
 import com.example.green.domain.challengecert.dto.ChallengeCertificationDetailResponseDto;
 import com.example.green.domain.challengecert.dto.ChallengeCertificationListResponseDto;
+import com.example.green.domain.challengecert.enums.CertificationStatus;
 import com.example.green.domain.challengecert.exception.ChallengeCertException;
 import com.example.green.domain.challengecert.exception.ChallengeCertExceptionMessage;
 import com.example.green.domain.challengecert.service.ChallengeCertificationService;
@@ -364,18 +366,24 @@ class ChallengeCertificationControllerTest {
 			10L,
 			List.of(
 				ChallengeCertificationListResponseDto.builder()
-					.certificationId(1L)
-					.challengeId(1L)
-					.challengeTitle("30일 런닝 챌린지")
+					.id(1L)
+					.memberId(1L)
+					.memberNickname("테스트사용자1")
+					.memberEmail("test1@example.com")
+					.certificationImageUrl("https://example.com/image1.jpg")
+					.certificationReview("오늘도 열심히 운동했습니다!")
 					.certifiedDate(LocalDate.of(2024, 1, 15))
-					.approved(true)
+					.status(CertificationStatus.PAID)
 					.build(),
 				ChallengeCertificationListResponseDto.builder()
-					.certificationId(2L)
-					.challengeId(2L)
-					.challengeTitle("홈트 챌린지")
+					.id(2L)
+					.memberId(2L)
+					.memberNickname("테스트사용자2")
+					.memberEmail("test2@example.com")
+					.certificationImageUrl("https://example.com/image2.jpg")
+					.certificationReview("홈트 완료!")
 					.certifiedDate(LocalDate.of(2024, 1, 14))
-					.approved(false)
+					.status(CertificationStatus.PENDING)
 					.build()
 			)
 		);
@@ -393,11 +401,11 @@ class ChallengeCertificationControllerTest {
 			.andExpect(jsonPath("$.result.hasNext").value(true))
 			.andExpect(jsonPath("$.result.nextCursor").value(10L))
 			.andExpect(jsonPath("$.result.content").isArray())
-			.andExpect(jsonPath("$.result.content[0].certificationId").value(1L))
-			.andExpect(jsonPath("$.result.content[0].challengeTitle").value("30일 런닝 챌린지"))
-			.andExpect(jsonPath("$.result.content[0].approved").value(true))
-			.andExpect(jsonPath("$.result.content[1].certificationId").value(2L))
-			.andExpect(jsonPath("$.result.content[1].approved").value(false));
+			.andExpect(jsonPath("$.result.content[0].id").value(1L))
+			.andExpect(jsonPath("$.result.content[0].memberNickname").value("테스트사용자1"))
+			.andExpect(jsonPath("$.result.content[0].status").value("PAID"))
+			.andExpect(jsonPath("$.result.content[1].id").value(2L))
+			.andExpect(jsonPath("$.result.content[1].status").value("PENDING"));
 
 		then(challengeCertificationService).should().getPersonalChallengeCertifications(eq(cursor), any());
 	}
@@ -409,11 +417,14 @@ class ChallengeCertificationControllerTest {
 		CursorTemplate<Long, ChallengeCertificationListResponseDto> response = CursorTemplate.of(
 			List.of(
 				ChallengeCertificationListResponseDto.builder()
-					.certificationId(3L)
-					.challengeId(3L)
-					.challengeTitle("팀 러닝 챌린지")
+					.id(3L)
+					.memberId(3L)
+					.memberNickname("테스트사용자3")
+					.memberEmail("test3@example.com")
+					.certificationImageUrl("https://example.com/image3.jpg")
+					.certificationReview("팀 러닝 완료!")
 					.certifiedDate(LocalDate.of(2024, 1, 15))
-					.approved(true)
+					.status(CertificationStatus.PAID)
 					.build()
 			)
 		);
@@ -432,9 +443,9 @@ class ChallengeCertificationControllerTest {
 			.andExpect(jsonPath("$.result.hasNext").value(false))
 			.andExpect(jsonPath("$.result.nextCursor").doesNotExist())
 			.andExpect(jsonPath("$.result.content").isArray())
-			.andExpect(jsonPath("$.result.content[0].certificationId").value(3L))
-			.andExpect(jsonPath("$.result.content[0].challengeTitle").value("팀 러닝 챌린지"))
-			.andExpect(jsonPath("$.result.content[0].approved").value(true));
+			.andExpect(jsonPath("$.result.content[0].id").value(3L))
+			.andExpect(jsonPath("$.result.content[0].memberNickname").value("테스트사용자3"))
+			.andExpect(jsonPath("$.result.content[0].status").value("PAID"));
 
 		then(challengeCertificationService).should().getTeamChallengeCertifications(eq(cursor), any());
 	}
@@ -443,16 +454,17 @@ class ChallengeCertificationControllerTest {
 	void 챌린지_인증_상세_정보를_성공적으로_조회한다() throws Exception {
 		// given
 		Long certificationId = 100L;
-		ChallengeCertificationDetailResponseDto detailResponse = ChallengeCertificationDetailResponseDto.builder()
-			.certificationId(certificationId)
-			.challengeId(1L)
-			.challengeTitle("30일 런닝 챌린지")
-			.challengeType("PERSONAL")
-			.certificationImageUrl(TEST_IMAGE_URL)
-			.certificationReview(TEST_REVIEW)
-			.certifiedDate(LocalDate.of(2024, 1, 15))
-			.approved(true)
-			.build();
+		ChallengeCertificationDetailResponseDto detailResponse = new ChallengeCertificationDetailResponseDto(
+			certificationId,
+			1L,
+			"테스트사용자",
+			"test@example.com",
+			TEST_IMAGE_URL,
+			TEST_REVIEW,
+			LocalDateTime.of(2024, 1, 15, 14, 30),
+			LocalDate.of(2024, 1, 15),
+			CertificationStatus.PAID
+		);
 
 		given(challengeCertificationService.getChallengeCertificationDetail(eq(certificationId), any()))
 			.willReturn(detailResponse);
@@ -464,12 +476,11 @@ class ChallengeCertificationControllerTest {
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.success").value(true))
 			.andExpect(jsonPath("$.message").value("챌린지 인증 상세 정보가 성공적으로 조회되었습니다."))
-			.andExpect(jsonPath("$.result.certificationId").value(certificationId))
-			.andExpect(jsonPath("$.result.challengeTitle").value("30일 런닝 챌린지"))
-			.andExpect(jsonPath("$.result.challengeType").value("PERSONAL"))
+			.andExpect(jsonPath("$.result.id").value(certificationId))
+			.andExpect(jsonPath("$.result.memberNickname").value("테스트사용자"))
 			.andExpect(jsonPath("$.result.certificationImageUrl").value(TEST_IMAGE_URL))
 			.andExpect(jsonPath("$.result.certificationReview").value(TEST_REVIEW))
-			.andExpect(jsonPath("$.result.approved").value(true));
+			.andExpect(jsonPath("$.result.status").value("PAID"));
 
 		then(challengeCertificationService).should().getChallengeCertificationDetail(eq(certificationId), any());
 	}

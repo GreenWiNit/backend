@@ -1,7 +1,10 @@
 package com.example.green.domain.challengecert.repository;
 
+import java.util.List;
 import java.util.Optional;
 
+import com.example.green.domain.challengecert.dto.AdminGroupCodeResponseDto;
+import com.example.green.domain.challengecert.dto.AdminTeamCertificationSearchRequestDto;
 import com.example.green.domain.challengecert.dto.ChallengeCertificationListResponseDto;
 import com.example.green.domain.challengecert.entity.TeamChallengeCertification;
 import com.example.green.domain.member.entity.Member;
@@ -33,4 +36,22 @@ public interface TeamChallengeCertificationRepositoryCustom {
 	 * @return 팀 챌린지 인증 정보
 	 */
 	Optional<TeamChallengeCertification> findByIdAndMember(Long id, Member member);
+
+	/**
+	 * 팀 챌린지의 그룹 코드 목록을 조회합니다. (관리자용)
+	 * @param challengeId 챌린지 ID
+	 * @return 그룹 코드 목록
+	 */
+	List<AdminGroupCodeResponseDto> findGroupCodesByChallengeId(Long challengeId);
+
+	/**
+	 * 관리자용 팀 챌린지 인증 목록을 복합 조건으로 조회합니다. (커서 기반 페이징)
+	 * @param searchRequest 검색 조건
+	 * @param pageSize 페이지 크기
+	 * @return 커서 템플릿에 담긴 팀 챌린지 인증 목록
+	 */
+	CursorTemplate<Long, ChallengeCertificationListResponseDto> findTeamCertificationsWithFilters(
+		AdminTeamCertificationSearchRequestDto searchRequest,
+		int pageSize
+	);
 }
