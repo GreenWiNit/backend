@@ -8,8 +8,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * 관리자 팀 챌린지 인증 목록 검색 요청 DTO
+ * 페이지 크기는 10건으로 고정되어 있습니다.
  */
-@Schema(description = "관리자 팀 챌린지 인증 목록 검색 조건")
+@Schema(description = "관리자 팀 챌린지 인증 목록 검색 조건 (10건씩 조회)")
 public record AdminTeamCertificationSearchRequestDto(
 	@Schema(description = "챌린지 ID (선택사항, null이면 전체 조회)", example = "1")
 	Long challengeId,
@@ -22,15 +23,8 @@ public record AdminTeamCertificationSearchRequestDto(
 	List<CertificationStatus> statuses,
 
 	@Schema(description = "커서 (페이징용, 마지막 인증 ID)")
-	Long cursor,
-
-	@Schema(description = "페이지 크기 (기본값: 10, 백엔드에서 고정)", example = "10", hidden = true)
-	Integer size
+	Long cursor
 ) {
-	public AdminTeamCertificationSearchRequestDto {
-		// 백엔드에서 고정값 사용 (프론트에서 받지 않음)
-		size = 10;
-	}
 
 	/**
 	 * 전체 챌린지 조회 여부
