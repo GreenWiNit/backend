@@ -29,7 +29,7 @@ public interface RefreshTokenRepository extends JpaRepository<TokenManager, Long
 	// memberKey로 가장 최신 TokenManager 조회 (로그아웃용)
 	@Query("SELECT rt FROM TokenManager rt "
 		+ "WHERE rt.member.memberKey = :memberKey AND rt.isRevoked = false "
-		+ "ORDER BY rt.tokenVersion DESC, rt.id DESC")
+		+ "ORDER BY rt.tokenVersion DESC, rt.id DESC LIMIT 1")
 	Optional<TokenManager> findLatestByMemberKeyAndNotRevoked(@Param("memberKey") String memberKey);
 
 	// 토큰 정리 전용
