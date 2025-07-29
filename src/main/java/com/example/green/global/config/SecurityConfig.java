@@ -23,6 +23,8 @@ import com.example.green.domain.auth.OAuth2FailureHandler;
 import com.example.green.domain.auth.filter.JwtFilter;
 import com.example.green.domain.auth.service.CustomOAuth2UserService;
 import com.example.green.domain.auth.service.TokenService;
+import com.example.green.domain.auth.security.CustomAuthorizationRequestResolver;
+import com.example.green.global.config.AllowedDomainsPolicy;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -42,16 +44,18 @@ public class SecurityConfig {
 	private final OAuth2FailureHandler oauth2FailureHandler;
 	private final TokenService tokenService;
 	private final AllowedDomainsPolicy allowedDomainsPolicy;
+	private final CustomAuthorizationRequestResolver customAuthorizationRequestResolver;
 
 	public SecurityConfig(CustomOAuth2UserService customOAuth2UserService, CustomSuccessHandler customSuccessHandler,
 		OAuth2FailureHandler oauth2FailureHandler, TokenService tokenService,
-		AllowedDomainsPolicy allowedDomainsPolicy) {
+		AllowedDomainsPolicy allowedDomainsPolicy, CustomAuthorizationRequestResolver customAuthorizationRequestResolver) {
 
 		this.customOAuth2UserService = customOAuth2UserService;
 		this.customSuccessHandler = customSuccessHandler;
 		this.oauth2FailureHandler = oauth2FailureHandler;
 		this.tokenService = tokenService;
 		this.allowedDomainsPolicy = allowedDomainsPolicy;
+		this.customAuthorizationRequestResolver = customAuthorizationRequestResolver;
 	}
 
 	@Bean
@@ -92,6 +96,8 @@ public class SecurityConfig {
 			.cors(corsCustomizer -> corsCustomizer.configurationSource(createCorsConfigurationSource()))
 			// OAuth2 로그인 설정
 			.oauth2Login(oauth2 -> oauth2
+				.authorizationEndpoint(authorization -> authorization
+					.authorizationRequestResolver(customAuthorizationRequestResolver))
 				.userInfoEndpoint(userInfoEndpointConfig -> userInfoEndpointConfig
 					.userService(customOAuth2UserService))
 				.successHandler(customSuccessHandler)
