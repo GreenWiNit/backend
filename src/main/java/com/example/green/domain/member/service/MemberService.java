@@ -130,10 +130,10 @@ public class MemberService {
 
 	@Transactional(readOnly = true)
 	public boolean isNicknameAvailable(String nickname) {
-
-		boolean isDuplicate = memberRepository.existsByNickname(nickname.trim());
-		
-		return !isDuplicate;
+		// 비즈니스 로직: 중복 확인만 수행
+		// 닉네임 형식 검증은 DTO(@Valid)와 Profile VO에서 보장됨
+		Long count = memberRepository.countByNickname(nickname);
+		return count == null || count == 0;
 	}
 
 	/**

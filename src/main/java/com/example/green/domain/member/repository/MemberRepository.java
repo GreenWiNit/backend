@@ -17,9 +17,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
 	boolean existsByMemberKey(String memberKey);
 
-	Optional<Member> findByEmail(String email);
-
-	boolean existsByEmail(String email);
 
 	/**
 	 * 활성 회원만 조회 (탈퇴하지 않은 회원)
@@ -80,11 +77,8 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 	@Query("SELECT m FROM Member m WHERE m.status = 'DELETED' OR m.deleted = true ORDER BY m.modifiedDate DESC")
 	List<Member> findAllWithdrawnMembersForAdmin();
 
-	/**
-	 * 활성 회원 중 닉네임 중복 확인
-	 * - 탈퇴하지 않은 회원 중에서 닉네임 중복 체크
-	 */
-	@Query(value = "SELECT EXISTS(SELECT 1 FROM MEMBER WHERE NICKNAME = :nickname AND STATUS = 'NORMAL' AND DELETED = false LIMIT 1)", 
+
+	@Query(value = "SELECT COUNT(*) FROM MEMBER WHERE BINARY NICKNAME = :nickname AND STATUS = 'NORMAL' AND DELETED = false", 
 		   nativeQuery = true)
-	boolean existsByNickname(@Param("nickname") String nickname);
+	Long countByNickname(@Param("nickname") String nickname);
 }

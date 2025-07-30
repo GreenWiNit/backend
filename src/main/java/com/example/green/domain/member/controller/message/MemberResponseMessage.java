@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 public enum MemberResponseMessage implements ResponseMessage {
 
 	NICKNAME_AVAILABLE("사용 가능한 닉네임입니다."),
-	NICKNAME_TAKEN("이미 사용 중인 닉네임입니다."),
+	NICKNAME_TAKEN("중복된 닉네임이 존재합니다."),
 
 	PROFILE_UPDATED("프로필이 성공적으로 수정되었습니다."),
 	PROFILE_FOUND("프로필 조회에 성공했습니다."),
