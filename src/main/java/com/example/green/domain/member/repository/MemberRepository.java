@@ -84,6 +84,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 	 * 활성 회원 중 닉네임 중복 확인
 	 * - 탈퇴하지 않은 회원 중에서 닉네임 중복 체크
 	 */
-	@Query("SELECT COUNT(m) > 0 FROM Member m WHERE m.profile.nickname = :nickname AND m.status = 'NORMAL' AND m.deleted = false")
+	@Query(value = "SELECT EXISTS(SELECT 1 FROM MEMBER WHERE NICKNAME = :nickname AND STATUS = 'NORMAL' AND DELETED = false LIMIT 1)", 
+		   nativeQuery = true)
 	boolean existsByNickname(@Param("nickname") String nickname);
 }
