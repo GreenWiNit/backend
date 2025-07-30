@@ -75,7 +75,7 @@ public class Profile {
 			throw new BusinessException(MemberExceptionMessage.MEMBER_NICKNAME_REQUIRED);
 		}
 		String trimmed = nickname.trim();
-		if (trimmed.length() < MIN_NICKNAME_LENGTH|| trimmed.length() > MAX_NICKNAME_LENGTH) {
+		if (trimmed.length() < MIN_NICKNAME_LENGTH || trimmed.length() > MAX_NICKNAME_LENGTH) {
 			throw new BusinessException(MemberExceptionMessage.MEMBER_NICKNAME_INVALID);
 		}
 	}

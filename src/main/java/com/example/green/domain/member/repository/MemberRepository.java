@@ -79,4 +79,11 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 	 */
 	@Query("SELECT m FROM Member m WHERE m.status = 'DELETED' OR m.deleted = true ORDER BY m.modifiedDate DESC")
 	List<Member> findAllWithdrawnMembersForAdmin();
+
+	/**
+	 * 활성 회원 중 닉네임 중복 확인
+	 * - 탈퇴하지 않은 회원 중에서 닉네임 중복 체크
+	 */
+	@Query("SELECT COUNT(m) > 0 FROM Member m WHERE m.profile.nickname = :nickname AND m.status = 'NORMAL' AND m.deleted = false")
+	boolean existsByNickname(@Param("nickname") String nickname);
 }

@@ -124,8 +124,16 @@ public class MemberService {
 	 * 추가 프로필 정보가 있는지 확인
 	 */
 	private boolean hasAdditionalProfileInfo(String nickname, String profileImageUrl) {
-		return (nickname != null && !nickname.trim().isEmpty()) ||
-			(profileImageUrl != null && !profileImageUrl.trim().isEmpty());
+		return StringUtils.hasText(nickname) || StringUtils.hasText(profileImageUrl);
+	}
+
+
+	@Transactional(readOnly = true)
+	public boolean isNicknameAvailable(String nickname) {
+
+		boolean isDuplicate = memberRepository.existsByNickname(nickname.trim());
+		
+		return !isDuplicate;
 	}
 
 	/**

@@ -1,6 +1,8 @@
 package com.example.green.domain.member.controller;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -8,6 +10,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 
+import com.example.green.domain.member.controller.message.MemberResponseMessage;
+import com.example.green.domain.member.dto.NicknameCheckRequestDto;
+import com.example.green.domain.member.dto.NicknameCheckResponseDto;
 import com.example.green.domain.member.dto.ProfileUpdateRequestDto;
 import com.example.green.domain.member.dto.ProfileUpdateResponseDto;
 import com.example.green.domain.member.entity.Member;
@@ -15,6 +20,7 @@ import com.example.green.domain.member.service.MemberService;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.security.PrincipalDetails;
 import com.example.green.global.security.annotation.AuthenticatedApi;
+import com.example.green.global.security.annotation.PublicApi;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -75,6 +81,63 @@ public class MemberController {
 		log.info("[MEMBER] 프로필 업데이트 성공: memberId={} nickname={}", 
 			memberId, request.getNickname());
 
-		return ApiTemplate.ok(() -> "프로필이 성공적으로 수정되었습니다.", response);
+		return ApiTemplate.ok(MemberResponseMessage.PROFILE_UPDATED, response);
 	}
-} 
+
+	@PublicApi
+	@Operation(
+		summary = "닉네임 중복 확인",
+		description = "입력된 닉네임이 이미 사용 중인지 확인합니다."
+	)
+	@ApiResponses(value = {
+		@ApiResponse(
+			responseCode = "200",
+			description = "닉네임 중복 확인 성공",
+			content = @Content(
+				mediaType = "application/json",
+				schema = @Schema(implementation = NicknameCheckResponseDto.class),
+				examples = @ExampleObject(value = """
+					{
+						"nickname": "홍길동",
+						"available": true,
+						"message": "사용 가능한 닉네임입니다."
+					}
+					""")
+			)),
+		@ApiResponse(
+			responseCode = "400",
+			description = "잘못된 요청 (닉네임 누락 등)",
+			content = @Content(
+				mediaType = "application/json",
+				examples = @ExampleObject(value = """
+					{
+						"error": "INVALID_REQUEST",
+						"message": "닉네임을 입력해주세요."
+					}
+					""")
+			))
+	})
+	@PostMapping("/nickname-check")
+	public ResponseEntity<NicknameCheckResponseDto> checkNickname(@Valid @RequestBody NicknameCheckRequestDto request) {
+		log.info("[NICKNAME_CHECK] 닉네임 중복 확인 요청: {}", request.nickname());
+
+		boolean isAvailable = memberService.isNicknameAvailable(request.nickname());
+
+		String message;
+
+		if (isAvailable) {
+			message = MemberResponseMessage.NICKNAME_AVAILABLE.getMessage();
+		} else {
+			message = MemberResponseMessage.NICKNAME_TAKEN.getMessage();
+		}
+
+		NicknameCheckResponseDto response = new NicknameCheckResponseDto(
+			request.nickname(),
+			isAvailable,
+			message
+		);
+
+		log.info("[NICKNAME_CHECK] 닉네임 중복 확인 완료: {} - {}", request.nickname(), message);
+		return ResponseEntity.ok(response);
+	}
+}
