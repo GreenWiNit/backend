@@ -314,22 +314,6 @@ public class MemberService {
 		}
 	}
 
-	/**
-	 * memberKey로 회원 탈퇴 처리
-	 * Auth 도메인에서 토큰 무효화 후 Member 도메인 탈퇴 처리를 위해 호출됩니다.
-	 *
-	 * @param memberKey 탈퇴할 사용자의 memberKey
-	 * @throws BusinessException 회원을 찾을 수 없는 경우
-	 */
-	@Retryable(
-		retryFor = {OptimisticLockException.class, ObjectOptimisticLockingFailureException.class},
-		maxAttempts = GENERAL_MAX_ATTEMPTS,
-		backoff = @Backoff(delay = GENERAL_DELAY, multiplier = GENERAL_MULTIPLIER, random = true)
-	)
-	public void withdrawMemberByMemberKey(String memberKey) {
-		Member member = findMemberByMemberKey(memberKey, "회원 탈퇴");
-		withdrawMember(member.getId());
-	}
 
 	/**
 	 * 사용자명으로 회원 조회

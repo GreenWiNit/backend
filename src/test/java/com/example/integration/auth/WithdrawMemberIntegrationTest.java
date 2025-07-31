@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,26 +15,30 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import com.example.green.domain.auth.entity.TokenManager;
 import com.example.green.domain.auth.repository.RefreshTokenRepository;
-import com.example.green.domain.auth.service.AuthService;
 import com.example.green.domain.file.service.FileService;
+import com.example.green.domain.member.dto.WithdrawRequestDto;
 import com.example.green.domain.member.entity.Member;
+import com.example.green.domain.member.entity.WithdrawReason;
 import com.example.green.domain.member.entity.enums.MemberStatus;
+import com.example.green.domain.member.entity.enums.WithdrawReasonType;
 import com.example.green.domain.member.exception.MemberExceptionMessage;
 import com.example.green.domain.member.repository.MemberRepository;
-import com.example.green.domain.member.service.MemberService;
+import com.example.green.domain.member.repository.WithdrawReasonRepository;
+import com.example.green.domain.member.service.WithdrawService;
 import com.example.green.global.error.exception.BusinessException;
 import com.example.integration.common.BaseIntegrationTest;
 
+@DisplayName("회원 탈퇴 통합 테스트 - 새로운 플로우")
 class WithdrawMemberIntegrationTest extends BaseIntegrationTest {
 
 	@Autowired
-	private AuthService authService;
-
-	@Autowired
-	private MemberService memberService;
+	private WithdrawService withdrawService;
 
 	@Autowired
 	private MemberRepository memberRepository;
+
+	@Autowired
+	private WithdrawReasonRepository withdrawReasonRepository;
 
 	@Autowired
 	private RefreshTokenRepository refreshTokenRepository;
@@ -61,19 +66,24 @@ class WithdrawMemberIntegrationTest extends BaseIntegrationTest {
 
 	@AfterEach
 	void tearDown() {
+		withdrawReasonRepository.deleteAllInBatch();
 		refreshTokenRepository.deleteAllInBatch();
 		memberRepository.deleteAllInBatch();
 	}
 
 	@Test
-	@DisplayName("정상 회원 탈퇴 시 전체 플로우가 성공적으로 처리된다")
-	void withdrawMember_WithValidMember_ShouldSucceed() {
+	@DisplayName("탈퇴 사유와 함께 회원 탈퇴 시 전체 플로우가 성공적으로 처리된다")
+	void withdrawMemberWithReason_WithValidMember_ShouldSucceed() {
 		// given
-		String username = testMember.getMemberKey();
+		String memberKey = testMember.getMemberKey();
 		Long memberId = testMember.getId();
+		WithdrawRequestDto request = new WithdrawRequestDto(
+			WithdrawReasonType.SERVICE_DISSATISFACTION,
+			"서비스가 불편해서 탈퇴합니다."
+		);
 
 		// when
-		authService.withdrawMember(username);
+		withdrawService.withdrawMemberWithReason(memberKey, request);
 
 		// then
 		Member updatedMember = memberRepository.findById(memberId).orElseThrow();
@@ -82,39 +92,77 @@ class WithdrawMemberIntegrationTest extends BaseIntegrationTest {
 		assertThat(updatedMember.getLastLoginAt()).isNull();
 		assertThat(updatedMember.isWithdrawn()).isTrue();
 
-		assertThat(refreshTokenRepository.findAllByMemberKeyAndNotRevoked(username))
+		// then
+		assertThat(refreshTokenRepository.findAllByMemberKeyAndNotRevoked(memberKey))
 			.isEmpty();
 
-		assertThat(memberRepository.findActiveByMemberKey(username))
+		assertThat(memberRepository.findActiveByMemberKey(memberKey))
 			.isEmpty();
+
+		// then
+		Optional<WithdrawReason> withdrawReason = withdrawReasonRepository.findByMemberKey(memberKey);
+		assertThat(withdrawReason).isPresent();
+		assertThat(withdrawReason.get().getReasonType()).isEqualTo(WithdrawReasonType.SERVICE_DISSATISFACTION);
+		assertThat(withdrawReason.get().getCustomReason()).isEqualTo("서비스가 불편해서 탈퇴합니다.");
 	}
 
 	@Test
 	@DisplayName("존재하지 않는 회원 탈퇴 시 예외 발생")
-	void withdrawMember_WithNonExistentMember_ShouldThrowException() {
+	void withdrawMemberWithReason_WithNonExistentMember_ShouldThrowException() {
 		// given
-		String nonExistentUsername = "nonexistent";
+		String nonExistentMemberKey = "nonexistent 123456";
+		WithdrawRequestDto request = new WithdrawRequestDto(
+			WithdrawReasonType.PRIVACY_CONCERN,
+			null
+		);
 
 		// when & then
-		assertThatThrownBy(() -> authService.withdrawMember(nonExistentUsername))
+		assertThatThrownBy(() -> withdrawService.withdrawMemberWithReason(nonExistentMemberKey, request))
 			.isInstanceOf(BusinessException.class)
 			.hasMessage(MemberExceptionMessage.MEMBER_NOT_FOUND.getMessage());
 	}
 
 	@Test
 	@DisplayName("프로필 이미지가 있는 회원 탈퇴 시 파일 처리도 함께 수행된다")
-	void withdrawMember_WithProfileImage_ShouldProcessFile() {
+	void withdrawMemberWithReason_WithProfileImage_ShouldProcessFile() {
 		// given
-		String username = testMember.getMemberKey();
+		String memberKey = testMember.getMemberKey();
 		String profileImageUrl = testMember.getProfile().getProfileImageUrl();
+		WithdrawRequestDto request = new WithdrawRequestDto(
+			WithdrawReasonType.INFREQUENT_USE,
+			null
+		);
 
 		// when
-		authService.withdrawMember(username);
+		withdrawService.withdrawMemberWithReason(memberKey, request);
 
 		// then
 		verify(fileService).unUseImage(profileImageUrl);
 
+		// then
 		Member updatedMember = memberRepository.findById(testMember.getId()).orElseThrow();
 		assertThat(updatedMember.isWithdrawn()).isTrue();
+
+		// then
+		Optional<WithdrawReason> withdrawReason = withdrawReasonRepository.findByMemberKey(memberKey);
+		assertThat(withdrawReason).isPresent();
+		assertThat(withdrawReason.get().getReasonType()).isEqualTo(WithdrawReasonType.INFREQUENT_USE);
+		assertThat(withdrawReason.get().getCustomReason()).isNull();
+	}
+
+	@Test
+	@DisplayName("기타 사유 선택 시 상세 사유 없으면 예외 발생")
+	void withdrawMemberWithReason_OtherReasonWithoutCustomReason_ShouldThrowException() {
+		// given
+		String memberKey = testMember.getMemberKey();
+		WithdrawRequestDto request = new WithdrawRequestDto(
+			WithdrawReasonType.OTHER,
+			null // 기타 사유인데 상세 사유 없음
+		);
+
+		// when & then
+		assertThatThrownBy(() -> withdrawService.withdrawMemberWithReason(memberKey, request))
+			.isInstanceOf(BusinessException.class)
+			.hasMessage(MemberExceptionMessage.WITHDRAW_CUSTOM_REASON_REQUIRED.getMessage());
 	}
 }

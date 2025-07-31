@@ -38,7 +38,7 @@ public class MemberAdminController implements MemberManagementControllerDocs {
 	private final MemberAdminService memberAdminService;
 	private final ExcelDownloader excelDownloader;
 
-
+	@Override
 	@GetMapping
 	public ApiTemplate<PageTemplate<MemberListResponseDto>> getMemberList(
 		@ParameterObject @ModelAttribute @Valid MemberListRequestDto request
@@ -50,6 +50,7 @@ public class MemberAdminController implements MemberManagementControllerDocs {
 		return ApiTemplate.ok(MemberResponseMessage.MEMBER_LIST_RETRIEVED, result);
 	}
 
+	@Override
 	@GetMapping("/excel")
 	public void downloadMemberListExcel(HttpServletResponse response) {
 		log.info("[ADMIN] 회원 목록 엑셀 다운로드 요청");
@@ -60,6 +61,7 @@ public class MemberAdminController implements MemberManagementControllerDocs {
 		log.info("[ADMIN] 회원 목록 엑셀 다운로드 완료: count={}", members.size());
 	}
 
+	@Override
 	@GetMapping("/withdrawn")
 	public ApiTemplate<PageTemplate<WithdrawnMemberListResponseDto>> getWithdrawnMemberList(
 		@ParameterObject @ModelAttribute @Valid MemberListRequestDto request
@@ -71,6 +73,7 @@ public class MemberAdminController implements MemberManagementControllerDocs {
 		return ApiTemplate.ok(MemberResponseMessage.WITHDRAWN_MEMBER_LIST_RETRIEVED , result);
 	}
 
+	@Override
 	@GetMapping("/withdrawn/excel")
 	public void downloadWithdrawnMemberListExcel(HttpServletResponse response) {
 		log.info("[ADMIN] 탈퇴 회원 목록 엑셀 다운로드 요청");
@@ -81,6 +84,7 @@ public class MemberAdminController implements MemberManagementControllerDocs {
 		log.info("[ADMIN] 탈퇴 회원 목록 엑셀 다운로드 완료: count={}", members.size());
 	}
 
+	@Override
 	@PostMapping("/delete")
 	public NoContent deleteMember(@RequestBody @Valid MemberDeleteRequestDto request) {
 		log.info("[ADMIN] 회원 강제 삭제 요청: memberKey={}", request.memberKey());

@@ -99,9 +99,9 @@ public class TokenService {
 	private Long getCurrentTokenVersion(String memberKey) {
 		List<TokenManager> tokens = refreshTokenRepository.findAllByMemberKeyAndNotRevoked(memberKey);
 		if (tokens.isEmpty()) {
-			return 1L; // 기본값
+			return 1L;
 		}
-		// 가장 최신 tokenVersion 반환
+
 		return tokens.stream()
 			.mapToLong(TokenManager::getTokenVersion)
 			.max()
@@ -111,16 +111,19 @@ public class TokenService {
 	public String createAccessToken(String memberKey, String role) {
 		try {
 			Long tokenVersion;
+			Long tokenExpiration;
 			
-			// 어드민 계정의 경우 기본 토큰 버전 사용 (RefreshToken 미사용)
+			// 어드민 계정의 경우 1시간 만료
 			if (memberKey.startsWith("admin_")) {
 				tokenVersion = 1L;
+				tokenExpiration = 3600000L;
 			} else {
-				// 일반 사용자: RefreshToken에서 최신 tokenVersion 조회
+				// 일반 사용자: 15분 만료
 				tokenVersion = getCurrentTokenVersion(memberKey);
 				if (tokenVersion == null) {
 					throw new BusinessException(GlobalExceptionMessage.JWT_CREATION_FAILED);
 				}
+				tokenExpiration = accessTokenExpiration;
 			}
 
 			return Jwts.builder()
@@ -129,7 +132,7 @@ public class TokenService {
 				.claim(CLAIM_TYPE, TOKEN_TYPE_ACCESS)
 				.claim(CLAIM_TOKEN_VERSION, tokenVersion)
 				.issuedAt(new Date(System.currentTimeMillis()))
-				.expiration(new Date(System.currentTimeMillis() + accessTokenExpiration))
+				.expiration(new Date(System.currentTimeMillis() + tokenExpiration))
 				.signWith(secretKey)
 				.compact();
 		} catch (Exception e) {

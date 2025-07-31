@@ -141,24 +141,20 @@ public class AuthService {
 	}
 
 	/**
-	 * 회원 탈퇴 처리
+	 * 토큰 무효화 처리
 	 * - 모든 디바이스에서 로그아웃 (AccessToken 무효화)
 	 * - 모든 RefreshToken 무효화 (즉시 처리)
-	 * - Member 도메인에 탈퇴 처리 위임
+	 * - Auth 도메인의 단일 책임: 토큰 관리만 담당
 	 * 
-	 * @param memberKey 탈퇴할 회원의 사용자명
+	 * @param memberKey 회원키
 	 */
-	public void withdrawMember(String memberKey) {
-		log.info("[AUTH] 회원 탈퇴 처리 시작 - memberKey: {}", memberKey);
-
-		// 1단계: 인증 관련 처리
+	public void invalidateAllTokens(String memberKey) {
+		log.info("[AUTH] 토큰 무효화 처리 시작 - memberKey: {}", memberKey);
+		
 		invalidateAllAuthentications(memberKey);
-
-		// 2단계: 회원 정보 처리
-		memberService.withdrawMemberByMemberKey(memberKey);
-
-		log.info("[AUTH] 회원 탈퇴 완료 - memberKey: {}", memberKey);
-
+		
+		log.info("[AUTH] 토큰 무효화 완료 - memberKey: {}", memberKey);
+		
 		// TODO: 배치 시스템으로 토큰 물리적 삭제 처리
 		// - 탈퇴한 사용자의 모든 TokenManager 레코드 물리적 삭제
 		// - 관련 인증 로그, 세션 기록 등도 함께 정리

@@ -10,26 +10,21 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 
+import com.example.green.domain.member.controller.docs.MemberControllerDocs;
 import com.example.green.domain.member.controller.message.MemberResponseMessage;
 import com.example.green.domain.member.dto.NicknameCheckRequestDto;
 import com.example.green.domain.member.dto.NicknameCheckResponseDto;
 import com.example.green.domain.member.dto.ProfileUpdateRequestDto;
 import com.example.green.domain.member.dto.ProfileUpdateResponseDto;
+import com.example.green.domain.member.dto.WithdrawRequestDto;
 import com.example.green.domain.member.entity.Member;
 import com.example.green.domain.member.service.MemberService;
+import com.example.green.domain.member.service.WithdrawService;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.security.PrincipalDetails;
 import com.example.green.global.security.annotation.AuthenticatedApi;
 import com.example.green.global.security.annotation.PublicApi;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -37,34 +32,15 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping("/api/members")
 @RequiredArgsConstructor
-@Tag(name = "Member API", description = "회원 프로필 관리 API")
-public class MemberController {
+public class MemberController implements MemberControllerDocs {
 
 	private final MemberService memberService;
+	private final WithdrawService withdrawService;
 
+	@Override
 	@AuthenticatedApi(reason = "본인의 프로필 수정은 로그인이 필요합니다")
-	@Operation(
-		summary = "프로필 수정", 
-		description = """
-			사용자의 닉네임과 프로필 이미지를 수정합니다.
-			프로필 이미지는 먼저 /api/images 엔드포인트로 업로드한 후 받은 URL을 사용합니다.
-			"""
-	)
-	@ApiResponses(value = {
-		@ApiResponse(responseCode = "200", description = "프로필 수정 성공",
-			content = @Content(schema = @Schema(implementation = ProfileUpdateResponseDto.class))),
-		@ApiResponse(responseCode = "400", description = "잘못된 요청 데이터",
-			content = @Content(examples = @ExampleObject(value = "{\"message\":\"닉네임은 2자 이상 20자 이하로 입력해주세요.\"}"))),
-		@ApiResponse(responseCode = "401", description = "인증되지 않은 사용자",
-			content = @Content(examples = @ExampleObject(value = "{\"message\":\"로그인이 필요합니다.\"}"))),
-		@ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없음",
-			content = @Content(examples = @ExampleObject(value = "{\"message\":\"해당 회원을 찾을 수 없습니다.\"}"))),
-		@ApiResponse(responseCode = "500", description = "프로필 업데이트 실패",
-			content = @Content(examples = @ExampleObject(value = "{\"message\":\"프로필 업데이트에 실패했습니다.\"}")))
-	})
 	@PutMapping("/profile")
 	public ApiTemplate<ProfileUpdateResponseDto> updateProfile(
-		@Parameter(description = "프로필 업데이트 요청 데이터", required = true)
 		@Valid @RequestBody ProfileUpdateRequestDto request,
 		@AuthenticationPrincipal PrincipalDetails currentUser) {
 
@@ -84,39 +60,8 @@ public class MemberController {
 		return ApiTemplate.ok(MemberResponseMessage.PROFILE_UPDATED, response);
 	}
 
+	@Override
 	@PublicApi
-	@Operation(
-		summary = "닉네임 중복 확인",
-		description = "입력된 닉네임이 이미 사용 중인지 확인합니다."
-	)
-	@ApiResponses(value = {
-		@ApiResponse(
-			responseCode = "200",
-			description = "닉네임 중복 확인 성공",
-			content = @Content(
-				mediaType = "application/json",
-				schema = @Schema(implementation = NicknameCheckResponseDto.class),
-				examples = @ExampleObject(value = """
-					{
-						"nickname": "홍길동",
-						"available": true,
-						"message": "사용 가능한 닉네임입니다."
-					}
-					""")
-			)),
-		@ApiResponse(
-			responseCode = "400",
-			description = "잘못된 요청 (닉네임 누락 등)",
-			content = @Content(
-				mediaType = "application/json",
-				examples = @ExampleObject(value = """
-					{
-						"error": "INVALID_REQUEST",
-						"message": "닉네임을 입력해주세요."
-					}
-					""")
-			))
-	})
 	@PostMapping("/nickname-check")
 	public ResponseEntity<NicknameCheckResponseDto> checkNickname(@Valid @RequestBody NicknameCheckRequestDto request) {
 		log.info("[NICKNAME_CHECK] 닉네임 중복 확인 요청: {}", request.nickname());
@@ -139,5 +84,24 @@ public class MemberController {
 
 		log.info("[NICKNAME_CHECK] 닉네임 중복 확인 완료: {} - {}", request.nickname(), message);
 		return ResponseEntity.ok(response);
+	}
+
+	@Override
+	@AuthenticatedApi(reason = "회원 탈퇴는 로그인한 사용자만 가능합니다")
+	@PostMapping("/withdraw")
+	public ResponseEntity<Void> withdraw(
+		@AuthenticationPrincipal PrincipalDetails currentUser,
+		@Valid @RequestBody WithdrawRequestDto withdrawRequest) {
+		
+		String memberKey = currentUser.getUsername();
+
+		log.info("[WITHDRAW] 회원 탈퇴 요청 - memberKey: {}, reasonType: {}", 
+				 memberKey, withdrawRequest.reasonType());
+
+		withdrawService.withdrawMemberWithReason(memberKey, withdrawRequest);
+
+		log.info("[WITHDRAW] 회원 탈퇴 완료 - memberKey: {}, reasonType: {}", 
+				 memberKey, withdrawRequest.reasonType());
+		return ResponseEntity.ok().build();
 	}
 }
