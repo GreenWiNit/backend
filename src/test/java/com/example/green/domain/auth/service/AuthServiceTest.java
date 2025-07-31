@@ -48,7 +48,6 @@ class AuthServiceTest {
 		// given
 		String memberKey = "google 123";
 		List<TokenManager> allTokens = Arrays.asList(tokenManager1, tokenManager2);
-		// 이 테스트에서만 사용하는 stubbing
 		when(tokenManager1.logoutAllDevices()).thenReturn(1001L);
 		when(tokenManager2.logoutAllDevices()).thenReturn(1002L);
 		when(refreshTokenRepository.findAllByMemberKeyAndNotRevoked(memberKey))
@@ -63,6 +62,28 @@ class AuthServiceTest {
 		verify(refreshTokenRepository).saveAll(allTokens);
 		verify(refreshTokenRepository).revokeAllByMemberKey(memberKey);
 		verify(memberService).withdrawMemberByMemberKey(memberKey);
+	}
+
+	@Test
+	@DisplayName("토큰 무효화만 수행 시 회원 탈퇴 처리는 하지 않음")
+	void invalidateAllTokens_ShouldOnlyInvalidateTokens() {
+		// given
+		String memberKey = "google 123";
+		List<TokenManager> allTokens = Arrays.asList(tokenManager1, tokenManager2);
+		when(tokenManager1.logoutAllDevices()).thenReturn(1001L);
+		when(tokenManager2.logoutAllDevices()).thenReturn(1002L);
+		when(refreshTokenRepository.findAllByMemberKeyAndNotRevoked(memberKey))
+			.thenReturn(allTokens);
+
+		// when
+		authService.invalidateAllTokens(memberKey);
+
+		// then
+		verify(tokenManager1).logoutAllDevices();
+		verify(tokenManager2).logoutAllDevices();
+		verify(refreshTokenRepository).saveAll(allTokens);
+		verify(refreshTokenRepository).revokeAllByMemberKey(memberKey);
+		verify(memberService, never()).withdrawMemberByMemberKey(any());
 	}
 
 	@Test

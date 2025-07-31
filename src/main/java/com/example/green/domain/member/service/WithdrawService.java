@@ -70,8 +70,11 @@ public class WithdrawService {
             log.info("[WITHDRAW] 탈퇴 사유 저장 및 회원 탈퇴 완료 - memberKey: {}, reasonType: {}", 
                      memberKey, withdrawRequest.reasonType());
 
+        } catch (BusinessException e) {
+            log.warn("[WITHDRAW] 비즈니스 검증 실패 - memberKey: {}, message: {}", memberKey, e.getMessage());
+            throw e;
         } catch (Exception e) {
-            log.error("[WITHDRAW] 회원 탈퇴 처리 중 오류 발생 - memberKey: {}", memberKey, e);
+            log.error("[WITHDRAW] 시스템 오류 발생 - memberKey: {}", memberKey, e);
             throw new BusinessException(MemberExceptionMessage.MEMBER_WITHDRAW_FAILED);
         }
     }
