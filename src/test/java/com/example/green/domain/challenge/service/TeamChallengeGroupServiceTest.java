@@ -79,7 +79,7 @@ class TeamChallengeGroupServiceTest {
 		// 테스트용 Member 생성
 		testMember = Member.create(
 			"memberkey",
-			"테스트 사용자",
+			"테스트사용자",
 			"test@example.com"
 		);
 

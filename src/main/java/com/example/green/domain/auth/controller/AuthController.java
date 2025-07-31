@@ -226,10 +226,10 @@ public class AuthController {
 		log.info("[LOGOUT-ALL] User {} logged out from all devices", memberKey);
 		return ResponseEntity.ok().build();
 	}
-	
+
 	@AuthenticatedApi(reason = "회원 탈퇴는 로그인한 사용자만 가능합니다")
 	@Operation(
-		summary = "회원 탈퇴", 
+		summary = "회원 탈퇴",
 		description = "현재 로그인한 사용자의 회원 탈퇴를 처리합니다. " +
 			"모든 토큰을 무효화하고 계정을 비활성화합니다. " +
 			"Soft Delete 방식으로 처리되어 일정 기간 후 완전 삭제됩니다."
@@ -276,13 +276,13 @@ public class AuthController {
 	public ResponseEntity<Void> withdraw(HttpServletRequest request, HttpServletResponse response,
 		@AuthenticationPrincipal PrincipalDetails currentUser) {
 		String memberKey = currentUser.getUsername();
-		
+
 		log.info("[WITHDRAW] 회원 탈퇴 요청 - memberKey: {}", memberKey);
 
 		authService.withdrawMember(memberKey);
 
 		WebUtils.removeRefreshTokenCookie(response);
-		
+
 		log.info("[WITHDRAW] 회원 탈퇴 완료 - memberKey: {}", memberKey);
 		return ResponseEntity.ok().build();
 	}

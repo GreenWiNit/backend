@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.green.domain.member.controller.docs.MemberManagementControllerDocs;
+import com.example.green.domain.member.controller.message.MemberResponseMessage;
 import com.example.green.domain.member.dto.admin.MemberDeleteRequestDto;
 import com.example.green.domain.member.dto.admin.MemberListRequestDto;
 import com.example.green.domain.member.dto.admin.MemberListResponseDto;
@@ -46,7 +47,7 @@ public class MemberAdminController implements MemberManagementControllerDocs {
 		
 		PageTemplate<MemberListResponseDto> result = memberAdminService.getMemberList(request);
 		
-		return ApiTemplate.ok(() -> "회원 목록 조회가 완료되었습니다.", result);
+		return ApiTemplate.ok(MemberResponseMessage.MEMBER_LIST_RETRIEVED, result);
 	}
 
 	@GetMapping("/excel")
@@ -67,7 +68,7 @@ public class MemberAdminController implements MemberManagementControllerDocs {
 		
 		PageTemplate<WithdrawnMemberListResponseDto> result = memberAdminService.getWithdrawnMemberList(request);
 		
-		return ApiTemplate.ok(() -> "탈퇴 회원 목록 조회가 완료되었습니다.", result);
+		return ApiTemplate.ok(MemberResponseMessage.WITHDRAWN_MEMBER_LIST_RETRIEVED , result);
 	}
 
 	@GetMapping("/withdrawn/excel")
@@ -83,13 +84,11 @@ public class MemberAdminController implements MemberManagementControllerDocs {
 	@PostMapping("/delete")
 	public NoContent deleteMember(@RequestBody @Valid MemberDeleteRequestDto request) {
 		log.info("[ADMIN] 회원 강제 삭제 요청: memberKey={}", request.memberKey());
-		
-		// 회원 존재 여부 먼저 확인
+
 		memberAdminService.validateMemberExistsByMemberKey(request.memberKey());
-		
-		// 회원 강제 삭제 처리
+
 		memberAdminService.deleteMemberByMemberKey(request.memberKey());
 		
-		return NoContent.ok(() -> "회원 삭제가 완료되었습니다.");
+		return NoContent.ok(MemberResponseMessage.MEMBER_DELETED);
 	}
 }
