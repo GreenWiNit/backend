@@ -19,7 +19,9 @@ public enum MemberExceptionMessage implements ExceptionMessage {
 	MEMBER_NICKNAME_INVALID(BAD_REQUEST, "닉네임은 2자 이상 20자 이하여야 합니다."),
 	MEMBER_NICKNAME_DUPLICATE(CONFLICT, "이미 사용 중인 닉네임입니다."),
 	MEMBER_ALREADY_WITHDRAWN(BAD_REQUEST, "이미 탈퇴한 회원입니다."),
-	MEMBER_WITHDRAW_FAILED(INTERNAL_SERVER_ERROR, "회원 탈퇴 처리에 실패했습니다.");
+	MEMBER_WITHDRAW_FAILED(INTERNAL_SERVER_ERROR, "회원 탈퇴 처리에 실패했습니다."),
+	WITHDRAW_CUSTOM_REASON_REQUIRED(BAD_REQUEST, "기타 사유 선택 시 상세 사유를 입력해주세요.")
+	;
 
 	private final HttpStatus httpStatus;
 	private final String message;

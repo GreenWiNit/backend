@@ -166,6 +166,19 @@ public class AuthService {
 	}
 
 	/**
+	 * 토큰 무효화만 처리 (회원 탈퇴 시 사용)
+	 * 
+	 * @param memberKey 회원키
+	 */
+	public void invalidateAllTokens(String memberKey) {
+		log.info("[AUTH] 토큰 무효화 처리 시작 - memberKey: {}", memberKey);
+		
+		invalidateAllAuthentications(memberKey);
+		
+		log.info("[AUTH] 토큰 무효화 완료 - memberKey: {}", memberKey);
+	}
+
+	/**
 	 * 모든 인증 정보 무효화
 	 * - 모든 디바이스 로그아웃 (AccessToken 무효화)
 	 * - 모든 RefreshToken 무효화

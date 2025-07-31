@@ -15,8 +15,10 @@ import com.example.green.domain.member.dto.NicknameCheckRequestDto;
 import com.example.green.domain.member.dto.NicknameCheckResponseDto;
 import com.example.green.domain.member.dto.ProfileUpdateRequestDto;
 import com.example.green.domain.member.dto.ProfileUpdateResponseDto;
+import com.example.green.domain.member.dto.WithdrawRequestDto;
 import com.example.green.domain.member.entity.Member;
 import com.example.green.domain.member.service.MemberService;
+import com.example.green.domain.member.service.WithdrawService;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.security.PrincipalDetails;
 import com.example.green.global.security.annotation.AuthenticatedApi;
@@ -41,6 +43,7 @@ import lombok.extern.slf4j.Slf4j;
 public class MemberController {
 
 	private final MemberService memberService;
+	private final WithdrawService withdrawService;
 
 	@AuthenticatedApi(reason = "본인의 프로필 수정은 로그인이 필요합니다")
 	@Operation(
@@ -139,5 +142,68 @@ public class MemberController {
 
 		log.info("[NICKNAME_CHECK] 닉네임 중복 확인 완료: {} - {}", request.nickname(), message);
 		return ResponseEntity.ok(response);
+	}
+
+	@AuthenticatedApi(reason = "회원 탈퇴는 로그인한 사용자만 가능합니다")
+	@Operation(
+		summary = "회원 탈퇴",
+		description = "현재 로그인한 사용자의 회원 탈퇴를 처리합니다. " +
+			"탈퇴 사유와 함께 계정을 비활성화합니다.",
+		requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+			description = "탈퇴 요청 정보 (탈퇴 사유 포함)",
+			required = true,
+			content = @Content(
+				mediaType = "application/json",
+				schema = @Schema(implementation = WithdrawRequestDto.class),
+				examples = @ExampleObject(value = """
+					{
+						"reasonType": "SERVICE_DISSATISFACTION",
+						"customReason": "챌린지 기능이 부족해서 탈퇴합니다."
+					}
+					""")
+			)
+		)
+	)
+	@ApiResponses(value = {
+		@ApiResponse(
+			responseCode = "200",
+			description = "회원 탈퇴 성공",
+			content = @Content(
+				mediaType = "application/json",
+				examples = @ExampleObject(value = """
+					{
+						"success": true,
+						"message": "회원 탈퇴가 완료되었습니다."
+					}
+					""")
+			)),
+		@ApiResponse(
+			responseCode = "400",
+			description = "잘못된 요청 (이미 탈퇴한 회원, 필수 정보 누락 등)",
+			content = @Content(
+				mediaType = "application/json",
+				examples = @ExampleObject(value = """
+					{
+						"success": false,
+						"message": "이미 탈퇴한 회원입니다."
+					}
+					""")
+			))
+	})
+	@PostMapping("/withdraw")
+	public ResponseEntity<Void> withdraw(
+		@AuthenticationPrincipal PrincipalDetails currentUser,
+		@Valid @RequestBody WithdrawRequestDto withdrawRequest) {
+		
+		String memberKey = currentUser.getUsername();
+
+		log.info("[WITHDRAW] 회원 탈퇴 요청 - memberKey: {}, reasonType: {}", 
+				 memberKey, withdrawRequest.reasonType());
+
+		withdrawService.withdrawMemberWithReason(memberKey, withdrawRequest);
+
+		log.info("[WITHDRAW] 회원 탈퇴 완료 - memberKey: {}, reasonType: {}", 
+				 memberKey, withdrawRequest.reasonType());
+		return ResponseEntity.ok().build();
 	}
 }
