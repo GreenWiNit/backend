@@ -55,8 +55,8 @@ class PersonalChallengeCertificationRepositoryImplTest extends BaseIntegrationTe
 		testNow = LocalDateTime.now();
 
 		// 테스트용 Members 생성
-		testMember1 = Member.create("member1", "테스트 사용자 1", "test1@example.com");
-		testMember2 = Member.create("member2", "테스트 사용자 2", "test2@example.com");
+		testMember1 = Member.create("member1", "테스트사용자1", "test1@example.com");
+		testMember2 = Member.create("member2", "테스트사용자2", "test2@example.com");
 		testMember1 = memberRepository.save(testMember1);
 		testMember2 = memberRepository.save(testMember2);
 
