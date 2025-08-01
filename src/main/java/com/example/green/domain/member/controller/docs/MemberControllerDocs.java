@@ -84,20 +84,53 @@ public interface MemberControllerDocs {
 
     @Operation(
         summary = "회원 탈퇴",
-        description = "현재 로그인한 사용자의 회원 탈퇴를 처리합니다. " +
-            "탈퇴 사유와 함께 계정을 비활성화합니다.",
+        description = """
+            현재 로그인한 사용자의 회원 탈퇴를 처리합니다.
+            
+            ## 탈퇴 사유 목록 (reasonType)
+            
+            | 코드 | 설명 | customReason |
+            |------|------|--------------|
+            | `SERVICE_DISSATISFACTION` | 서비스 이용이 불편해요 | 무시됨 |
+            | `POLICY_DISAGREEMENT` | 원하는 정보가 없어요 | 무시됨 |
+            | `PRIVACY_CONCERN` | 다른 서비스를 이용할 예정이에요 | 무시됨 |
+            | `PRIVACY_PROTECTION` | 개인정보 보호를 위해 탈퇴할게요 | 무시됨 |
+            | `OTHER` | 기타 | **필수 입력** |
+            
+            ## 주의사항
+            - `reasonType`이 `OTHER`인 경우 `customReason` 필드 필수 입력
+            - `OTHER` 외의 타입 선택 시 `customReason` 값은 무시됨 (null 처리)
+            - `customReason`은 최대 1000자까지 입력 가능
+            - 탈퇴 처리 후 모든 토큰이 무효화됩니다
+            """,
         requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
             description = "탈퇴 요청 정보 (탈퇴 사유 포함)",
             required = true,
             content = @Content(
                 mediaType = "application/json",
                 schema = @Schema(implementation = WithdrawRequestDto.class),
-                examples = @ExampleObject(value = """
-                    {
-                        "reasonType": "SERVICE_DISSATISFACTION",
-                        "customReason": "챌린지 기능이 부족해서 탈퇴합니다."
-                    }
-                    """)
+                examples = {
+                    @ExampleObject(
+                        name = "일반 사유로 탈퇴",
+                        summary = "미리 정의된 사유 (customReason 무시됨)",
+                        value = """
+                            {
+                                "reasonType": "SERVICE_DISSATISFACTION",
+                                "customReason": null
+                            }
+                            """
+                    ),
+                    @ExampleObject(
+                        name = "기타 사유로 탈퇴",
+                        summary = "OTHER 선택 시 customReason 필수",
+                        value = """
+                            {
+                                "reasonType": "OTHER",
+                                "customReason": "원하는 기능이 없어서 탈퇴합니다."
+                            }
+                            """
+                    )
+                }
             )
         )
     )

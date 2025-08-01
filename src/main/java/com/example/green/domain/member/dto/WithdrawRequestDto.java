@@ -11,11 +11,25 @@ import jakarta.validation.constraints.Size;
 public record WithdrawRequestDto(
     
     @NotNull(message = "탈퇴 사유를 선택해주세요.")
-    @Schema(description = "탈퇴 사유 타입", example = "SERVICE_DISSATISFACTION")
+    @Schema(
+        description = "탈퇴 사유 타입", 
+        example = "SERVICE_DISSATISFACTION",
+        allowableValues = {
+            "SERVICE_DISSATISFACTION", 
+            "POLICY_DISAGREEMENT", 
+            "PRIVACY_CONCERN", 
+            "PRIVACY_PROTECTION", 
+            "OTHER"
+        }
+    )
     WithdrawReasonType reasonType,
     
     @Size(max = 1000, message = "탈퇴 사유는 1000자 이내로 입력해주세요.")
-    @Schema(description = "상세 탈퇴 사유 (선택사항)", example = "챌린지 기능이 부족해서 탈퇴합니다.")
+    @Schema(
+        description = "상세 탈퇴 사유 (reasonType이 'OTHER'인 경우 필수 입력)", 
+        example = "챌린지 기능이 부족해서 탈퇴합니다.",
+        nullable = true
+    )
     String customReason
 ) {
     

@@ -76,7 +76,7 @@ class WithdrawMemberWithReasonIntegrationTest extends BaseIntegrationTest {
         Long memberId = testMember.getId();
         WithdrawRequestDto request = new WithdrawRequestDto(
             WithdrawReasonType.SERVICE_DISSATISFACTION,
-            "서비스가 불편해서 탈퇴합니다."
+            null  // OTHER 외에는 customReason 무시됨
         );
 
         // when
@@ -95,7 +95,7 @@ class WithdrawMemberWithReasonIntegrationTest extends BaseIntegrationTest {
         Optional<WithdrawReason> withdrawReason = withdrawReasonRepository.findByMemberKey(memberKey);
         assertThat(withdrawReason).isPresent();
         assertThat(withdrawReason.get().getReasonType()).isEqualTo(WithdrawReasonType.SERVICE_DISSATISFACTION);
-        assertThat(withdrawReason.get().getCustomReason()).isEqualTo("서비스가 불편해서 탈퇴합니다.");
+        assertThat(withdrawReason.get().getCustomReason()).isNull(); // OTHER 외에는 customReason이 null로 처리됨
         assertThat(withdrawReason.get().getMemberKey()).isEqualTo(memberKey);
     }
 
@@ -154,7 +154,7 @@ class WithdrawMemberWithReasonIntegrationTest extends BaseIntegrationTest {
         String memberKey = testMember.getMemberKey();
         String profileImageUrl = testMember.getProfile().getProfileImageUrl();
         WithdrawRequestDto request = new WithdrawRequestDto(
-            WithdrawReasonType.INFREQUENT_USE,
+            WithdrawReasonType.PRIVACY_PROTECTION,
             null
         );
 
@@ -169,6 +169,6 @@ class WithdrawMemberWithReasonIntegrationTest extends BaseIntegrationTest {
 
         Optional<WithdrawReason> withdrawReason = withdrawReasonRepository.findByMemberKey(memberKey);
         assertThat(withdrawReason).isPresent();
-        assertThat(withdrawReason.get().getReasonType()).isEqualTo(WithdrawReasonType.INFREQUENT_USE);
+        assertThat(withdrawReason.get().getReasonType()).isEqualTo(WithdrawReasonType.PRIVACY_PROTECTION);
     }
 } 
