@@ -1,7 +1,6 @@
 package com.example.green.domain.member.dto;
 
 import com.example.green.domain.member.entity.enums.WithdrawReasonType;
-import com.example.green.domain.member.dto.validation.ValidWithdrawRequest;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
@@ -9,7 +8,6 @@ import jakarta.validation.constraints.Size;
 
 
 @Schema(description = "회원 탈퇴 요청")
-@ValidWithdrawRequest
 public record WithdrawRequestDto(
     
     @NotNull(message = "탈퇴 사유를 선택해주세요.")
