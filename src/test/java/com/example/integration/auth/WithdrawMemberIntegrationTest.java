@@ -129,7 +129,7 @@ class WithdrawMemberIntegrationTest extends BaseIntegrationTest {
 		String memberKey = testMember.getMemberKey();
 		String profileImageUrl = testMember.getProfile().getProfileImageUrl();
 		WithdrawRequestDto request = new WithdrawRequestDto(
-			WithdrawReasonType.INFREQUENT_USE,
+			            WithdrawReasonType.PRIVACY_PROTECTION,
 			null
 		);
 
@@ -146,7 +146,7 @@ class WithdrawMemberIntegrationTest extends BaseIntegrationTest {
 		// then
 		Optional<WithdrawReason> withdrawReason = withdrawReasonRepository.findByMemberKey(memberKey);
 		assertThat(withdrawReason).isPresent();
-		assertThat(withdrawReason.get().getReasonType()).isEqualTo(WithdrawReasonType.INFREQUENT_USE);
+        assertThat(withdrawReason.get().getReasonType()).isEqualTo(WithdrawReasonType.PRIVACY_PROTECTION);
 		assertThat(withdrawReason.get().getCustomReason()).isNull();
 	}
 

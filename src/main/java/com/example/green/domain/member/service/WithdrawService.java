@@ -20,12 +20,6 @@ import com.example.green.global.error.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * 회원 탈퇴 전담 서비스
- * 
- * 탈퇴 관련 비즈니스 로직을 담당하며, 탈퇴 사유 저장과 함께
- * 회원 탈퇴 처리를 수행합니다.
- */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -84,7 +78,13 @@ public class WithdrawService {
      */
     private void saveWithdrawReason(Member member, WithdrawRequestDto withdrawRequest) {
         WithdrawReasonType reasonType = withdrawRequest.reasonType();
-        String customReason = withdrawRequest.getCleanCustomReason();
+        
+        // OTHER 타입이 아닌 경우 customReason은 무조건 null 처리
+
+		String customReason = null;
+		if (reasonType.isCustomReason()) {
+			customReason = withdrawRequest.getCleanCustomReason();
+		}
 
         // OTHER 타입인 경우 사용자 정의 사유 필수
         validateCustomReasonIfNeeded(reasonType, customReason);
