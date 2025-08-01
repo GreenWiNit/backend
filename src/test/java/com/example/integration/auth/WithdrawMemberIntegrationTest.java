@@ -79,7 +79,7 @@ class WithdrawMemberIntegrationTest extends BaseIntegrationTest {
 		Long memberId = testMember.getId();
 		WithdrawRequestDto request = new WithdrawRequestDto(
 			WithdrawReasonType.SERVICE_DISSATISFACTION,
-			"서비스가 불편해서 탈퇴합니다."
+			null
 		);
 
 		// when
@@ -103,7 +103,7 @@ class WithdrawMemberIntegrationTest extends BaseIntegrationTest {
 		Optional<WithdrawReason> withdrawReason = withdrawReasonRepository.findByMemberKey(memberKey);
 		assertThat(withdrawReason).isPresent();
 		assertThat(withdrawReason.get().getReasonType()).isEqualTo(WithdrawReasonType.SERVICE_DISSATISFACTION);
-		assertThat(withdrawReason.get().getCustomReason()).isEqualTo("서비스가 불편해서 탈퇴합니다.");
+		assertThat(withdrawReason.get().getCustomReason()).isNull(); // OTHER 외에는 customReason이 null로 처리됨
 	}
 
 	@Test
