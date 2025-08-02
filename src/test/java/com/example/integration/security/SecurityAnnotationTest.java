@@ -40,7 +40,7 @@ class SecurityAnnotationTest extends ServiceIntegrationTest {
 				.content(
 					"{\"title\":\"Valid Title Here\",\"content\":\"This is a valid content that meets the minimum length requirement.\",\"challengeId\":1}"))
 			.andDo(print())
-			.andExpect(status().isForbidden());
+			.andExpect(status().isUnauthorized());
 	}
 
 	@Test
@@ -103,6 +103,6 @@ class SecurityAnnotationTest extends ServiceIntegrationTest {
 				.content(
 					"{\"title\":\"Valid Title Here\",\"content\":\"This is a valid content that meets the minimum length requirement.\",\"challengeId\":1}"))
 			.andDo(print())
-			.andExpect(status().isForbidden());
+			.andExpect(status().isUnauthorized());
 	}
 } 
