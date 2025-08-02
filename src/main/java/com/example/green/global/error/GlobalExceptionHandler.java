@@ -118,9 +118,6 @@ public class GlobalExceptionHandler {
 		return buildExceptionResponse(exception.getExceptionMessage());
 	}
 
-	// ------------------------------------------------------------------
-	// helpers
-
 	private ResponseEntity<ExceptionResponse> buildExceptionResponse(ExceptionMessage exceptionMessage) {
 		return ResponseEntity.status(exceptionMessage.getHttpStatus())
 			.body(ExceptionResponse.fail(exceptionMessage));
