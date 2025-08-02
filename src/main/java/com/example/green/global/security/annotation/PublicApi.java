@@ -8,6 +8,8 @@ import java.lang.annotation.Target;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
+
 /**
  * 인증이 필요 없는 공개 API를 명시하는 메타 어노테이션입니다.
  *
@@ -24,6 +26,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @PreAuthorize("permitAll()")
+@SecurityRequirements() // 전역 보안 요구사항 제거 (공개 API는 자물쇠 없음)
 public @interface PublicApi {
 
 	String DEFAULT_REASON = "공개 API";
