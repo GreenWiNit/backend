@@ -151,11 +151,14 @@ public class TokenService {
 				.signWith(secretKey)
 				.compact();
 
-			Member member = memberService.findActiveByMemberKey(memberKey)
+			Member member = memberService.findByMemberKey(memberKey)
 				.orElseThrow(() -> {
-					log.error("TokenManager 생성 실패: 활성 사용자를 찾을 수 없음 (탈퇴했거나 존재하지 않음) - {}", memberKey);
+					log.error("TokenManager 생성 실패: 사용자를 찾을 수 없음 - {}", memberKey);
 					return new BusinessException(MemberExceptionMessage.MEMBER_NOT_FOUND);
 				});
+			if (member.isWithdrawn()) {
+				memberService.restoreStatusToNormal(member);
+			}
 
 			// 기존 토큰 정리 (선택적: 한 사용자당 최대 토큰 수 제한)
 			cleanupOldTokens(memberKey);

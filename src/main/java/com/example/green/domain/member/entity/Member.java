@@ -104,6 +104,11 @@ public class Member extends BaseEntity {
 		this.markDeleted();
 	}
 
+	public void restoreStatusToNormal() {
+		this.status = MemberStatus.NORMAL;
+		this.restore();
+	}
+
 	public boolean isWithdrawn() {
 		return this.status == MemberStatus.DELETED || this.isDeleted();
 	}

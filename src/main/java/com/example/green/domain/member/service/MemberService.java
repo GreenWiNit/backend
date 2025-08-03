@@ -169,6 +169,23 @@ public class MemberService {
 	}
 
 	/**
+	 * 회원 키로 회원 조회
+	 */
+	@Transactional(readOnly = true)
+	public Optional<Member> findByMemberKey(String memberKey) {
+		return memberRepository.findByMemberKey(memberKey);
+	}
+
+	/**
+	 * 탈퇴한 회원에서 다시 가입한 회원으로 전환
+	 * 작성일 기준 createRefreshToken에서 사용
+	 */
+	@Transactional(readOnly = true)
+	public void restoreStatusToNormal(Member member) {
+		member.restoreStatusToNormal();
+	}
+
+	/**
 	 * 활성 회원 존재 여부 확인
 	 */
 	@Transactional(readOnly = true)
