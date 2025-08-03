@@ -180,7 +180,7 @@ public class MemberService {
 	 * 탈퇴한 회원에서 다시 가입한 회원으로 전환
 	 * 작성일 기준 createRefreshToken에서 사용
 	 */
-	@Transactional(readOnly = true)
+	@Transactional
 	public void restoreStatusToNormal(Member member) {
 		member.restoreStatusToNormal();
 	}
