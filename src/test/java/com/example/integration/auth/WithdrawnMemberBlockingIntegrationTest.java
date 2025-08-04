@@ -69,14 +69,14 @@ class WithdrawnMemberBlockingIntegrationTest extends BaseIntegrationTest {
 	void shouldAllowSignupWithDifferentSNSAccount() {
 		// When: 다른 SNS 계정으로 가입
 		String newMemberKey = memberService.signupFromOAuth2(
-			"naver", "999999999",  // 다른 providerId
+			"naver", "999999999",
 			"김철수", 
 			"new@example.com",
 			"새사용자",
 			"https://example.com/new-profile.jpg"
 		);
 
-		// Then: 정상 가입 성공
+		// Then
 		assertThat(newMemberKey).isEqualTo("naver 999999999");
 		
 		Member newMember = memberRepository.findByMemberKey(newMemberKey).orElseThrow();

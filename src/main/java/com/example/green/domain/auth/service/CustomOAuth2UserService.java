@@ -49,23 +49,23 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 			oAuth2Response.getProviderId()
 		);
 
-		// 탈퇴한 사용자 체크 - 재가입 차단
-		Optional<Member> withdrawnMember = memberService.findByMemberKey(memberKey);
-		if (withdrawnMember.isPresent() && withdrawnMember.get().isWithdrawn()) {
+		Optional<Member> existingMember = memberService.findByMemberKey(memberKey);
+		
+		// 신규 사용자 처리
+		if (existingMember.isEmpty()) {
+			log.info("신규 사용자 발견: {}", memberKey);
+			UserDto userDto = UserDto.forNewUser(oauth2UserInfoDto);
+			return new CustomOAuth2UserDto(userDto);
+		}
+		
+		Member member = existingMember.get();
+
+		if (member.isWithdrawn()) {
 			log.warn("탈퇴한 회원의 재가입 시도 차단: {}", memberKey);
 			throw new WithdrawnMemberAccessException(memberKey);
 		}
 
-		boolean isExistingUser = memberService.existsActiveByMemberKey(memberKey);
-
-		if (!isExistingUser) {
-			log.info("신규 사용자 발견: {}", memberKey);
-			UserDto userDto = UserDto.forNewUser(oauth2UserInfoDto);
-			return new CustomOAuth2UserDto(userDto);
-		} else {
-			// 기존 사용자 정보 업데이트
-			return updateExistingUser(memberKey, oAuth2Response);
-		}
+		return updateExistingUser(memberKey, oAuth2Response);
 	}
 
 	@Transactional
