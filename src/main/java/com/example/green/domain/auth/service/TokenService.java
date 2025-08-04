@@ -156,6 +156,7 @@ public class TokenService {
 					log.error("TokenManager 생성 실패: 사용자를 찾을 수 없음 - {}", memberKey);
 					return new BusinessException(MemberExceptionMessage.MEMBER_NOT_FOUND);
 				});
+			
 			if (member.isWithdrawn()) {
 				memberService.restoreStatusToNormal(member);
 			}
