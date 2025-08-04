@@ -96,11 +96,37 @@ public class MemberService {
 	 * @return 생성된 사용자의 memberKey
 	 */
 	private String createMember(String memberKey, String name, String email, String nickname, String profileImageUrl) {
-		if (memberRepository.existsByMemberKey(memberKey)) {
-			log.warn("이미 존재하는 사용자입니다 (DB 체크): {}", memberKey);
-			return memberKey;
+		Optional<Member> existingMember = memberRepository.findByMemberKey(memberKey);
+		
+		if (existingMember.isPresent()) {
+			Member member = existingMember.get();
+			
+			if (member.isWithdrawn()) {
+				return restoreWithdrawnMember(member, name, email, nickname, profileImageUrl);
+			} else {
+				log.warn("이미 존재하는 활성 사용자입니다: {}", memberKey);
+				return memberKey;
+			}
 		}
+		return createNewMember(memberKey, name, email, nickname, profileImageUrl);
+	}
 
+	private String restoreWithdrawnMember(Member member, String name, String email, String nickname, String profileImageUrl) {
+		member.restoreStatusToNormal();
+		member.updateOAuth2Info(name, email);
+
+		if (hasAdditionalProfileInfo(nickname, profileImageUrl)) {
+			member.updateProfile(nickname, profileImageUrl);
+			log.info("탈퇴 사용자 복원 및 새 프로필 적용: nickname={}, profileImageUrl={}", nickname, profileImageUrl);
+		}
+		log.info("재가입 완료: memberKey={}, newNickname={}, previousData=preserved",
+			member.getMemberKey(), nickname);
+		
+		log.info("탈퇴 사용자 복원 완료: {} ({})", name, email);
+		return member.getMemberKey();
+	}
+
+	private String createNewMember(String memberKey, String name, String email, String nickname, String profileImageUrl) {
 		try {
 			Member member = Member.create(memberKey, name, email);
 
@@ -169,11 +195,28 @@ public class MemberService {
 	}
 
 	/**
+	 * 회원 키로 회원 조회
+	 */
+	@Transactional(readOnly = true)
+	public Optional<Member> findByMemberKey(String memberKey) {
+		return memberRepository.findByMemberKey(memberKey);
+	}
+
+	/**
 	 * 활성 회원 존재 여부 확인
 	 */
 	@Transactional(readOnly = true)
 	public boolean existsActiveByMemberKey(String memberKey) {
 		return memberRepository.existsActiveByMemberKey(memberKey);
+	}
+
+	/**
+	 * 탈퇴한 회원의 상태를 정상으로 복원
+	 */
+	@Transactional
+	public void restoreStatusToNormal(Member member) {
+		member.restoreStatusToNormal();
+		log.info("회원 상태 복원 완료: memberKey={}", member.getMemberKey());
 	}
 
 	/**

@@ -13,6 +13,10 @@ import com.example.green.domain.member.entity.Member;
 import com.example.green.domain.member.entity.enums.MemberStatus;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
+	/**
+	 * 회원 키로 회원 조회
+	 */
+	@Query("SELECT m FROM Member m WHERE m.memberKey = :memberKey")
 	Optional<Member> findByMemberKey(String memberKey);
 
 	boolean existsByMemberKey(String memberKey);
