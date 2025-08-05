@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Tag(name = "주문(상품 교환) API", description = "주문 관련 API 모음 입니다.")
 public interface OrderAdminControllerDocs {
@@ -34,6 +35,10 @@ public interface OrderAdminControllerDocs {
 	@ApiResponse(responseCode = "200", description = "상품 교환 신쳥 목록 조회에 성공했습니다.")
 	ApiTemplate<PageTemplate<ExchangeApplicationResult>> searchExchangeApplication(
 		ExchangeApplicationSearchCondition condition);
+
+	@Operation(summary = "교환 신청 목록 다운로드 (관리자)", description = "포인트 상품 교환 신청 목록을 다운로드합니다.")
+	@ApiResponse(responseCode = "200")
+	void downloadExchangeApplication(ExchangeApplicationSearchCondition condition, HttpServletResponse response);
 
 	@Operation(summary = "상품 배송 상태로 변경 (관리자)", description = "주문된 상품 교환 내역을 배송중인 상태로 변경합니다.")
 	@ApiResponse(responseCode = "200", description = "주문이 배송 시작 상태로 변경되었습니다.")

@@ -1,5 +1,7 @@
 package com.example.green.domain.pointshop.order.repository;
 
+import java.util.List;
+
 import com.example.green.domain.pointshop.order.controller.dto.ExchangeApplicationResult;
 import com.example.green.domain.pointshop.order.controller.dto.ExchangeApplicationSearchCondition;
 import com.example.green.domain.pointshop.order.controller.dto.PointProductApplicantResult;
@@ -14,4 +16,6 @@ public interface OrderQueryRepository {
 	);
 
 	PageTemplate<ExchangeApplicationResult> searchExchangeApplication(ExchangeApplicationSearchCondition condition);
+
+	List<ExchangeApplicationResult> searchExchangeApplicationForExcel(ExchangeApplicationSearchCondition condition);
 }
