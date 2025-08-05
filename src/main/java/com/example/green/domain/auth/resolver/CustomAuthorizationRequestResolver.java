@@ -1,4 +1,4 @@
-package com.example.green.domain.auth.security;
+package com.example.green.domain.auth.resolver;
 
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizationRequestResolver;

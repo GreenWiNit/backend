@@ -4,7 +4,7 @@ import java.net.URI;
 
 import org.springframework.stereotype.Component;
 
-import com.example.green.domain.auth.security.CustomAuthorizationRequestResolver;
+import com.example.green.domain.auth.resolver.CustomAuthorizationRequestResolver;
 import com.example.green.global.config.AllowedDomainsPolicy;
 
 import jakarta.servlet.http.HttpServletRequest;
