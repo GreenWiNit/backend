@@ -2,7 +2,6 @@ package com.example.integration.config;
 
 import static org.mockito.Mockito.*;
 
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -10,7 +9,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import com.example.green.domain.auth.service.TokenService;
 import com.example.green.global.security.PrincipalDetails;
 
-@TestConfiguration
 public class TestTokenServiceConfig {
 
 	@Bean
