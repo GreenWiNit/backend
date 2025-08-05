@@ -51,14 +51,7 @@ public class PointProductAdminController implements PointProductAdminControllerD
 
 	@PostMapping
 	public ApiTemplate<Long> createPointProduct(@RequestBody @Valid PointProductCreateDto dto) {
-		PointProductCreateCommand command = new PointProductCreateCommand(
-			new Code(dto.code()),
-			new BasicInfo(dto.name(), dto.description()),
-			new Media(dto.thumbnailUrl()),
-			new Price(dto.price()),
-			new Stock(dto.stock())
-		);
-
+		PointProductCreateCommand command = dto.toCommand();
 		Long result = pointProductService.create(command);
 		return ApiTemplate.ok(POINT_PRODUCT_CREATION_SUCCESS, result);
 	}
