@@ -192,9 +192,6 @@ public class MemberService {
 		return memberRepository.findByMemberKey(memberKey);
 	}
 
-	/**
-	 * 활성 회원 존재 여부 확인
-	 */
 	@Transactional(readOnly = true)
 	public boolean existsActiveByMemberKey(String memberKey) {
 		return memberRepository.existsActiveByMemberKey(memberKey);
@@ -206,6 +203,12 @@ public class MemberService {
 	@Transactional(readOnly = true)
 	public boolean existsByMemberKey(String memberKey) {
 		return memberRepository.existsByMemberKey(memberKey);
+	}
+
+
+	@Transactional(readOnly = true)
+	public Member getCurrentMemberInfo(Long memberId) {
+		return findMemberById(memberId, "현재 사용자 정보 조회");
 	}
 
 	/**

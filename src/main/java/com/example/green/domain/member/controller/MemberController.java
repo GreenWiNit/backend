@@ -2,6 +2,7 @@ package com.example.green.domain.member.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,6 +13,7 @@ import jakarta.validation.Valid;
 
 import com.example.green.domain.member.controller.docs.MemberControllerDocs;
 import com.example.green.domain.member.controller.message.MemberResponseMessage;
+import com.example.green.domain.member.dto.MemberInfoResponseDto;
 import com.example.green.domain.member.dto.NicknameCheckRequestDto;
 import com.example.green.domain.member.dto.NicknameCheckResponseDto;
 import com.example.green.domain.member.dto.ProfileUpdateRequestDto;
@@ -36,6 +38,21 @@ public class MemberController implements MemberControllerDocs {
 
 	private final MemberService memberService;
 	private final WithdrawService withdrawService;
+
+	@AuthenticatedApi(reason = "자신의 정보를 조회할 수 있습니다")
+	@GetMapping("/me")
+	public ApiTemplate<MemberInfoResponseDto> getCurrentMemberInfo(
+		@AuthenticationPrincipal PrincipalDetails currentUser) {
+		
+		Long memberId = currentUser.getMemberId();
+		Member member = memberService.getCurrentMemberInfo(memberId);
+		MemberInfoResponseDto response = MemberInfoResponseDto.from(member);
+		
+		log.info("[MEMBER] 현재 사용자 정보 조회: memberId={}, nickname={}", 
+			memberId, member.getProfile().getNickname());
+		
+		return ApiTemplate.ok(MemberResponseMessage.MEMBER_INFO_RETRIEVED, response);
+	}
 
 	@Override
 	@AuthenticatedApi(reason = "본인의 프로필 수정은 로그인이 필요합니다")
