@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +38,6 @@ class OrderIdempotencyTest extends BaseIntegrationTest {
 	@BeforeEach
 	void setUp() {
 		RestAssuredMockMvc.mockMvc(mockMvc);
-
 		dataSource.deleteOrderItems();
 		dataSource.deleteOrder();
 		dataSource.deleteIdempotency();
@@ -45,6 +45,11 @@ class OrderIdempotencyTest extends BaseIntegrationTest {
 		dataSource.createOrder();
 		dataSource.createOrderItems();
 		dataSource.createIdempotency();
+	}
+
+	@AfterEach
+	void tearDown() {
+
 	}
 
 	@Test
@@ -88,6 +93,7 @@ class OrderIdempotencyTest extends BaseIntegrationTest {
 		return RestAssuredMockMvc
 			.given().log().all()
 			.contentType(ContentType.JSON)
+			.header("Authorization", "Bearer TEST")
 			.header("idempotency-Key", "unique-idempotency-key")
 			.body(orderRequest)
 			.when()

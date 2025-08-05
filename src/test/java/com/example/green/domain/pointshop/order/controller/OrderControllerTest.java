@@ -10,9 +10,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
+import com.example.green.domain.pointshop.order.controller.dto.SingleOrderRequest;
 import com.example.green.domain.pointshop.order.service.OrderService;
 import com.example.green.domain.pointshop.order.service.command.SingleOrderCommand;
-import com.example.green.domain.pointshop.order.controller.dto.SingleOrderRequest;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.template.base.BaseControllerUnitTest;
 
