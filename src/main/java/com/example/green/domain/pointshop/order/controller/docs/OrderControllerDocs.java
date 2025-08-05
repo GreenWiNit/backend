@@ -3,6 +3,7 @@ package com.example.green.domain.pointshop.order.controller.docs;
 import com.example.green.domain.pointshop.order.controller.dto.SingleOrderRequest;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.error.dto.ExceptionResponse;
+import com.example.green.global.security.PrincipalDetails;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -35,5 +36,5 @@ public interface OrderControllerDocs {
 		""",
 		content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
 	)
-	ApiTemplate<Long> exchangeSinglePointProduct(SingleOrderRequest dto);
+	ApiTemplate<Long> exchangeSinglePointProduct(SingleOrderRequest dto, PrincipalDetails principal);
 }

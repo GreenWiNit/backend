@@ -2,6 +2,7 @@ package com.example.green.domain.pointshop.order.controller;
 
 import static com.example.green.domain.pointshop.order.controller.OrderResponseMessage.*;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +14,8 @@ import com.example.green.domain.pointshop.order.controller.dto.SingleOrderReques
 import com.example.green.domain.pointshop.order.service.OrderService;
 import com.example.green.domain.pointshop.order.service.command.SingleOrderCommand;
 import com.example.green.global.api.ApiTemplate;
+import com.example.green.global.security.PrincipalDetails;
+import com.example.green.global.security.annotation.AuthenticatedApi;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,9 +28,13 @@ public class OrderController implements OrderControllerDocs {
 
 	@Idempotent
 	@PostMapping("/point-products/single")
-	public ApiTemplate<Long> exchangeSinglePointProduct(@RequestBody SingleOrderRequest dto) {
-		// TODO: 인증 시스템 구현 후 실제 사용자 정보로 변경
-		SingleOrderCommand command = SingleOrderCommand.of(1L, "01ARZ3NDEKTSV4RRFFQ69G5FAV", dto);
+	@AuthenticatedApi
+	public ApiTemplate<Long> exchangeSinglePointProduct(
+		@RequestBody SingleOrderRequest dto,
+		@AuthenticationPrincipal PrincipalDetails principal
+	) {
+		SingleOrderCommand command =
+			dto.toCommand(principal.getMemberId(), principal.getMemberKey(), principal.getEmail());
 		Long result = orderService.orderSingleItem(command);
 		return ApiTemplate.ok(POINT_PRODUCT_EXCHANGE_SUCCESS, result);
 	}

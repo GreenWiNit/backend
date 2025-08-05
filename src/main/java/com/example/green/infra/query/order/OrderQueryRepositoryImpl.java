@@ -47,7 +47,8 @@ public class OrderQueryRepositoryImpl implements OrderQueryRepository {
 
 		List<PointProductApplicantResult> result = jpaQueryFactory.select(Projections.constructor(
 				PointProductApplicantResult.class,
-				qOrder.memberSnapshot.memberCode,
+				qOrder.memberSnapshot.memberKey,
+				qOrder.memberSnapshot.memberEmail,
 				qOrder.createdDate,
 				qOrder.status
 			))
@@ -79,7 +80,8 @@ public class OrderQueryRepositoryImpl implements OrderQueryRepository {
 				Projections.constructor(ExchangeApplicationResult.class,
 					qOrder.id,
 					qOrder.createdDate,
-					qOrder.memberSnapshot.memberCode,
+					qOrder.memberSnapshot.memberKey,
+					qOrder.memberSnapshot.memberEmail,
 					qOrderItem.itemSnapshot.itemCode,
 					qOrderItem.quantity,
 					qOrder.totalPrice,

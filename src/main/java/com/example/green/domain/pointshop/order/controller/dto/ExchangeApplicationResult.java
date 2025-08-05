@@ -21,6 +21,8 @@ public class ExchangeApplicationResult {
 	private long id;
 	@Schema(description = "상품 교환 신청일자")
 	private LocalDateTime exchangedAt;
+	@Schema(description = "상품 교환 신청자 키 값", example = "oauth_0000")
+	private String memberKey;
 	@Schema(description = "상품 교환 신청자 이메일", example = "greenwinit@gmail.com")
 	private String memberEmail;
 	@Schema(description = "상품 코드", example = "PRD-AA-001")
@@ -41,6 +43,7 @@ public class ExchangeApplicationResult {
 	public ExchangeApplicationResult(
 		Long id,
 		LocalDateTime exchangedAt,
+		String memberKey,
 		String memberEmail,
 		String pointProductCode,
 		int quantity,
@@ -50,6 +53,7 @@ public class ExchangeApplicationResult {
 	) {
 		this(id,
 			exchangedAt,
+			memberKey,
 			memberEmail,
 			pointProductCode,
 			quantity,

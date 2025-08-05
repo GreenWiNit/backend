@@ -193,7 +193,8 @@ public class DbInitializer {
 			DeliveryAddressSnapshot deliveryAddressSnapshot = DeliveryAddressSnapshot.of(
 				i + 1L, name, phoneNumber, "랜덤 도로명" + i, "상세 주소" + i,
 				String.valueOf(random.nextInt(10000, 100000)));
-			MemberSnapshot memberSnapshot = new MemberSnapshot(random.nextLong(1, 101), UUID.randomUUID().toString());
+			MemberSnapshot memberSnapshot = new MemberSnapshot(random.nextLong(1, 101), UUID.randomUUID().toString(),
+				UUID.randomUUID().toString());
 			int price = random.nextInt(1000, 10000);
 			ItemSnapshot itemSnapshot =
 				new ItemSnapshot(i + 1L, "랜덤 아이템" + i, UUID.randomUUID().toString(), BigDecimal.valueOf(price));
