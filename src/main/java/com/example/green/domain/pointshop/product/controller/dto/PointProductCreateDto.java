@@ -2,6 +2,13 @@ package com.example.green.domain.pointshop.product.controller.dto;
 
 import java.math.BigDecimal;
 
+import com.example.green.domain.pointshop.product.entity.vo.BasicInfo;
+import com.example.green.domain.pointshop.product.entity.vo.Code;
+import com.example.green.domain.pointshop.product.entity.vo.Media;
+import com.example.green.domain.pointshop.product.entity.vo.Price;
+import com.example.green.domain.pointshop.product.entity.vo.Stock;
+import com.example.green.domain.pointshop.product.service.command.PointProductCreateCommand;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -30,4 +37,14 @@ public record PointProductCreateDto(
 	@Schema(description = "상품 재고", example = "10")
 	Integer stock
 ) {
+
+	public PointProductCreateCommand toCommand() {
+		return new PointProductCreateCommand(
+			new Code(code),
+			new BasicInfo(name, description),
+			new Media(thumbnailUrl),
+			new Price(price),
+			new Stock(stock)
+		);
+	}
 }

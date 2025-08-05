@@ -17,6 +17,8 @@ import lombok.NoArgsConstructor;
 @Schema(description = "관리자 상품 목록 조회 응답")
 public class PointProductSearchResult {
 
+	@Schema(description = "상품 식별자", example = "1")
+	private Long id;
 	@Schema(description = "상품 코드", example = "PRD-AA-001")
 	private String code;
 	@Schema(description = "상품명", example = "텀블러")
