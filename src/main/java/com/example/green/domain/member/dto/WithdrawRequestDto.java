@@ -12,15 +12,17 @@ public record WithdrawRequestDto(
     
     @NotNull(message = "탈퇴 사유를 선택해주세요.")
     @Schema(
-        description = "탈퇴 사유 타입", 
+        description = "탈퇴 사유 타입 (단일 선택)", 
         example = "SERVICE_DISSATISFACTION",
+        type = "string",
         allowableValues = {
             "SERVICE_DISSATISFACTION", 
             "POLICY_DISAGREEMENT", 
             "PRIVACY_CONCERN", 
             "PRIVACY_PROTECTION", 
             "OTHER"
-        }
+        },
+        requiredMode = Schema.RequiredMode.REQUIRED
     )
     WithdrawReasonType reasonType,
     
