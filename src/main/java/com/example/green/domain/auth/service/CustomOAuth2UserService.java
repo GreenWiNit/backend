@@ -1,5 +1,7 @@
 package com.example.green.domain.auth.service;
 
+import java.util.Optional;
+
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -12,6 +14,8 @@ import com.example.green.domain.auth.dto.OAuth2ResponseDto;
 import com.example.green.domain.auth.dto.OAuth2UserInfoDto;
 import com.example.green.domain.auth.dto.UserDto;
 import com.example.green.domain.auth.enums.OAuth2Provider;
+import com.example.green.domain.auth.exception.WithdrawnMemberAccessException;
+import com.example.green.domain.member.entity.Member;
 import com.example.green.domain.member.service.MemberService;
 
 import lombok.RequiredArgsConstructor;
@@ -26,7 +30,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 	private final MemberService memberService;
 
 	@Override
-	@Transactional // OAuth2 사용자 로딩 시 쓰기 트랜잭션 필요
+	@Transactional
 	public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 		OAuth2User oAuth2User = super.loadUser(userRequest);
 		log.info("loadUser : {}", oAuth2User);
@@ -45,16 +49,23 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 			oAuth2Response.getProviderId()
 		);
 
-		boolean isExistingUser = memberService.existsActiveByMemberKey(memberKey);
-
-		if (!isExistingUser) {
+		Optional<Member> existingMember = memberService.findByMemberKey(memberKey);
+		
+		// 신규 사용자 처리
+		if (existingMember.isEmpty()) {
 			log.info("신규 사용자 발견: {}", memberKey);
 			UserDto userDto = UserDto.forNewUser(oauth2UserInfoDto);
 			return new CustomOAuth2UserDto(userDto);
-		} else {
-			// 기존 사용자 정보 업데이트
-			return updateExistingUser(memberKey, oAuth2Response);
 		}
+		
+		Member member = existingMember.get();
+
+		if (member.isWithdrawn()) {
+			log.warn("탈퇴한 회원의 재가입 시도 차단: {}", memberKey);
+			throw new WithdrawnMemberAccessException(memberKey);
+		}
+
+		return updateExistingUser(memberKey, oAuth2Response);
 	}
 
 	@Transactional

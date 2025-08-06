@@ -47,7 +47,8 @@ public class OrderQueryRepositoryImpl implements OrderQueryRepository {
 
 		List<PointProductApplicantResult> result = jpaQueryFactory.select(Projections.constructor(
 				PointProductApplicantResult.class,
-				qOrder.memberSnapshot.memberCode,
+				qOrder.memberSnapshot.memberKey,
+				qOrder.memberSnapshot.memberEmail,
 				qOrder.createdDate,
 				qOrder.status
 			))
@@ -79,7 +80,8 @@ public class OrderQueryRepositoryImpl implements OrderQueryRepository {
 				Projections.constructor(ExchangeApplicationResult.class,
 					qOrder.id,
 					qOrder.createdDate,
-					qOrder.memberSnapshot.memberCode,
+					qOrder.memberSnapshot.memberKey,
+					qOrder.memberSnapshot.memberEmail,
 					qOrderItem.itemSnapshot.itemCode,
 					qOrderItem.quantity,
 					qOrder.totalPrice,
@@ -95,6 +97,30 @@ public class OrderQueryRepositoryImpl implements OrderQueryRepository {
 			.fetch();
 
 		return PageTemplate.of(result, pagination);
+	}
+
+	@Override
+	public List<ExchangeApplicationResult> searchExchangeApplicationForExcel(
+		ExchangeApplicationSearchCondition condition
+	) {
+		BooleanExpression expression = fromCondition(condition);
+		return jpaQueryFactory.select(
+				Projections.constructor(ExchangeApplicationResult.class,
+					qOrder.id,
+					qOrder.createdDate,
+					qOrder.memberSnapshot.memberKey,
+					qOrder.memberSnapshot.memberEmail,
+					qOrderItem.itemSnapshot.itemCode,
+					qOrderItem.quantity,
+					qOrder.totalPrice,
+					qOrder.deliveryAddressSnapshot,
+					qOrder.status
+				))
+			.from(qOrder)
+			.where(expression)
+			.join(qOrderItem).on(qOrderItem.order.id.eq(qOrder.id))
+			.orderBy(qOrder.createdDate.desc())
+			.fetch();
 	}
 
 	private BooleanExpression fromCondition(ExchangeApplicationSearchCondition condition) {

@@ -102,30 +102,20 @@ public class MemberService {
 			Member member = existingMember.get();
 			
 			if (member.isWithdrawn()) {
-				return restoreWithdrawnMember(member, name, email, nickname, profileImageUrl);
+				log.warn("탈퇴한 사용자의 회원가입 시도 감지: {}", memberKey);
+				throw new IllegalStateException("탈퇴한 사용자는 재가입할 수 없습니다: " + memberKey);
 			} else {
-				log.warn("이미 존재하는 활성 사용자입니다: {}", memberKey);
+				log.warn("이미 존재하는 활성 사용자입니다 (DB 체크): {}", memberKey);
 				return memberKey;
 			}
 		}
+
 		return createNewMember(memberKey, name, email, nickname, profileImageUrl);
 	}
 
-	private String restoreWithdrawnMember(Member member, String name, String email, String nickname, String profileImageUrl) {
-		member.restoreStatusToNormal();
-		member.updateOAuth2Info(name, email);
-
-		if (hasAdditionalProfileInfo(nickname, profileImageUrl)) {
-			member.updateProfile(nickname, profileImageUrl);
-			log.info("탈퇴 사용자 복원 및 새 프로필 적용: nickname={}, profileImageUrl={}", nickname, profileImageUrl);
-		}
-		log.info("재가입 완료: memberKey={}, newNickname={}, previousData=preserved",
-			member.getMemberKey(), nickname);
-		
-		log.info("탈퇴 사용자 복원 완료: {} ({})", name, email);
-		return member.getMemberKey();
-	}
-
+	/**
+	 * 완전히 새로운 사용자 생성
+	 */
 	private String createNewMember(String memberKey, String name, String email, String nickname, String profileImageUrl) {
 		try {
 			Member member = Member.create(memberKey, name, email);
@@ -202,21 +192,23 @@ public class MemberService {
 		return memberRepository.findByMemberKey(memberKey);
 	}
 
-	/**
-	 * 활성 회원 존재 여부 확인
-	 */
 	@Transactional(readOnly = true)
 	public boolean existsActiveByMemberKey(String memberKey) {
 		return memberRepository.existsActiveByMemberKey(memberKey);
 	}
 
 	/**
-	 * 탈퇴한 회원의 상태를 정상으로 복원
+	 * 모든 회원(탈퇴 포함) 존재 여부 확인
 	 */
-	@Transactional
-	public void restoreStatusToNormal(Member member) {
-		member.restoreStatusToNormal();
-		log.info("회원 상태 복원 완료: memberKey={}", member.getMemberKey());
+	@Transactional(readOnly = true)
+	public boolean existsByMemberKey(String memberKey) {
+		return memberRepository.existsByMemberKey(memberKey);
+	}
+
+
+	@Transactional(readOnly = true)
+	public Member getCurrentMemberInfo(Long memberId) {
+		return findMemberById(memberId, "현재 사용자 정보 조회");
 	}
 
 	/**
@@ -355,24 +347,6 @@ public class MemberService {
 			unUseProfileImage(member.getProfile().getProfileImageUrl());
 			log.info("회원 탈퇴로 인한 프로필 이미지 사용 중지: {}", member.getProfile().getProfileImageUrl());
 		}
-	}
-
-
-	/**
-	 * 사용자명으로 회원 조회
-	 * - 회원이 존재하지 않으면 예외 발생
-	 *
-	 * @param memberKey 사용자명
-	 * @param operation 수행 중인 작업
-	 * @return 조회된 회원
-	 * @throws BusinessException 회원이 존재하지 않는 경우
-	 */
-	private Member findMemberByMemberKey(String memberKey, String operation) {
-		return memberRepository.findByMemberKey(memberKey)
-			.orElseThrow(() -> {
-				log.error("{} 실패: 사용자를 찾을 수 없음 - memberKey: {}", operation, memberKey);
-				return new BusinessException(MemberExceptionMessage.MEMBER_NOT_FOUND);
-			});
 	}
 
 }

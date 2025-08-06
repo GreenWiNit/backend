@@ -23,8 +23,7 @@ import com.example.green.domain.auth.OAuth2FailureHandler;
 import com.example.green.domain.auth.filter.JwtFilter;
 import com.example.green.domain.auth.service.CustomOAuth2UserService;
 import com.example.green.domain.auth.service.TokenService;
-import com.example.green.domain.auth.security.CustomAuthorizationRequestResolver;
-import com.example.green.global.config.AllowedDomainsPolicy;
+import com.example.green.domain.auth.resolver.CustomAuthorizationRequestResolver;
 
 import jakarta.servlet.http.HttpServletRequest;
 

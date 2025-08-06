@@ -1,5 +1,8 @@
 package com.example.green.domain.pointshop.order.controller.dto;
 
+import com.example.green.domain.pointshop.order.entity.vo.MemberSnapshot;
+import com.example.green.domain.pointshop.order.service.command.SingleOrderCommand;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 
@@ -15,4 +18,13 @@ public record SingleOrderRequest(
 	@Schema(description = "교환 수량")
 	Integer quantity
 ) {
+
+	public SingleOrderCommand toCommand(Long memberId, String memberKey, String memberEmail) {
+		return new SingleOrderCommand(
+			new MemberSnapshot(memberId, memberKey, memberEmail),
+			deliveryAddressId,
+			orderItemId,
+			quantity
+		);
+	}
 }

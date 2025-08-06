@@ -34,22 +34,22 @@ public class OrderService {
 	// todo: 통합 테스트
 	@Transactional
 	public Long orderSingleItem(SingleOrderCommand command) {
-		deliveryAddressService.validateAddressOwnership(command.deliveryAddressId(), command.memberId());
+		MemberSnapshot memberSnapshot = command.memberSnapshot();
+		deliveryAddressService.validateAddressOwnership(command.deliveryAddressId(), memberSnapshot.getMemberId());
 
 		ItemSnapshot itemSnapshot = pointProductService.getItemSnapshot(command.orderItemId());
-		MemberSnapshot memberSnapshot = new MemberSnapshot(command.memberId(), command.memberCode());
 		DeliveryAddressSnapshot deliveryAddress = deliveryAddressService.getSnapshot(command.deliveryAddressId());
 
 		Order savedOrder = processOrder(command.quantity(), itemSnapshot, deliveryAddress, memberSnapshot);
-		processSideEffect(command, savedOrder);
+		processSideEffect(command, memberSnapshot.getMemberId(), savedOrder);
 		return savedOrder.getId();
 	}
 
-	private void processSideEffect(SingleOrderCommand command, Order savedOrder) {
+	private void processSideEffect(SingleOrderCommand command, Long memberId, Order savedOrder) {
 		pointProductService.decreaseSingleItemStock(command.orderItemId(), command.quantity());
 		String itemName = savedOrder.getOrderItems().getFirst().getItemSnapshot().getItemName();
 		pointSpendClient.spendPoints(
-			new PointSpendRequest(command.memberId(), savedOrder.getTotalPrice(), savedOrder.getId(), itemName + "교환")
+			new PointSpendRequest(memberId, savedOrder.getTotalPrice(), savedOrder.getId(), itemName + "교환")
 		);
 	}
 

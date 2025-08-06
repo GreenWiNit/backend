@@ -27,7 +27,7 @@ class OrderTest {
 	@BeforeEach
 	void setUp() {
 		deliveryAddressSnapshot = DeliveryAddressSnapshot.of(1L, "수령자", "010-0000-0000", "도로명", "상세", "우편");
-		memberSnapshot = new MemberSnapshot(1L, "01ARZ3NDEKTSV4RRFFQ69G5FAV");
+		memberSnapshot = new MemberSnapshot(1L, "anyKey", "01ARZ3NDEKTSV4RRFFQ69G5FAV");
 		OrderItem orderItem = mock(OrderItem.class);
 		when(orderItem.calculateItemFinalPrice()).thenReturn(finalPrice);
 		orderItems = List.of(orderItem);

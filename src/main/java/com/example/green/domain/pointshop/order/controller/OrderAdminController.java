@@ -1,5 +1,7 @@
 package com.example.green.domain.pointshop.order.controller;
 
+import java.util.List;
+
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -18,7 +20,9 @@ import com.example.green.domain.pointshop.order.service.OrderService;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.NoContent;
 import com.example.green.global.api.page.PageTemplate;
+import com.example.green.global.excel.core.ExcelDownloader;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -28,6 +32,7 @@ public class OrderAdminController implements OrderAdminControllerDocs {
 
 	private final OrderService orderService;
 	private final OrderQueryRepository orderQueryRepository;
+	private final ExcelDownloader excelDownloader;
 
 	@GetMapping("/point-products/{pointProductId}")
 	public ApiTemplate<PageTemplate<PointProductApplicantResult>> getExchangeApplicant(
@@ -47,6 +52,16 @@ public class OrderAdminController implements OrderAdminControllerDocs {
 	) {
 		PageTemplate<ExchangeApplicationResult> result = orderQueryRepository.searchExchangeApplication(condition);
 		return ApiTemplate.ok(OrderResponseMessage.EXCHANGE_APPLICANT_INQUIRY_SUCCESS, result);
+	}
+
+	@GetMapping("/point-products/excel")
+	public void downloadExchangeApplication(
+		@ParameterObject @ModelAttribute
+		ExchangeApplicationSearchCondition condition,
+		HttpServletResponse response
+	) {
+		List<ExchangeApplicationResult> result = orderQueryRepository.searchExchangeApplicationForExcel(condition);
+		excelDownloader.downloadAsStream(result, response);
 	}
 
 	@PatchMapping("/{orderId}/shipping")

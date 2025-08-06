@@ -14,6 +14,7 @@ public enum MemberResponseMessage implements ResponseMessage {
 
 	PROFILE_UPDATED("프로필이 성공적으로 수정되었습니다."),
 	PROFILE_FOUND("프로필 조회에 성공했습니다."),
+	MEMBER_INFO_RETRIEVED("회원 정보 조회에 성공했습니다."),
 
 	MEMBER_LIST_RETRIEVED("회원 목록 조회가 완료되었습니다."),
 	WITHDRAWN_MEMBER_LIST_RETRIEVED("탈퇴 회원 목록 조회가 완료되었습니다."),

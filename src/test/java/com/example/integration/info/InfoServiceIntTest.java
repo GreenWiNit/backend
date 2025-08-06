@@ -21,15 +21,14 @@ import com.example.green.domain.info.exception.InfoException;
 import com.example.green.domain.info.exception.InfoExceptionMessage;
 import com.example.green.domain.info.repository.InfoRepository;
 import com.example.green.domain.info.service.InfoService;
-import com.example.integration.common.ServiceIntegrationTest;
+import com.example.integration.common.BaseIntegrationTest;
 
 /**
  * 정보공유(Info) 관련 비즈니스 계층의 통합 테스트를 진행하는 테스트 클래스
  * - Repository 단은 별도로 테스트하지 않음 (Hibernate 외부 시스템 사용)
  * - Service 단 단위테스트는 통합테스트로 대체 (응답값 검증 위주)
  */
-// TODO [추후작업필요] ServiceIntegrationTest 상속 삭제 후 BaseIntegrationTest 상속으로 변경
-class InfoServiceIntTest extends ServiceIntegrationTest {
+class InfoServiceIntTest extends BaseIntegrationTest {
 
 	@Autowired
 	private InfoRepository infoRepository;
@@ -144,6 +143,7 @@ class InfoServiceIntTest extends ServiceIntegrationTest {
 
 				// then
 				assertThat(response.title()).isEqualTo(infoEntity.getTitle());
+				assertThat(response.infoCategoryCode()).isEqualTo(infoEntity.getInfoCategory().name());
 			}
 
 			@ParameterizedTest
@@ -169,9 +169,9 @@ class InfoServiceIntTest extends ServiceIntegrationTest {
 
 				// then
 				assertThat(response.title()).isEqualTo(updateRequest.title());
+				assertThat(response.infoCategoryCode()).isEqualTo("ETC"); // 컨텐츠 -> 기타
+				assertThat(response.infoCategoryName()).isEqualTo("기타");
 				assertThat(response.imageurl()).isEqualTo(updateRequest.imageUrl());
-				// assertThat(response.modifiedDate()).isNotEqualTo(infoEntity.getCreatedDate()); // 테스트시 시간차 구현이 어려움
-				//assertThat(response.registerId()).isEqualTo(newLonginId); // 수정자 ID가 제대로 반영이 되었는지
 			}
 
 			@Test

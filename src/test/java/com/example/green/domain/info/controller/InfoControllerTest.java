@@ -89,6 +89,20 @@ class InfoControllerTest {
 		}
 
 		@Test
+		void 정보_카테고리_조회() throws Exception {
+			// when & then
+			mockMvc.perform(get("/api/admin/info/categories")
+					.with(csrf())
+					.contentType(APPLICATION_JSON))
+				.andDo(print())
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.success").value(true))
+				.andExpect(jsonPath("$.message").value("카테고리 목록 조회에 성공했습니다."))
+				.andExpect(jsonPath("$.result[0].infoCategoryName").value("이벤트"))
+				.andExpect(jsonPath("$.result[0].infoCategoryCode").value("EVENT"));
+		}
+
+		@Test
 		void 정보_상세_조회() throws Exception {
 			// given
 			LocalDateTime dummyDate = LocalDateTime.of(2025, 7, 1, 10, 15, 30);
@@ -96,6 +110,7 @@ class InfoControllerTest {
 				"P000001",
 				"테스트 제목",
 				"공지사항",
+				"ETC",
 				"테스트 내용 10자 이상 테스트 작성",
 				"imageUrl",
 				"adminUser",
@@ -165,7 +180,8 @@ class InfoControllerTest {
 			InfoDetailResponseByAdmin dummyUpdatedResponse = new InfoDetailResponseByAdmin(
 				"P000001",
 				"테스트 제목",
-				"공지사항",
+				"컨텐츠",
+				"CONTENTS",
 				"테스트 내용 10자 이상 테스트 작성",
 				"imageUrl",
 				"adminUser",
@@ -437,7 +453,7 @@ class InfoControllerTest {
 				"공지사항",
 				"테스트 내용 10자 이상 테스트 작성",
 				"http://example.com/image.jpg"
-				
+
 			);
 
 			when(infoService.getInfoDetailForUser(eq("P000001")))

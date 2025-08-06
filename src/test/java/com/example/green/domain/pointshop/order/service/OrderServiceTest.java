@@ -13,15 +13,16 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.example.green.domain.pointshop.delivery.service.DeliveryAddressService;
 import com.example.green.domain.pointshop.order.client.PointSpendClient;
 import com.example.green.domain.pointshop.order.client.dto.PointSpendRequest;
 import com.example.green.domain.pointshop.order.entity.Order;
 import com.example.green.domain.pointshop.order.entity.OrderItem;
 import com.example.green.domain.pointshop.order.entity.vo.DeliveryAddressSnapshot;
 import com.example.green.domain.pointshop.order.entity.vo.ItemSnapshot;
+import com.example.green.domain.pointshop.order.entity.vo.MemberSnapshot;
 import com.example.green.domain.pointshop.order.repository.OrderRepository;
 import com.example.green.domain.pointshop.order.service.command.SingleOrderCommand;
-import com.example.green.domain.pointshop.delivery.service.DeliveryAddressService;
 import com.example.green.domain.pointshop.product.service.PointProductService;
 
 @ExtendWith(MockitoExtension.class)
@@ -41,7 +42,8 @@ class OrderServiceTest {
 	@Test
 	void 상품주문_커맨드가_주어지면_상품_주문_요청과_사이드_이펙트가_성공한다() {
 		// given
-		SingleOrderCommand command = new SingleOrderCommand(1L, "01ARZ3NDEKTSV4RRFFQ69G5FAV", 1L, 1L, 2);
+		MemberSnapshot memberSnapshot = new MemberSnapshot(1L, "key", "email");
+		SingleOrderCommand command = new SingleOrderCommand(memberSnapshot, 1L, 1L, 2);
 
 		ItemSnapshot itemSnapshot = new ItemSnapshot(1L, "ITEM-001", "테스트 상품", BigDecimal.valueOf(10000));
 		DeliveryAddressSnapshot deliverySnapshot = createDeliverySnapshot();

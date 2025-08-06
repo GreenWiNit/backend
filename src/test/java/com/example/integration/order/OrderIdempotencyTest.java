@@ -17,12 +17,13 @@ import com.example.green.global.api.ApiTemplate;
 import com.example.integration.common.BaseIntegrationTest;
 import com.example.integration.common.concurrency.ConcurrencyTestResult;
 import com.example.integration.common.concurrency.ConcurrencyTestTemplate;
+import com.example.integration.config.TestTokenServiceConfig;
 
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.http.ContentType;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 
-@Import(OrderTestConfig.class)
+@Import({OrderTestConfig.class, TestTokenServiceConfig.class})
 class OrderIdempotencyTest extends BaseIntegrationTest {
 
 	@Autowired
@@ -37,7 +38,6 @@ class OrderIdempotencyTest extends BaseIntegrationTest {
 	@BeforeEach
 	void setUp() {
 		RestAssuredMockMvc.mockMvc(mockMvc);
-
 		dataSource.deleteOrderItems();
 		dataSource.deleteOrder();
 		dataSource.deleteIdempotency();
@@ -88,6 +88,7 @@ class OrderIdempotencyTest extends BaseIntegrationTest {
 		return RestAssuredMockMvc
 			.given().log().all()
 			.contentType(ContentType.JSON)
+			.header("Authorization", "Bearer TEST")
 			.header("idempotency-Key", "unique-idempotency-key")
 			.body(orderRequest)
 			.when()
