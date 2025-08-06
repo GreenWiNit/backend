@@ -145,4 +145,8 @@ public class PointProduct extends BaseEntity {
 	public String getThumbnailUrl() {
 		return this.media.getThumbnailUrl();
 	}
+
+	public boolean isDisplay() {
+		return this.displayStatus == DisplayStatus.DISPLAY;
+	}
 }
