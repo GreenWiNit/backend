@@ -60,6 +60,9 @@ public abstract class BaseChallengeCertification extends BaseEntity {
 	@Column(nullable = false)
 	private CertificationStatus status = CertificationStatus.PENDING;
 
+	@Column(nullable = false)
+	private Boolean approved = false;
+
 	// 하위 클래스를 위한 protected 생성자
 	protected BaseChallengeCertification(
 		Member member,
@@ -74,6 +77,7 @@ public abstract class BaseChallengeCertification extends BaseEntity {
 		this.certifiedAt = certifiedAt;
 		this.certifiedDate = certifiedDate;
 		this.status = CertificationStatus.PENDING;
+		this.approved = false;
 	}
 
 	/**
