@@ -1,5 +1,8 @@
 package com.example.green.domain.info.controller;
 
+import java.util.List;
+
+import com.example.green.domain.info.dto.InfoCategoryDto;
 import com.example.green.domain.info.dto.InfoRequest;
 import com.example.green.domain.info.dto.admin.InfoDetailResponseByAdmin;
 import com.example.green.domain.info.dto.admin.InfoSearchListResponseByAdmin;
@@ -31,6 +34,20 @@ public interface InfoControllerDocs {
 		@Parameter(name = "page", description = "조회할 페이지 번호 (0부터 시작)", example = "0", required = true) Integer page,
 		@Parameter(name = "size", description = "페이지당 게시글 수 (20개로)", example = "20", required = true) Integer size
 	);
+
+	@Operation(
+		summary = "정보공유 카테고리 목록 조회",
+		description = "정보공유 글 생성 페이지 진입시 호출되는 api 입니다. "
+			+ "응답값으로는 서버의 InfoCategory 값들로 infoCategoryCode(영문) / infoCategoryName (한글명)을 반환합니다."
+			+ "글 생성, 수정시 infoCategoryCode infoCategory 필드에 입력해주세요."
+	)
+	@ApiErrorStandard
+	@ApiResponse(
+		responseCode = "200",
+		description = "정보공유 글 생성시 카테고리 목록 조회 성공",
+		useReturnTypeSchema = true
+	)
+	ApiTemplate<List<InfoCategoryDto>> getInfoCategories();
 
 	@Operation(summary = "관리자 Info 상세 페이지 조회", description = "관리자가 정보공유 ID로 상세 페이지를 조회합니다.")
 	@ApiErrorStandard

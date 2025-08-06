@@ -28,6 +28,12 @@ public record InfoDetailResponseByAdmin(
 	String infoCategoryName,
 
 	@Schema(
+		description = "정보 카테고리 코드",
+		allowableValues = {"EVENT", "CONTENTS", "ETC"}
+	)
+	String infoCategoryCode,
+
+	@Schema(
 		description = "정보 본문 내용",
 		example = "그린의 새로운 이벤트에 대해 자세히 알아보세요."
 	)
@@ -69,7 +75,8 @@ public record InfoDetailResponseByAdmin(
 		return new InfoDetailResponseByAdmin(
 			e.getId(),
 			e.getTitle(),
-			e.getInfoCategory().getDescription(),// @JsonValue 대신 명시적인 방법으로 사용
+			e.getInfoCategory().getDescription(),// 카테고리 한글명
+			e.getInfoCategory().name(), // 카테고리 영문명 (수정용)
 			e.getContent(),
 			e.getImageUrl(),
 			e.getLastModifiedBy(),

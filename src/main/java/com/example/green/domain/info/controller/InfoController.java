@@ -1,6 +1,8 @@
 package com.example.green.domain.info.controller;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.green.domain.info.controller.api.InfoResponseMessage;
+import com.example.green.domain.info.domain.vo.InfoCategory;
+import com.example.green.domain.info.dto.InfoCategoryDto;
 import com.example.green.domain.info.dto.InfoRequest;
 import com.example.green.domain.info.dto.admin.InfoDetailResponseByAdmin;
 import com.example.green.domain.info.dto.admin.InfoSearchListResponseByAdmin;
@@ -43,6 +47,18 @@ public class InfoController implements InfoControllerDocs {
 		@RequestParam(name = "size", required = false) Integer size) {
 		InfoSearchListResponseByAdmin response = infoService.getInfosForAdmin(page, size);
 		return ApiTemplate.ok(InfoResponseMessage.INFO_LIST_FOUND, response);
+	}
+
+	@AdminApi(reason = "관리자만 정보 공유 목록 조회 가능")
+	@GetMapping("/api/admin/info/categories")
+	public ApiTemplate<List<InfoCategoryDto>> getInfoCategories() {
+		List<InfoCategoryDto> infoCategories = Arrays.stream(InfoCategory.values())
+			.map(e -> new InfoCategoryDto(
+				e.getDescription(),  // 한글명
+				e.name()             // 영문 코드
+			))
+			.collect(Collectors.toList());
+		return ApiTemplate.ok(InfoResponseMessage.GET_INFOCATEGORIES_SUCCESS, infoCategories);
 	}
 
 	@AdminApi(reason = "관리자만 정보 공유 상세 조회 가능")
