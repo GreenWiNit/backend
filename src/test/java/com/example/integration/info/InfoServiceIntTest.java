@@ -169,10 +169,9 @@ class InfoServiceIntTest extends BaseIntegrationTest {
 
 				// then
 				assertThat(response.title()).isEqualTo(updateRequest.title());
-				assertThat(response.infoCategoryCode()).isEqualTo(infoEntity.getInfoCategory().name());
+				assertThat(response.infoCategoryCode()).isEqualTo("ETC"); // 컨텐츠 -> 기타
+				assertThat(response.infoCategoryName()).isEqualTo("기타");
 				assertThat(response.imageurl()).isEqualTo(updateRequest.imageUrl());
-				// assertThat(response.modifiedDate()).isNotEqualTo(infoEntity.getCreatedDate()); // 테스트시 시간차 구현이 어려움
-				//assertThat(response.registerId()).isEqualTo(newLonginId); // 수정자 ID가 제대로 반영이 되었는지
 			}
 
 			@Test

@@ -2,7 +2,6 @@ package com.example.green.domain.info.controller;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -57,7 +56,7 @@ public class InfoController implements InfoControllerDocs {
 				e.getDescription(),  // 한글명
 				e.name()             // 영문 코드
 			))
-			.collect(Collectors.toList());
+			.toList();
 		return ApiTemplate.ok(InfoResponseMessage.GET_INFOCATEGORIES_SUCCESS, infoCategories);
 	}
 
