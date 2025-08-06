@@ -3,6 +3,7 @@ package com.example.green.domain.member.controller.docs;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
+import com.example.green.domain.member.dto.MemberInfoResponseDto;
 import com.example.green.domain.member.dto.NicknameCheckRequestDto;
 import com.example.green.domain.member.dto.NicknameCheckResponseDto;
 import com.example.green.domain.member.dto.ProfileUpdateRequestDto;
@@ -23,6 +24,68 @@ import jakarta.validation.Valid;
 
 @Tag(name = "Member API", description = "회원 프로필 관리 API")
 public interface MemberControllerDocs {
+
+    @Operation(
+        summary = "현재 사용자 정보 조회",
+        description = """
+            현재 로그인한 사용자의 기본 정보를 조회합니다.
+            
+            ## 조회 정보
+            - 닉네임
+            - 이메일 주소
+            - 프로필 이미지 URL (있는 경우)
+            
+            ## 인증 요구사항
+            - 유효한 JWT 토큰이 필요합니다
+            - 탈퇴한 회원은 조회할 수 없습니다
+            """
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200", 
+            description = "회원 정보 조회 성공",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ApiTemplate.class),
+                examples = @ExampleObject(value = """
+                    {
+                        "success": true,
+                        "message": "회원 정보 조회에 성공했습니다.",
+                        "data": {
+                            "nickname": "환경지킴이",
+                            "email": "user@example.com",
+                            "profileImageUrl": "https://example.com/profile.jpg"
+                        }
+                    }
+                    """)
+            )),
+        @ApiResponse(
+            responseCode = "401", 
+            description = "인증되지 않은 사용자",
+            content = @Content(
+                mediaType = "application/json",
+                examples = @ExampleObject(value = """
+                    {
+                        "success": false,
+                        "message": "인증이 필요합니다."
+                    }
+                    """)
+            )),
+        @ApiResponse(
+            responseCode = "404", 
+            description = "사용자를 찾을 수 없음 (탈퇴한 회원 등)",
+            content = @Content(
+                mediaType = "application/json",
+                examples = @ExampleObject(value = """
+                    {
+                        "success": false,
+                        "message": "해당 회원을 찾을 수 없습니다."
+                    }
+                    """)
+            ))
+    })
+    ApiTemplate<MemberInfoResponseDto> getCurrentMemberInfo(
+        @Parameter(hidden = true) @AuthenticationPrincipal PrincipalDetails currentUser);
 
     @Operation(
         summary = "프로필 수정", 
