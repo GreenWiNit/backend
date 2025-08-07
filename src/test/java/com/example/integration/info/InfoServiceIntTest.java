@@ -1,6 +1,7 @@
 package com.example.integration.info;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -172,6 +173,28 @@ class InfoServiceIntTest extends BaseIntegrationTest {
 				assertThat(response.infoCategoryCode()).isEqualTo("ETC"); // 컨텐츠 -> 기타
 				assertThat(response.infoCategoryName()).isEqualTo("기타");
 				assertThat(response.imageurl()).isEqualTo(updateRequest.imageUrl());
+			}
+
+			@Test
+			void 정보_수정시_이미지URL이_같으면_기존_이미지_URL을_유지한다() {
+				// given
+				InfoRequest updateRequest = InfoRequest.builder()
+					.title("updateTitle")
+					.content("updateContent")
+					.infoCategory(InfoCategory.ETC)
+					.imageUrl(infoEntity.getImageUrl()) // 기존 이미지 URL과 동일
+					.isDisplay("N")
+					.build();
+
+				// when
+				var response = infoService.updateInfo(infoEntity.getId(), updateRequest);
+
+				// then - 결과 값 검증
+				assertThat(response.imageurl()).isEqualTo(infoEntity.getImageUrl());
+
+				// then - 메서드 호출 여부 검증
+				verify(fileManager, never()).unUseImage(anyString());
+				verify(fileManager, never()).confirmUsingImage(anyString());
 			}
 
 			@Test
