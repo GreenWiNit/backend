@@ -47,12 +47,15 @@ public class AuthController implements AuthControllerDocs {
 		HttpServletRequest httpRequest,
 		HttpServletResponse response
 	) {
-		log.info("[SIGNUP] tempToken={}, nickname={}", request.tempToken(), request.nickname());
+		// 닉네임 전처리: 앞뒤 공백 제거
+		String cleanedNickname = request.nickname() != null ? request.nickname().trim() : null;
+		
+		log.info("[SIGNUP] tempToken={}, nickname={}", request.tempToken(), cleanedNickname);
 
 		TempToken tempToken = TempToken.from(request.tempToken(), tokenService);
 		TempTokenInfoDto tempInfo = tempToken.extractUserInfo();
 
-		String memberKey = authService.signup(tempInfo, request.nickname(), request.profileImageUrl());
+		String memberKey = authService.signup(tempInfo, cleanedNickname, request.profileImageUrl());
 
 		String refreshTokenString = tokenService.createRefreshToken(
 			memberKey,

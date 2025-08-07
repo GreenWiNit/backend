@@ -9,6 +9,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "관리자용 탈퇴 회원 목록 조회 응답")
 public record WithdrawnMemberListResponseDto(
+	@Schema(description = "회원 ID", example = "1")
+	Long memberId,
+	
 	@Schema(description = "회원키 (고유 식별자)", example = "naver 123456789")
 	String memberKey,
 	
@@ -35,6 +38,7 @@ public record WithdrawnMemberListResponseDto(
 ) {
 	public static WithdrawnMemberListResponseDto from(Member member) {
 		return new WithdrawnMemberListResponseDto(
+			member.getId(),
 			member.getMemberKey(),
 			member.getEmail(),
 			member.getProfile().getNickname(),
