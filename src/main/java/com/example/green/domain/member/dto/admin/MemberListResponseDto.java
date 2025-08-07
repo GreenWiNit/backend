@@ -9,7 +9,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "관리자용 회원 목록 조회 응답")
 public record MemberListResponseDto(
-	@Schema(description = "회원 ID (포인트 조회 등에 사용)", example = "1")
+	@Schema(description = "회원 ID", example = "1")
 	Long memberId,
 	
 	@Schema(description = "회원키 (고유 식별자)", example = "naver 123456789")
