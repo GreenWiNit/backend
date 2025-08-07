@@ -10,11 +10,14 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import com.example.green.domain.pointshop.product.controller.dto.PointProductDetail;
 import com.example.green.domain.pointshop.product.controller.dto.PointProductView;
 import com.example.green.domain.pointshop.product.entity.PointProduct;
 import com.example.green.domain.pointshop.product.entity.vo.BasicInfo;
+import com.example.green.domain.pointshop.product.entity.vo.Code;
+import com.example.green.domain.pointshop.product.entity.vo.Media;
 import com.example.green.domain.pointshop.product.entity.vo.Price;
 import com.example.green.domain.pointshop.product.entity.vo.Stock;
 import com.example.green.domain.pointshop.product.repository.PointProductQueryRepository;
@@ -62,14 +65,13 @@ class PointProductControllerTest extends BaseControllerUnitTest {
 	}
 
 	private static PointProduct getMockPointProductWithStub() {
-		PointProduct mock = mock(PointProduct.class);
+		Code code = new Code("PRD-AB-001");
 		BasicInfo mockBasicInfo = new BasicInfo("name", "description");
+		Media media = new Media("https://image.png");
 		Stock mockStock = new Stock(10);
 		Price mockPrice = new Price(BigDecimal.ONE);
-		when(mock.getThumbnailUrl()).thenReturn("url");
-		when(mock.getBasicInfo()).thenReturn(mockBasicInfo);
-		when(mock.getStock()).thenReturn(mockStock);
-		when(mock.getPrice()).thenReturn(mockPrice);
-		return mock;
+		PointProduct pointProduct = PointProduct.create(code, mockBasicInfo, media, mockPrice, mockStock);
+		ReflectionTestUtils.setField(pointProduct, "id", 1L);
+		return pointProduct;
 	}
 }
