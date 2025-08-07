@@ -21,8 +21,17 @@ public record ChallengeCertificationListResponseDto(
 	@Schema(description = "회원 닉네임", example = "홍길동")
 	String memberNickname,
 
+	@Schema(description = "회원 키", example = "google_1234")
+	String memberKey,
+
 	@Schema(description = "회원 이메일", example = "test@example.com")
 	String memberEmail,
+
+	@Schema(description = "챌린지 ID", example = "1")
+	Long challengeId,
+
+	@Schema(description = "챌린지 코드", example = "CH-P-20250109-143521-A3FV")
+	String challengeCode,
 
 	@Schema(description = "인증 이미지 URL", example = "https://example.com/image.jpg")
 	String certificationImageUrl,
@@ -47,7 +56,10 @@ public record ChallengeCertificationListResponseDto(
 			certification.getId(),
 			certification.getMember().getId(),
 			certification.getMember().getProfile().getNickname(),
+			certification.getMember().getMemberKey(),
 			certification.getMember().getEmail(),
+			certification.getParticipation().getPersonalChallenge().getId(),
+			certification.getParticipation().getPersonalChallenge().getChallengeCode(),
 			certification.getCertificationImageUrl(),
 			certification.getCertificationReview(),
 			certification.getCertifiedDate(),
@@ -65,7 +77,10 @@ public record ChallengeCertificationListResponseDto(
 			certification.getId(),
 			certification.getMember().getId(),
 			certification.getMember().getProfile().getNickname(),
+			certification.getMember().getMemberKey(),
 			certification.getMember().getEmail(),
+			certification.getParticipation().getTeamChallenge().getId(),
+			certification.getParticipation().getTeamChallenge().getChallengeCode(),
 			certification.getCertificationImageUrl(),
 			certification.getCertificationReview(),
 			certification.getCertifiedDate(),
