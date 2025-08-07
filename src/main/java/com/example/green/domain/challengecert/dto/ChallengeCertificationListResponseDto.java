@@ -30,6 +30,9 @@ public record ChallengeCertificationListResponseDto(
 	@Schema(description = "챌린지 ID", example = "1")
 	Long challengeId,
 
+	@Schema(description = "챌린지 제목", example = "30일 운동 챌린지")
+	String challengeTitle,
+
 	@Schema(description = "챌린지 코드", example = "CH-P-20250109-143521-A3FV")
 	String challengeCode,
 
@@ -59,6 +62,7 @@ public record ChallengeCertificationListResponseDto(
 			certification.getMember().getMemberKey(),
 			certification.getMember().getEmail(),
 			certification.getParticipation().getPersonalChallenge().getId(),
+			certification.getParticipation().getPersonalChallenge().getChallengeName(),
 			certification.getParticipation().getPersonalChallenge().getChallengeCode(),
 			certification.getCertificationImageUrl(),
 			certification.getCertificationReview(),
@@ -80,6 +84,7 @@ public record ChallengeCertificationListResponseDto(
 			certification.getMember().getMemberKey(),
 			certification.getMember().getEmail(),
 			certification.getParticipation().getTeamChallenge().getId(),
+			certification.getParticipation().getTeamChallenge().getChallengeName(),
 			certification.getParticipation().getTeamChallenge().getChallengeCode(),
 			certification.getCertificationImageUrl(),
 			certification.getCertificationReview(),
