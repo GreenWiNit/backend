@@ -47,7 +47,7 @@ public class AuthController implements AuthControllerDocs {
 		HttpServletRequest httpRequest,
 		HttpServletResponse response
 	) {
-		log.info("[SIGNUP] tempToken={}, nickname={}", request.tempToken());
+		log.info("[SIGNUP] tempToken={}, nickname={}", request.tempToken(),request.nickname());
 
 		TempToken tempToken = TempToken.from(request.tempToken(), tokenService);
 		TempTokenInfoDto tempInfo = tempToken.extractUserInfo();
