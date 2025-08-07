@@ -72,13 +72,29 @@ public class InfoServiceImpl implements InfoService {
 	@Override
 	public InfoDetailResponseByAdmin updateInfo(String infoId, InfoRequest updateRequest) {
 		InfoEntity infoEntity = getInfoEntity(infoId);
-		if (StringUtils.isNotEmpty(infoEntity.getImageUrl())) {
-			fileManager.unUseImage(infoEntity.getImageUrl());
-		}
+		String formerImageUrl = infoEntity.getImageUrl();
+		String newImageUrl = updateRequest.imageUrl();
+
 		log.info("[InfoServiceImpl] 정보공유 수정합니다. 정보공유 번호: {}", infoEntity.getId());
 		makeUpdateEntity(updateRequest, infoEntity);
-		fileManager.confirmUsingImage(updateRequest.imageUrl());
+
+		checkWhetherImageChanged(formerImageUrl, newImageUrl);
+
 		return InfoDetailResponseByAdmin.from(infoEntity);
+	}
+
+	private void checkWhetherImageChanged(String formerImageUrl, String newImageUrl) {
+		// 방어 로직: DB 제약상 formerImageUrl이 null일 가능성은 낮음
+		if (StringUtils.isEmpty(formerImageUrl)) {
+			fileManager.confirmUsingImage(newImageUrl);
+			return;
+		}
+
+		// 이미지가 변경된 경우
+		if (!formerImageUrl.equals(newImageUrl)) {
+			fileManager.unUseImage(formerImageUrl);
+			fileManager.confirmUsingImage(newImageUrl);
+		}
 	}
 
 	@Override
