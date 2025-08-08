@@ -54,6 +54,15 @@ public class AdminChallengeController implements AdminChallengeControllerDocs {
 		return ApiTemplate.ok(AdminChallengeResponseMessage.CHALLENGE_UPDATED, null);
 	}
 
+	@PutMapping("/code/{challengeCode}")
+	@Override
+	public ApiTemplate<Void> updateChallengeByCode(
+		@PathVariable String challengeCode,
+		@Valid @RequestBody AdminChallengeUpdateRequestDto request) {
+		adminChallengeService.updateChallengeByCode(challengeCode, request);
+		return ApiTemplate.ok(AdminChallengeResponseMessage.CHALLENGE_UPDATED, null);
+	}
+
 	@Override
 	@PatchMapping("/{challengeId}/image")
 	public ApiTemplate<AdminChallengeDetailResponseDto> updateChallengeImage(

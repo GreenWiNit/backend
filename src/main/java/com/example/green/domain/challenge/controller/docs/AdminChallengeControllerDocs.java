@@ -78,6 +78,20 @@ public interface AdminChallengeControllerDocs {
 		@RequestBody(description = "챌린지 수정 요청", required = true, content = @Content(schema = @Schema(
 			implementation = AdminChallengeUpdateRequestDto.class))) AdminChallengeUpdateRequestDto request);
 
+	@Operation(summary = "챌린지 코드로 수정 (사진x)",
+		description = "챌린지 코드로 챌린지를 수정합니다. (이미지 및 전시 상태 제외)")
+	@ApiErrorStandard
+	@ApiResponse(responseCode = "200", description = "챌린지 수정 성공", useReturnTypeSchema = true)
+	@ApiResponse(responseCode = "403", description = "관리자 권한이 필요합니다.",
+		content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
+	@ApiResponse(responseCode = "404", description = "챌린지를 찾을 수 없습니다.",
+		content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
+	ApiTemplate<Void> updateChallengeByCode(
+		@Parameter(name = "challengeCode", description = "챌린지 코드",
+			in = ParameterIn.PATH, required = true, example = "CH-P-20250109-143521-A3FV") String challengeCode,
+		@RequestBody(description = "챌린지 수정 요청", required = true, content = @Content(schema = @Schema(
+			implementation = AdminChallengeUpdateRequestDto.class))) AdminChallengeUpdateRequestDto request);
+
 	@SuppressWarnings("checkstyle:RegexpSingleline")
 	@Operation(summary = "챌린지 전시여부 수정", description = """
 		챌린지의 전시 상태를 변경합니다.

@@ -292,4 +292,45 @@ public class AdminChallengeService {
 
 		throw new ChallengeException(ChallengeExceptionMessage.ADMIN_CHALLENGE_NOT_FOUND);
 	}
+
+	/**
+	 * 챌린지 코드로 챌린지를 수정합니다.
+	 */
+	public void updateChallengeByCode(String challengeCode, AdminChallengeUpdateRequestDto request) {
+		try {
+			// PersonalChallenge인지 확인
+			var personalChallenge = personalChallengeRepository.findByChallengeCode(challengeCode);
+			if (personalChallenge.isPresent()) {
+				personalChallenge.get().update(
+					request.challengeName(),
+					PointAmount.of(request.challengePoint().longValue()),
+					request.beginDateTime(),
+					request.endDateTime(),
+					request.challengeContent()
+				);
+				return;
+			}
+
+			// TeamChallenge인지 확인
+			var teamChallenge = teamChallengeRepository.findByChallengeCode(challengeCode);
+			if (teamChallenge.isPresent()) {
+				teamChallenge.get().update(
+					request.challengeName(),
+					PointAmount.of(request.challengePoint().longValue()),
+					request.beginDateTime(),
+					request.endDateTime(),
+					request.challengeContent(),
+					request.maxGroupCount()
+				);
+				return;
+			}
+
+			// 둘 다 없으면 예외 발생
+			throw new ChallengeException(ChallengeExceptionMessage.ADMIN_CHALLENGE_NOT_FOUND);
+		} catch (ChallengeException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new ChallengeException(ChallengeExceptionMessage.ADMIN_CHALLENGE_UPDATE_FAILED);
+		}
+	}
 }
