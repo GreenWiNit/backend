@@ -7,7 +7,7 @@ import com.example.green.domain.pointshop.product.entity.PointProduct;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "Point 상품 상세 조회")
-public record PointProductDetail(
+public record PointProductDetailForAdmin(
 	@Schema(description = "상품 아이디", example = "1")
 	long pointProductId,
 	@Schema(description = "상품 코드", example = "PRD-AB-001")
@@ -23,10 +23,12 @@ public record PointProductDetail(
 	@Schema(description = "상품 재고 수량", example = "10")
 	int stockQuantity,
 	@Schema(description = "판매 가능 여부", example = "교환가능", allowableValues = {"교환가능", "품절"})
-	String sellingStatus
+	String sellingStatus,
+	@Schema(description = "상품 전시 상태 (사용자는 null)", example = "true", allowableValues = {"null", "true", "false"})
+	Boolean display
 ) {
-	public static PointProductDetail from(PointProduct pointProduct) {
-		return new PointProductDetail(
+	public static PointProductDetailForAdmin from(PointProduct pointProduct) {
+		return new PointProductDetailForAdmin(
 			pointProduct.getId(),
 			pointProduct.getCode().getCode(),
 			pointProduct.getBasicInfo().getName(),
@@ -34,7 +36,8 @@ public record PointProductDetail(
 			pointProduct.getThumbnailUrl(),
 			pointProduct.getPrice().getPrice(),
 			pointProduct.getStock().getStock(),
-			pointProduct.getSellingStatus().getValue()
+			pointProduct.getSellingStatus().getValue(),
+			pointProduct.isDisplay()
 		);
 	}
 }

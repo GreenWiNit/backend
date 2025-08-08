@@ -64,7 +64,7 @@ class PointProductControllerTest extends BaseControllerUnitTest {
 		assertThat(response.message()).isEqualTo(POINT_PRODUCT_DETAIL_INQUIRY_SUCCESS.getMessage());
 	}
 
-	private static PointProduct getMockPointProductWithStub() {
+	public static PointProduct getMockPointProductWithStub() {
 		Code code = new Code("PRD-AB-001");
 		BasicInfo mockBasicInfo = new BasicInfo("name", "description");
 		Media media = new Media("https://image.png");

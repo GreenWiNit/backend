@@ -1,5 +1,6 @@
 package com.example.green.domain.pointshop.product.controller;
 
+import static com.example.green.domain.pointshop.product.controller.PointProductControllerTest.*;
 import static com.example.green.domain.pointshop.product.controller.PointProductResponseMessage.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -11,12 +12,15 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import com.example.green.domain.pointshop.product.controller.dto.PointProductCreateDto;
+import com.example.green.domain.pointshop.product.controller.dto.PointProductDetailForAdmin;
 import com.example.green.domain.pointshop.product.controller.dto.PointProductExcelCondition;
 import com.example.green.domain.pointshop.product.controller.dto.PointProductSearchCondition;
 import com.example.green.domain.pointshop.product.controller.dto.PointProductSearchResult;
 import com.example.green.domain.pointshop.product.controller.dto.PointProductUpdateDto;
+import com.example.green.domain.pointshop.product.entity.PointProduct;
 import com.example.green.domain.pointshop.product.entity.vo.SellingStatus;
 import com.example.green.domain.pointshop.product.repository.PointProductQueryRepository;
+import com.example.green.domain.pointshop.product.service.PointProductQueryService;
 import com.example.green.domain.pointshop.product.service.PointProductService;
 import com.example.green.domain.pointshop.product.service.command.PointProductCreateCommand;
 import com.example.green.domain.pointshop.product.service.command.PointProductUpdateCommand;
@@ -33,6 +37,8 @@ class PointProductAdminControllerTest extends BaseControllerUnitTest {
 
 	@MockitoBean
 	private PointProductService pointProductService;
+	@MockitoBean
+	private PointProductQueryService pointProductQueryService;
 	@MockitoBean
 	private PointProductQueryRepository pointProductQueryRepository;
 	@MockitoBean
@@ -94,6 +100,21 @@ class PointProductAdminControllerTest extends BaseControllerUnitTest {
 		// then
 		assertThat(response.message()).isEqualTo(POINT_PRODUCT_UPDATE_SUCCESS.getMessage());
 		verify(pointProductService).update(any(PointProductUpdateCommand.class), anyLong());
+	}
+
+	@Test
+	void 포인트_아이디가_주어지면_포인트_상품_상세_조회에_성공한다() {
+		// given
+		PointProduct mock = getMockPointProductWithStub();
+		when(pointProductQueryService.getPointProduct(anyLong())).thenReturn(mock);
+		PointProductDetailForAdmin result = PointProductDetailForAdmin.from(mock);
+
+		// when
+		ApiTemplate<PointProductDetailForAdmin> response = PointProductRequest.getProductByIdForAdmin(1L);
+
+		// then
+		assertThat(response.result()).isEqualTo(result);
+		assertThat(response.message()).isEqualTo(POINT_PRODUCT_DETAIL_INQUIRY_SUCCESS.getMessage());
 	}
 
 	@Test
