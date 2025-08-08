@@ -2,6 +2,8 @@ package com.example.green.domain.challenge.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Supplier;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -109,44 +111,25 @@ public class AdminChallengeService {
 	}
 
 	/**
-	 * 챌린지 정보를 수정합니다.
+	 * 챌린지를 수정합니다.
 	 */
 	public void updateChallenge(Long challengeId, AdminChallengeUpdateRequestDto request) {
-		try {
-			// PersonalChallenge인지 확인
-			var personalChallenge = personalChallengeRepository.findById(challengeId);
-			if (personalChallenge.isPresent()) {
-				personalChallenge.get().update(
-					request.challengeName(),
-					PointAmount.of(request.challengePoint().longValue()),
-					request.beginDateTime(),
-					request.endDateTime(),
-					request.challengeContent()
-				);
-				return;
-			}
+		executeChallengeUpdate(
+			() -> findChallengeById(challengeId),
+			request,
+			ChallengeExceptionMessage.ADMIN_CHALLENGE_UPDATE_FAILED
+		);
+	}
 
-			// TeamChallenge인지 확인
-			var teamChallenge = teamChallengeRepository.findById(challengeId);
-			if (teamChallenge.isPresent()) {
-				teamChallenge.get().update(
-					request.challengeName(),
-					PointAmount.of(request.challengePoint().longValue()),
-					request.beginDateTime(),
-					request.endDateTime(),
-					request.challengeContent(),
-					request.maxGroupCount()
-				);
-				return;
-			}
-
-			// 둘 다 없으면 예외 발생
-			throw new ChallengeException(ChallengeExceptionMessage.ADMIN_CHALLENGE_NOT_FOUND);
-		} catch (ChallengeException e) {
-			throw e;
-		} catch (Exception e) {
-			throw new ChallengeException(ChallengeExceptionMessage.ADMIN_CHALLENGE_UPDATE_FAILED);
-		}
+	/**
+	 * 챌린지 코드로 챌린지를 수정합니다.
+	 */
+	public void updateChallengeByCode(String challengeCode, AdminChallengeUpdateRequestDto request) {
+		executeChallengeUpdate(
+			() -> findChallengeByCode(challengeCode),
+			request,
+			ChallengeExceptionMessage.ADMIN_CHALLENGE_UPDATE_FAILED
+		);
 	}
 
 	/**
@@ -154,56 +137,22 @@ public class AdminChallengeService {
 	 */
 	public AdminChallengeDetailResponseDto updateChallengeImage(Long challengeId,
 		AdminChallengeImageUpdateRequestDto request) {
-		try {
-			// PersonalChallenge인지 확인
-			var personalChallenge = personalChallengeRepository.findById(challengeId);
-			if (personalChallenge.isPresent()) {
-				personalChallenge.get().updateImage(request.challengeImageUrl());
-				return AdminChallengeDetailResponseDto.from(personalChallenge.get());
-			}
-
-			// TeamChallenge인지 확인
-			var teamChallenge = teamChallengeRepository.findById(challengeId);
-			if (teamChallenge.isPresent()) {
-				teamChallenge.get().updateImage(request.challengeImageUrl());
-				return AdminChallengeDetailResponseDto.from(teamChallenge.get());
-			}
-
-			// 둘 다 없으면 예외 발생
-			throw new ChallengeException(ChallengeExceptionMessage.ADMIN_CHALLENGE_NOT_FOUND);
-		} catch (ChallengeException e) {
-			throw e;
-		} catch (Exception e) {
-			throw new ChallengeException(ChallengeExceptionMessage.ADMIN_CHALLENGE_UPDATE_FAILED);
-		}
+		return executeChallengeImageUpdate(
+			() -> findChallengeById(challengeId),
+			request,
+			ChallengeExceptionMessage.ADMIN_CHALLENGE_UPDATE_FAILED
+		);
 	}
 
 	/**
 	 * 챌린지 전시 상태를 수정합니다.
 	 */
 	public void updateChallengeDisplayStatus(Long challengeId, AdminChallengeDisplayStatusUpdateRequestDto request) {
-		try {
-			// PersonalChallenge인지 확인
-			var personalChallenge = personalChallengeRepository.findById(challengeId);
-			if (personalChallenge.isPresent()) {
-				personalChallenge.get().updateDisplayStatus(request.displayStatus());
-				return;
-			}
-
-			// TeamChallenge인지 확인
-			var teamChallenge = teamChallengeRepository.findById(challengeId);
-			if (teamChallenge.isPresent()) {
-				teamChallenge.get().updateDisplayStatus(request.displayStatus());
-				return;
-			}
-
-			// 둘 다 없으면 예외 발생
-			throw new ChallengeException(ChallengeExceptionMessage.ADMIN_CHALLENGE_NOT_FOUND);
-		} catch (ChallengeException e) {
-			throw e;
-		} catch (Exception e) {
-			throw new ChallengeException(ChallengeExceptionMessage.ADMIN_CHALLENGE_UPDATE_FAILED);
-		}
+		executeChallengeDisplayStatusUpdate(
+			() -> findChallengeById(challengeId),
+			request,
+			ChallengeExceptionMessage.ADMIN_CHALLENGE_UPDATE_FAILED
+		);
 	}
 
 	public CursorTemplate<Long, AdminPersonalChallengeListResponseDto> getPersonalChallenges(Long cursor) {
@@ -218,16 +167,9 @@ public class AdminChallengeService {
 	 * 챌린지 상세 정보를 조회합니다.
 	 */
 	public AdminChallengeDetailResponseDto getChallengeDetail(Long challengeId) {
-		var personalChallenge = personalChallengeRepository.findById(challengeId);
-		if (personalChallenge.isPresent()) {
-			return AdminChallengeDetailResponseDto.from(personalChallenge.get());
-		}
-		var teamChallenge = teamChallengeRepository.findById(challengeId);
-		if (teamChallenge.isPresent()) {
-			return AdminChallengeDetailResponseDto.from(teamChallenge.get());
-		}
-
-		throw new ChallengeException(ChallengeExceptionMessage.ADMIN_CHALLENGE_NOT_FOUND);
+		return findChallengeById(challengeId)
+			.map(this::createAdminChallengeDetailResponseDto)
+			.orElseThrow(() -> new ChallengeException(ChallengeExceptionMessage.ADMIN_CHALLENGE_NOT_FOUND));
 	}
 
 	/**
@@ -281,56 +223,162 @@ public class AdminChallengeService {
 	 * 챌린지 코드로 상세 정보를 조회합니다.
 	 */
 	public AdminChallengeDetailResponseDto getChallengeDetailByCode(String challengeCode) {
-		var personalChallenge = personalChallengeRepository.findByChallengeCode(challengeCode);
-		if (personalChallenge.isPresent()) {
-			return AdminChallengeDetailResponseDto.from(personalChallenge.get());
-		}
-		var teamChallenge = teamChallengeRepository.findByChallengeCode(challengeCode);
-		if (teamChallenge.isPresent()) {
-			return AdminChallengeDetailResponseDto.from(teamChallenge.get());
-		}
-
-		throw new ChallengeException(ChallengeExceptionMessage.ADMIN_CHALLENGE_NOT_FOUND);
+		return findChallengeByCode(challengeCode)
+			.map(this::createAdminChallengeDetailResponseDto)
+			.orElseThrow(() -> new ChallengeException(ChallengeExceptionMessage.ADMIN_CHALLENGE_NOT_FOUND));
 	}
 
 	/**
-	 * 챌린지 코드로 챌린지를 수정합니다.
+	 * 챌린지 ID로 챌린지를 찾습니다.
 	 */
-	public void updateChallengeByCode(String challengeCode, AdminChallengeUpdateRequestDto request) {
+	private Optional<Object> findChallengeById(Long challengeId) {
+		var personalChallenge = personalChallengeRepository.findById(challengeId);
+		if (personalChallenge.isPresent()) {
+			return Optional.of(personalChallenge.get());
+		}
+		var teamChallenge = teamChallengeRepository.findById(challengeId);
+		if (teamChallenge.isPresent()) {
+			return Optional.of(teamChallenge.get());
+		}
+		return Optional.empty();
+	}
+
+	/**
+	 * 챌린지 코드로 챌린지를 찾습니다.
+	 */
+	private Optional<Object> findChallengeByCode(String challengeCode) {
+		var personalChallenge = personalChallengeRepository.findByChallengeCode(challengeCode);
+		if (personalChallenge.isPresent()) {
+			return Optional.of(personalChallenge.get());
+		}
+		var teamChallenge = teamChallengeRepository.findByChallengeCode(challengeCode);
+		if (teamChallenge.isPresent()) {
+			return Optional.of(teamChallenge.get());
+		}
+		return Optional.empty();
+	}
+
+	/**
+	 * 챌린지 수정을 실행합니다.
+	 */
+	private void executeChallengeUpdate(
+		Supplier<Optional<Object>> challengeFinder,
+		AdminChallengeUpdateRequestDto request,
+		ChallengeExceptionMessage errorMessage
+	) {
 		try {
-			// PersonalChallenge인지 확인
-			var personalChallenge = personalChallengeRepository.findByChallengeCode(challengeCode);
-			if (personalChallenge.isPresent()) {
-				personalChallenge.get().update(
-					request.challengeName(),
-					PointAmount.of(request.challengePoint().longValue()),
-					request.beginDateTime(),
-					request.endDateTime(),
-					request.challengeContent()
-				);
+			Optional<Object> challenge = challengeFinder.get();
+			if (challenge.isPresent()) {
+				updateChallengeEntity(challenge.get(), request);
 				return;
 			}
-
-			// TeamChallenge인지 확인
-			var teamChallenge = teamChallengeRepository.findByChallengeCode(challengeCode);
-			if (teamChallenge.isPresent()) {
-				teamChallenge.get().update(
-					request.challengeName(),
-					PointAmount.of(request.challengePoint().longValue()),
-					request.beginDateTime(),
-					request.endDateTime(),
-					request.challengeContent(),
-					request.maxGroupCount()
-				);
-				return;
-			}
-
-			// 둘 다 없으면 예외 발생
 			throw new ChallengeException(ChallengeExceptionMessage.ADMIN_CHALLENGE_NOT_FOUND);
 		} catch (ChallengeException e) {
 			throw e;
 		} catch (Exception e) {
-			throw new ChallengeException(ChallengeExceptionMessage.ADMIN_CHALLENGE_UPDATE_FAILED);
+			throw new ChallengeException(errorMessage);
 		}
+	}
+
+	/**
+	 * 챌린지 이미지 수정을 실행합니다.
+	 */
+	private AdminChallengeDetailResponseDto executeChallengeImageUpdate(
+		Supplier<Optional<Object>> challengeFinder,
+		AdminChallengeImageUpdateRequestDto request,
+		ChallengeExceptionMessage errorMessage
+	) {
+		try {
+			Optional<Object> challenge = challengeFinder.get();
+			if (challenge.isPresent()) {
+				updateChallengeImageEntity(challenge.get(), request);
+				return createAdminChallengeDetailResponseDto(challenge.get());
+			}
+			throw new ChallengeException(ChallengeExceptionMessage.ADMIN_CHALLENGE_NOT_FOUND);
+		} catch (ChallengeException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new ChallengeException(errorMessage);
+		}
+	}
+
+	/**
+	 * 챌린지 전시 상태 수정을 실행합니다.
+	 */
+	private void executeChallengeDisplayStatusUpdate(
+		Supplier<Optional<Object>> challengeFinder,
+		AdminChallengeDisplayStatusUpdateRequestDto request,
+		ChallengeExceptionMessage errorMessage
+	) {
+		try {
+			Optional<Object> challenge = challengeFinder.get();
+			if (challenge.isPresent()) {
+				updateChallengeDisplayStatusEntity(challenge.get(), request);
+				return;
+			}
+			throw new ChallengeException(ChallengeExceptionMessage.ADMIN_CHALLENGE_NOT_FOUND);
+		} catch (ChallengeException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new ChallengeException(errorMessage);
+		}
+	}
+
+	/**
+	 * 챌린지 엔티티를 수정합니다.
+	 */
+	private void updateChallengeEntity(Object challenge, AdminChallengeUpdateRequestDto request) {
+		if (challenge instanceof PersonalChallenge personalChallenge) {
+			personalChallenge.update(
+				request.challengeName(),
+				PointAmount.of(request.challengePoint().longValue()),
+				request.beginDateTime(),
+				request.endDateTime(),
+				request.challengeContent()
+			);
+		} else if (challenge instanceof TeamChallenge teamChallenge) {
+			teamChallenge.update(
+				request.challengeName(),
+				PointAmount.of(request.challengePoint().longValue()),
+				request.beginDateTime(),
+				request.endDateTime(),
+				request.challengeContent(),
+				request.maxGroupCount()
+			);
+		}
+	}
+
+	/**
+	 * 챌린지 이미지 엔티티를 수정합니다.
+	 */
+	private void updateChallengeImageEntity(Object challenge, AdminChallengeImageUpdateRequestDto request) {
+		if (challenge instanceof PersonalChallenge personalChallenge) {
+			personalChallenge.updateImage(request.challengeImageUrl());
+		} else if (challenge instanceof TeamChallenge teamChallenge) {
+			teamChallenge.updateImage(request.challengeImageUrl());
+		}
+	}
+
+	/**
+	 * 챌린지 전시 상태 엔티티를 수정합니다.
+	 */
+	private void updateChallengeDisplayStatusEntity(Object challenge, AdminChallengeDisplayStatusUpdateRequestDto request) {
+		if (challenge instanceof PersonalChallenge personalChallenge) {
+			personalChallenge.updateDisplayStatus(request.displayStatus());
+		} else if (challenge instanceof TeamChallenge teamChallenge) {
+			teamChallenge.updateDisplayStatus(request.displayStatus());
+		}
+	}
+
+	/**
+	 * AdminChallengeDetailResponseDto를 생성합니다.
+	 */
+	private AdminChallengeDetailResponseDto createAdminChallengeDetailResponseDto(Object challenge) {
+		if (challenge instanceof PersonalChallenge personalChallenge) {
+			return AdminChallengeDetailResponseDto.from(personalChallenge);
+		} else if (challenge instanceof TeamChallenge teamChallenge) {
+			return AdminChallengeDetailResponseDto.from(teamChallenge);
+		}
+		throw new IllegalArgumentException("Unknown challenge type: " + challenge.getClass());
 	}
 }
