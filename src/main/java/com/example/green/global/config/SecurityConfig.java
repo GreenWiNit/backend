@@ -174,7 +174,7 @@ public class SecurityConfig {
 				configuration.setMaxAge(3600L);
 
 				// 두 헤더를 함께 설정 (덮어쓰기 방지)
-				configuration.setExposedHeaders(Arrays.asList("Set-Cookie", "Authorization"));
+				configuration.setExposedHeaders(Arrays.asList("Set-Cookie", "Authorization", "Content-Disposition"));
 
 				return configuration;
 			}
