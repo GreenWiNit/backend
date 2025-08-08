@@ -2,6 +2,7 @@ package com.example.green.domain.point.controller;
 
 import static com.example.green.domain.point.controller.message.PointTransactionResponseMessage.*;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -28,7 +29,9 @@ public class PointTransactionController implements PointTransactionControllerDoc
 
 	@GetMapping("/me")
 	@AuthenticatedApi
-	public ApiTemplate<MemberPointSummary> getPointSummary(PrincipalDetails principalDetails) {
+	public ApiTemplate<MemberPointSummary> getPointSummary(
+		@AuthenticationPrincipal PrincipalDetails principalDetails
+	) {
 		Long memberId = principalDetails.getMemberId();
 		MemberPointSummary result = pointTransactionQueryRepository.findMemberPointSummary(memberId);
 		return ApiTemplate.ok(MY_POINT_INQUIRY_SUCCESS, result);
@@ -37,7 +40,7 @@ public class PointTransactionController implements PointTransactionControllerDoc
 	@GetMapping("/transaction")
 	@AuthenticatedApi
 	public ApiTemplate<CursorTemplate<Long, MyPointTransactionDto>> getMyPointTransaction(
-		PrincipalDetails principalDetails,
+		@AuthenticationPrincipal PrincipalDetails principalDetails,
 		@RequestParam(required = false) Long cursor,
 		@RequestParam(required = false) TransactionType status
 	) {

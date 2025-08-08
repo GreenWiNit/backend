@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.core.MethodParameter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.WebApplicationContext;
@@ -49,7 +50,8 @@ public class BaseControllerUnitTest {
 			resolvers.add(new HandlerMethodArgumentResolver() {
 				@Override
 				public boolean supportsParameter(MethodParameter parameter) {
-					return parameter.getParameterType().equals(PrincipalDetails.class);
+					return parameter.hasParameterAnnotation(AuthenticationPrincipal.class) &&
+						parameter.getParameterType().equals(PrincipalDetails.class);
 				}
 
 				@Override

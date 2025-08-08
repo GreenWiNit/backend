@@ -1,5 +1,6 @@
 package com.example.green.domain.pointshop.delivery.controller;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,7 +36,7 @@ public class DeliveryAddressController implements DeliveryAddressControllerDocs 
 	@AuthenticatedApi
 	public ApiTemplate<Long> createDeliveryAddress(
 		@Valid @RequestBody DeliveryAddressCreateDto dto,
-		PrincipalDetails principalDetails
+		@AuthenticationPrincipal PrincipalDetails principalDetails
 	) {
 		Recipient recipient = Recipient.of(dto.recipientName(), dto.phoneNumber());
 		Address address = Address.of(dto.roadAddress(), dto.detailAddress(), dto.zipCode());
@@ -52,7 +53,7 @@ public class DeliveryAddressController implements DeliveryAddressControllerDocs 
 	public NoContent updateDeliveryAddress(
 		@Valid @RequestBody DeliveryAddressUpdateDto dto,
 		@PathVariable Long deliveryAddressId,
-		PrincipalDetails principalDetails
+		@AuthenticationPrincipal PrincipalDetails principalDetails
 	) {
 		Long recipientId = principalDetails.getMemberId();
 		DeliveryAddressUpdateCommand command = DeliveryAddressUpdateCommand.of(recipientId, deliveryAddressId, dto);
@@ -62,7 +63,7 @@ public class DeliveryAddressController implements DeliveryAddressControllerDocs 
 
 	@GetMapping
 	@AuthenticatedApi
-	public ApiTemplate<DeliveryResult> getDeliveryAddress(PrincipalDetails principalDetails) {
+	public ApiTemplate<DeliveryResult> getDeliveryAddress(@AuthenticationPrincipal PrincipalDetails principalDetails) {
 		Long recipientId = principalDetails.getMemberId();
 		DeliveryResult result = deliveryAddressService.getDeliveryAddressByRecipient(recipientId);
 		return ApiTemplate.ok(DeliveryAddressResponseMessage.DELIVERY_ADDRESS_GET_SUCCESS, result);
