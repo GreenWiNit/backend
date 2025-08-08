@@ -70,7 +70,7 @@ public class OrderAdminController implements OrderAdminControllerDocs {
 		return NoContent.ok(OrderResponseMessage.ORDER_SHIPPING_START_SUCCESS);
 	}
 
-	@PatchMapping("/{orderId}/complete")
+	@PatchMapping("/{orderId}/delivered")
 	public NoContent completeDelivery(@PathVariable Long orderId) {
 		orderService.completeDelivery(orderId);
 		return NoContent.ok(OrderResponseMessage.ORDER_DELIVERY_COMPLETE_SUCCESS);
