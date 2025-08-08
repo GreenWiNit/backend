@@ -1,0 +1,70 @@
+name: "🐛Bug Report"
+description: "버그 신고 및 문제 해결을 위한 Issue"
+labels: [ "bug" ]
+body:
+  - type: input
+    id: date_time
+    attributes:
+      label: 📅 발생 날짜 및 시간 (선택사항)
+      description: 버그가 발생한 날짜와 시간을 작성해 주세요. (버그 추적에 도움이 됩니다.)
+      placeholder: "예: 2024-01-15 14:30"
+    validations:
+      required: false
+
+  - type: textarea
+    id: bug_description
+    attributes:
+      label: 🐛 버그 설명
+      description: 발생한 버그에 대해 자세히 설명해 주세요.
+      placeholder: 어떤 문제가 발생했는지 구체적으로 작성해 주세요.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps_to_reproduce
+    attributes:
+      label: 🔄 재현 단계 (선택 사항)
+      description: 버그를 재현하기 위한 단계를 작성해 주세요.
+      placeholder: |
+        1. '...'로 이동
+        2. '...' 클릭
+        3. '...' 입력
+        4. 오류 확인
+    validations:
+      required: false
+
+  - type: textarea
+    id: expected_behavior
+    attributes:
+      label: ✅ 예상 동작
+      description: 정상적으로 동작했을 때 기대하는 결과를 작성해 주세요.
+      placeholder: 어떻게 동작해야 하는지 설명해 주세요.
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual_behavior
+    attributes:
+      label: ❌ 실제 동작
+      description: 실제로 발생한 동작이나 오류를 작성해 주세요.
+      placeholder: 실제로 어떤 일이 일어났는지 설명해 주세요.
+    validations:
+      required: true
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: 📸 스크린샷 또는 이미지 (선택사항)
+      description: 버그를 보여주는 스크린샷이나 이미지를 첨부해 주세요.
+      placeholder: 이미지를 드래그 & 드롭하거나 붙여넣기 하세요.
+    validations:
+      required: false
+
+  - type: textarea
+    id: additional_context
+    attributes:
+      label: 💬 추가 정보 (선택샇아)
+      description: 다른 관련 정보가 있다면 자유롭게 작성해 주세요.
+      placeholder: API 요청 시 발생한 에러라면 JSON 같은 정보를 추가해주세요.
+    validations:
+      required: false

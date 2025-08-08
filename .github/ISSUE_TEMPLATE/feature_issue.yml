@@ -1,27 +1,33 @@
-name: "✨Issue"
-description: "새로운 Issue 추가"
-labels: ["enhancement"]
+name: "✨Feature Issue"
+description: "기능추가 및 개선 Issue 추가"
+labels: [ "dev:feature" ]
 body:
   - type: textarea
     id: description
     attributes:
       label: 📄 설명
       description: 새로운 기능에 대한 설명을 작성해 주세요.
-      placeholder: 자세히 적을수록 좋습니다!
+      placeholder: 커뮤니티 기능이 추가되면 좋겠어요!
     validations:
       required: true
+
   - type: textarea
     id: tasks
     attributes:
       label: ✅ 작업할 내용
       description: 할 일을 체크박스 형태로 작성해주세요.
-      placeholder: 최대한 세분화 해서 적어주세요!
+      placeholder: |
+        - [ ] 글 작성 기능
+        - [ ] 댓글 기능
+        - [ ] 좋아요 기능
     validations:
       required: true
+
   - type: textarea
     id: references
     attributes:
-      label: 🙋🏻 참고 자료
+      label: 🙋🏻 참고 자료 (선택사항)
       description: 참고 자료가 있다면 작성해 주세요.
+      placeholder: 요구사항 정의서, 플로우 등
     validations:
       required: false
