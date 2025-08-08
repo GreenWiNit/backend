@@ -18,6 +18,8 @@ import com.example.green.domain.pointshop.delivery.service.command.DeliveryAddre
 import com.example.green.domain.pointshop.delivery.service.result.DeliveryResult;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.NoContent;
+import com.example.green.global.security.PrincipalDetails;
+import com.example.green.global.security.annotation.AuthenticatedApi;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -30,33 +32,39 @@ public class DeliveryAddressController implements DeliveryAddressControllerDocs 
 	private final DeliveryAddressService deliveryAddressService;
 
 	@PostMapping
+	@AuthenticatedApi
 	public ApiTemplate<Long> createDeliveryAddress(
-		@Valid @RequestBody DeliveryAddressCreateDto dto
+		@Valid @RequestBody DeliveryAddressCreateDto dto,
+		PrincipalDetails principalDetails
 	) {
 		Recipient recipient = Recipient.of(dto.recipientName(), dto.phoneNumber());
 		Address address = Address.of(dto.roadAddress(), dto.detailAddress(), dto.zipCode());
 
-		// todo: security 추가 시 recipientId Resolver 로 받기
-		DeliveryAddressCreateCommand command = new DeliveryAddressCreateCommand(1L, recipient, address);
+		Long recipientId = principalDetails.getMemberId();
+		DeliveryAddressCreateCommand command = new DeliveryAddressCreateCommand(recipientId, recipient, address);
 		Long result = deliveryAddressService.saveSingleAddress(command);
 
 		return ApiTemplate.ok(DeliveryAddressResponseMessage.DELIVERY_ADDRESS_ADD_SUCCESS, result);
 	}
 
 	@PutMapping("/{deliveryAddressId}")
+	@AuthenticatedApi
 	public NoContent updateDeliveryAddress(
 		@Valid @RequestBody DeliveryAddressUpdateDto dto,
-		@PathVariable Long deliveryAddressId
+		@PathVariable Long deliveryAddressId,
+		PrincipalDetails principalDetails
 	) {
-		DeliveryAddressUpdateCommand command = DeliveryAddressUpdateCommand.of(1L, deliveryAddressId, dto);
+		Long recipientId = principalDetails.getMemberId();
+		DeliveryAddressUpdateCommand command = DeliveryAddressUpdateCommand.of(recipientId, deliveryAddressId, dto);
 		deliveryAddressService.updateSingleAddress(command);
 		return NoContent.ok(DeliveryAddressResponseMessage.DELIVERY_ADDRESS_UPDATE_SUCCESS);
 	}
 
 	@GetMapping
-	public ApiTemplate<DeliveryResult> getDeliveryAddress() {
-		// todo: security 추가 시 recipientId Resolver 로 받기
-		DeliveryResult result = deliveryAddressService.getDeliveryAddressByRecipient(1L);
+	@AuthenticatedApi
+	public ApiTemplate<DeliveryResult> getDeliveryAddress(PrincipalDetails principalDetails) {
+		Long recipientId = principalDetails.getMemberId();
+		DeliveryResult result = deliveryAddressService.getDeliveryAddressByRecipient(recipientId);
 		return ApiTemplate.ok(DeliveryAddressResponseMessage.DELIVERY_ADDRESS_GET_SUCCESS, result);
 	}
 }
