@@ -1,7 +1,7 @@
 package com.example.green.domain.pointshop.product.controller.docs;
 
 import com.example.green.domain.pointshop.product.controller.dto.PointProductCreateDto;
-import com.example.green.domain.pointshop.product.controller.dto.PointProductDetail;
+import com.example.green.domain.pointshop.product.controller.dto.PointProductDetailForAdmin;
 import com.example.green.domain.pointshop.product.controller.dto.PointProductExcelCondition;
 import com.example.green.domain.pointshop.product.controller.dto.PointProductSearchCondition;
 import com.example.green.domain.pointshop.product.controller.dto.PointProductSearchResult;
@@ -35,7 +35,7 @@ public interface PointProductAdminControllerDocs {
 
 	@Operation(summary = "포인트 상품 상세 조회(관리자)", description = "포인트 상품을 상세 조회합니다.")
 	@ApiResponse(responseCode = "200", description = "포인트 상품 상세 조회에 성공했습니다.")
-	ApiTemplate<PointProductDetail> getProductById(Long pointProductId);
+	ApiTemplate<PointProductDetailForAdmin> getProductById(Long pointProductId);
 
 	@Operation(summary = "포인트 상품 목록 엑셀 다운로드(관리자)", description = "포인트 상품 목록 다운로드")
 	@ApiResponse(responseCode = "200", description = "첨부파일")

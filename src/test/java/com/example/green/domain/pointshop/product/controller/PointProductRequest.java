@@ -5,6 +5,7 @@ import org.springframework.http.MediaType;
 
 import com.example.green.domain.pointshop.product.controller.dto.PointProductCreateDto;
 import com.example.green.domain.pointshop.product.controller.dto.PointProductDetail;
+import com.example.green.domain.pointshop.product.controller.dto.PointProductDetailForAdmin;
 import com.example.green.domain.pointshop.product.controller.dto.PointProductSearchResult;
 import com.example.green.domain.pointshop.product.controller.dto.PointProductUpdateDto;
 import com.example.green.domain.pointshop.product.controller.dto.PointProductView;
@@ -118,7 +119,7 @@ public class PointProductRequest {
 			});
 	}
 
-	public static ApiTemplate<PointProductDetail> getProductByIdForAdmin(Long id) {
+	public static ApiTemplate<PointProductDetailForAdmin> getProductByIdForAdmin(Long id) {
 		return RestAssuredMockMvc
 			.given().log().all()
 			.contentType(MediaType.APPLICATION_JSON)

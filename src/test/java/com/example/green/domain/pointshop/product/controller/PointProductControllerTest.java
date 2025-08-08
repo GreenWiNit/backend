@@ -54,7 +54,7 @@ class PointProductControllerTest extends BaseControllerUnitTest {
 		// given
 		PointProduct mock = getMockPointProductWithStub();
 		when(pointProductQueryService.getPointProduct(anyLong())).thenReturn(mock);
-		PointProductDetail result = PointProductDetail.forClient(mock);
+		PointProductDetail result = PointProductDetail.from(mock);
 
 		// when
 		ApiTemplate<PointProductDetail> response = PointProductRequest.getProductById(1L);

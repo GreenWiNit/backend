@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.green.domain.pointshop.product.controller.docs.PointProductAdminControllerDocs;
 import com.example.green.domain.pointshop.product.controller.dto.PointProductCreateDto;
-import com.example.green.domain.pointshop.product.controller.dto.PointProductDetail;
+import com.example.green.domain.pointshop.product.controller.dto.PointProductDetailForAdmin;
 import com.example.green.domain.pointshop.product.controller.dto.PointProductExcelCondition;
 import com.example.green.domain.pointshop.product.controller.dto.PointProductSearchCondition;
 import com.example.green.domain.pointshop.product.controller.dto.PointProductSearchResult;
@@ -69,9 +69,9 @@ public class PointProductAdminController implements PointProductAdminControllerD
 	}
 
 	@GetMapping("/{pointProductId}")
-	public ApiTemplate<PointProductDetail> getProductById(@PathVariable Long pointProductId) {
+	public ApiTemplate<PointProductDetailForAdmin> getProductById(@PathVariable Long pointProductId) {
 		PointProduct pointProduct = pointProductQueryService.getPointProduct(pointProductId);
-		PointProductDetail result = PointProductDetail.forAdmin(pointProduct);
+		PointProductDetailForAdmin result = PointProductDetailForAdmin.from(pointProduct);
 		return ApiTemplate.ok(PointProductResponseMessage.POINT_PRODUCT_DETAIL_INQUIRY_SUCCESS, result);
 	}
 

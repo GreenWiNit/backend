@@ -12,7 +12,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import com.example.green.domain.pointshop.product.controller.dto.PointProductCreateDto;
-import com.example.green.domain.pointshop.product.controller.dto.PointProductDetail;
+import com.example.green.domain.pointshop.product.controller.dto.PointProductDetailForAdmin;
 import com.example.green.domain.pointshop.product.controller.dto.PointProductExcelCondition;
 import com.example.green.domain.pointshop.product.controller.dto.PointProductSearchCondition;
 import com.example.green.domain.pointshop.product.controller.dto.PointProductSearchResult;
@@ -107,10 +107,10 @@ class PointProductAdminControllerTest extends BaseControllerUnitTest {
 		// given
 		PointProduct mock = getMockPointProductWithStub();
 		when(pointProductQueryService.getPointProduct(anyLong())).thenReturn(mock);
-		PointProductDetail result = PointProductDetail.forAdmin(mock);
+		PointProductDetailForAdmin result = PointProductDetailForAdmin.from(mock);
 
 		// when
-		ApiTemplate<PointProductDetail> response = PointProductRequest.getProductByIdForAdmin(1L);
+		ApiTemplate<PointProductDetailForAdmin> response = PointProductRequest.getProductByIdForAdmin(1L);
 
 		// then
 		assertThat(response.result()).isEqualTo(result);
