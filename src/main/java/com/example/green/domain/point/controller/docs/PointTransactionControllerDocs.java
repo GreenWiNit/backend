@@ -5,6 +5,7 @@ import com.example.green.domain.point.repository.dto.MemberPointSummary;
 import com.example.green.domain.point.repository.dto.MyPointTransactionDto;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.page.CursorTemplate;
+import com.example.green.global.security.PrincipalDetails;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -16,11 +17,12 @@ public interface PointTransactionControllerDocs {
 
 	@Operation(summary = "내 포인트 조회", description = "현재 포인트를 조회합니다.")
 	@ApiResponse(responseCode = "200", description = "내 포인트 조회에 성공했습니다.")
-	ApiTemplate<MemberPointSummary> getPointSummary();
+	ApiTemplate<MemberPointSummary> getPointSummary(PrincipalDetails principalDetails);
 
 	@Operation(summary = "내 포인트 내역 조회", description = "현재 포인트 내역을 조회합니다.")
 	@ApiResponse(responseCode = "200", description = "포인트 내역 조회에 성공했습니다.")
 	ApiTemplate<CursorTemplate<Long, MyPointTransactionDto>> getMyPointTransaction(
+		PrincipalDetails principalDetails,
 		@Schema(description = "커서 정보", example = "1") Long cursor,
 		@Schema(description = "포인트 내역 상태", type = "string", allowableValues = {"earn", "spend"}) TransactionType status
 	);
