@@ -18,6 +18,7 @@ import com.example.green.domain.point.repository.dto.PointTransactionDto;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.page.PageTemplate;
 import com.example.green.global.excel.core.ExcelDownloader;
+import com.example.green.global.security.annotation.AdminApi;
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/admin/points")
+@AdminApi
 public class PointTransactionAdminController implements PointTransactionAdminControllerDocs {
 
 	private final PointTransactionQueryRepository pointTransactionQueryRepository;

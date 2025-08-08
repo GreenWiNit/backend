@@ -2,6 +2,7 @@ package com.example.green.domain.point.controller;
 
 import static com.example.green.domain.point.controller.message.PointTransactionResponseMessage.*;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -14,6 +15,8 @@ import com.example.green.domain.point.repository.dto.MemberPointSummary;
 import com.example.green.domain.point.repository.dto.MyPointTransactionDto;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.page.CursorTemplate;
+import com.example.green.global.security.PrincipalDetails;
+import com.example.green.global.security.annotation.AuthenticatedApi;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,19 +28,23 @@ public class PointTransactionController implements PointTransactionControllerDoc
 	private final PointTransactionQueryRepository pointTransactionQueryRepository;
 
 	@GetMapping("/me")
-	public ApiTemplate<MemberPointSummary> getPointSummary() {
-		//Long memberId = principalDetails.getMemberId();
-		MemberPointSummary result = pointTransactionQueryRepository.findMemberPointSummary(1L);
+	@AuthenticatedApi
+	public ApiTemplate<MemberPointSummary> getPointSummary(
+		@AuthenticationPrincipal PrincipalDetails principalDetails
+	) {
+		Long memberId = principalDetails.getMemberId();
+		MemberPointSummary result = pointTransactionQueryRepository.findMemberPointSummary(memberId);
 		return ApiTemplate.ok(MY_POINT_INQUIRY_SUCCESS, result);
 	}
 
 	@GetMapping("/transaction")
+	@AuthenticatedApi
 	public ApiTemplate<CursorTemplate<Long, MyPointTransactionDto>> getMyPointTransaction(
+		@AuthenticationPrincipal PrincipalDetails principalDetails,
 		@RequestParam(required = false) Long cursor,
 		@RequestParam(required = false) TransactionType status
 	) {
-		// todo: security 가져와야 함
-		Long memberId = 1L;
+		Long memberId = principalDetails.getMemberId();
 		CursorTemplate<Long, MyPointTransactionDto> result =
 			pointTransactionQueryRepository.getPointTransaction(memberId, cursor, status);
 		return ApiTemplate.ok(POINT_TRANSACTION_INQUIRY_SUCCESS, result);
