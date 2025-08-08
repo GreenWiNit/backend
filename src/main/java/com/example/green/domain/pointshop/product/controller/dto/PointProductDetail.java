@@ -13,9 +13,9 @@ public record PointProductDetail(
 	BigDecimal pointPrice,
 	int stockQuantity,
 	String sellingStatus,
-	boolean display
+	Boolean display
 ) {
-	public static PointProductDetail from(PointProduct pointProduct) {
+	public static PointProductDetail forAdmin(PointProduct pointProduct) {
 		return new PointProductDetail(
 			pointProduct.getId(),
 			pointProduct.getCode().getCode(),
@@ -26,6 +26,20 @@ public record PointProductDetail(
 			pointProduct.getStock().getStock(),
 			pointProduct.getSellingStatus().getValue(),
 			pointProduct.isDisplay()
+		);
+	}
+
+	public static PointProductDetail forClient(PointProduct pointProduct) {
+		return new PointProductDetail(
+			pointProduct.getId(),
+			pointProduct.getCode().getCode(),
+			pointProduct.getBasicInfo().getName(),
+			pointProduct.getBasicInfo().getDescription(),
+			pointProduct.getThumbnailUrl(),
+			pointProduct.getPrice().getPrice(),
+			pointProduct.getStock().getStock(),
+			pointProduct.getSellingStatus().getValue(),
+			null
 		);
 	}
 }

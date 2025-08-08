@@ -5,8 +5,8 @@ import org.springframework.http.MediaType;
 
 import com.example.green.domain.pointshop.product.controller.dto.PointProductCreateDto;
 import com.example.green.domain.pointshop.product.controller.dto.PointProductDetail;
-import com.example.green.domain.pointshop.product.controller.dto.PointProductUpdateDto;
 import com.example.green.domain.pointshop.product.controller.dto.PointProductSearchResult;
+import com.example.green.domain.pointshop.product.controller.dto.PointProductUpdateDto;
 import com.example.green.domain.pointshop.product.controller.dto.PointProductView;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.NoContent;
@@ -112,6 +112,17 @@ public class PointProductRequest {
 			.given().log().all()
 			.contentType(MediaType.APPLICATION_JSON)
 			.when().get("/api/point-products/" + id)
+			.then().log().all()
+			.status(HttpStatus.OK)
+			.extract().as(new TypeRef<>() {
+			});
+	}
+
+	public static ApiTemplate<PointProductDetail> getProductByIdForAdmin(Long id) {
+		return RestAssuredMockMvc
+			.given().log().all()
+			.contentType(MediaType.APPLICATION_JSON)
+			.when().get("/api/admin/point-products/" + id)
 			.then().log().all()
 			.status(HttpStatus.OK)
 			.extract().as(new TypeRef<>() {

@@ -36,7 +36,7 @@ public class PointProductController implements PointProductControllerDocs {
 	@GetMapping("/{pointProductId}")
 	public ApiTemplate<PointProductDetail> getProductById(@PathVariable Long pointProductId) {
 		PointProduct pointProduct = pointProductQueryService.getPointProduct(pointProductId);
-		PointProductDetail result = PointProductDetail.from(pointProduct);
+		PointProductDetail result = PointProductDetail.forClient(pointProduct);
 		return ApiTemplate.ok(PointProductResponseMessage.POINT_PRODUCT_DETAIL_INQUIRY_SUCCESS, result);
 	}
 }

@@ -54,7 +54,7 @@ class PointProductControllerTest extends BaseControllerUnitTest {
 		// given
 		PointProduct mock = getMockPointProductWithStub();
 		when(pointProductQueryService.getPointProduct(anyLong())).thenReturn(mock);
-		PointProductDetail result = PointProductDetail.from(mock);
+		PointProductDetail result = PointProductDetail.forClient(mock);
 
 		// when
 		ApiTemplate<PointProductDetail> response = PointProductRequest.getProductById(1L);
@@ -64,7 +64,7 @@ class PointProductControllerTest extends BaseControllerUnitTest {
 		assertThat(response.message()).isEqualTo(POINT_PRODUCT_DETAIL_INQUIRY_SUCCESS.getMessage());
 	}
 
-	private static PointProduct getMockPointProductWithStub() {
+	public static PointProduct getMockPointProductWithStub() {
 		Code code = new Code("PRD-AB-001");
 		BasicInfo mockBasicInfo = new BasicInfo("name", "description");
 		Media media = new Media("https://image.png");

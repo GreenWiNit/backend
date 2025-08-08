@@ -18,16 +18,19 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.green.domain.pointshop.product.controller.docs.PointProductAdminControllerDocs;
 import com.example.green.domain.pointshop.product.controller.dto.PointProductCreateDto;
+import com.example.green.domain.pointshop.product.controller.dto.PointProductDetail;
 import com.example.green.domain.pointshop.product.controller.dto.PointProductExcelCondition;
 import com.example.green.domain.pointshop.product.controller.dto.PointProductSearchCondition;
 import com.example.green.domain.pointshop.product.controller.dto.PointProductSearchResult;
 import com.example.green.domain.pointshop.product.controller.dto.PointProductUpdateDto;
+import com.example.green.domain.pointshop.product.entity.PointProduct;
 import com.example.green.domain.pointshop.product.entity.vo.BasicInfo;
 import com.example.green.domain.pointshop.product.entity.vo.Code;
 import com.example.green.domain.pointshop.product.entity.vo.Media;
 import com.example.green.domain.pointshop.product.entity.vo.Price;
 import com.example.green.domain.pointshop.product.entity.vo.Stock;
 import com.example.green.domain.pointshop.product.repository.PointProductQueryRepository;
+import com.example.green.domain.pointshop.product.service.PointProductQueryService;
 import com.example.green.domain.pointshop.product.service.PointProductService;
 import com.example.green.domain.pointshop.product.service.command.PointProductCreateCommand;
 import com.example.green.domain.pointshop.product.service.command.PointProductUpdateCommand;
@@ -46,6 +49,7 @@ import lombok.RequiredArgsConstructor;
 public class PointProductAdminController implements PointProductAdminControllerDocs {
 
 	private final PointProductService pointProductService;
+	private final PointProductQueryService pointProductQueryService;
 	private final PointProductQueryRepository pointProductQueryRepository;
 	private final ExcelDownloader excelDownloader;
 
@@ -62,6 +66,13 @@ public class PointProductAdminController implements PointProductAdminControllerD
 	) {
 		PageTemplate<PointProductSearchResult> result = pointProductQueryRepository.searchPointProducts(condition);
 		return ApiTemplate.ok(PointProductResponseMessage.POINT_PRODUCTS_INQUIRY_SUCCESS, result);
+	}
+
+	@GetMapping("/{pointProductId}")
+	public ApiTemplate<PointProductDetail> getProductById(@PathVariable Long pointProductId) {
+		PointProduct pointProduct = pointProductQueryService.getPointProduct(pointProductId);
+		PointProductDetail result = PointProductDetail.forAdmin(pointProduct);
+		return ApiTemplate.ok(PointProductResponseMessage.POINT_PRODUCT_DETAIL_INQUIRY_SUCCESS, result);
 	}
 
 	@GetMapping("/excel")
