@@ -42,6 +42,7 @@ public interface MemberManagementControllerDocs {
 							"hasNext": true,
 							"content": [
 								{
+									"memberId": 1,
 									"memberKey": "naver_123456789",
 									"email": "user@naver.com",
 									"nickname": "홍길동",
@@ -106,6 +107,7 @@ public interface MemberManagementControllerDocs {
 							"hasNext": false,
 							"content": [
 								{
+									"memberId": 1,
 									"memberKey": "naver_123456789",
 									"email": "user@naver.com",
 									"nickname": "홍길동",
