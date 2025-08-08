@@ -14,6 +14,7 @@ import com.example.green.domain.pointshop.product.repository.PointProductQueryRe
 import com.example.green.domain.pointshop.product.service.PointProductQueryService;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.page.CursorTemplate;
+import com.example.green.global.security.annotation.PublicApi;
 
 import lombok.RequiredArgsConstructor;
 
@@ -26,6 +27,7 @@ public class PointProductController implements PointProductControllerDocs {
 	private final PointProductQueryRepository pointProductQueryRepository;
 
 	@GetMapping
+	@PublicApi
 	public ApiTemplate<CursorTemplate<Long, PointProductView>> getProducts(
 		@RequestParam(required = false) Long cursor
 	) {
@@ -34,6 +36,7 @@ public class PointProductController implements PointProductControllerDocs {
 	}
 
 	@GetMapping("/{pointProductId}")
+	@PublicApi
 	public ApiTemplate<PointProductDetail> getProductById(@PathVariable Long pointProductId) {
 		PointProduct pointProduct = pointProductQueryService.getPointProduct(pointProductId);
 		PointProductDetail result = PointProductDetail.from(pointProduct);
