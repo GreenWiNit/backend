@@ -97,6 +97,13 @@ public class AdminChallengeController implements AdminChallengeControllerDocs {
 		return ApiTemplate.ok(AdminChallengeResponseMessage.CHALLENGE_DETAIL_FOUND, result);
 	}
 
+	@GetMapping("/code/{challengeCode}")
+	@Override
+	public ApiTemplate<AdminChallengeDetailResponseDto> getChallengeDetailByCode(@PathVariable String challengeCode) {
+		AdminChallengeDetailResponseDto result = adminChallengeService.getChallengeDetailByCode(challengeCode);
+		return ApiTemplate.ok(AdminChallengeResponseMessage.CHALLENGE_DETAIL_FOUND, result);
+	}
+
 	@Override
 	@GetMapping("/{challengeId}/participants")
 	public ApiTemplate<CursorTemplate<Long, AdminChallengeParticipantListResponseDto>> getChallengeParticipants(

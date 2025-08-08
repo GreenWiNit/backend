@@ -276,4 +276,20 @@ public class AdminChallengeService {
 
 		return AdminTeamChallengeGroupDetailResponseDto.from(group, participants);
 	}
+
+	/**
+	 * 챌린지 코드로 상세 정보를 조회합니다.
+	 */
+	public AdminChallengeDetailResponseDto getChallengeDetailByCode(String challengeCode) {
+		var personalChallenge = personalChallengeRepository.findByChallengeCode(challengeCode);
+		if (personalChallenge.isPresent()) {
+			return AdminChallengeDetailResponseDto.from(personalChallenge.get());
+		}
+		var teamChallenge = teamChallengeRepository.findByChallengeCode(challengeCode);
+		if (teamChallenge.isPresent()) {
+			return AdminChallengeDetailResponseDto.from(teamChallenge.get());
+		}
+
+		throw new ChallengeException(ChallengeExceptionMessage.ADMIN_CHALLENGE_NOT_FOUND);
+	}
 }

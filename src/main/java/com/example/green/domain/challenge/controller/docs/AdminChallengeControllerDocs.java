@@ -126,6 +126,18 @@ public interface AdminChallengeControllerDocs {
 			in = ParameterIn.PATH, required = true, example = "1") Long challengeId
 	);
 
+	@Operation(summary = "챌린지 코드로 상세 조회", description = "챌린지 코드로 상세 정보를 조회합니다.")
+	@ApiErrorStandard
+	@ApiResponse(responseCode = "200", description = "챌린지 상세 조회 성공", useReturnTypeSchema = true)
+	@ApiResponse(responseCode = "403", description = "관리자 권한이 필요합니다.",
+		content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
+	@ApiResponse(responseCode = "404", description = "챌린지를 찾을 수 없습니다.",
+		content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
+	ApiTemplate<AdminChallengeDetailResponseDto> getChallengeDetailByCode(
+		@Parameter(name = "challengeCode", description = "챌린지 코드",
+			in = ParameterIn.PATH, required = true, example = "CH-P-20250109-143521-A3FV") String challengeCode
+	);
+
 	@Operation(summary = "챌린지 참여자 목록 조회", description = "챌린지의 참여자 목록을 조회합니다. (10개씩 조회)")
 	@ApiErrorStandard
 	@ApiResponse(responseCode = "200", description = "참여자 목록 조회 성공", useReturnTypeSchema = true)
