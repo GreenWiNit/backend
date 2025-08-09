@@ -12,7 +12,9 @@ import com.example.green.domain.challenge.entity.PersonalChallenge;
 import com.example.green.domain.challenge.entity.TeamChallenge;
 import com.example.green.domain.challenge.exception.ChallengeException;
 import com.example.green.domain.challenge.exception.ChallengeExceptionMessage;
+import com.example.green.domain.challenge.repository.PersonalChallengeParticipationRepository;
 import com.example.green.domain.challenge.repository.PersonalChallengeRepository;
+import com.example.green.domain.challenge.repository.TeamChallengeParticipationRepository;
 import com.example.green.domain.challenge.repository.TeamChallengeRepository;
 import com.example.green.domain.challengecert.dto.AdminChallengeTitleResponseDto;
 import com.example.green.domain.challengecert.dto.AdminGroupCodeResponseDto;
@@ -30,9 +32,7 @@ import com.example.green.domain.challengecert.entity.TeamChallengeParticipation;
 import com.example.green.domain.challengecert.exception.ChallengeCertException;
 import com.example.green.domain.challengecert.exception.ChallengeCertExceptionMessage;
 import com.example.green.domain.challengecert.repository.PersonalChallengeCertificationRepository;
-import com.example.green.domain.challengecert.repository.PersonalChallengeParticipationRepository;
 import com.example.green.domain.challengecert.repository.TeamChallengeCertificationRepository;
-import com.example.green.domain.challengecert.repository.TeamChallengeParticipationRepository;
 import com.example.green.domain.member.entity.Member;
 import com.example.green.domain.member.exception.MemberExceptionMessage;
 import com.example.green.domain.member.repository.MemberRepository;
@@ -296,7 +296,8 @@ public class ChallengeCertificationService {
 			findPersonalChallengeById(searchRequest.challengeId());
 		}
 
-		return personalChallengeCertificationRepository.findPersonalCertificationsWithFilters(searchRequest, ADMIN_PAGE_SIZE);
+		return personalChallengeCertificationRepository.findPersonalCertificationsWithFilters(searchRequest,
+			ADMIN_PAGE_SIZE);
 	}
 
 	/**

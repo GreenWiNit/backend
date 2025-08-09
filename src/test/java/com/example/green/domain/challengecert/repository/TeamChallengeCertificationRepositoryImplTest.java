@@ -16,6 +16,7 @@ import com.example.green.domain.challenge.entity.TeamChallenge;
 import com.example.green.domain.challenge.enums.ChallengeDisplayStatus;
 import com.example.green.domain.challenge.enums.ChallengeStatus;
 import com.example.green.domain.challenge.enums.ChallengeType;
+import com.example.green.domain.challenge.repository.TeamChallengeParticipationRepository;
 import com.example.green.domain.challenge.repository.TeamChallengeRepository;
 import com.example.green.domain.challenge.utils.CodeGenerator;
 import com.example.green.domain.challengecert.dto.ChallengeCertificationListResponseDto;

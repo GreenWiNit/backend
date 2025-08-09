@@ -1,4 +1,4 @@
-package com.example.green.domain.challengecert.repository;
+package com.example.green.domain.challenge.repository;
 
 import java.util.Optional;
 

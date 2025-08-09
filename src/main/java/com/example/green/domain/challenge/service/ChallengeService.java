@@ -11,13 +11,13 @@ import com.example.green.domain.challenge.entity.PersonalChallenge;
 import com.example.green.domain.challenge.entity.TeamChallenge;
 import com.example.green.domain.challenge.exception.ChallengeException;
 import com.example.green.domain.challenge.exception.ChallengeExceptionMessage;
+import com.example.green.domain.challenge.repository.PersonalChallengeParticipationRepository;
 import com.example.green.domain.challenge.repository.PersonalChallengeRepository;
+import com.example.green.domain.challenge.repository.TeamChallengeParticipationRepository;
 import com.example.green.domain.challenge.repository.TeamChallengeRepository;
 import com.example.green.domain.challengecert.entity.PersonalChallengeParticipation;
 import com.example.green.domain.challengecert.entity.TeamChallengeParticipation;
-import com.example.green.domain.challengecert.repository.PersonalChallengeParticipationRepository;
 import com.example.green.domain.challengecert.repository.TeamChallengeGroupParticipationRepository;
-import com.example.green.domain.challengecert.repository.TeamChallengeParticipationRepository;
 import com.example.green.domain.member.entity.Member;
 import com.example.green.domain.member.exception.MemberExceptionMessage;
 import com.example.green.domain.member.repository.MemberRepository;
@@ -42,14 +42,6 @@ public class ChallengeService {
 	private final TeamChallengeGroupParticipationRepository teamChallengeGroupParticipationRepository;
 	private final MemberRepository memberRepository;
 	private final TimeUtils timeUtils;
-
-	// 내가 참여한 개인 챌린지 목록 조회
-	public CursorTemplate<Long, ChallengeListResponseDto> getMyPersonalChallenges(Long cursor,
-		PrincipalDetails currentUser) {
-		Member member = getMemberById(currentUser.getMemberId());
-		return personalChallengeParticipationRepository
-			.findMyParticipationsByCursor(member, cursor, DEFAULT_PAGE_SIZE);
-	}
 
 	// 내가 참여한 팀 챌린지 목록 조회
 	public CursorTemplate<Long, ChallengeListResponseDto> getMyTeamChallenges(Long cursor,
@@ -195,16 +187,5 @@ public class ChallengeService {
 
 		// TeamChallengeParticipation 삭제
 		teamChallengeParticipationRepository.delete(participation);
-	}
-
-	private ChallengeListResponseDto toChallengeListDto(BaseChallenge challenge) {
-		return new ChallengeListResponseDto(
-			challenge.getId(),
-			challenge.getChallengeName(),
-			challenge.getBeginDateTime(),
-			challenge.getEndDateTime(),
-			challenge.getChallengeImage(),
-			challenge.getChallengePoint().getAmount().intValue()
-		);
 	}
 }

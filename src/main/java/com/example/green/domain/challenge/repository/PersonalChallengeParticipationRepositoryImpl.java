@@ -1,4 +1,4 @@
-package com.example.green.domain.challengecert.repository;
+package com.example.green.domain.challenge.repository;
 
 import static com.example.green.domain.challengecert.entity.QPersonalChallengeParticipation.*;
 
@@ -110,8 +110,6 @@ public class PersonalChallengeParticipationRepositoryImpl implements PersonalCha
 			return CursorTemplate.of(daos);
 		}
 	}
-
-
 
 	private BooleanExpression cursorCondition(Long cursor) {
 		return cursor != null ? personalChallengeParticipation.id.lt(cursor) : null;

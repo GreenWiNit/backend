@@ -1,0 +1,76 @@
+package com.example.green.domain.challenge.infra;
+
+import static com.example.green.domain.challenge.entity.QPersonalChallenge.*;
+import static com.example.green.domain.challengecert.entity.QPersonalChallengeParticipation.*;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.example.green.domain.challenge.controller.dto.ChallengeListResponseDto;
+import com.example.green.domain.challenge.enums.ChallengeStatus;
+import com.example.green.domain.challenge.repository.query.PersonalChallengeQuery;
+import com.example.green.global.api.page.CursorTemplate;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+
+import lombok.RequiredArgsConstructor;
+
+@Repository
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
+public class PersonalChallengeQueryImpl implements PersonalChallengeQuery {
+
+	private final JPAQueryFactory queryFactory;
+
+	public CursorTemplate<Long, ChallengeListResponseDto> findMyParticipationByCursor(
+		Long memberId,
+		Long cursor,
+		int size
+	) {
+		List<ChallengeListResponseDto> participation = queryFactory
+			.select(PersonalChallengeProjections.toChallenges())
+			.from(personalChallenge)
+			.join(personalChallengeParticipation.personalChallenge)
+			.where(
+				personalChallengeParticipation.member.id.eq(memberId),
+				cursorCondition(cursor)
+			)
+			.orderBy(personalChallengeParticipation.id.desc())
+			.limit(size + 1)
+			.fetch();
+
+		return CursorTemplate.from(participation, size, ChallengeListResponseDto::id);
+	}
+
+	public CursorTemplate<Long, ChallengeListResponseDto> findPersonalChallengesByCursor(
+		Long cursor,
+		int size,
+		ChallengeStatus status,
+		LocalDateTime now
+	) {
+		List<ChallengeListResponseDto> participation = queryFactory
+			.select(PersonalChallengeProjections.toChallenges())
+			.from(personalChallenge)
+			.where(
+				cursorCondition(cursor),
+				personalChallenge.challengeStatus.eq(status),
+				personalChallenge.beginDateTime.loe(now),
+				personalChallenge.endDateTime.goe(now)
+			)
+			.orderBy(personalChallenge.id.desc())
+			.limit(size + 1)
+			.fetch();
+
+		return CursorTemplate.from(participation, size, ChallengeListResponseDto::id);
+	}
+
+	private BooleanExpression cursorCondition(Long cursor) {
+		if (cursor == null) {
+			return null;
+		}
+		return personalChallengeParticipation.id.lt(cursor);
+	}
+}

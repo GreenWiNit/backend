@@ -1,0 +1,19 @@
+package com.example.green.domain.challenge.repository.query;
+
+import java.time.LocalDateTime;
+
+import com.example.green.domain.challenge.controller.dto.ChallengeListResponseDto;
+import com.example.green.domain.challenge.enums.ChallengeStatus;
+import com.example.green.global.api.page.CursorTemplate;
+
+public interface PersonalChallengeQuery {
+
+	CursorTemplate<Long, ChallengeListResponseDto> findMyParticipationByCursor(Long memberId, Long cursor, int size);
+
+	CursorTemplate<Long, ChallengeListResponseDto> findPersonalChallengesByCursor(
+		Long cursor,
+		int size,
+		ChallengeStatus status,
+		LocalDateTime now
+	);
+}

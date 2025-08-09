@@ -1,4 +1,4 @@
-package com.example.green.domain.challengecert.repository;
+package com.example.green.domain.challenge.repository;
 
 import com.example.green.domain.challenge.controller.dto.ChallengeListResponseDto;
 import com.example.green.domain.challengecert.repository.dao.ChallengeParticipantDao;

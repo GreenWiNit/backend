@@ -83,7 +83,8 @@ public interface ChallengeQueryControllerDocs {
 	@ApiResponse(responseCode = "200", description = "내 개인 챌린지 목록 조회 성공", useReturnTypeSchema = true)
 	ApiTemplate<CursorTemplate<Long, ChallengeListResponseDto>> getMyPersonalChallenges(
 		@Parameter(description = "다음 페이지 조회를 위한 마지막 챌린지 ID (선택, 첫 페이지 조회 시 생략)", example = "1") Long cursor,
-		@Parameter(hidden = true) PrincipalDetails currentUser
+		@Parameter(hidden = true) PrincipalDetails currentUser,
+		@Parameter(description = "페이지 사이즈(생략 가능)", example = "20") Integer pageSize
 	);
 
 	@Operation(
@@ -98,6 +99,7 @@ public interface ChallengeQueryControllerDocs {
 	@ApiResponse(responseCode = "200", description = "내 팀 챌린지 목록 조회 성공", useReturnTypeSchema = true)
 	ApiTemplate<CursorTemplate<Long, ChallengeListResponseDto>> getMyTeamChallenges(
 		@Parameter(description = "다음 페이지 조회를 위한 마지막 챌린지 ID (선택, 첫 페이지 조회 시 생략)", example = "1") Long cursor,
-		@Parameter(hidden = true) PrincipalDetails currentUser
+		@Parameter(hidden = true) PrincipalDetails currentUser,
+		@Parameter(description = "페이지 사이즈(생략 가능)", example = "20") Integer pageSize
 	);
 }

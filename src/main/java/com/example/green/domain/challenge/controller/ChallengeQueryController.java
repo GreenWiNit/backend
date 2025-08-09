@@ -14,8 +14,8 @@ import com.example.green.domain.challenge.controller.docs.ChallengeQueryControll
 import com.example.green.domain.challenge.controller.dto.ChallengeDetailResponseDto;
 import com.example.green.domain.challenge.controller.dto.ChallengeListResponseDto;
 import com.example.green.domain.challenge.controller.message.ChallengeResponseMessage;
-import com.example.green.domain.challenge.repository.PersonalChallengeRepository;
-import com.example.green.domain.challenge.repository.TeamChallengeRepository;
+import com.example.green.domain.challenge.repository.query.PersonalChallengeQuery;
+import com.example.green.domain.challenge.repository.query.TeamChallengeQuery;
 import com.example.green.domain.challenge.service.ChallengeService;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.page.CursorTemplate;
@@ -30,8 +30,8 @@ import lombok.RequiredArgsConstructor;
 public class ChallengeQueryController implements ChallengeQueryControllerDocs {
 
 	private final ChallengeService challengeService;
-	private final PersonalChallengeRepository personalChallengeRepository;
-	private final TeamChallengeRepository teamChallengeRepository;
+	private final PersonalChallengeQuery personalChallengeQuery;
+	private final TeamChallengeQuery teamChallengeQuery;
 	private final TimeUtils timeUtils;
 
 	@GetMapping("/challenges/personal")
@@ -40,7 +40,7 @@ public class ChallengeQueryController implements ChallengeQueryControllerDocs {
 		@RequestParam(required = false, defaultValue = "20") Integer pageSize
 	) {
 		CursorTemplate<Long, ChallengeListResponseDto> result =
-			personalChallengeRepository.findPersonalChallengesByCursor(cursor, pageSize, PROCEEDING, timeUtils.now());
+			personalChallengeQuery.findPersonalChallengesByCursor(cursor, pageSize, PROCEEDING, timeUtils.now());
 
 		return ApiTemplate.ok(CHALLENGE_LIST_FOUND, result);
 	}
@@ -51,7 +51,7 @@ public class ChallengeQueryController implements ChallengeQueryControllerDocs {
 		@RequestParam(required = false, defaultValue = "20") Integer pageSize
 	) {
 		CursorTemplate<Long, ChallengeListResponseDto> result =
-			teamChallengeRepository.findTeamChallengesByCursor(cursor, pageSize, PROCEEDING, timeUtils.now());
+			teamChallengeQuery.findTeamChallengesByCursor(cursor, pageSize, PROCEEDING, timeUtils.now());
 
 		return ApiTemplate.ok(CHALLENGE_LIST_FOUND, result);
 	}
@@ -70,22 +70,26 @@ public class ChallengeQueryController implements ChallengeQueryControllerDocs {
 	@GetMapping("/my/challenges/personal")
 	public ApiTemplate<CursorTemplate<Long, ChallengeListResponseDto>> getMyPersonalChallenges(
 		@RequestParam(required = false) Long cursor,
-		@AuthenticationPrincipal PrincipalDetails currentUser
+		@AuthenticationPrincipal PrincipalDetails currentUser,
+		@RequestParam(required = false, defaultValue = "20") Integer pageSize
 	) {
-		return ApiTemplate.ok(
-			ChallengeResponseMessage.MY_PERSONAL_CHALLENGE_LIST_FOUND,
-			challengeService.getMyPersonalChallenges(cursor, currentUser)
-		);
+		Long memberId = currentUser.getMemberId();
+		CursorTemplate<Long, ChallengeListResponseDto> result =
+			personalChallengeQuery.findMyParticipationByCursor(memberId, cursor, pageSize);
+
+		return ApiTemplate.ok(MY_PERSONAL_CHALLENGE_LIST_FOUND, result);
 	}
 
 	@GetMapping("/my/challenges/team")
 	public ApiTemplate<CursorTemplate<Long, ChallengeListResponseDto>> getMyTeamChallenges(
 		@RequestParam(required = false) Long cursor,
-		@AuthenticationPrincipal PrincipalDetails currentUser
+		@AuthenticationPrincipal PrincipalDetails currentUser,
+		@RequestParam(required = false, defaultValue = "20") Integer pageSize
 	) {
-		return ApiTemplate.ok(
-			ChallengeResponseMessage.MY_TEAM_CHALLENGE_LIST_FOUND,
-			challengeService.getMyTeamChallenges(cursor, currentUser)
-		);
+		Long memberId = currentUser.getMemberId();
+		CursorTemplate<Long, ChallengeListResponseDto> result =
+			teamChallengeQuery.findMyParticipationByCursor(memberId, cursor, pageSize);
+
+		return ApiTemplate.ok(MY_TEAM_CHALLENGE_LIST_FOUND, result);
 	}
 }
