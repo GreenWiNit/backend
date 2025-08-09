@@ -2,6 +2,7 @@ package com.example.green.global.api.page;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.NonNull;
@@ -37,5 +38,19 @@ public record CursorTemplate<R, T>(
 			nextCursor,
 			Optional.ofNullable(content).orElse(List.of())
 		);
+	}
+
+	public static <R, T> CursorTemplate<R, T> from(List<T> content, int size, Function<T, R> cursorExtractor) {
+		if (content.size() <= size) {
+			return of(content);
+		}
+
+		content.removeLast();
+		if (content.isEmpty()) {
+			return ofEmpty();
+		}
+
+		R nextCursor = cursorExtractor.apply(content.getLast());
+		return ofWithNextCursor(nextCursor, content);
 	}
 }
