@@ -9,7 +9,6 @@ import com.example.green.domain.challenge.controller.dto.ChallengeParticipationS
 import com.example.green.domain.challenge.entity.BaseChallenge;
 import com.example.green.domain.challenge.entity.PersonalChallenge;
 import com.example.green.domain.challenge.entity.TeamChallenge;
-import com.example.green.domain.challenge.enums.ChallengeStatus;
 import com.example.green.domain.challenge.exception.ChallengeException;
 import com.example.green.domain.challenge.exception.ChallengeExceptionMessage;
 import com.example.green.domain.challenge.repository.PersonalChallengeRepository;
@@ -43,26 +42,6 @@ public class ChallengeService {
 	private final TeamChallengeGroupParticipationRepository teamChallengeGroupParticipationRepository;
 	private final MemberRepository memberRepository;
 	private final TimeUtils timeUtils;
-
-	// 개인 챌린지 목록 조회
-	public CursorTemplate<Long, ChallengeListResponseDto> getPersonalChallenges(Long cursor) {
-		return personalChallengeRepository.findPersonalChallengesByCursor(
-			cursor,
-			DEFAULT_PAGE_SIZE,
-			ChallengeStatus.PROCEEDING,
-			timeUtils.now()
-		);
-	}
-
-	// 팀 챌린지 목록 조회
-	public CursorTemplate<Long, ChallengeListResponseDto> getTeamChallenges(Long cursor) {
-		return teamChallengeRepository.findTeamChallengesByCursor(
-			cursor,
-			DEFAULT_PAGE_SIZE,
-			ChallengeStatus.PROCEEDING,
-			timeUtils.now()
-		);
-	}
 
 	// 내가 참여한 개인 챌린지 목록 조회
 	public CursorTemplate<Long, ChallengeListResponseDto> getMyPersonalChallenges(Long cursor,
