@@ -1,6 +1,6 @@
 package com.example.green.domain.challenge.controller.docs;
 
-import com.example.green.domain.challenge.controller.dto.ChallengeDetailResponseDto;
+import com.example.green.domain.challenge.controller.dto.ChallengeDetailDto;
 import com.example.green.domain.challenge.controller.dto.ChallengeListResponseDto;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.page.CursorTemplate;
@@ -49,8 +49,11 @@ public interface ChallengeQueryControllerDocs {
 		@Parameter(description = "페이지 사이즈(생략 가능)", example = "20") Integer pageSize
 	);
 
+	@Deprecated
+	ApiTemplate<ChallengeDetailDto> getChallengeDetail(Long chlgNo);
+
 	@Operation(
-		summary = "챌린지 상세 조회",
+		summary = "개인 챌린지 상세 조회",
 		description = """
 			챌린지 ID로 상세 정보를 조회합니다.
 			- 비로그인 상태: 참여하기 버튼 표시
@@ -65,7 +68,29 @@ public interface ChallengeQueryControllerDocs {
 		description = "챌린지를 찾을 수 없습니다.",
 		content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
 	)
-	ApiTemplate<ChallengeDetailResponseDto> getChallengeDetail(
+	ApiTemplate<ChallengeDetailDto> getPersonalChallenge(
+		@Parameter(name = "chlgNo", description = "조회할 챌린지 ID",
+			in = ParameterIn.PATH, required = true, example = "1") Long chlgNo,
+		@Parameter(hidden = true) PrincipalDetails currentUser
+	);
+
+	@Operation(
+		summary = "팀 챌린지 상세 조회",
+		description = """
+			챌린지 ID로 상세 정보를 조회합니다.
+			- 비로그인 상태: 참여하기 버튼 표시
+			- 로그인 상태 & 미참여: 참여하기 버튼 표시
+			- 로그인 상태 & 참여 중: 참여하기 버튼 미표시
+			"""
+	)
+	@ApiErrorStandard
+	@ApiResponse(responseCode = "200", description = "챌린지 상세 조회 성공", useReturnTypeSchema = true)
+	@ApiResponse(
+		responseCode = "404",
+		description = "챌린지를 찾을 수 없습니다.",
+		content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+	)
+	ApiTemplate<ChallengeDetailDto> getTeamChallenge(
 		@Parameter(name = "chlgNo", description = "조회할 챌린지 ID",
 			in = ParameterIn.PATH, required = true, example = "1") Long chlgNo,
 		@Parameter(hidden = true) PrincipalDetails currentUser

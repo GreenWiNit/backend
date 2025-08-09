@@ -16,8 +16,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import com.example.green.domain.challenge.controller.dto.ChallengeDetailResponseDto;
-import com.example.green.domain.challenge.controller.dto.ChallengeParticipationStatus;
 import com.example.green.domain.challenge.entity.PersonalChallenge;
 import com.example.green.domain.challenge.entity.TeamChallenge;
 import com.example.green.domain.challenge.entity.TeamChallengeGroup;
@@ -95,29 +93,6 @@ class ChallengeServiceTest {
 
 		// TimeUtils mock 설정 (lenient 모드로 설정하여 불필요한 stubbing 허용)
 		lenient().when(timeUtils.now()).thenReturn(LocalDateTime.now());
-	}
-
-	@Test
-	void 로그인한_사용자가_참여한_팀_챌린지를_조회하면_JOINED_상태를_반환한다() {
-		// given
-		given(teamChallengeRepository.findById(TEST_CHALLENGE_ID + 1))
-			.willReturn(Optional.of(testTeamChallenge));
-		given(memberRepository.findById(TEST_MEMBER_ID))
-			.willReturn(Optional.of(testMember));
-		given(teamChallengeParticipationRepository.existsByMemberAndTeamChallenge(testMember, testTeamChallenge))
-			.willReturn(true);
-
-		// when
-		ChallengeDetailResponseDto result = challengeService.getChallengeDetail(TEST_CHALLENGE_ID + 1,
-			principalDetails);
-
-		// then
-		assertThat(result.getId()).isEqualTo(TEST_CHALLENGE_ID + 1);
-		assertThat(result.getTitle()).isEqualTo(testTeamChallenge.getChallengeName());
-		assertThat(result.getParticipationStatus()).isEqualTo(ChallengeParticipationStatus.JOINED);
-		verify(teamChallengeRepository).findById(TEST_CHALLENGE_ID + 1);
-		verify(memberRepository).findById(TEST_MEMBER_ID);
-		verify(teamChallengeParticipationRepository).existsByMemberAndTeamChallenge(testMember, testTeamChallenge);
 	}
 
 	@Test

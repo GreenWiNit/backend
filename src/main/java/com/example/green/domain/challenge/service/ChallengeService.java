@@ -3,9 +3,6 @@ package com.example.green.domain.challenge.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.green.domain.challenge.controller.dto.ChallengeDetailResponseDto;
-import com.example.green.domain.challenge.controller.dto.ChallengeListResponseDto;
-import com.example.green.domain.challenge.controller.dto.ChallengeParticipationStatus;
 import com.example.green.domain.challenge.entity.BaseChallenge;
 import com.example.green.domain.challenge.entity.PersonalChallenge;
 import com.example.green.domain.challenge.entity.TeamChallenge;
@@ -21,7 +18,6 @@ import com.example.green.domain.challengecert.repository.TeamChallengeGroupParti
 import com.example.green.domain.member.entity.Member;
 import com.example.green.domain.member.exception.MemberExceptionMessage;
 import com.example.green.domain.member.repository.MemberRepository;
-import com.example.green.global.api.page.CursorTemplate;
 import com.example.green.global.error.exception.BusinessException;
 import com.example.green.global.security.PrincipalDetails;
 import com.example.green.global.utils.TimeUtils;
@@ -33,8 +29,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ChallengeService {
 
-	private static final int DEFAULT_PAGE_SIZE = 20;
-
 	private final PersonalChallengeRepository personalChallengeRepository;
 	private final TeamChallengeRepository teamChallengeRepository;
 	private final PersonalChallengeParticipationRepository personalChallengeParticipationRepository;
@@ -42,21 +36,6 @@ public class ChallengeService {
 	private final TeamChallengeGroupParticipationRepository teamChallengeGroupParticipationRepository;
 	private final MemberRepository memberRepository;
 	private final TimeUtils timeUtils;
-
-	// 내가 참여한 팀 챌린지 목록 조회
-	public CursorTemplate<Long, ChallengeListResponseDto> getMyTeamChallenges(Long cursor,
-		PrincipalDetails currentUser) {
-		Member member = getMemberById(currentUser.getMemberId());
-		return teamChallengeParticipationRepository
-			.findMyParticipationsByCursor(member, cursor, DEFAULT_PAGE_SIZE);
-	}
-
-	// 챌린지 상세 조회
-	public ChallengeDetailResponseDto getChallengeDetail(Long challengeId, PrincipalDetails currentUser) {
-		BaseChallenge challenge = findChallengeById(challengeId);
-		ChallengeParticipationStatus participationStatus = determineParticipationStatus(challenge, currentUser);
-		return ChallengeDetailResponseDto.from(challenge, participationStatus);
-	}
 
 	// 챌린지 참여
 	@Transactional
@@ -96,30 +75,6 @@ public class ChallengeService {
 	private Member getMemberById(Long memberId) {
 		return memberRepository.findById(memberId)
 			.orElseThrow(() -> new BusinessException(MemberExceptionMessage.MEMBER_NOT_FOUND));
-	}
-
-	private ChallengeParticipationStatus determineParticipationStatus(
-		BaseChallenge challenge,
-		PrincipalDetails currentUser
-	) {
-		if (currentUser == null) {
-			return ChallengeParticipationStatus.NOT_LOGGED_IN;
-		}
-
-		Member member = getMemberById(currentUser.getMemberId());
-		boolean isParticipating = false;
-
-		if (challenge instanceof PersonalChallenge personalChallenge) {
-			isParticipating = personalChallengeParticipationRepository
-				.existsByMemberAndPersonalChallenge(member, personalChallenge);
-		} else if (challenge instanceof TeamChallenge teamChallenge) {
-			isParticipating = teamChallengeParticipationRepository
-				.existsByMemberAndTeamChallenge(member, teamChallenge);
-		}
-
-		return isParticipating
-			? ChallengeParticipationStatus.JOINED
-			: ChallengeParticipationStatus.NOT_JOINED;
 	}
 
 	private void validateChallengeParticipation(BaseChallenge challenge, Member member) {

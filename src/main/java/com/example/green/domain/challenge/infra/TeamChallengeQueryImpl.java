@@ -1,5 +1,6 @@
 package com.example.green.domain.challenge.infra;
 
+import static com.example.green.domain.challenge.entity.QPersonalChallenge.*;
 import static com.example.green.domain.challenge.entity.QTeamChallenge.*;
 import static com.example.green.domain.challengecert.entity.QPersonalChallengeParticipation.*;
 import static com.example.green.domain.challengecert.entity.QTeamChallengeParticipation.*;
@@ -10,11 +11,13 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.green.domain.challenge.controller.dto.ChallengeDetailDto;
 import com.example.green.domain.challenge.controller.dto.ChallengeListResponseDto;
 import com.example.green.domain.challenge.enums.ChallengeStatus;
 import com.example.green.domain.challenge.repository.query.TeamChallengeQuery;
 import com.example.green.global.api.page.CursorTemplate;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
@@ -66,6 +69,22 @@ public class TeamChallengeQueryImpl implements TeamChallengeQuery {
 			.fetch();
 
 		return CursorTemplate.from(participation, size, ChallengeListResponseDto::id);
+	}
+
+	@Override
+	public ChallengeDetailDto findTeamChallenge(Long challengeId, Long memberId) {
+		BooleanExpression exists = JPAExpressions.selectOne()
+			.from(teamChallengeParticipation)
+			.where(
+				teamChallengeParticipation.teamChallenge.id.eq(challengeId),
+				teamChallengeParticipation.member.id.eq(memberId)
+			).exists();
+
+		return queryFactory
+			.select(TeamChallengeProjections.toChallengeByMember(exists))
+			.from(personalChallenge)
+			.where(personalChallenge.id.eq(challengeId))
+			.fetchOne();
 	}
 
 	private BooleanExpression cursorCondition(Long cursor) {

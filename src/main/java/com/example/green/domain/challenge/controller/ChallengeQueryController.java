@@ -11,14 +11,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.green.domain.challenge.controller.docs.ChallengeQueryControllerDocs;
-import com.example.green.domain.challenge.controller.dto.ChallengeDetailResponseDto;
+import com.example.green.domain.challenge.controller.dto.ChallengeDetailDto;
 import com.example.green.domain.challenge.controller.dto.ChallengeListResponseDto;
-import com.example.green.domain.challenge.controller.message.ChallengeResponseMessage;
 import com.example.green.domain.challenge.repository.query.PersonalChallengeQuery;
 import com.example.green.domain.challenge.repository.query.TeamChallengeQuery;
-import com.example.green.domain.challenge.service.ChallengeService;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.page.CursorTemplate;
+import com.example.green.global.error.exception.BusinessException;
+import com.example.green.global.error.exception.GlobalExceptionMessage;
 import com.example.green.global.security.PrincipalDetails;
 import com.example.green.global.utils.TimeUtils;
 
@@ -29,7 +29,6 @@ import lombok.RequiredArgsConstructor;
 @RestController
 public class ChallengeQueryController implements ChallengeQueryControllerDocs {
 
-	private final ChallengeService challengeService;
 	private final PersonalChallengeQuery personalChallengeQuery;
 	private final TeamChallengeQuery teamChallengeQuery;
 	private final TimeUtils timeUtils;
@@ -57,14 +56,33 @@ public class ChallengeQueryController implements ChallengeQueryControllerDocs {
 	}
 
 	@GetMapping("/challenges/{chlgNo}")
-	public ApiTemplate<ChallengeDetailResponseDto> getChallengeDetail(
-		@PathVariable Long chlgNo,
-		@AuthenticationPrincipal PrincipalDetails currentUser
-	) {
+	public ApiTemplate<ChallengeDetailDto> getChallengeDetail(@PathVariable Long chlgNo) {
+		/*
 		return ApiTemplate.ok(
 			ChallengeResponseMessage.CHALLENGE_DETAIL_FOUND,
 			challengeService.getChallengeDetail(chlgNo, currentUser)
-		);
+		);*/
+		throw new BusinessException(GlobalExceptionMessage.NO_RESOURCE_MESSAGE);
+	}
+
+	@GetMapping("/challenges/personal/{chlgNo}")
+	public ApiTemplate<ChallengeDetailDto> getPersonalChallenge(
+		@PathVariable(value = "chlgNo") Long challengeId,
+		@AuthenticationPrincipal PrincipalDetails principalDetails
+	) {
+		Long memberId = principalDetails.getMemberId();
+		ChallengeDetailDto result = personalChallengeQuery.findPersonalChallenge(challengeId, memberId);
+		return ApiTemplate.ok(CHALLENGE_DETAIL_FOUND, result);
+	}
+
+	@GetMapping("/challenges/team/{chlgNo}")
+	public ApiTemplate<ChallengeDetailDto> getTeamChallenge(
+		@PathVariable(value = "chlgNo") Long challengeId,
+		@AuthenticationPrincipal PrincipalDetails principalDetails
+	) {
+		Long memberId = principalDetails.getMemberId();
+		ChallengeDetailDto result = teamChallengeQuery.findTeamChallenge(challengeId, memberId);
+		return ApiTemplate.ok(CHALLENGE_DETAIL_FOUND, result);
 	}
 
 	@GetMapping("/my/challenges/personal")
