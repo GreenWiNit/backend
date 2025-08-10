@@ -34,10 +34,6 @@ public class GroupPeriod {
 		return new GroupPeriod(beginDateTime, endDateTime);
 	}
 
-	public boolean isActive(LocalDateTime now) {
-		return now.isAfter(beginDateTime) && now.isBefore(endDateTime);
-	}
-
 	public boolean canParticipate(LocalDateTime now) {
 		return now.isBefore(endDateTime);
 	}

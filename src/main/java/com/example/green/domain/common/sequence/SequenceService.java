@@ -16,7 +16,7 @@ public class SequenceService {
 
 	private final DailySequenceRepository sequenceRepository;
 
-	@Retryable(value = OptimisticLockingFailureException.class, maxAttempts = 5)
+	@Retryable(retryFor = OptimisticLockingFailureException.class, maxAttempts = 5)
 	public long getNextSequence(SequenceType type, LocalDateTime date) {
 		String sequenceKey = type.getSequenceKey(date);
 		DailySequence sequence = sequenceRepository.findById(sequenceKey)

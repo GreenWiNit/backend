@@ -2,8 +2,9 @@ package com.example.green.domain.challenge.entity.group;
 
 import static com.example.green.global.utils.EntityValidator.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import com.example.green.domain.challenge.exception.ChallengeException;
 import com.example.green.domain.challenge.exception.ChallengeExceptionMessage;
@@ -18,6 +19,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,7 +30,8 @@ import lombok.NoArgsConstructor;
 	indexes = {
 		@Index(name = "idx_challenge_groups_period", columnList = "begin_date_time, end_date_time"),
 		@Index(name = "idx_challenge_groups_team_challenge_id", columnList = "team_challenge_id")
-	})
+	}
+)
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ChallengeGroup extends BaseEntity {
@@ -37,6 +40,9 @@ public class ChallengeGroup extends BaseEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "challenge_group_id")
 	private Long id;
+
+	@Version
+	private Long version;
 
 	@Column(length = 30, nullable = false)
 	private String teamCode;
@@ -53,7 +59,7 @@ public class ChallengeGroup extends BaseEntity {
 	private GroupPeriod period;
 
 	@OneToMany(mappedBy = "challengeGroup", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<ChallengeGroupParticipation> participants = new ArrayList<>();
+	private Set<ChallengeGroupParticipation> participants = new LinkedHashSet<>();
 
 	private ChallengeGroup(
 		String teamCode, Long teamChallengeId, Long leaderId, GroupBasicInfo basicInfo,
@@ -84,12 +90,21 @@ public class ChallengeGroup extends BaseEntity {
 		return challengeGroup;
 	}
 
-	private void addParticipant(ChallengeGroupParticipation participation) {
+	public void joinMember(Long memberId, LocalDateTime now) {
 		if (capacity.isFull()) {
 			throw new ChallengeException(ChallengeExceptionMessage.GROUP_IS_FULL);
 		}
+		if (!period.canParticipate(now)) {
+			throw new ChallengeException(ChallengeExceptionMessage.CHALLENGE_NOT_PARTICIPATABLE);
+		}
+		ChallengeGroupParticipation participation = ChallengeGroupParticipation.fromMember(this, memberId);
+		addParticipant(participation);
+	}
 
-		participants.add(participation);
+	private void addParticipant(ChallengeGroupParticipation participation) {
+		if (!participants.add(participation)) {
+			throw new ChallengeException(ChallengeExceptionMessage.ALREADY_PARTICIPATING);
+		}
 		capacity.increase();
 	}
 
@@ -109,7 +124,7 @@ public class ChallengeGroup extends BaseEntity {
 		this.period = period;
 	}
 
-	public boolean isLeader(Long leaderId) {
-		return leaderId.equals(this.leaderId);
+	public boolean isLeader(Long memberId) {
+		return memberId.equals(this.leaderId);
 	}
 }

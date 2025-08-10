@@ -21,7 +21,7 @@ public enum ChallengeExceptionMessage implements ExceptionMessage {
 	MAX_PARTICIPANTS_LESS_THAN_CURRENT("최대 참여자 수는 현재 참여자 수보다 작을 수 없습니다.", 400),
 	NO_AVAILABLE_MEMBER_FOR_LEADER("리더로 지정할 수 있는 멤버가 없습니다.", 400),
 	GROUP_IS_FULL("그룹의 최대 참여자 수에 도달했습니다.", 400),
-	LEADER_CANNOT_LEAVE_WITH_MEMBERS("멤버가 있는 상태에서 리더는 탈퇴할 수 없습니다.", 400),
+	LEADER_USE_BE_DELETE("리더는 나가기를 이용해주세요.", 400),
 	CANNOT_LEAVE_WHILE_IN_GROUP("그룹에 참여 중인 상태에서는 팀 챌린지에서 탈퇴할 수 없습니다.", 400),
 	CHALLENGE_GROUP_NOT_FOUND("챌린지 그룹을 찾을 수 없습니다.", 404),
 	MEMBER_NOT_FOUND("회원을 찾을 수 없습니다.", 404),

@@ -1,5 +1,7 @@
 package com.example.green.domain.challenge.service;
 
+import org.springframework.dao.OptimisticLockingFailureException;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,7 +51,9 @@ public class ChallengeGroupService {
 		challengeGroupRepository.deleteById(groupId);
 	}
 
+	@Retryable(retryFor = OptimisticLockingFailureException.class)
 	public void join(Long groupId, Long memberId) {
-
+		ChallengeGroup challengeGroup = challengeGroupQuery.getChallengeGroup(groupId);
+		challengeGroup.joinMember(memberId, timeUtils.now());
 	}
 }

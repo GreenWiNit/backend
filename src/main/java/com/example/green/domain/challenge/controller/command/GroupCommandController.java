@@ -66,9 +66,8 @@ public class GroupCommandController implements GroupCommandControllerDocs {
 		@PathVariable Long groupId,
 		@AuthenticationPrincipal PrincipalDetails principalDetails
 	) {
-		Long memberId = 1L;
+		Long memberId = 2L;
 		challengeGroupService.join(groupId, memberId);
-
 		return NoContent.ok(TeamChallengeGroupResponseMessage.GROUP_JOINED);
 	}
 }
