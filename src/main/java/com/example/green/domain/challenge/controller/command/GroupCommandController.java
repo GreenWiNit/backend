@@ -46,9 +46,8 @@ public class GroupCommandController implements GroupCommandControllerDocs {
 		@Valid @RequestBody TeamChallengeGroupUpdateRequestDto request,
 		@AuthenticationPrincipal PrincipalDetails principalDetails
 	) {
-		Long memberId = 1L;
-		challengeGroupService.update(groupId, request, memberId);
-
+		Long leaderId = 1L;
+		challengeGroupService.update(groupId, leaderId, request);
 		return NoContent.ok(TeamChallengeGroupResponseMessage.GROUP_UPDATED);
 	}
 

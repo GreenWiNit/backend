@@ -92,4 +92,24 @@ public class ChallengeGroup extends BaseEntity {
 		participants.add(participation);
 		capacity.increase();
 	}
+
+	public void updateBasicInfo(GroupBasicInfo groupBasicInfo) {
+		this.basicInfo = groupBasicInfo;
+	}
+
+	public void updateAddress(GroupAddress groupAddress) {
+		this.groupAddress = groupAddress;
+	}
+
+	public void updateCapacity(Integer maxParticipants) {
+		this.capacity = GroupCapacity.update(capacity.getCurrentParticipants(), maxParticipants);
+	}
+
+	public void updatePeriod(GroupPeriod period) {
+		this.period = period;
+	}
+
+	public boolean isLeader(Long leaderId) {
+		return leaderId.equals(this.leaderId);
+	}
 }

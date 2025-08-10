@@ -6,10 +6,14 @@ import com.example.green.domain.challenge.exception.ChallengeExceptionMessage;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
+@EqualsAndHashCode
 public class GroupCapacity {
 
 	@Column(nullable = false)
@@ -17,16 +21,23 @@ public class GroupCapacity {
 	@Column(nullable = false)
 	private Integer maxParticipants;
 
-	private GroupCapacity(Integer maxParticipants) {
-		if (maxParticipants != null && maxParticipants <= 0) {
+	private GroupCapacity(Integer currentParticipants, Integer maxParticipants) {
+		if (maxParticipants == null || maxParticipants <= 0) {
 			throw new ChallengeException(ChallengeExceptionMessage.INVALID_MAX_PARTICIPANTS_COUNT);
 		}
-		this.currentParticipants = 0;
+		if (currentParticipants > maxParticipants) {
+			throw new ChallengeException(ChallengeExceptionMessage.MAX_PARTICIPANTS_LESS_THAN_CURRENT);
+		}
 		this.maxParticipants = maxParticipants;
+		this.currentParticipants = currentParticipants;
 	}
 
 	public static GroupCapacity of(Integer maxParticipants) {
-		return new GroupCapacity(maxParticipants);
+		return new GroupCapacity(0, maxParticipants);
+	}
+
+	public static GroupCapacity update(Integer currentParticipants, Integer maxParticipants) {
+		return new GroupCapacity(currentParticipants, maxParticipants);
 	}
 
 	public boolean isFull() {

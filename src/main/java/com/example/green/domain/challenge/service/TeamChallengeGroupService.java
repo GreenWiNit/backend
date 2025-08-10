@@ -205,10 +205,10 @@
 // 		group.update(
 // 			request.groupName(),
 // 			groupAddress,
-// 			request.groupDescription(),
+// 			request.description(),
 // 			request.openChatUrl(),
-// 			request.groupBeginDateTime(),
-// 			request.groupEndDateTime(),
+// 			request.beginDateTime(),
+// 			request.endDateTime(),
 // 			request.maxParticipants()
 // 		);
 // 	}
