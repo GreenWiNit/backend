@@ -82,6 +82,9 @@ springdoc:
     enabled: true
   swagger-ui:
     path: ${SWAGGER_PATH:/swagger-ui.html}
+    tags-sorter: alpha
+    operations-sorter: method
+    doc-expansion: none
 
 app:
   storage:

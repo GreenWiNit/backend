@@ -5,4 +5,6 @@ public interface FileManager {
 	void confirmUsingImage(String imageUrl);
 
 	void unUseImage(String imageUrl);
+
+	void swapImage(String beforeImageUrl, String afterImageUrl);
 }

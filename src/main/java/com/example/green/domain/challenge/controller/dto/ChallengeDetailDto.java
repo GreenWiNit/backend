@@ -10,6 +10,6 @@ public record ChallengeDetailDto(
 	LocalDateTime endDateTime,
 	String imageUrl,
 	BigDecimal point,
-	boolean canParticipate
+	boolean participating
 ) {
 }
