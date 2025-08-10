@@ -1,4 +1,4 @@
-package com.example.green.domain.challenge.controller.docs;
+package com.example.green.domain.challenge.controller.command.docs;
 
 import static io.swagger.v3.oas.annotations.enums.ParameterIn.*;
 

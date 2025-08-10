@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.green.domain.challenge.controller.docs.ChallengeControllerDocs;
+import com.example.green.domain.challenge.controller.command.docs.ChallengeControllerDocs;
 import com.example.green.domain.challenge.controller.message.ChallengeResponseMessage;
-import com.example.green.domain.challenge.service.ChallengeService;
+import com.example.green.domain.challenge.service.PersonalChallengeService;
 import com.example.green.global.api.NoContent;
 import com.example.green.global.error.exception.BusinessException;
 import com.example.green.global.error.exception.GlobalExceptionMessage;
@@ -24,7 +24,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ChallengeController implements ChallengeControllerDocs {
 
-	private final ChallengeService challengeService;
+	private final PersonalChallengeService challengeService;
 
 	@Deprecated
 	@PostMapping("/challenges/{chlgNo}/participate")
@@ -38,7 +38,7 @@ public class ChallengeController implements ChallengeControllerDocs {
 		@AuthenticationPrincipal PrincipalDetails currentUser
 	) {
 		Long memberId = 1L;
-		challengeService.joinTeamChallenge(challengeId, memberId);
+		challengeService.join(challengeId, memberId);
 		return NoContent.ok(CHALLENGE_JOINED);
 	}
 
@@ -48,7 +48,7 @@ public class ChallengeController implements ChallengeControllerDocs {
 		@AuthenticationPrincipal PrincipalDetails currentUser
 	) {
 		Long memberId = 1L;
-		challengeService.joinPersonalChallenge(challengeId, memberId);
+		challengeService.join(challengeId, memberId);
 		return NoContent.ok(CHALLENGE_JOINED);
 	}
 
@@ -64,7 +64,7 @@ public class ChallengeController implements ChallengeControllerDocs {
 		@AuthenticationPrincipal PrincipalDetails currentUser
 	) {
 		Long memberId = 1L;
-		challengeService.leavePersonalChallenge(challengeId, memberId);
+		challengeService.leave(challengeId, memberId);
 		return NoContent.ok(ChallengeResponseMessage.CHALLENGE_LEFT);
 	}
 
@@ -74,7 +74,7 @@ public class ChallengeController implements ChallengeControllerDocs {
 		@AuthenticationPrincipal PrincipalDetails currentUser
 	) {
 		Long memberId = 1L;
-		challengeService.leaveTeamChallenge(challengeId, memberId);
+		challengeService.leave(challengeId, memberId);
 		return NoContent.ok(ChallengeResponseMessage.CHALLENGE_LEFT);
 	}
 }
