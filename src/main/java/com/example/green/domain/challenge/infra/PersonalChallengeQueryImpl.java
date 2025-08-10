@@ -101,17 +101,6 @@ public class PersonalChallengeQueryImpl implements PersonalChallengeQuery {
 			.fetchOne();
 	}
 
-	public CursorTemplate<Long, AdminPersonalChallengesDto> findAllForAdminByCursor(Long cursor, Integer size) {
-		List<AdminPersonalChallengesDto> challenges = queryFactory
-			.select(PersonalChallengeProjections.toChallengesForAdmin())
-			.from(personalChallenge)
-			.where(cursorCondition(cursor))
-			.orderBy(personalChallenge.id.desc())
-			.limit(size + 1)
-			.fetch();
-		return CursorTemplate.from(challenges, size, AdminPersonalChallengesDto::id);
-	}
-
 	public AdminChallengeDetailDto getChallengeDetail(Long challengeId) {
 		PersonalChallenge personalChallenge = getPersonalChallengeById(challengeId);
 		return AdminChallengeDetailDto.from(personalChallenge);
@@ -135,6 +124,15 @@ public class PersonalChallengeQueryImpl implements PersonalChallengeQuery {
 			.fetch();
 
 		return PageTemplate.of(result, pagination);
+	}
+
+	@Override
+	public List<AdminPersonalChallengesDto> findChallengePageForExcel() {
+		return queryFactory
+			.select(PersonalChallengeProjections.toChallengesForAdmin())
+			.from(personalChallenge)
+			.orderBy(personalChallenge.id.desc())
+			.fetch();
 	}
 
 	private BooleanExpression cursorCondition(Long cursor) {

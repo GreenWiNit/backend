@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 
 @Tag(name = "[챌린지] 관리자 개인 챌린지 관리 API", description = "관리자 개인 챌린지 생성/수정/이미지/전시여부 등 관리 API")
 public interface AdminPersonalChallengeQueryControllerDocs {
@@ -37,4 +38,11 @@ public interface AdminPersonalChallengeQueryControllerDocs {
 	ApiTemplate<AdminChallengeDetailDto> getPersonalChallengeDetail(
 		@Parameter(name = "challengeId", description = "챌린지 ID", in = PATH, required = true, example = "1")
 		Long challengeId);
+
+	@Operation(summary = "개인 챌린지 목록 엑셀 다운로드", description = "개인 챌린지 상세 목록을 엑셀로 다운로드합니다.")
+	@ApiErrorStandard
+	@ApiResponse(responseCode = "200")
+	@ApiResponse(responseCode = "403", description = "관리자 권한이 필요합니다.",
+		content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
+	void downloadExcel(HttpServletResponse response);
 }

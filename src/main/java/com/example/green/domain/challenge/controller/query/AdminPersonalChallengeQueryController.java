@@ -2,6 +2,8 @@ package com.example.green.domain.challenge.controller.query;
 
 import static com.example.green.domain.challenge.controller.message.AdminChallengeResponseMessage.*;
 
+import java.util.List;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,7 +17,9 @@ import com.example.green.domain.challenge.controller.query.docs.AdminPersonalCha
 import com.example.green.domain.challenge.repository.query.PersonalChallengeQuery;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.page.PageTemplate;
+import com.example.green.global.excel.core.ExcelDownloader;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -24,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 public class AdminPersonalChallengeQueryController implements AdminPersonalChallengeQueryControllerDocs {
 
 	private final PersonalChallengeQuery personalChallengeQuery;
+	private final ExcelDownloader excelDownloader;
 
 	@GetMapping
 	public ApiTemplate<PageTemplate<AdminPersonalChallengesDto>> getPersonalChallenges(
@@ -38,5 +43,11 @@ public class AdminPersonalChallengeQueryController implements AdminPersonalChall
 	public ApiTemplate<AdminChallengeDetailDto> getPersonalChallengeDetail(@PathVariable Long challengeId) {
 		AdminChallengeDetailDto result = personalChallengeQuery.getChallengeDetail(challengeId);
 		return ApiTemplate.ok(AdminChallengeResponseMessage.CHALLENGE_DETAIL_FOUND, result);
+	}
+
+	@GetMapping("/excel")
+	public void downloadExcel(HttpServletResponse response) {
+		List<AdminPersonalChallengesDto> result = personalChallengeQuery.findChallengePageForExcel();
+		excelDownloader.downloadAsStream(result, response);
 	}
 }
