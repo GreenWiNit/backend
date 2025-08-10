@@ -19,6 +19,7 @@ import com.example.green.domain.challenge.repository.query.TeamChallengeQuery;
 import com.example.green.domain.challenge.service.AdminChallengeService;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.page.CursorTemplate;
+import com.example.green.global.api.page.PageTemplate;
 
 import lombok.RequiredArgsConstructor;
 
@@ -31,11 +32,11 @@ public class AdminTeamChallengeQueryController implements AdminTeamChallengeQuer
 	private final TeamChallengeQuery teamChallengeQuery;
 
 	@GetMapping
-	public ApiTemplate<CursorTemplate<Long, AdminTeamChallengesDto>> getTeamChallenges(
-		@RequestParam(required = false) Long cursor,
+	public ApiTemplate<PageTemplate<AdminTeamChallengesDto>> getTeamChallenges(
+		@RequestParam(required = false) Integer page,
 		@RequestParam(required = false, defaultValue = "20") Integer size
 	) {
-		CursorTemplate<Long, AdminTeamChallengesDto> result = teamChallengeQuery.findAllForAdminByCursor(cursor, size);
+		PageTemplate<AdminTeamChallengesDto> result = teamChallengeQuery.findChallengePage(page, size);
 		return ApiTemplate.ok(TEAM_CHALLENGE_LIST_FOUND, result);
 	}
 

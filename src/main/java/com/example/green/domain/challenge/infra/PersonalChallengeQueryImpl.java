@@ -6,7 +6,6 @@ import static com.example.green.domain.challengecert.entity.QPersonalChallengePa
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -108,12 +107,8 @@ public class PersonalChallengeQueryImpl implements PersonalChallengeQuery {
 
 	@Override
 	public PageTemplate<AdminPersonalChallengesDto> findChallengePage(Integer page, Integer size) {
-		Long totalCount = Optional.ofNullable(queryFactory.select(personalChallenge.count())
-				.from(personalChallenge)
-				.fetchOne())
-			.orElseThrow(() -> new IllegalStateException("카운트 조회 중 예외 발생"));
-
-		Pagination pagination = Pagination.of(totalCount, page, size);
+		long count = personalChallengeRepository.count();
+		Pagination pagination = Pagination.of(count, page, size);
 
 		List<AdminPersonalChallengesDto> result = queryFactory
 			.select(PersonalChallengeProjections.toChallengesForAdmin())

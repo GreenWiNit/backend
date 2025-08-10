@@ -9,6 +9,7 @@ import com.example.green.domain.challenge.controller.dto.admin.AdminTeamChalleng
 import com.example.green.domain.challenge.entity.TeamChallenge;
 import com.example.green.domain.challenge.enums.ChallengeStatus;
 import com.example.green.global.api.page.CursorTemplate;
+import com.example.green.global.api.page.PageTemplate;
 
 public interface TeamChallengeQuery {
 
@@ -21,7 +22,7 @@ public interface TeamChallengeQuery {
 
 	TeamChallenge getTeamChallengeById(Long challengeId);
 
-	CursorTemplate<Long, AdminTeamChallengesDto> findAllForAdminByCursor(Long cursor, Integer size);
+	PageTemplate<AdminTeamChallengesDto> findChallengePage(Integer page, Integer size);
 
 	AdminChallengeDetailDto getChallengeDetail(Long challengeId);
 }

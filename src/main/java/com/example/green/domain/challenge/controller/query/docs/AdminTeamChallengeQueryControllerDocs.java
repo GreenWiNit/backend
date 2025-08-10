@@ -9,6 +9,7 @@ import com.example.green.domain.challenge.controller.dto.admin.AdminTeamChalleng
 import com.example.green.domain.challenge.controller.dto.admin.AdminTeamChallengesDto;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.page.CursorTemplate;
+import com.example.green.global.api.page.PageTemplate;
 import com.example.green.global.docs.ApiErrorStandard;
 import com.example.green.global.error.dto.ExceptionResponse;
 
@@ -27,9 +28,9 @@ public interface AdminTeamChallengeQueryControllerDocs {
 	@ApiResponse(responseCode = "200", description = "팀 챌린지 목록 조회 성공", useReturnTypeSchema = true)
 	@ApiResponse(responseCode = "403", description = "관리자 권한이 필요합니다.",
 		content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
-	ApiTemplate<CursorTemplate<Long, AdminTeamChallengesDto>> getTeamChallenges(
-		@Parameter(description = "커서 (마지막 챌린지 ID) - 첫 번째 조회 시에는 아무것도 넣지 말고 조회하세요") Long cursor,
-		@Parameter(description = "페이지 사이즈(생략 가능)", example = "20") Integer size
+	ApiTemplate<PageTemplate<AdminTeamChallengesDto>> getTeamChallenges(
+		@Parameter(description = "페이지 수 (생략가능)") Integer page,
+		@Parameter(description = "페이지 사이즈(생략 가능)", example = "10") Integer size
 	);
 
 	@Operation(summary = "팀 챌린지 상세 조회", description = "팀 챌린지 상세 정보를 조회합니다.")
