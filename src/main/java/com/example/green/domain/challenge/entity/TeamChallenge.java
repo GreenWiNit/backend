@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.example.green.domain.challenge.enums.ChallengeDisplayStatus;
 import com.example.green.domain.challenge.enums.ChallengeType;
 import com.example.green.domain.challenge.exception.ChallengeException;
 import com.example.green.domain.challenge.exception.ChallengeExceptionMessage;
@@ -91,9 +90,5 @@ public class TeamChallenge extends BaseChallenge {
 			.filter(p -> p.isParticipated(memberId))
 			.findFirst()
 			.orElseThrow(() -> new ChallengeException(ChallengeExceptionMessage.NOT_PARTICIPATING));
-	}
-
-	public void updateDisplayStatus(ChallengeDisplayStatus displayStatus) {
-		super.updateDisplayStatus(displayStatus);
 	}
 }

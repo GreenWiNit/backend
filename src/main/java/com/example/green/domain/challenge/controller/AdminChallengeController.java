@@ -11,12 +11,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.green.domain.challenge.controller.docs.AdminChallengeControllerDocs;
 import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeCreateRequestDto;
 import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeDetailDto;
-import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeDisplayStatusUpdateRequestDto;
 import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeImageUpdateRequestDto;
 import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeUpdateRequestDto;
 import com.example.green.domain.challenge.controller.message.AdminChallengeResponseMessage;
 import com.example.green.domain.challenge.service.AdminChallengeService;
+import com.example.green.domain.challenge.service.ChallengeService;
 import com.example.green.global.api.ApiTemplate;
+import com.example.green.global.api.NoContent;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,16 +28,17 @@ import lombok.RequiredArgsConstructor;
 public class AdminChallengeController implements AdminChallengeControllerDocs {
 
 	private final AdminChallengeService adminChallengeService;
+	private final ChallengeService challengeService;
 
 	@PostMapping("/team")
 	public ApiTemplate<Long> createTeamChallenge(@Valid @RequestBody AdminChallengeCreateRequestDto request) {
-		Long challengeId = adminChallengeService.createTeamChallenge(request);
+		Long challengeId = challengeService.createTeamChallenge(request);
 		return ApiTemplate.ok(AdminChallengeResponseMessage.CHALLENGE_CREATED, challengeId);
 	}
 
 	@PostMapping("/personal")
 	public ApiTemplate<Long> createPersonalChallenge(@Valid @RequestBody AdminChallengeCreateRequestDto request) {
-		Long challengeId = adminChallengeService.createPersonalChallenge(request);
+		Long challengeId = challengeService.createPersonalChallenge(request);
 		return ApiTemplate.ok(AdminChallengeResponseMessage.CHALLENGE_CREATED, challengeId);
 	}
 
@@ -49,7 +51,6 @@ public class AdminChallengeController implements AdminChallengeControllerDocs {
 		return ApiTemplate.ok(AdminChallengeResponseMessage.CHALLENGE_UPDATED, null);
 	}
 
-	@Override
 	@PatchMapping("/{challengeId}/image")
 	public ApiTemplate<AdminChallengeDetailDto> updateChallengeImage(
 		@PathVariable Long challengeId,
@@ -58,12 +59,27 @@ public class AdminChallengeController implements AdminChallengeControllerDocs {
 		return ApiTemplate.ok(AdminChallengeResponseMessage.CHALLENGE_IMAGE_UPDATED, result);
 	}
 
-	@Override
-	@PatchMapping("/{challengeId}/visibility")
-	public ApiTemplate<Void> updateChallengeDisplayStatus(
-		@PathVariable Long challengeId,
-		@Valid @RequestBody AdminChallengeDisplayStatusUpdateRequestDto request) {
-		adminChallengeService.updateChallengeDisplayStatus(challengeId, request);
-		return ApiTemplate.ok(AdminChallengeResponseMessage.CHALLENGE_DISPLAY_STATUS_UPDATED, null);
+	@PatchMapping("/team/{challengeId}/visibility")
+	public NoContent showTeamChallenge(@PathVariable Long challengeId) {
+		challengeService.showTeamChallenge(challengeId);
+		return NoContent.ok(AdminChallengeResponseMessage.CHALLENGE_SHOW);
+	}
+
+	@PatchMapping("/team/{challengeId}/invisibility")
+	public NoContent hideTeamChallenge(@PathVariable Long challengeId) {
+		challengeService.hideTeamChallenge(challengeId);
+		return NoContent.ok(AdminChallengeResponseMessage.CHALLENGE_HIDE);
+	}
+
+	@PatchMapping("/personal/{challengeId}/visibility")
+	public NoContent showPersonalChallenge(@PathVariable Long challengeId) {
+		challengeService.showPersonalChallenge(challengeId);
+		return NoContent.ok(AdminChallengeResponseMessage.CHALLENGE_SHOW);
+	}
+
+	@PatchMapping("/personal/{challengeId}/invisibility")
+	public NoContent hidePersonalChallenge(@PathVariable Long challengeId) {
+		challengeService.hidePersonalChallenge(challengeId);
+		return NoContent.ok(AdminChallengeResponseMessage.CHALLENGE_HIDE);
 	}
 }

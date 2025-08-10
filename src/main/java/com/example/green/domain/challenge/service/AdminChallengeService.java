@@ -5,16 +5,12 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeCreateRequestDto;
 import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeDetailDto;
-import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeDisplayStatusUpdateRequestDto;
 import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeImageUpdateRequestDto;
 import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeParticipantListResponseDto;
 import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeUpdateRequestDto;
 import com.example.green.domain.challenge.controller.dto.admin.AdminTeamChallengeGroupDetailResponseDto;
 import com.example.green.domain.challenge.controller.dto.admin.AdminTeamChallengeGroupListResponseDto;
-import com.example.green.domain.challenge.entity.PersonalChallenge;
-import com.example.green.domain.challenge.entity.TeamChallenge;
 import com.example.green.domain.challenge.entity.TeamChallengeGroup;
 import com.example.green.domain.challenge.exception.ChallengeException;
 import com.example.green.domain.challenge.exception.ChallengeExceptionMessage;
@@ -22,7 +18,6 @@ import com.example.green.domain.challenge.repository.PersonalChallengeParticipat
 import com.example.green.domain.challenge.repository.PersonalChallengeRepository;
 import com.example.green.domain.challenge.repository.TeamChallengeGroupRepository;
 import com.example.green.domain.challenge.repository.TeamChallengeRepository;
-import com.example.green.domain.challenge.utils.CodeGenerator;
 import com.example.green.domain.challengecert.entity.TeamChallengeGroupParticipation;
 import com.example.green.domain.challengecert.repository.TeamChallengeGroupParticipationRepository;
 import com.example.green.domain.challengecert.repository.dao.ChallengeParticipantDao;
@@ -43,30 +38,6 @@ public class AdminChallengeService {
 	private final PersonalChallengeParticipationRepository personalChallengeParticipationRepository;
 	private final TeamChallengeGroupParticipationRepository teamChallengeGroupParticipationRepository;
 	private final TimeUtils timeUtils;
-
-	public Long createPersonalChallenge(AdminChallengeCreateRequestDto request) {
-		long count = personalChallengeRepository.countChallengesByCreatedDate(timeUtils.now());
-		String challengeCode = CodeGenerator.generatePersonalCode(timeUtils.now(), count + 1);
-		PersonalChallenge challenge = PersonalChallenge.create(
-			challengeCode, request.challengeName(), request.challengeImageUrl(), request.challengeContent(),
-			request.challengePoint(), request.beginDateTime(), request.endDateTime()
-		);
-
-		PersonalChallenge savedChallenge = personalChallengeRepository.save(challenge);
-		return savedChallenge.getId();
-	}
-
-	public Long createTeamChallenge(AdminChallengeCreateRequestDto request) {
-		long count = teamChallengeRepository.countChallengesByCreatedDate(timeUtils.now());
-		String challengeCode = CodeGenerator.generateTeamCode(timeUtils.now(), count + 1);
-		TeamChallenge challenge = TeamChallenge.create(
-			challengeCode, request.challengeName(), request.challengeImageUrl(), request.challengeContent(),
-			request.challengePoint(), request.beginDateTime(), request.endDateTime()
-		);
-
-		TeamChallenge saved = teamChallengeRepository.save(challenge);
-		return saved.getId();
-	}
 
 	public void updateChallenge(Long challengeId, AdminChallengeUpdateRequestDto request) {
 		try {
@@ -130,50 +101,6 @@ public class AdminChallengeService {
 		} catch (Exception e) {
 			throw new ChallengeException(ChallengeExceptionMessage.ADMIN_CHALLENGE_UPDATE_FAILED);
 		}
-	}
-
-	/**
-	 * 챌린지 전시 상태를 수정합니다.
-	 */
-	public void updateChallengeDisplayStatus(Long challengeId, AdminChallengeDisplayStatusUpdateRequestDto request) {
-		try {
-			// PersonalChallenge인지 확인
-			var personalChallenge = personalChallengeRepository.findById(challengeId);
-			if (personalChallenge.isPresent()) {
-				personalChallenge.get().updateDisplayStatus(request.displayStatus());
-				return;
-			}
-
-			// TeamChallenge인지 확인
-			var teamChallenge = teamChallengeRepository.findById(challengeId);
-			if (teamChallenge.isPresent()) {
-				teamChallenge.get().updateDisplayStatus(request.displayStatus());
-				return;
-			}
-
-			// 둘 다 없으면 예외 발생
-			throw new ChallengeException(ChallengeExceptionMessage.ADMIN_CHALLENGE_NOT_FOUND);
-		} catch (ChallengeException e) {
-			throw e;
-		} catch (Exception e) {
-			throw new ChallengeException(ChallengeExceptionMessage.ADMIN_CHALLENGE_UPDATE_FAILED);
-		}
-	}
-
-	/**
-	 * 챌린지 상세 정보를 조회합니다.
-	 */
-	public AdminChallengeDetailDto getChallengeDetail(Long challengeId) {
-		var personalChallenge = personalChallengeRepository.findById(challengeId);
-		if (personalChallenge.isPresent()) {
-			return AdminChallengeDetailDto.from(personalChallenge.get());
-		}
-		var teamChallenge = teamChallengeRepository.findById(challengeId);
-		if (teamChallenge.isPresent()) {
-			return AdminChallengeDetailDto.from(teamChallenge.get());
-		}
-
-		throw new ChallengeException(ChallengeExceptionMessage.ADMIN_CHALLENGE_NOT_FOUND);
 	}
 
 	/**
