@@ -1,6 +1,7 @@
 package com.example.green.domain.challenge.repository.query;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.example.green.domain.challenge.controller.dto.ChallengeDetailDto;
 import com.example.green.domain.challenge.controller.dto.ChallengeListResponseDto;
@@ -9,6 +10,7 @@ import com.example.green.domain.challenge.controller.dto.admin.AdminTeamChalleng
 import com.example.green.domain.challenge.entity.TeamChallenge;
 import com.example.green.domain.challenge.enums.ChallengeStatus;
 import com.example.green.global.api.page.CursorTemplate;
+import com.example.green.global.api.page.PageTemplate;
 
 public interface TeamChallengeQuery {
 
@@ -21,7 +23,9 @@ public interface TeamChallengeQuery {
 
 	TeamChallenge getTeamChallengeById(Long challengeId);
 
-	CursorTemplate<Long, AdminTeamChallengesDto> findAllForAdminByCursor(Long cursor, Integer size);
+	PageTemplate<AdminTeamChallengesDto> findChallengePage(Integer page, Integer size);
 
 	AdminChallengeDetailDto getChallengeDetail(Long challengeId);
+
+	List<AdminTeamChallengesDto> findTeamChallengeForExcel();
 }

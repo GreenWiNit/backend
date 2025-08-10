@@ -2,6 +2,7 @@ package com.example.green.domain.challenge.controller.dto.admin;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import com.example.green.domain.challenge.enums.ChallengeDisplayStatus;
 
@@ -36,4 +37,12 @@ public record AdminTeamChallengesDto(
 	@Schema(description = "생성 일시")
 	LocalDateTime createdDate
 ) {
+	private static final DateTimeFormatter PERIOD_FORMATTER = DateTimeFormatter.ofPattern("yyyy.MM.dd");
+
+	public String getPeriod() {
+		String startDate = beginDateTime.format(PERIOD_FORMATTER);
+		String endDate = endDateTime.format(PERIOD_FORMATTER);
+
+		return startDate + " ~ " + endDate + ".";
+	}
 }

@@ -20,6 +20,8 @@ import com.example.green.domain.challenge.exception.ChallengeException;
 import com.example.green.domain.challenge.repository.TeamChallengeRepository;
 import com.example.green.domain.challenge.repository.query.TeamChallengeQuery;
 import com.example.green.global.api.page.CursorTemplate;
+import com.example.green.global.api.page.PageTemplate;
+import com.example.green.global.api.page.Pagination;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -96,21 +98,33 @@ public class TeamChallengeQueryImpl implements TeamChallengeQuery {
 			.orElseThrow(() -> new ChallengeException(CHALLENGE_NOT_FOUND));
 	}
 
-	public CursorTemplate<Long, AdminTeamChallengesDto> findAllForAdminByCursor(Long cursor, Integer size) {
-		List<AdminTeamChallengesDto> challenges = queryFactory
+	public PageTemplate<AdminTeamChallengesDto> findChallengePage(Integer page, Integer size) {
+		long count = teamChallengeRepository.count();
+		Pagination pagination = Pagination.of(count, page, size);
+
+		List<AdminTeamChallengesDto> result = queryFactory
 			.select(TeamChallengeProjections.toChallengesForAdmin())
 			.from(teamChallenge)
-			.where(cursorCondition(cursor))
 			.orderBy(teamChallenge.id.desc())
-			.limit(size + 1)
+			.offset(pagination.calculateOffset())
+			.limit(pagination.getPageSize())
 			.fetch();
-		return CursorTemplate.from(challenges, size, AdminTeamChallengesDto::id);
+
+		return PageTemplate.of(result, pagination);
 	}
 
 	@Override
 	public AdminChallengeDetailDto getChallengeDetail(Long challengeId) {
 		TeamChallenge teamChallenge = getTeamChallengeById(challengeId);
 		return AdminChallengeDetailDto.from(teamChallenge);
+	}
+
+	public List<AdminTeamChallengesDto> findTeamChallengeForExcel() {
+		return queryFactory
+			.select(TeamChallengeProjections.toChallengesForAdmin())
+			.from(teamChallenge)
+			.orderBy(teamChallenge.id.desc())
+			.fetch();
 	}
 
 	private BooleanExpression cursorCondition(Long cursor) {

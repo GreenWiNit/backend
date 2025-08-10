@@ -2,6 +2,8 @@ package com.example.green.domain.challenge.controller.query;
 
 import static com.example.green.domain.challenge.controller.message.AdminChallengeResponseMessage.*;
 
+import java.util.List;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,8 +16,10 @@ import com.example.green.domain.challenge.controller.message.AdminChallengeRespo
 import com.example.green.domain.challenge.controller.query.docs.AdminPersonalChallengeQueryControllerDocs;
 import com.example.green.domain.challenge.repository.query.PersonalChallengeQuery;
 import com.example.green.global.api.ApiTemplate;
-import com.example.green.global.api.page.CursorTemplate;
+import com.example.green.global.api.page.PageTemplate;
+import com.example.green.global.excel.core.ExcelDownloader;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -24,14 +28,14 @@ import lombok.RequiredArgsConstructor;
 public class AdminPersonalChallengeQueryController implements AdminPersonalChallengeQueryControllerDocs {
 
 	private final PersonalChallengeQuery personalChallengeQuery;
+	private final ExcelDownloader excelDownloader;
 
 	@GetMapping
-	public ApiTemplate<CursorTemplate<Long, AdminPersonalChallengesDto>> getPersonalChallenges(
-		@RequestParam(required = false) Long cursor,
-		@RequestParam(required = false, defaultValue = "20") Integer size
+	public ApiTemplate<PageTemplate<AdminPersonalChallengesDto>> getPersonalChallenges(
+		@RequestParam(required = false) Integer page,
+		@RequestParam(required = false, defaultValue = "10") Integer size
 	) {
-		CursorTemplate<Long, AdminPersonalChallengesDto> result =
-			personalChallengeQuery.findAllForAdminByCursor(cursor, size);
+		PageTemplate<AdminPersonalChallengesDto> result = personalChallengeQuery.findChallengePage(page, size);
 		return ApiTemplate.ok(PERSONAL_CHALLENGE_LIST_FOUND, result);
 	}
 
@@ -39,5 +43,11 @@ public class AdminPersonalChallengeQueryController implements AdminPersonalChall
 	public ApiTemplate<AdminChallengeDetailDto> getPersonalChallengeDetail(@PathVariable Long challengeId) {
 		AdminChallengeDetailDto result = personalChallengeQuery.getChallengeDetail(challengeId);
 		return ApiTemplate.ok(AdminChallengeResponseMessage.CHALLENGE_DETAIL_FOUND, result);
+	}
+
+	@GetMapping("/excel")
+	public void downloadExcel(HttpServletResponse response) {
+		List<AdminPersonalChallengesDto> result = personalChallengeQuery.findChallengePageForExcel();
+		excelDownloader.downloadAsStream(result, response);
 	}
 }

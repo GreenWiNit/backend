@@ -2,6 +2,8 @@ package com.example.green.domain.challenge.controller.query;
 
 import static com.example.green.domain.challenge.controller.message.AdminChallengeResponseMessage.*;
 
+import java.util.List;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,7 +21,10 @@ import com.example.green.domain.challenge.repository.query.TeamChallengeQuery;
 import com.example.green.domain.challenge.service.AdminChallengeService;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.page.CursorTemplate;
+import com.example.green.global.api.page.PageTemplate;
+import com.example.green.global.excel.core.ExcelDownloader;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -29,14 +34,21 @@ public class AdminTeamChallengeQueryController implements AdminTeamChallengeQuer
 
 	private final AdminChallengeService adminChallengeService;
 	private final TeamChallengeQuery teamChallengeQuery;
+	private final ExcelDownloader excelDownloader;
 
 	@GetMapping
-	public ApiTemplate<CursorTemplate<Long, AdminTeamChallengesDto>> getTeamChallenges(
-		@RequestParam(required = false) Long cursor,
+	public ApiTemplate<PageTemplate<AdminTeamChallengesDto>> getTeamChallenges(
+		@RequestParam(required = false) Integer page,
 		@RequestParam(required = false, defaultValue = "20") Integer size
 	) {
-		CursorTemplate<Long, AdminTeamChallengesDto> result = teamChallengeQuery.findAllForAdminByCursor(cursor, size);
+		PageTemplate<AdminTeamChallengesDto> result = teamChallengeQuery.findChallengePage(page, size);
 		return ApiTemplate.ok(TEAM_CHALLENGE_LIST_FOUND, result);
+	}
+
+	@GetMapping("/excel")
+	public void downloadTeamChallenges(HttpServletResponse response) {
+		List<AdminTeamChallengesDto> result = teamChallengeQuery.findTeamChallengeForExcel();
+		excelDownloader.downloadAsStream(result, response);
 	}
 
 	@GetMapping("/{challengeId}")

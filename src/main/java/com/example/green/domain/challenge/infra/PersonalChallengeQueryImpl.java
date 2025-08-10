@@ -20,6 +20,8 @@ import com.example.green.domain.challenge.exception.ChallengeException;
 import com.example.green.domain.challenge.repository.PersonalChallengeRepository;
 import com.example.green.domain.challenge.repository.query.PersonalChallengeQuery;
 import com.example.green.global.api.page.CursorTemplate;
+import com.example.green.global.api.page.PageTemplate;
+import com.example.green.global.api.page.Pagination;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -98,20 +100,34 @@ public class PersonalChallengeQueryImpl implements PersonalChallengeQuery {
 			.fetchOne();
 	}
 
-	public CursorTemplate<Long, AdminPersonalChallengesDto> findAllForAdminByCursor(Long cursor, Integer size) {
-		List<AdminPersonalChallengesDto> challenges = queryFactory
-			.select(PersonalChallengeProjections.toChallengesForAdmin())
-			.from(personalChallenge)
-			.where(cursorCondition(cursor))
-			.orderBy(personalChallenge.id.desc())
-			.limit(size + 1)
-			.fetch();
-		return CursorTemplate.from(challenges, size, AdminPersonalChallengesDto::id);
-	}
-
 	public AdminChallengeDetailDto getChallengeDetail(Long challengeId) {
 		PersonalChallenge personalChallenge = getPersonalChallengeById(challengeId);
 		return AdminChallengeDetailDto.from(personalChallenge);
+	}
+
+	@Override
+	public PageTemplate<AdminPersonalChallengesDto> findChallengePage(Integer page, Integer size) {
+		long count = personalChallengeRepository.count();
+		Pagination pagination = Pagination.of(count, page, size);
+
+		List<AdminPersonalChallengesDto> result = queryFactory
+			.select(PersonalChallengeProjections.toChallengesForAdmin())
+			.from(personalChallenge)
+			.orderBy(personalChallenge.id.desc())
+			.offset(pagination.calculateOffset())
+			.limit(pagination.getPageSize())
+			.fetch();
+
+		return PageTemplate.of(result, pagination);
+	}
+
+	@Override
+	public List<AdminPersonalChallengesDto> findChallengePageForExcel() {
+		return queryFactory
+			.select(PersonalChallengeProjections.toChallengesForAdmin())
+			.from(personalChallenge)
+			.orderBy(personalChallenge.id.desc())
+			.fetch();
 	}
 
 	private BooleanExpression cursorCondition(Long cursor) {
