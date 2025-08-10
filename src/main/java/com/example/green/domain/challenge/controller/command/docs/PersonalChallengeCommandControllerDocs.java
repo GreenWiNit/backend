@@ -14,10 +14,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-@Tag(name = "[챌린지] 팀 챌린지 API", description = "팀 챌린지 조회, 참여, 탈퇴 API")
-public interface TeamChallengeCommandControllerDocs {
+@Tag(name = "[챌린지] 개인 챌린지 API", description = "개인 챌린지 조회, 참여, 탈퇴 API")
+public interface PersonalChallengeCommandControllerDocs {
 
-	@Operation(summary = "팀 챌린지 참여", description = "팀 챌린지에 참여합니다.")
+	@Operation(summary = "개인 챌린지 참여", description = "개인 챌린지에 참여합니다.")
 	@ApiErrorStandard
 	@ApiResponse(responseCode = "200", description = "챌린지 참여 성공", useReturnTypeSchema = true)
 	@ApiResponse(
@@ -33,12 +33,12 @@ public interface TeamChallengeCommandControllerDocs {
 		description = "챌린지를 찾을 수 없습니다.",
 		content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
 	)
-	NoContent joinTeamChallenge(
-		@Parameter(name = "challengeId", description = "참여할 팀 챌린지 ID", in = PATH, required = true, example = "1")
+	NoContent join(
+		@Parameter(name = "challengeId", description = "참여할 개인 챌린지 ID", in = PATH, required = true, example = "1")
 		Long challengeId, PrincipalDetails currentUser
 	);
 
-	@Operation(summary = "팀 챌린지 탈퇴", description = "참여 중인 팀 챌린지에서 탈퇴합니다.")
+	@Operation(summary = "개인 챌린지 탈퇴", description = "참여 중인 개인 챌린지에서 탈퇴합니다.")
 	@ApiErrorStandard
 	@ApiResponse(responseCode = "200", description = "챌린지 탈퇴 성공", useReturnTypeSchema = true)
 	@ApiResponse(
@@ -54,7 +54,7 @@ public interface TeamChallengeCommandControllerDocs {
 		description = "챌린지를 찾을 수 없습니다.",
 		content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
 	)
-	NoContent leaveTeamChallenge(
+	NoContent leave(
 		@Parameter(name = "challengeId", description = "탈퇴할 챌린지 ID", in = PATH, required = true, example = "1")
 		Long challengeId, PrincipalDetails currentUser
 	);

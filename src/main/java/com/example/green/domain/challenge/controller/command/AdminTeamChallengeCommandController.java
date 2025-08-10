@@ -8,11 +8,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.green.domain.challenge.controller.command.docs.AdminPersonalChallengeCommandControllerDocs;
+import com.example.green.domain.challenge.controller.command.docs.AdminTeamChallengeCommandControllerDocs;
 import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeCreateDto;
 import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeUpdateDto;
 import com.example.green.domain.challenge.controller.message.AdminChallengeResponseMessage;
-import com.example.green.domain.challenge.service.PersonalChallengeService;
+import com.example.green.domain.challenge.service.TeamChallengeService;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.NoContent;
 
@@ -20,11 +20,11 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/admin/challenges/personal")
+@RequestMapping("/api/admin/challenges/team")
 @RequiredArgsConstructor
-public class AdminPersonalChallengeCommandController implements AdminPersonalChallengeCommandControllerDocs {
+public class AdminTeamChallengeCommandController implements AdminTeamChallengeCommandControllerDocs {
 
-	private final PersonalChallengeService challengeService;
+	private final TeamChallengeService challengeService;
 
 	@PostMapping
 	public ApiTemplate<Long> create(@Valid @RequestBody AdminChallengeCreateDto request) {
@@ -47,7 +47,7 @@ public class AdminPersonalChallengeCommandController implements AdminPersonalCha
 		return NoContent.ok(AdminChallengeResponseMessage.CHALLENGE_SHOW);
 	}
 
-	@PatchMapping("/{challengeId}/invisibility")
+	@PatchMapping("/{challengeId}/hide")
 	public NoContent hide(@PathVariable Long challengeId) {
 		challengeService.hide(challengeId);
 		return NoContent.ok(AdminChallengeResponseMessage.CHALLENGE_HIDE);

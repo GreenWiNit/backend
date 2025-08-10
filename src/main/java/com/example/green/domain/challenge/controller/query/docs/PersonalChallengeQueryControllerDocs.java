@@ -16,7 +16,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-@Tag(name = "챌린지 API", description = "챌린지 조회, 참여, 탈퇴 API")
+@Tag(name = "[챌린지] 개인 챌린지 API", description = "개인 챌린지 조회, 참여, 탈퇴 API")
 public interface PersonalChallengeQueryControllerDocs {
 
 	@Operation(
@@ -51,8 +51,8 @@ public interface PersonalChallengeQueryControllerDocs {
 		content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
 	)
 	ApiTemplate<ChallengeDetailDto> getPersonalChallenge(
-		@Parameter(name = "chlgNo", description = "조회할 챌린지 ID",
-			in = ParameterIn.PATH, required = true, example = "1") Long chlgNo,
+		@Parameter(name = "challengeId", description = "조회할 챌린지 ID",
+			in = ParameterIn.PATH, required = true, example = "1") Long challengeId,
 		@Parameter(hidden = true) PrincipalDetails currentUser
 	);
 

@@ -16,7 +16,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-@Tag(name = "관리자 챌린지 관리 API", description = "관리자 챌린지 생성/수정/이미지/전시여부 등 관리 API")
+@Tag(name = "[챌린지] 관리자 개인 챌린지 관리 API", description = "관리자 개인 챌린지 생성/수정/이미지/전시여부 등 관리 API")
 public interface AdminPersonalChallengeQueryControllerDocs {
 
 	@Operation(summary = "개인 챌린지 목록 조회", description = "개인 챌린지 목록을 조회합니다. (10개씩 조회)")
