@@ -5,7 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeCreateDto;
 import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeUpdateDto;
-import com.example.green.domain.challenge.entity.PersonalChallenge;
+import com.example.green.domain.challenge.entity.challenge.PersonalChallenge;
 import com.example.green.domain.challenge.repository.PersonalChallengeRepository;
 import com.example.green.domain.challenge.repository.query.PersonalChallengeQuery;
 import com.example.green.domain.challenge.utils.CodeGenerator;

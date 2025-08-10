@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import com.example.green.domain.challenge.enums.ChallengeDisplayStatus;
+import com.example.green.domain.challenge.entity.challenge.vo.ChallengeDisplayStatus;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 

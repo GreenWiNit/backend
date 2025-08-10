@@ -1,16 +1,17 @@
-package com.example.green.domain.challenge.entity;
+package com.example.green.domain.challenge.entity.challenge;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.example.green.domain.challenge.enums.ChallengeType;
+import com.example.green.domain.challenge.entity.group.TeamChallengeGroup;
+import com.example.green.domain.challenge.entity.challenge.vo.ChallengeType;
 import com.example.green.domain.challenge.exception.ChallengeException;
 import com.example.green.domain.challenge.exception.ChallengeExceptionMessage;
-import com.example.green.domain.challengecert.entity.PersonalChallengeParticipation;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Index;
 import jakarta.persistence.OneToMany;
@@ -20,39 +21,47 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-/**
- * 개인 챌린지 엔티티
- */
 @Entity
 @Table(
 	indexes = {
-		@Index(name = "idx_personal_challenge_active", columnList = "challengeStatus, displayStatus, beginDateTime, endDateTime")
+		@Index(
+			name = "idx_team_challenge_active",
+			columnList = "challengeStatus, displayStatus, beginDateTime, endDateTime"
+		)
 	},
 	uniqueConstraints = {
-		@UniqueConstraint(name = "uk_personal_challenge_code", columnNames = "challenge_code")
+		@UniqueConstraint(name = "uk_team_challenge_code", columnNames = "challenge_code")
 	}
 )
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PersonalChallenge extends BaseChallenge {
+public class TeamChallenge extends BaseChallenge {
 
-	@OneToMany(mappedBy = "personalChallenge", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<PersonalChallengeParticipation> participations = new ArrayList<>();
+	@Column(nullable = false)
+	private Integer teamCount;
 
-	private PersonalChallenge(
+	@OneToMany(mappedBy = "teamChallenge", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<TeamChallengeGroup> challengeGroups = new ArrayList<>();
+
+	@OneToMany(mappedBy = "teamChallenge", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<TeamChallengeParticipation> participations = new ArrayList<>();
+
+	private TeamChallenge(
 		String challengeCode, String challengeName, String challengeImage, String challengeContent,
 		BigDecimal challengePoint, LocalDateTime beginDateTime, LocalDateTime endDateTime
 	) {
 		super(challengeCode, challengeName, challengeImage, challengeContent, challengePoint, beginDateTime,
-			endDateTime, ChallengeType.PERSONAL);
+			endDateTime, ChallengeType.TEAM);
+		this.teamCount = 0;
 	}
 
-	public static PersonalChallenge create(
+	public static TeamChallenge create(
 		String challengeCode, String challengeName, String challengeImage, String challengeContent,
 		BigDecimal challengePoint, LocalDateTime beginDateTime, LocalDateTime endDateTime
 	) {
-		return new PersonalChallenge(
-			challengeCode, challengeName, challengeImage, challengeContent, challengePoint, beginDateTime, endDateTime
+		return new TeamChallenge(
+			challengeCode, challengeName, challengeImage, challengeContent,
+			challengePoint, beginDateTime, endDateTime
 		);
 	}
 
@@ -62,13 +71,13 @@ public class PersonalChallenge extends BaseChallenge {
 	}
 
 	protected void doAddParticipation(Long memberId, LocalDateTime now) {
-		PersonalChallengeParticipation participation =
-			PersonalChallengeParticipation.create(this, memberId, now);
+		TeamChallengeParticipation participation =
+			TeamChallengeParticipation.create(this, memberId, now);
 		participations.add(participation);
 	}
 
 	public void removeParticipation(Long memberId, LocalDateTime now) {
-		PersonalChallengeParticipation participation = findParticipationByMemberId(memberId);
+		TeamChallengeParticipation participation = findParticipationByMemberId(memberId);
 		if (!isActive(now)) {
 			throw new ChallengeException(ChallengeExceptionMessage.CHALLENGE_NOT_LEAVEABLE);
 		}
@@ -76,7 +85,7 @@ public class PersonalChallenge extends BaseChallenge {
 		participations.remove(participation);
 	}
 
-	private PersonalChallengeParticipation findParticipationByMemberId(Long memberId) {
+	private TeamChallengeParticipation findParticipationByMemberId(Long memberId) {
 		return participations.stream()
 			.filter(p -> p.isParticipated(memberId))
 			.findFirst()

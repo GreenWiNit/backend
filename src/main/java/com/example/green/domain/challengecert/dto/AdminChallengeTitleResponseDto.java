@@ -1,7 +1,7 @@
 package com.example.green.domain.challengecert.dto;
 
-import com.example.green.domain.challenge.entity.BaseChallenge;
-import com.example.green.domain.challenge.enums.ChallengeType;
+import com.example.green.domain.challenge.entity.challenge.BaseChallenge;
+import com.example.green.domain.challenge.entity.challenge.vo.ChallengeType;
 
 /**
  * 관리자 챌린지 제목 응답 DTO

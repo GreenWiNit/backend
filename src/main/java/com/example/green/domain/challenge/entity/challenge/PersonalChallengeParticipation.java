@@ -1,10 +1,8 @@
-package com.example.green.domain.challengecert.entity;
+package com.example.green.domain.challenge.entity.challenge;
 
 import static com.example.green.global.utils.EntityValidator.*;
 
 import java.time.LocalDateTime;
-
-import com.example.green.domain.challenge.entity.PersonalChallenge;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;

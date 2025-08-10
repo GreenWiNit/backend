@@ -1,11 +1,10 @@
-package com.example.green.domain.challenge.entity;
+package com.example.green.domain.challenge.entity.group;
 
 import static com.example.green.global.utils.EntityValidator.*;
 
 import java.time.LocalDateTime;
 
-import com.example.green.domain.challenge.entity.vo.GroupAddress;
-import com.example.green.domain.challenge.enums.GroupStatus;
+import com.example.green.domain.challenge.entity.challenge.TeamChallenge;
 import com.example.green.domain.challenge.exception.ChallengeException;
 import com.example.green.domain.challenge.exception.ChallengeExceptionMessage;
 import com.example.green.domain.common.BaseEntity;

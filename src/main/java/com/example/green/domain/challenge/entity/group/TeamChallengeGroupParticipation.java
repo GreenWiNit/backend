@@ -1,11 +1,10 @@
-package com.example.green.domain.challengecert.entity;
+package com.example.green.domain.challenge.entity.group;
 
 import static com.example.green.global.utils.EntityValidator.*;
 
-import com.example.green.domain.challenge.entity.TeamChallengeGroup;
+import com.example.green.domain.challenge.entity.challenge.TeamChallengeParticipation;
 import com.example.green.domain.challenge.exception.ChallengeException;
 import com.example.green.domain.challenge.exception.ChallengeExceptionMessage;
-import com.example.green.domain.challengecert.entity.enums.GroupRoleType;
 import com.example.green.domain.common.BaseEntity;
 
 import jakarta.persistence.Column;

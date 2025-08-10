@@ -2,7 +2,7 @@ package com.example.green.domain.challenge.controller.dto;
 
 import java.time.LocalDateTime;
 
-import com.example.green.domain.challenge.enums.GroupStatus;
+import com.example.green.domain.challenge.entity.group.GroupStatus;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 

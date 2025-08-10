@@ -1,10 +1,10 @@
-package com.example.green.domain.challengecert.entity;
+package com.example.green.domain.challenge.entity.challenge;
 
 import static com.example.green.global.utils.EntityValidator.*;
 
 import java.time.LocalDateTime;
 
-import com.example.green.domain.challenge.entity.TeamChallenge;
+import com.example.green.domain.challenge.entity.group.TeamChallengeGroupParticipation;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;

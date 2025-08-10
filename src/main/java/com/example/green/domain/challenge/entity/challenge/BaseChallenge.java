@@ -1,13 +1,13 @@
-package com.example.green.domain.challenge.entity;
+package com.example.green.domain.challenge.entity.challenge;
 
 import static com.example.green.global.utils.EntityValidator.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-import com.example.green.domain.challenge.enums.ChallengeDisplayStatus;
-import com.example.green.domain.challenge.enums.ChallengeStatus;
-import com.example.green.domain.challenge.enums.ChallengeType;
+import com.example.green.domain.challenge.entity.challenge.vo.ChallengeDisplayStatus;
+import com.example.green.domain.challenge.entity.challenge.vo.ChallengeStatus;
+import com.example.green.domain.challenge.entity.challenge.vo.ChallengeType;
 import com.example.green.domain.challenge.exception.ChallengeException;
 import com.example.green.domain.challenge.exception.ChallengeExceptionMessage;
 import com.example.green.domain.common.BaseEntity;
