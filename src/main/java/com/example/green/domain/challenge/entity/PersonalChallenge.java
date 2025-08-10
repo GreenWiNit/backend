@@ -9,6 +9,8 @@ import java.util.List;
 import com.example.green.domain.challenge.enums.ChallengeDisplayStatus;
 import com.example.green.domain.challenge.enums.ChallengeStatus;
 import com.example.green.domain.challenge.enums.ChallengeType;
+import com.example.green.domain.challenge.exception.ChallengeException;
+import com.example.green.domain.challenge.exception.ChallengeExceptionMessage;
 import com.example.green.domain.challengecert.entity.PersonalChallengeParticipation;
 import com.example.green.domain.point.entity.vo.PointAmount;
 
@@ -50,6 +52,22 @@ public class PersonalChallenge extends BaseChallenge {
 		PersonalChallengeParticipation participation =
 			PersonalChallengeParticipation.create(this, memberId, now);
 		participations.add(participation);
+	}
+
+	public void removeParticipation(Long memberId, LocalDateTime now) {
+		PersonalChallengeParticipation participation = findParticipationByMemberId(memberId);
+		if (!isActive(now)) {
+			throw new ChallengeException(ChallengeExceptionMessage.CHALLENGE_NOT_LEAVEABLE);
+		}
+
+		participations.remove(participation);
+	}
+
+	private PersonalChallengeParticipation findParticipationByMemberId(Long memberId) {
+		return participations.stream()
+			.filter(p -> p.isParticipated(memberId))
+			.findFirst()
+			.orElseThrow(() -> new ChallengeException(ChallengeExceptionMessage.NOT_PARTICIPATING));
 	}
 
 	public static PersonalChallenge create(

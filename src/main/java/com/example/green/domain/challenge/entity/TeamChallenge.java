@@ -67,6 +67,22 @@ public class TeamChallenge extends BaseChallenge {
 		participations.add(participation);
 	}
 
+	public void removeParticipation(Long memberId, LocalDateTime now) {
+		TeamChallengeParticipation participation = findParticipationByMemberId(memberId);
+		if (!isActive(now)) {
+			throw new ChallengeException(ChallengeExceptionMessage.CHALLENGE_NOT_LEAVEABLE);
+		}
+
+		participations.remove(participation);
+	}
+
+	private TeamChallengeParticipation findParticipationByMemberId(Long memberId) {
+		return participations.stream()
+			.filter(p -> p.isParticipated(memberId))
+			.findFirst()
+			.orElseThrow(() -> new ChallengeException(ChallengeExceptionMessage.NOT_PARTICIPATING));
+	}
+
 	private TeamChallenge(
 		String challengeCode,
 		String challengeName,

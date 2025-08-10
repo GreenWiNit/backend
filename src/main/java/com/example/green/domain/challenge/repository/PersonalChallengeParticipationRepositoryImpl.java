@@ -136,7 +136,7 @@ public class PersonalChallengeParticipationRepositoryImpl implements PersonalCha
 			challenge.getBeginDateTime(),
 			challenge.getEndDateTime(),
 			challenge.getChallengeImage(),
-			challenge.getChallengePoint().getAmount().intValue()
+			challenge.getChallengePoint().getAmount()
 		);
 	}
 }

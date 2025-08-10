@@ -28,12 +28,7 @@ public class ChallengeController implements ChallengeControllerDocs {
 
 	@Deprecated
 	@PostMapping("/challenges/{chlgNo}/participate")
-	public NoContent joinChallenge(
-		@PathVariable Long chlgNo
-	) {/*
-		challengeService.joinChallenge(chlgNo, currentUser);
-		return NoContent.ok(CHALLENGE_JOINED);
-		*/
+	public NoContent joinChallenge(@PathVariable Long chlgNo) {
 		throw new BusinessException(GlobalExceptionMessage.NO_RESOURCE_MESSAGE);
 	}
 
@@ -57,12 +52,29 @@ public class ChallengeController implements ChallengeControllerDocs {
 		return NoContent.ok(CHALLENGE_JOINED);
 	}
 
+	@Deprecated
 	@DeleteMapping("/challenges/{chlgNo}/participate")
-	public NoContent leaveChallenge(
-		@PathVariable Long chlgNo,
+	public NoContent leaveChallenge(@PathVariable Long chlgNo) {
+		throw new BusinessException(GlobalExceptionMessage.NO_RESOURCE_MESSAGE);
+	}
+
+	@DeleteMapping("/challenges/personal/{chlgNo}/participate")
+	public NoContent leavePersonalChallenge(
+		@PathVariable(value = "chlgNo") Long challengeId,
 		@AuthenticationPrincipal PrincipalDetails currentUser
 	) {
-		challengeService.leaveChallenge(chlgNo, currentUser);
+		Long memberId = currentUser.getMemberId();
+		challengeService.leavePersonalChallenge(challengeId, memberId);
+		return NoContent.ok(ChallengeResponseMessage.CHALLENGE_LEFT);
+	}
+
+	@DeleteMapping("/challenges/team/{chlgNo}/participate")
+	public NoContent leaveTeamChallenge(
+		@PathVariable(value = "chlgNo") Long challengeId,
+		@AuthenticationPrincipal PrincipalDetails currentUser
+	) {
+		Long memberId = currentUser.getMemberId();
+		challengeService.leaveTeamChallenge(challengeId, memberId);
 		return NoContent.ok(ChallengeResponseMessage.CHALLENGE_LEFT);
 	}
 }

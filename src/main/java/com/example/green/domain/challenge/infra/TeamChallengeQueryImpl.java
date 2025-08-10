@@ -1,9 +1,7 @@
 package com.example.green.domain.challenge.infra;
 
-import static com.example.green.domain.challenge.entity.QPersonalChallenge.*;
 import static com.example.green.domain.challenge.entity.QTeamChallenge.*;
 import static com.example.green.domain.challenge.exception.ChallengeExceptionMessage.*;
-import static com.example.green.domain.challengecert.entity.QPersonalChallengeParticipation.*;
 import static com.example.green.domain.challengecert.entity.QTeamChallengeParticipation.*;
 
 import java.time.LocalDateTime;
@@ -86,8 +84,8 @@ public class TeamChallengeQueryImpl implements TeamChallengeQuery {
 
 		return queryFactory
 			.select(TeamChallengeProjections.toChallengeByMember(exists))
-			.from(personalChallenge)
-			.where(personalChallenge.id.eq(challengeId))
+			.from(teamChallenge)
+			.where(teamChallenge.id.eq(challengeId))
 			.fetchOne();
 	}
 
@@ -100,6 +98,6 @@ public class TeamChallengeQueryImpl implements TeamChallengeQuery {
 		if (cursor == null) {
 			return null;
 		}
-		return personalChallengeParticipation.id.lt(cursor);
+		return teamChallenge.id.lt(cursor);
 	}
 }

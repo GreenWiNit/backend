@@ -98,20 +98,7 @@ public abstract class BaseChallenge extends BaseEntity {
 		this.displayStatus = displayStatus;
 	}
 
-	/**
-	 * 챌린지가 활성 상태인지 확인
-	 */
 	public boolean isActive(LocalDateTime now) {
-		return challengeStatus == ChallengeStatus.PROCEEDING
-			&& displayStatus == ChallengeDisplayStatus.VISIBLE
-			&& now.isAfter(beginDateTime)
-			&& now.isBefore(endDateTime);
-	}
-
-	/**
-	 * 챌린지 참여 가능 여부 확인
-	 */
-	public boolean canParticipate(LocalDateTime now) {
 		return challengeStatus == ChallengeStatus.PROCEEDING
 			&& displayStatus == ChallengeDisplayStatus.VISIBLE
 			&& now.isBefore(endDateTime);

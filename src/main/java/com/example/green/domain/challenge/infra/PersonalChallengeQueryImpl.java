@@ -100,6 +100,6 @@ public class PersonalChallengeQueryImpl implements PersonalChallengeQuery {
 		if (cursor == null) {
 			return null;
 		}
-		return personalChallengeParticipation.id.lt(cursor);
+		return personalChallenge.id.lt(cursor);
 	}
 }

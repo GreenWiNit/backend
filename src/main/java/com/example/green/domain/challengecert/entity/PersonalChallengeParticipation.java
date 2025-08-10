@@ -8,6 +8,9 @@ import com.example.green.domain.challenge.entity.PersonalChallenge;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -38,6 +41,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder(access = AccessLevel.PRIVATE)
 public class PersonalChallengeParticipation extends BaseChallengeParticipation {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "personal_challenge_id", nullable = false)

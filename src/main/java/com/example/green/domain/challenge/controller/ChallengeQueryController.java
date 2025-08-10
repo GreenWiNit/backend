@@ -58,11 +58,6 @@ public class ChallengeQueryController implements ChallengeQueryControllerDocs {
 	@Deprecated
 	@GetMapping("/challenges/{chlgNo}")
 	public ApiTemplate<ChallengeDetailDto> getChallengeDetail(@PathVariable Long chlgNo) {
-		/*
-		return ApiTemplate.ok(
-			ChallengeResponseMessage.CHALLENGE_DETAIL_FOUND,
-			challengeService.getChallengeDetail(chlgNo, currentUser)
-		);*/
 		throw new BusinessException(GlobalExceptionMessage.NO_RESOURCE_MESSAGE);
 	}
 

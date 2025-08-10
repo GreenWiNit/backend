@@ -1,5 +1,6 @@
 package com.example.green.domain.challenge.controller.dto;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -22,6 +23,6 @@ public record ChallengeListResponseDto(
 	String challengeImage,
 
 	@Schema(description = "챌린지 포인트", example = "100")
-	Integer point
+	BigDecimal point
 ) {
 }

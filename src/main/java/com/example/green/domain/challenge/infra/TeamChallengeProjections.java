@@ -18,7 +18,7 @@ public class TeamChallengeProjections {
 			teamChallenge.beginDateTime,
 			teamChallenge.endDateTime,
 			teamChallenge.challengeImage,
-			teamChallenge.challengePoint
+			teamChallenge.challengePoint.amount
 		);
 	}
 

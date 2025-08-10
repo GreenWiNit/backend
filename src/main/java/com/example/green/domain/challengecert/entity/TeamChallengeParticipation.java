@@ -9,6 +9,9 @@ import com.example.green.domain.challenge.entity.TeamChallenge;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
@@ -31,6 +34,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder(access = AccessLevel.PRIVATE)
 public class TeamChallengeParticipation extends BaseChallengeParticipation {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "team_challenge_id", nullable = false)
