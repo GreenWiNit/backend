@@ -40,7 +40,7 @@ public class TeamChallengeQueryImpl implements TeamChallengeQuery {
 		List<ChallengeListResponseDto> participation = queryFactory
 			.select(TeamChallengeProjections.toChallenges())
 			.from(teamChallenge)
-			.join(teamChallengeParticipation.teamChallenge)
+			.join(teamChallenge.participations, teamChallengeParticipation)
 			.where(
 				teamChallengeParticipation.memberId.eq(memberId),
 				cursorCondition(cursor)
