@@ -3,9 +3,9 @@ package com.example.green.domain.challenge.controller.dto.admin;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-import com.example.green.domain.challenge.entity.BaseChallenge;
-import com.example.green.domain.challenge.enums.ChallengeDisplayStatus;
-import com.example.green.domain.challenge.enums.ChallengeType;
+import com.example.green.domain.challenge.entity.challenge.BaseChallenge;
+import com.example.green.domain.challenge.entity.challenge.vo.ChallengeDisplayStatus;
+import com.example.green.domain.challenge.entity.challenge.vo.ChallengeType;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 

@@ -4,9 +4,9 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
-import com.example.green.domain.challenge.entity.TeamChallengeGroup;
-import com.example.green.domain.challengecert.entity.TeamChallengeGroupParticipation;
-import com.example.green.domain.challengecert.entity.enums.GroupRoleType;
+import com.example.green.domain.challenge.entity.group.TeamChallengeGroup;
+import com.example.green.domain.challenge.entity.group.TeamChallengeGroupParticipation;
+import com.example.green.domain.challenge.entity.group.GroupRoleType;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 

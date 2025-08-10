@@ -4,8 +4,8 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.example.green.domain.challenge.entity.TeamChallenge;
-import com.example.green.domain.challengecert.entity.TeamChallengeParticipation;
+import com.example.green.domain.challenge.entity.challenge.TeamChallenge;
+import com.example.green.domain.challenge.entity.challenge.TeamChallengeParticipation;
 
 /**
  * 팀 챌린지 참여 정보를 관리하는 레포지토리

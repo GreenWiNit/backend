@@ -1,4 +1,4 @@
-package com.example.green.domain.challenge.enums;
+package com.example.green.domain.challenge.entity.challenge.vo;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;

@@ -7,9 +7,9 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.green.domain.challenge.entity.BaseChallenge;
-import com.example.green.domain.challenge.entity.PersonalChallenge;
-import com.example.green.domain.challenge.entity.TeamChallenge;
+import com.example.green.domain.challenge.entity.challenge.BaseChallenge;
+import com.example.green.domain.challenge.entity.challenge.PersonalChallenge;
+import com.example.green.domain.challenge.entity.challenge.TeamChallenge;
 import com.example.green.domain.challenge.exception.ChallengeException;
 import com.example.green.domain.challenge.exception.ChallengeExceptionMessage;
 import com.example.green.domain.challenge.repository.PersonalChallengeParticipationRepository;
@@ -26,9 +26,9 @@ import com.example.green.domain.challengecert.dto.ChallengeCertificationCreateRe
 import com.example.green.domain.challengecert.dto.ChallengeCertificationDetailResponseDto;
 import com.example.green.domain.challengecert.dto.ChallengeCertificationListResponseDto;
 import com.example.green.domain.challengecert.entity.PersonalChallengeCertification;
-import com.example.green.domain.challengecert.entity.PersonalChallengeParticipation;
+import com.example.green.domain.challenge.entity.challenge.PersonalChallengeParticipation;
 import com.example.green.domain.challengecert.entity.TeamChallengeCertification;
-import com.example.green.domain.challengecert.entity.TeamChallengeParticipation;
+import com.example.green.domain.challenge.entity.challenge.TeamChallengeParticipation;
 import com.example.green.domain.challengecert.exception.ChallengeCertException;
 import com.example.green.domain.challengecert.exception.ChallengeCertExceptionMessage;
 import com.example.green.domain.challengecert.repository.PersonalChallengeCertificationRepository;

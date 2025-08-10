@@ -8,7 +8,8 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 
 import com.example.green.domain.challenge.controller.dto.ChallengeListResponseDto;
-import com.example.green.domain.challengecert.entity.PersonalChallengeParticipation;
+import com.example.green.domain.challenge.entity.challenge.PersonalChallenge;
+import com.example.green.domain.challenge.entity.challenge.PersonalChallengeParticipation;
 import com.example.green.domain.challengecert.repository.dao.ChallengeParticipantDao;
 import com.example.green.domain.member.entity.Member;
 import com.example.green.global.api.page.CursorTemplate;
@@ -129,7 +130,7 @@ public class PersonalChallengeParticipationRepositoryImpl implements PersonalCha
 	}
 
 	private ChallengeListResponseDto toChallengeListDto(
-		com.example.green.domain.challenge.entity.PersonalChallenge challenge) {
+		PersonalChallenge challenge) {
 		return new ChallengeListResponseDto(
 			challenge.getId(),
 			challenge.getChallengeName(),

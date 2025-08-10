@@ -1,4 +1,4 @@
-package com.example.green.domain.challenge.enums;
+package com.example.green.domain.challenge.entity.group;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

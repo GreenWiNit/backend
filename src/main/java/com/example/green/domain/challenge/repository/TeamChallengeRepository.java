@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import com.example.green.domain.challenge.entity.TeamChallenge;
+import com.example.green.domain.challenge.entity.challenge.TeamChallenge;
 
 @Repository
 public interface TeamChallengeRepository extends JpaRepository<TeamChallenge, Long> {

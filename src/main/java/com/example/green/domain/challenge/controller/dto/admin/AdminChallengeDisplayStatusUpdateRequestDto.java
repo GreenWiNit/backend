@@ -1,6 +1,6 @@
 package com.example.green.domain.challenge.controller.dto.admin;
 
-import com.example.green.domain.challenge.enums.ChallengeDisplayStatus;
+import com.example.green.domain.challenge.entity.challenge.vo.ChallengeDisplayStatus;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;

@@ -4,10 +4,10 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.example.green.domain.challenge.entity.TeamChallengeGroup;
-import com.example.green.domain.challengecert.entity.TeamChallengeGroupParticipation;
-import com.example.green.domain.challengecert.entity.TeamChallengeParticipation;
-import com.example.green.domain.challengecert.entity.enums.GroupRoleType;
+import com.example.green.domain.challenge.entity.group.TeamChallengeGroup;
+import com.example.green.domain.challenge.entity.group.TeamChallengeGroupParticipation;
+import com.example.green.domain.challenge.entity.challenge.TeamChallengeParticipation;
+import com.example.green.domain.challenge.entity.group.GroupRoleType;
 
 public interface TeamChallengeGroupParticipationRepository
 	extends JpaRepository<TeamChallengeGroupParticipation, Long> {

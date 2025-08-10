@@ -5,7 +5,7 @@ import java.time.LocalDate;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.example.green.domain.challengecert.entity.PersonalChallengeCertification;
-import com.example.green.domain.challengecert.entity.PersonalChallengeParticipation;
+import com.example.green.domain.challenge.entity.challenge.PersonalChallengeParticipation;
 
 public interface PersonalChallengeCertificationRepository
 	extends JpaRepository<PersonalChallengeCertification, Long>, PersonalChallengeCertificationRepositoryCustom {

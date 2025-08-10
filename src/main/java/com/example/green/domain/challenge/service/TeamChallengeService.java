@@ -5,7 +5,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeCreateDto;
 import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeUpdateDto;
-import com.example.green.domain.challenge.entity.TeamChallenge;
+import com.example.green.domain.challenge.entity.challenge.TeamChallenge;
 import com.example.green.domain.challenge.repository.TeamChallengeRepository;
 import com.example.green.domain.challenge.repository.query.TeamChallengeQuery;
 import com.example.green.domain.challenge.utils.CodeGenerator;
@@ -64,7 +64,7 @@ public class TeamChallengeService {
 		teamChallenge.updateBasicInfo(
 			dto.challengeName(), dto.challengePoint(), dto.beginDateTime(), dto.endDateTime(), dto.challengeContent()
 		);
-		
+
 		String beforeImageUrl = teamChallenge.getChallengeImage();
 		teamChallenge.updateImage(dto.challengeImageUrl());
 		fileManager.swapImage(beforeImageUrl, teamChallenge.getChallengeImage());

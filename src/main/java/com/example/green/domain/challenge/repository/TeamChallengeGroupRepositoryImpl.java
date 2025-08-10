@@ -10,8 +10,8 @@ import org.springframework.stereotype.Repository;
 
 import com.example.green.domain.challenge.controller.dto.TeamChallengeGroupListResponseDto;
 import com.example.green.domain.challenge.controller.dto.admin.AdminTeamChallengeGroupListResponseDto;
-import com.example.green.domain.challenge.entity.TeamChallengeGroup;
-import com.example.green.domain.challengecert.entity.enums.GroupRoleType;
+import com.example.green.domain.challenge.entity.group.TeamChallengeGroup;
+import com.example.green.domain.challenge.entity.group.GroupRoleType;
 import com.example.green.global.api.page.CursorTemplate;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;

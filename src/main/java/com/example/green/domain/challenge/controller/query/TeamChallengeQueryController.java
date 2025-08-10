@@ -1,7 +1,7 @@
 package com.example.green.domain.challenge.controller.query;
 
 import static com.example.green.domain.challenge.controller.message.ChallengeResponseMessage.*;
-import static com.example.green.domain.challenge.enums.ChallengeStatus.*;
+import static com.example.green.domain.challenge.entity.challenge.vo.ChallengeStatus.*;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;

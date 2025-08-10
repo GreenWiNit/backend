@@ -5,6 +5,7 @@ import static com.example.green.global.utils.EntityValidator.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import com.example.green.domain.challenge.entity.challenge.TeamChallengeParticipation;
 import com.example.green.domain.member.entity.Member;
 
 import jakarta.persistence.Entity;
