@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.green.domain.challenge.controller.docs.AdminChallengeControllerDocs;
 import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeCreateRequestDto;
-import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeDetailResponseDto;
+import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeDetailDto;
 import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeDisplayStatusUpdateRequestDto;
 import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeImageUpdateRequestDto;
 import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeUpdateRequestDto;
@@ -51,10 +51,10 @@ public class AdminChallengeController implements AdminChallengeControllerDocs {
 
 	@Override
 	@PatchMapping("/{challengeId}/image")
-	public ApiTemplate<AdminChallengeDetailResponseDto> updateChallengeImage(
+	public ApiTemplate<AdminChallengeDetailDto> updateChallengeImage(
 		@PathVariable Long challengeId,
 		@Valid @RequestBody AdminChallengeImageUpdateRequestDto request) {
-		AdminChallengeDetailResponseDto result = adminChallengeService.updateChallengeImage(challengeId, request);
+		AdminChallengeDetailDto result = adminChallengeService.updateChallengeImage(challengeId, request);
 		return ApiTemplate.ok(AdminChallengeResponseMessage.CHALLENGE_IMAGE_UPDATED, result);
 	}
 

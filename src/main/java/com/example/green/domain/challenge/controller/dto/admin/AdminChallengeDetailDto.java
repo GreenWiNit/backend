@@ -3,26 +3,22 @@ package com.example.green.domain.challenge.controller.dto.admin;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-import com.example.green.domain.challenge.entity.TeamChallenge;
+import com.example.green.domain.challenge.entity.BaseChallenge;
 import com.example.green.domain.challenge.enums.ChallengeDisplayStatus;
-import com.example.green.domain.challenge.enums.ChallengeStatus;
 import com.example.green.domain.challenge.enums.ChallengeType;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
-@Schema(description = "어드민 팀 챌린지 목록 응답")
-public record AdminTeamChallengeListResponseDto(
+@Schema(description = "어드민 챌린지 상세 응답")
+public record AdminChallengeDetailDto(
 	@Schema(description = "챌린지 ID", example = "1")
 	Long id,
 
-	@Schema(description = "챌린지 코드", example = "CH-T-20250109-143522-B7MX")
+	@Schema(description = "챌린지 코드", example = "CH-P-20250109-143521-A3FV")
 	String challengeCode,
 
 	@Schema(description = "챌린지명", example = "30일 운동 챌린지")
 	String challengeName,
-
-	@Schema(description = "챌린지 상태")
-	ChallengeStatus challengeStatus,
 
 	@Schema(description = "챌린지 유형")
 	ChallengeType challengeType,
@@ -42,30 +38,22 @@ public record AdminTeamChallengeListResponseDto(
 	@Schema(description = "챌린지 이미지 URL", example = "https://example.com/image.jpg")
 	String challengeImage,
 
-	@Schema(description = "참여자 수", example = "150")
-	Integer participantCount,
-
-	@Schema(description = "생성 일시")
-	LocalDateTime createdDate
+	@Schema(description = "챌린지 설명 및 참여방법", example = "매일 30분 이상 운동하기")
+	String challengeContent
 ) {
 
-	/**
-	 * TeamChallenge 엔티티로부터 AdminTeamChallengeListResponseDto를 생성합니다.
-	 */
-	public static AdminTeamChallengeListResponseDto from(TeamChallenge challenge, Integer participantCount) {
-		return new AdminTeamChallengeListResponseDto(
+	public static AdminChallengeDetailDto from(BaseChallenge challenge) {
+		return new AdminChallengeDetailDto(
 			challenge.getId(),
 			challenge.getChallengeCode(),
 			challenge.getChallengeName(),
-			challenge.getChallengeStatus(),
 			challenge.getChallengeType(),
 			challenge.getChallengePoint(),
 			challenge.getBeginDateTime(),
 			challenge.getEndDateTime(),
 			challenge.getDisplayStatus(),
 			challenge.getChallengeImage(),
-			participantCount,
-			challenge.getCreatedDate()
+			challenge.getChallengeContent()
 		);
 	}
 }

@@ -1,7 +1,7 @@
 package com.example.green.domain.challenge.controller.docs;
 
 import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeCreateRequestDto;
-import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeDetailResponseDto;
+import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeDetailDto;
 import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeDisplayStatusUpdateRequestDto;
 import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeImageUpdateRequestDto;
 import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeUpdateRequestDto;
@@ -18,7 +18,7 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-@Tag(name = "어드민 챌린지 관리 API", description = "어드민 챌린지 생성/수정/이미지/전시여부 등 관리 API")
+@Tag(name = "관리자 챌린지 관리 API", description = "관리자 챌린지 생성/수정/이미지/전시여부 등 관리 API")
 public interface AdminChallengeControllerDocs {
 
 	@Operation(
@@ -31,7 +31,7 @@ public interface AdminChallengeControllerDocs {
 		content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
 	@ApiResponse(responseCode = "404", description = "챌린지 없음",
 		content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
-	ApiTemplate<AdminChallengeDetailResponseDto> updateChallengeImage(
+	ApiTemplate<AdminChallengeDetailDto> updateChallengeImage(
 		@Parameter(
 			name = "challengeId",
 			description = "챌린지 ID",
@@ -39,23 +39,22 @@ public interface AdminChallengeControllerDocs {
 		@RequestBody(description = "챌린지 이미지 URL", required = true, content = @Content(schema = @Schema(
 			implementation = AdminChallengeImageUpdateRequestDto.class))) AdminChallengeImageUpdateRequestDto request);
 
-	@Operation(summary = "챌린지 생성",
-		description = """
-			챌린지를 생성합니다. (이미지 URL 포함)
-			
-			**챌린지 타입 (challengeType):**
-			- PERSONAL: 개인 챌린지
-			- TEAM: 팀 챌린지
-			
-			**전시 상태 (displayStatus):**
-			- VISIBLE: 전시 (사용자에게 보임)
-			- HIDDEN: 숨김 (사용자에게 보이지 않음)
-			""")
+	@Operation(summary = "팀 챌린지 생성", description = "챌린지를 생성합니다. (이미지 URL 포함)")
 	@ApiErrorStandard
 	@ApiResponse(responseCode = "200", description = "챌린지 생성 성공", useReturnTypeSchema = true)
 	@ApiResponse(responseCode = "403", description = "관리자 권한이 필요합니다.",
 		content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
 	ApiTemplate<Long> createTeamChallenge(
+		@RequestBody(description = "챌린지 생성 요청", required = true, content = @Content(schema =
+		@Schema(implementation = AdminChallengeCreateRequestDto.class))) AdminChallengeCreateRequestDto request
+	);
+
+	@Operation(summary = "개인 챌린지 생성", description = "개인 챌린지를 생성합니다. (이미지 URL 포함)")
+	@ApiErrorStandard
+	@ApiResponse(responseCode = "200", description = "챌린지 생성 성공", useReturnTypeSchema = true)
+	@ApiResponse(responseCode = "403", description = "관리자 권한이 필요합니다.",
+		content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
+	ApiTemplate<Long> createPersonalChallenge(
 		@RequestBody(description = "챌린지 생성 요청", required = true, content = @Content(schema =
 		@Schema(implementation = AdminChallengeCreateRequestDto.class))) AdminChallengeCreateRequestDto request
 	);

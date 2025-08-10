@@ -1,5 +1,7 @@
 package com.example.green.domain.challenge.controller;
 
+import static com.example.green.domain.challenge.controller.message.AdminChallengeResponseMessage.*;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -7,13 +9,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.green.domain.challenge.controller.docs.AdminChallengeQueryControllerDocs;
-import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeDetailResponseDto;
+import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeDetailDto;
 import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeParticipantListResponseDto;
-import com.example.green.domain.challenge.controller.dto.admin.AdminPersonalChallengeListResponseDto;
+import com.example.green.domain.challenge.controller.dto.admin.AdminPersonalChallengesDto;
 import com.example.green.domain.challenge.controller.dto.admin.AdminTeamChallengeGroupDetailResponseDto;
 import com.example.green.domain.challenge.controller.dto.admin.AdminTeamChallengeGroupListResponseDto;
-import com.example.green.domain.challenge.controller.dto.admin.AdminTeamChallengeListResponseDto;
+import com.example.green.domain.challenge.controller.dto.admin.AdminTeamChallengesDto;
 import com.example.green.domain.challenge.controller.message.AdminChallengeResponseMessage;
+import com.example.green.domain.challenge.repository.query.PersonalChallengeQuery;
+import com.example.green.domain.challenge.repository.query.TeamChallengeQuery;
 import com.example.green.domain.challenge.service.AdminChallengeService;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.page.CursorTemplate;
@@ -26,28 +30,37 @@ import lombok.RequiredArgsConstructor;
 public class AdminChallengeQueryController implements AdminChallengeQueryControllerDocs {
 
 	private final AdminChallengeService adminChallengeService;
+	private final PersonalChallengeQuery personalChallengeQuery;
+	private final TeamChallengeQuery teamChallengeQuery;
 
 	@GetMapping("/personal")
-	public ApiTemplate<CursorTemplate<Long, AdminPersonalChallengeListResponseDto>> getPersonalChallenges(
-		@RequestParam(required = false) Long cursor) {
-		CursorTemplate<Long, AdminPersonalChallengeListResponseDto> result
-			= adminChallengeService.getPersonalChallenges(cursor);
-		return ApiTemplate.ok(AdminChallengeResponseMessage.PERSONAL_CHALLENGE_LIST_FOUND, result);
+	public ApiTemplate<CursorTemplate<Long, AdminPersonalChallengesDto>> getPersonalChallenges(
+		@RequestParam(required = false) Long cursor,
+		@RequestParam(required = false, defaultValue = "20") Integer size
+	) {
+		CursorTemplate<Long, AdminPersonalChallengesDto> result =
+			personalChallengeQuery.findAllForAdminByCursor(cursor, size);
+		return ApiTemplate.ok(PERSONAL_CHALLENGE_LIST_FOUND, result);
 	}
 
-	@Override
 	@GetMapping("/team")
-	public ApiTemplate<CursorTemplate<Long, AdminTeamChallengeListResponseDto>> getTeamChallenges(
-		@RequestParam(required = false) Long cursor) {
-		CursorTemplate<Long, AdminTeamChallengeListResponseDto> result =
-			adminChallengeService.getTeamChallenges(cursor);
-		return ApiTemplate.ok(AdminChallengeResponseMessage.TEAM_CHALLENGE_LIST_FOUND, result);
+	public ApiTemplate<CursorTemplate<Long, AdminTeamChallengesDto>> getTeamChallenges(
+		@RequestParam(required = false) Long cursor,
+		@RequestParam(required = false, defaultValue = "20") Integer size
+	) {
+		CursorTemplate<Long, AdminTeamChallengesDto> result = teamChallengeQuery.findAllForAdminByCursor(cursor, size);
+		return ApiTemplate.ok(TEAM_CHALLENGE_LIST_FOUND, result);
 	}
 
-	@Override
-	@GetMapping("/{challengeId}")
-	public ApiTemplate<AdminChallengeDetailResponseDto> getChallengeDetail(@PathVariable Long challengeId) {
-		AdminChallengeDetailResponseDto result = adminChallengeService.getChallengeDetail(challengeId);
+	@GetMapping("/personal/{challengeId}")
+	public ApiTemplate<AdminChallengeDetailDto> getPersonalChallengeDetail(@PathVariable Long challengeId) {
+		AdminChallengeDetailDto result = personalChallengeQuery.getChallengeDetail(challengeId);
+		return ApiTemplate.ok(AdminChallengeResponseMessage.CHALLENGE_DETAIL_FOUND, result);
+	}
+
+	@GetMapping("/team/{challengeId}")
+	public ApiTemplate<AdminChallengeDetailDto> getTeamChallengeDetail(@PathVariable Long challengeId) {
+		AdminChallengeDetailDto result = teamChallengeQuery.getChallengeDetail(challengeId);
 		return ApiTemplate.ok(AdminChallengeResponseMessage.CHALLENGE_DETAIL_FOUND, result);
 	}
 

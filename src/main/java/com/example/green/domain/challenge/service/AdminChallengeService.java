@@ -6,15 +6,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeCreateRequestDto;
-import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeDetailResponseDto;
+import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeDetailDto;
 import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeDisplayStatusUpdateRequestDto;
 import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeImageUpdateRequestDto;
 import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeParticipantListResponseDto;
 import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeUpdateRequestDto;
-import com.example.green.domain.challenge.controller.dto.admin.AdminPersonalChallengeListResponseDto;
 import com.example.green.domain.challenge.controller.dto.admin.AdminTeamChallengeGroupDetailResponseDto;
 import com.example.green.domain.challenge.controller.dto.admin.AdminTeamChallengeGroupListResponseDto;
-import com.example.green.domain.challenge.controller.dto.admin.AdminTeamChallengeListResponseDto;
 import com.example.green.domain.challenge.entity.PersonalChallenge;
 import com.example.green.domain.challenge.entity.TeamChallenge;
 import com.example.green.domain.challenge.entity.TeamChallengeGroup;
@@ -108,21 +106,21 @@ public class AdminChallengeService {
 	/**
 	 * 챌린지 이미지를 업데이트합니다.
 	 */
-	public AdminChallengeDetailResponseDto updateChallengeImage(Long challengeId,
+	public AdminChallengeDetailDto updateChallengeImage(Long challengeId,
 		AdminChallengeImageUpdateRequestDto request) {
 		try {
 			// PersonalChallenge인지 확인
 			var personalChallenge = personalChallengeRepository.findById(challengeId);
 			if (personalChallenge.isPresent()) {
 				personalChallenge.get().updateImage(request.challengeImageUrl());
-				return AdminChallengeDetailResponseDto.from(personalChallenge.get());
+				return AdminChallengeDetailDto.from(personalChallenge.get());
 			}
 
 			// TeamChallenge인지 확인
 			var teamChallenge = teamChallengeRepository.findById(challengeId);
 			if (teamChallenge.isPresent()) {
 				teamChallenge.get().updateImage(request.challengeImageUrl());
-				return AdminChallengeDetailResponseDto.from(teamChallenge.get());
+				return AdminChallengeDetailDto.from(teamChallenge.get());
 			}
 
 			// 둘 다 없으면 예외 발생
@@ -162,25 +160,17 @@ public class AdminChallengeService {
 		}
 	}
 
-	public CursorTemplate<Long, AdminPersonalChallengeListResponseDto> getPersonalChallenges(Long cursor) {
-		return personalChallengeRepository.findAllForAdminByCursor(cursor, DEFAULT_PAGE_SIZE);
-	}
-
-	public CursorTemplate<Long, AdminTeamChallengeListResponseDto> getTeamChallenges(Long cursor) {
-		return teamChallengeRepository.findAllForAdminByCursor(cursor, DEFAULT_PAGE_SIZE);
-	}
-
 	/**
 	 * 챌린지 상세 정보를 조회합니다.
 	 */
-	public AdminChallengeDetailResponseDto getChallengeDetail(Long challengeId) {
+	public AdminChallengeDetailDto getChallengeDetail(Long challengeId) {
 		var personalChallenge = personalChallengeRepository.findById(challengeId);
 		if (personalChallenge.isPresent()) {
-			return AdminChallengeDetailResponseDto.from(personalChallenge.get());
+			return AdminChallengeDetailDto.from(personalChallenge.get());
 		}
 		var teamChallenge = teamChallengeRepository.findById(challengeId);
 		if (teamChallenge.isPresent()) {
-			return AdminChallengeDetailResponseDto.from(teamChallenge.get());
+			return AdminChallengeDetailDto.from(teamChallenge.get());
 		}
 
 		throw new ChallengeException(ChallengeExceptionMessage.ADMIN_CHALLENGE_NOT_FOUND);

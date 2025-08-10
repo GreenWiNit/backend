@@ -12,6 +12,7 @@ import com.example.green.domain.challenge.exception.ChallengeExceptionMessage;
 import com.example.green.domain.challengecert.entity.TeamChallengeParticipation;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Index;
 import jakarta.persistence.OneToMany;
@@ -37,6 +38,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class TeamChallenge extends BaseChallenge {
 
+	@Column(nullable = false)
+	private Integer teamCount;
+
 	@OneToMany(mappedBy = "teamChallenge", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<TeamChallengeGroup> challengeGroups = new ArrayList<>();
 
@@ -49,6 +53,7 @@ public class TeamChallenge extends BaseChallenge {
 	) {
 		super(challengeCode, challengeName, challengeImage, challengeContent, challengePoint, beginDateTime,
 			endDateTime, ChallengeType.TEAM);
+		this.teamCount = 0;
 	}
 
 	public static TeamChallenge create(
