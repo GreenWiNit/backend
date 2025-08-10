@@ -1,4 +1,4 @@
-package com.example.green.domain.challenge.controller;
+package com.example.green.domain.challenge.controller.query;
 
 import static com.example.green.domain.challenge.controller.message.ChallengeResponseMessage.*;
 import static com.example.green.domain.challenge.enums.ChallengeStatus.*;
@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.green.domain.challenge.controller.docs.ChallengeQueryControllerDocs;
 import com.example.green.domain.challenge.controller.dto.ChallengeDetailDto;
 import com.example.green.domain.challenge.controller.dto.ChallengeListResponseDto;
+import com.example.green.domain.challenge.controller.query.docs.ChallengeQueryControllerDocs;
 import com.example.green.domain.challenge.repository.query.PersonalChallengeQuery;
 import com.example.green.domain.challenge.repository.query.TeamChallengeQuery;
 import com.example.green.global.api.ApiTemplate;

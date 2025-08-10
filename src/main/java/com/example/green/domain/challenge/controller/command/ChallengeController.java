@@ -1,4 +1,4 @@
-package com.example.green.domain.challenge.controller;
+package com.example.green.domain.challenge.controller.command;
 
 import static com.example.green.domain.challenge.controller.message.ChallengeResponseMessage.*;
 

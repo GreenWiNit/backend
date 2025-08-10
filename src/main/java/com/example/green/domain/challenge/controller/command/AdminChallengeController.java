@@ -1,4 +1,4 @@
-package com.example.green.domain.challenge.controller;
+package com.example.green.domain.challenge.controller.command;
 
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;

@@ -1,4 +1,4 @@
-package com.example.green.domain.challenge.controller.docs;
+package com.example.green.domain.challenge.controller.query.docs;
 
 import com.example.green.domain.challenge.controller.dto.ChallengeDetailDto;
 import com.example.green.domain.challenge.controller.dto.ChallengeListResponseDto;
