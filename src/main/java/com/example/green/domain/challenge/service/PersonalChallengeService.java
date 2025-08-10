@@ -63,8 +63,9 @@ public class PersonalChallengeService {
 		personalChallenge.updateBasicInfo(
 			dto.challengeName(), dto.challengePoint(), dto.beginDateTime(), dto.endDateTime(), dto.challengeContent()
 		);
-		fileManager.unUseImage(personalChallenge.getChallengeImage());
+
+		String beforeImageUrl = personalChallenge.getChallengeImage();
 		personalChallenge.updateImage(dto.challengeImageUrl());
-		fileManager.confirmUsingImage(personalChallenge.getChallengeImage());
+		fileManager.swapImage(beforeImageUrl, personalChallenge.getChallengeImage());
 	}
 }

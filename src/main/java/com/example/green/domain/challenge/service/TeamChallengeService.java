@@ -64,8 +64,9 @@ public class TeamChallengeService {
 		teamChallenge.updateBasicInfo(
 			dto.challengeName(), dto.challengePoint(), dto.beginDateTime(), dto.endDateTime(), dto.challengeContent()
 		);
-		fileManager.unUseImage(teamChallenge.getChallengeImage());
+		
+		String beforeImageUrl = teamChallenge.getChallengeImage();
 		teamChallenge.updateImage(dto.challengeImageUrl());
-		fileManager.confirmUsingImage(teamChallenge.getChallengeImage());
+		fileManager.swapImage(beforeImageUrl, teamChallenge.getChallengeImage());
 	}
 }

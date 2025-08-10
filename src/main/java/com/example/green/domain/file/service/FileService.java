@@ -49,6 +49,15 @@ public class FileService implements FileManager {
 		fileEntity.markDeleted();
 	}
 
+	@Override
+	public void swapImage(String beforeImageUrl, String afterImageUrl) {
+		if (beforeImageUrl.equals(afterImageUrl)) {
+			return;
+		}
+		unUseImage(beforeImageUrl);
+		confirmUsingImage(afterImageUrl);
+	}
+
 	private FileEntity getFileEntityFromImageUrl(String imageUrl) {
 		imageValidator.validateUrl(imageUrl);
 		String imageKey = storageHelper.extractImageKey(imageUrl);
