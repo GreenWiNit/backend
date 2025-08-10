@@ -5,13 +5,13 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.example.green.domain.challenge.enums.ChallengeDisplayStatus;
 import com.example.green.domain.challenge.enums.ChallengeType;
 import com.example.green.domain.challenge.exception.ChallengeException;
 import com.example.green.domain.challenge.exception.ChallengeExceptionMessage;
 import com.example.green.domain.challengecert.entity.TeamChallengeParticipation;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Index;
 import jakarta.persistence.OneToMany;
@@ -37,6 +37,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class TeamChallenge extends BaseChallenge {
 
+	@Column(nullable = false)
+	private Integer teamCount;
+
 	@OneToMany(mappedBy = "teamChallenge", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<TeamChallengeGroup> challengeGroups = new ArrayList<>();
 
@@ -49,6 +52,7 @@ public class TeamChallenge extends BaseChallenge {
 	) {
 		super(challengeCode, challengeName, challengeImage, challengeContent, challengePoint, beginDateTime,
 			endDateTime, ChallengeType.TEAM);
+		this.teamCount = 0;
 	}
 
 	public static TeamChallenge create(
@@ -86,9 +90,5 @@ public class TeamChallenge extends BaseChallenge {
 			.filter(p -> p.isParticipated(memberId))
 			.findFirst()
 			.orElseThrow(() -> new ChallengeException(ChallengeExceptionMessage.NOT_PARTICIPATING));
-	}
-
-	public void updateDisplayStatus(ChallengeDisplayStatus displayStatus) {
-		super.updateDisplayStatus(displayStatus);
 	}
 }

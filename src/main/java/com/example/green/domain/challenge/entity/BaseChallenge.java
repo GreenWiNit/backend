@@ -117,14 +117,12 @@ public abstract class BaseChallenge extends BaseEntity {
 			&& now.isBefore(endDateTime);
 	}
 
-	protected void updateStatus(ChallengeStatus newStatus) {
-		validateNullData(newStatus, "챌린지 상태는 필수값입니다.");
-		this.challengeStatus = newStatus;
+	public void show() {
+		this.displayStatus = ChallengeDisplayStatus.VISIBLE;
 	}
 
-	public void updateDisplayStatus(ChallengeDisplayStatus newDisplayStatus) {
-		validateNullData(newDisplayStatus, "챌린지 전시 상태는 필수값입니다.");
-		this.displayStatus = newDisplayStatus;
+	public void hide() {
+		this.displayStatus = ChallengeDisplayStatus.HIDDEN;
 	}
 
 	public void updateImage(String newImageUrl) {

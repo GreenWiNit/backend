@@ -12,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.green.domain.challenge.controller.dto.ChallengeDetailDto;
 import com.example.green.domain.challenge.controller.dto.ChallengeListResponseDto;
+import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeDetailDto;
+import com.example.green.domain.challenge.controller.dto.admin.AdminPersonalChallengesDto;
 import com.example.green.domain.challenge.entity.PersonalChallenge;
 import com.example.green.domain.challenge.enums.ChallengeStatus;
 import com.example.green.domain.challenge.exception.ChallengeException;
@@ -94,6 +96,22 @@ public class PersonalChallengeQueryImpl implements PersonalChallengeQuery {
 			.from(personalChallenge)
 			.where(personalChallenge.id.eq(challengeId))
 			.fetchOne();
+	}
+
+	public CursorTemplate<Long, AdminPersonalChallengesDto> findAllForAdminByCursor(Long cursor, Integer size) {
+		List<AdminPersonalChallengesDto> challenges = queryFactory
+			.select(PersonalChallengeProjections.toChallengesForAdmin())
+			.from(personalChallenge)
+			.where(cursorCondition(cursor))
+			.orderBy(personalChallenge.id.desc())
+			.limit(size + 1)
+			.fetch();
+		return CursorTemplate.from(challenges, size, AdminPersonalChallengesDto::id);
+	}
+
+	public AdminChallengeDetailDto getChallengeDetail(Long challengeId) {
+		PersonalChallenge personalChallenge = getPersonalChallengeById(challengeId);
+		return AdminChallengeDetailDto.from(personalChallenge);
 	}
 
 	private BooleanExpression cursorCondition(Long cursor) {

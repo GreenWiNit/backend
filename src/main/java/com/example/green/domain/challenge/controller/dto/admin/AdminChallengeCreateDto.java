@@ -10,7 +10,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 @Schema(description = "어드민 챌린지 생성 요청")
-public record AdminChallengeCreateRequestDto(
+public record AdminChallengeCreateDto(
 	@Schema(description = "챌린지명", example = "30일 운동 챌린지", requiredMode = Schema.RequiredMode.REQUIRED)
 	@NotBlank(message = "챌린지명은 필수값입니다.")
 	@Size(max = 90, message = "챌린지명은 90자 이하여야 합니다.")

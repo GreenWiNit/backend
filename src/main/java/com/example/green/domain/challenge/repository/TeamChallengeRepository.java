@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import com.example.green.domain.challenge.entity.TeamChallenge;
 
 @Repository
-public interface TeamChallengeRepository extends JpaRepository<TeamChallenge, Long>, TeamChallengeRepositoryCustom {
+public interface TeamChallengeRepository extends JpaRepository<TeamChallenge, Long> {
 
 	@Query("SELECT COUNT(t) FROM TeamChallenge t WHERE DATE(t.createdDate) = DATE(:date)")
 	long countChallengesByCreatedDate(LocalDateTime date);

@@ -12,7 +12,8 @@ public enum AdminChallengeResponseMessage implements ResponseMessage {
 	CHALLENGE_CREATED("챌린지가 성공적으로 생성되었습니다."),
 	CHALLENGE_UPDATED("챌린지가 성공적으로 수정되었습니다."),
 	CHALLENGE_DELETED("챌린지가 성공적으로 삭제되었습니다."),
-	CHALLENGE_DISPLAY_STATUS_UPDATED("챌린지 전시 상태가 성공적으로 변경되었습니다."),
+	CHALLENGE_SHOW("챌린지가 전시 상태로 변경되었습니다."),
+	CHALLENGE_HIDE("챌린지가 미전시 상태로 변경되었습니다."),
 	CHALLENGE_IMAGE_UPDATED("챌린지 이미지가 성공적으로 변경되었습니다."),
 
 	// 챌린지 조회
@@ -27,7 +28,8 @@ public enum AdminChallengeResponseMessage implements ResponseMessage {
 	GROUP_DELETED("그룹이 성공적으로 삭제되었습니다."),
 
 	// 통계
-	CHALLENGE_STATISTICS_FOUND("챌린지 통계 조회에 성공했습니다.");
+	CHALLENGE_STATISTICS_FOUND("챌린지 통계 조회에 성공했습니다."),
+	;
 
 	private final String message;
 }
