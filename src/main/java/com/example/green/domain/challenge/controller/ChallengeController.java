@@ -32,9 +32,9 @@ public class ChallengeController implements ChallengeControllerDocs {
 		throw new BusinessException(GlobalExceptionMessage.NO_RESOURCE_MESSAGE);
 	}
 
-	@PostMapping("/challenges/team/{chlgNo}/participate")
+	@PostMapping("/challenges/team/{challengeId}/participate")
 	public NoContent joinTeamChallenge(
-		@PathVariable(value = "chlgNo") Long challengeId,
+		@PathVariable Long challengeId,
 		@AuthenticationPrincipal PrincipalDetails currentUser
 	) {
 		Long memberId = 1L;
@@ -42,9 +42,9 @@ public class ChallengeController implements ChallengeControllerDocs {
 		return NoContent.ok(CHALLENGE_JOINED);
 	}
 
-	@PostMapping("/challenges/personal/{chlgNo}/participate")
+	@PostMapping("/challenges/personal/{challengeId}/participate")
 	public NoContent joinPersonalChallenge(
-		@PathVariable(value = "chlgNo") Long challengeId,
+		@PathVariable Long challengeId,
 		@AuthenticationPrincipal PrincipalDetails currentUser
 	) {
 		Long memberId = 1L;
@@ -53,14 +53,14 @@ public class ChallengeController implements ChallengeControllerDocs {
 	}
 
 	@Deprecated
-	@DeleteMapping("/challenges/{chlgNo}/participate")
+	@DeleteMapping("/challenges/{chlgNo}/leave")
 	public NoContent leaveChallenge(@PathVariable Long chlgNo) {
 		throw new BusinessException(GlobalExceptionMessage.NO_RESOURCE_MESSAGE);
 	}
 
-	@DeleteMapping("/challenges/personal/{chlgNo}/participate")
+	@DeleteMapping("/challenges/personal/{challengeId}/leave")
 	public NoContent leavePersonalChallenge(
-		@PathVariable(value = "chlgNo") Long challengeId,
+		@PathVariable Long challengeId,
 		@AuthenticationPrincipal PrincipalDetails currentUser
 	) {
 		Long memberId = 1L;
@@ -68,9 +68,9 @@ public class ChallengeController implements ChallengeControllerDocs {
 		return NoContent.ok(ChallengeResponseMessage.CHALLENGE_LEFT);
 	}
 
-	@DeleteMapping("/challenges/team/{chlgNo}/participate")
+	@DeleteMapping("/challenges/team/{challengeId}/participate")
 	public NoContent leaveTeamChallenge(
-		@PathVariable(value = "chlgNo") Long challengeId,
+		@PathVariable Long challengeId,
 		@AuthenticationPrincipal PrincipalDetails currentUser
 	) {
 		Long memberId = 1L;

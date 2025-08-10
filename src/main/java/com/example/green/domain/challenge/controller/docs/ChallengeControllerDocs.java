@@ -17,7 +17,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "챌린지 API", description = "챌린지 조회, 참여, 탈퇴 API")
 public interface ChallengeControllerDocs {
 
-	NoContent joinChallenge(Long chlgNo);
+	NoContent joinChallenge(Long challengeId);
 
 	@Operation(summary = "팀 챌린지 참여", description = "팀 챌린지에 참여합니다.")
 	@ApiErrorStandard
