@@ -21,7 +21,7 @@ public class TeamExcelMapper implements ExcelDataMapper<AdminTeamChallengesDto> 
 
 	@Override
 	public String getFileName() {
-		return "personal_challenge_" + timeUtils.getFormattedDate("yyyyMMddHHmmss");
+		return "team_challenge_" + timeUtils.getFormattedDate("yyyyMMddHHmmss");
 	}
 
 	@Override
