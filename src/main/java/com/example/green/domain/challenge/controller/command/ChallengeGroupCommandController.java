@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.green.domain.challenge.controller.command.docs.GroupCommandControllerDocs;
+import com.example.green.domain.challenge.controller.command.docs.ChallengeGroupCommandControllerDocs;
 import com.example.green.domain.challenge.controller.dto.ChallengeGroupCreateDto;
 import com.example.green.domain.challenge.controller.dto.TeamChallengeGroupUpdateRequestDto;
 import com.example.green.domain.challenge.controller.message.TeamChallengeGroupResponseMessage;
@@ -24,7 +24,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/challenges")
 @RequiredArgsConstructor
-public class GroupCommandController implements GroupCommandControllerDocs {
+public class ChallengeGroupCommandController implements ChallengeGroupCommandControllerDocs {
 
 	private final ChallengeGroupService challengeGroupService;
 

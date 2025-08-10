@@ -19,7 +19,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @Tag(name = "[챌린지-클라이언트] 팀 챌린지 그룹 API", description = "팀 챌린지 그룹 생성, 조회, 수정, 삭제 및 참가 관리")
-public interface GroupCommandControllerDocs {
+public interface ChallengeGroupCommandControllerDocs {
 
 	@Operation(
 		summary = "팀 챌린지 그룹 생성",

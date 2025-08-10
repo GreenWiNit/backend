@@ -127,6 +127,12 @@ public class TeamChallengeQueryImpl implements TeamChallengeQuery {
 			.fetch();
 	}
 
+	public void validateGroupPeriod(Long challengeId, LocalDateTime beginDateTime, LocalDateTime endDateTime) {
+		if (teamChallengeRepository.isGroupPeriodValidForChallenge(challengeId, beginDateTime, endDateTime)) {
+			throw new ChallengeException(MISMATCH_GROUP_PERIOD_RANGE);
+		}
+	}
+
 	private BooleanExpression cursorCondition(Long cursor) {
 		if (cursor == null) {
 			return null;

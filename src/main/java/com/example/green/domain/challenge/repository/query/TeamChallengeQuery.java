@@ -28,4 +28,6 @@ public interface TeamChallengeQuery {
 	AdminChallengeDetailDto getChallengeDetail(Long challengeId);
 
 	List<AdminTeamChallengesDto> findTeamChallengeForExcel();
+
+	void validateGroupPeriod(Long challengeId, LocalDateTime beginDateTime, LocalDateTime endDateTime);
 }
