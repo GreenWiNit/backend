@@ -35,7 +35,7 @@ public class TeamChallengeParticipationRepositoryImpl implements TeamChallengePa
 		List<TeamChallengeParticipation> participations = queryFactory
 			.selectFrom(teamChallengeParticipation)
 			.where(
-				teamChallengeParticipation.member.eq(member),
+				teamChallengeParticipation.memberId.eq(member.getId()),
 				cursorCondition(cursor)
 			)
 			.orderBy(teamChallengeParticipation.id.desc())
@@ -66,8 +66,8 @@ public class TeamChallengeParticipationRepositoryImpl implements TeamChallengePa
 	) {
 		List<ChallengeParticipantDao> daos = queryFactory
 			.select(Projections.constructor(ChallengeParticipantDao.class,
-				teamChallengeParticipation.member.id,
-				teamChallengeParticipation.member.memberKey,
+				teamChallengeParticipation.memberId,
+				// todo:
 				teamChallengeParticipation.participatedAt,
 				teamChallengeGroup.teamCode, // 실제 teamCode 조회
 				teamChallengeGroupParticipation.createdDate, // 팀 선택 일시
@@ -122,7 +122,7 @@ public class TeamChallengeParticipationRepositoryImpl implements TeamChallengePa
 			.selectOne()
 			.from(teamChallengeParticipation)
 			.where(
-				teamChallengeParticipation.member.eq(member),
+				teamChallengeParticipation.memberId.eq(member.getId()),
 				teamChallengeParticipation.id.lt(cursor)
 			)
 			.fetchFirst();

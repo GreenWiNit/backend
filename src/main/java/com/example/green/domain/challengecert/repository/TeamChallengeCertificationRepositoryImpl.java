@@ -42,7 +42,7 @@ public class TeamChallengeCertificationRepositoryImpl implements TeamChallengeCe
 			.join(teamChallengeCertification.participation, teamChallengeParticipation).fetchJoin()
 			.join(teamChallengeParticipation.teamChallenge, teamChallenge).fetchJoin()
 			.where(
-				teamChallengeParticipation.member.eq(member),
+				teamChallengeParticipation.memberId.eq(member.getId()),
 				cursorCondition(cursor)
 			)
 			.orderBy(teamChallengeCertification.id.desc())
@@ -78,7 +78,7 @@ public class TeamChallengeCertificationRepositoryImpl implements TeamChallengeCe
 			.join(teamChallengeParticipation.teamChallenge, teamChallenge).fetchJoin()
 			.where(
 				teamChallengeCertification.id.eq(id),
-				teamChallengeParticipation.member.eq(member)
+				teamChallengeParticipation.memberId.eq(member.getId())
 			)
 			.fetchOne();
 
@@ -109,12 +109,12 @@ public class TeamChallengeCertificationRepositoryImpl implements TeamChallengeCe
 	@Override
 	public CursorTemplate<Long, ChallengeCertificationListResponseDto> findTeamCertificationsWithFilters(
 		AdminTeamCertificationSearchRequestDto searchRequest, int pageSize) {
-		
+
 		List<TeamChallengeCertification> certifications = queryFactory
 			.selectFrom(teamChallengeCertification)
 			.join(teamChallengeCertification.participation, teamChallengeParticipation).fetchJoin()
 			.join(teamChallengeParticipation.teamChallenge, teamChallenge).fetchJoin()
-			.join(teamChallengeParticipation.member, member).fetchJoin()
+			.join(teamChallengeParticipation).on(member.id.eq(teamChallengeParticipation.id)).fetchJoin()
 			.join(teamChallengeParticipation.groupParticipation, teamChallengeGroupParticipation).fetchJoin()
 			.join(teamChallengeGroupParticipation.teamChallengeGroup, teamChallengeGroup).fetchJoin()
 			.where(
@@ -159,7 +159,7 @@ public class TeamChallengeCertificationRepositoryImpl implements TeamChallengeCe
 	 * 그룹 코드 조건
 	 */
 	private BooleanExpression groupCodeCondition(String groupCode) {
-		return (groupCode != null && !groupCode.trim().isEmpty()) 
+		return (groupCode != null && !groupCode.trim().isEmpty())
 			? teamChallengeGroup.teamCode.eq(groupCode.trim()) : null;
 	}
 
@@ -167,7 +167,7 @@ public class TeamChallengeCertificationRepositoryImpl implements TeamChallengeCe
 	 * 팀 인증 상태 조건
 	 */
 	private BooleanExpression teamStatusCondition(List<CertificationStatus> statuses) {
-		return (statuses != null && !statuses.isEmpty()) 
+		return (statuses != null && !statuses.isEmpty())
 			? teamChallengeCertification.status.in(statuses) : null;
 	}
 }

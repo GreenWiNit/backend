@@ -111,8 +111,8 @@ public class ChallengeCertificationService {
 	 */
 	public CursorTemplate<Long, ChallengeCertificationListResponseDto> getPersonalChallengeCertifications(
 		Long cursor, PrincipalDetails principalDetails) {
-		Member member = getMemberById(principalDetails.getMemberId());
-		return personalChallengeCertificationRepository.findByMemberWithCursor(member, cursor, DEFAULT_PAGE_SIZE);
+		return personalChallengeCertificationRepository.findByMemberWithCursor(
+			principalDetails.getMemberId(), cursor, DEFAULT_PAGE_SIZE);
 	}
 
 	/**
@@ -172,7 +172,7 @@ public class ChallengeCertificationService {
 	) {
 		// 참여 정보 조회
 		PersonalChallengeParticipation participation = personalChallengeParticipationRepository
-			.findByMemberAndPersonalChallenge(member, challenge)
+			.findByMemberIdAndPersonalChallenge(member.getId(), challenge)
 			.orElseThrow(() -> new ChallengeException(ChallengeExceptionMessage.NOT_PARTICIPATING));
 
 		// 중복 인증 확인 (하루 한 번 제약)
@@ -182,8 +182,10 @@ public class ChallengeCertificationService {
 		}
 
 		// 인증 생성
+		Member participant = getMemberById(participation.getMemberId());
 		PersonalChallengeCertification certification = PersonalChallengeCertification.create(
 			participation,
+			participant,
 			certificationImageUrl,
 			certificationReview,
 			certifiedAt,
@@ -209,7 +211,7 @@ public class ChallengeCertificationService {
 	) {
 		// 참여 정보 조회
 		TeamChallengeParticipation participation = teamChallengeParticipationRepository
-			.findByMemberAndTeamChallenge(member, challenge)
+			.findByMemberIdAndTeamChallenge(member.getId(), challenge)
 			.orElseThrow(() -> new ChallengeException(ChallengeExceptionMessage.NOT_PARTICIPATING));
 
 		// 중복 인증 확인 (하루 한 번 제약)
@@ -218,8 +220,10 @@ public class ChallengeCertificationService {
 		}
 
 		// 인증 생성
+		Member participant = getMemberById(participation.getMemberId());
 		TeamChallengeCertification certification = TeamChallengeCertification.create(
 			participation,
+			participant,
 			certificationImageUrl,
 			certificationReview,
 			certifiedAt,

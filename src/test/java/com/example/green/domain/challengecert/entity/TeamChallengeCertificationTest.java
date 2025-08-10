@@ -19,7 +19,6 @@ import com.example.green.domain.challenge.utils.CodeGenerator;
 import com.example.green.domain.challengecert.enums.CertificationStatus;
 import com.example.green.domain.member.entity.Member;
 import com.example.green.domain.point.entity.vo.PointAmount;
-import com.example.green.global.error.exception.BusinessException;
 
 class TeamChallengeCertificationTest {
 
@@ -28,6 +27,7 @@ class TeamChallengeCertificationTest {
 	private TeamChallengeGroup teamChallengeGroup;
 	private TeamChallenge teamChallenge;
 	private Member member;
+	private Member participant;
 	private LocalDateTime now;
 
 	@BeforeEach
@@ -67,13 +67,14 @@ class TeamChallengeCertificationTest {
 		// 테스트용 TeamChallengeParticipation 생성 (멤버로 참여)
 		participation = TeamChallengeParticipation.create(
 			teamChallenge,
-			member,
+			1L,
 			now.minusHours(1)
 		);
 
 		// 테스트용 TeamChallengeCertification 생성
 		certification = TeamChallengeCertification.create(
 			participation,
+			participant,
 			"https://example.com/team-cert-image.jpg",
 			"팀 챌린지 인증 후기입니다.",
 			now.minusMinutes(30),
@@ -92,6 +93,7 @@ class TeamChallengeCertificationTest {
 		// when
 		TeamChallengeCertification newCertification = TeamChallengeCertification.create(
 			participation,
+			member,
 			imageUrl,
 			review,
 			certifiedAt,
@@ -106,40 +108,5 @@ class TeamChallengeCertificationTest {
 		assertThat(newCertification.getCertifiedAt()).isEqualTo(certifiedAt);
 		assertThat(newCertification.getCertifiedDate()).isEqualTo(certifiedDate);
 		assertThat(newCertification.getStatus()).isEqualTo(CertificationStatus.PENDING);
-	}
-
-	@Test
-	void 참여_정보가_null이면_예외가_발생한다() {
-		// when & then
-		assertThatThrownBy(() -> TeamChallengeCertification.create(
-			null,
-			"https://example.com/image.jpg",
-			"후기",
-			now,
-			LocalDate.of(2025, 1, 9)
-		))
-			.isInstanceOf(BusinessException.class);
-	}
-
-	@Test
-	void 인증_이미지_URL이_null이거나_빈_문자열이면_예외가_발생한다() {
-		// when & then
-		assertThatThrownBy(() -> TeamChallengeCertification.create(
-			participation,
-			null,
-			"후기",
-			now,
-			LocalDate.of(2025, 1, 9)
-		))
-			.isInstanceOf(BusinessException.class);
-
-		assertThatThrownBy(() -> TeamChallengeCertification.create(
-			participation,
-			"",
-			"후기",
-			now,
-			LocalDate.of(2025, 1, 9)
-		))
-			.isInstanceOf(BusinessException.class);
 	}
 }

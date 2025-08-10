@@ -24,7 +24,7 @@ public interface PersonalChallengeCertificationRepositoryCustom {
 	 * @return 커서 템플릿에 담긴 개인 챌린지 인증 목록
 	 */
 	CursorTemplate<Long, ChallengeCertificationListResponseDto> findByMemberWithCursor(
-		Member member,
+		Long memberId,
 		Long cursor,
 		int size
 	);

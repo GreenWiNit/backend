@@ -124,7 +124,7 @@ public class TeamChallengeGroupRepositoryImpl implements TeamChallengeGroupRepos
 			.join(teamChallengeGroupParticipation.teamChallengeParticipation, teamChallengeParticipation)
 			.where(
 				teamChallengeGroupParticipation.teamChallengeGroup.id.eq(groupId),
-				teamChallengeParticipation.member.id.eq(memberId),
+				teamChallengeParticipation.memberId.eq(memberId),
 				teamChallengeGroupParticipation.groupRoleType.eq(GroupRoleType.LEADER)
 			)
 			.fetchOne();

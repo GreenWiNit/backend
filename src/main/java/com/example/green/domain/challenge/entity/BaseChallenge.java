@@ -7,6 +7,8 @@ import java.time.LocalDateTime;
 import com.example.green.domain.challenge.enums.ChallengeDisplayStatus;
 import com.example.green.domain.challenge.enums.ChallengeStatus;
 import com.example.green.domain.challenge.enums.ChallengeType;
+import com.example.green.domain.challenge.exception.ChallengeException;
+import com.example.green.domain.challenge.exception.ChallengeExceptionMessage;
 import com.example.green.domain.common.BaseEntity;
 import com.example.green.domain.point.entity.vo.PointAmount;
 
@@ -171,4 +173,26 @@ public abstract class BaseChallenge extends BaseEntity {
 		validateNullData(displayStatus, "챌린지 전시 상태는 필수값입니다.");
 		validateDateRange(beginDateTime, endDateTime, "시작일시는 종료일시보다 이전이어야 합니다.");
 	}
+
+	public final void addParticipation(Long memberId, LocalDateTime now) {
+		validateParticipation(memberId, now);
+		doAddParticipation(memberId, now);
+	}
+
+	protected final void validateParticipation(Long memberId, LocalDateTime now) {
+		if (isAlreadyParticipated(memberId)) {
+			throw new ChallengeException(ChallengeExceptionMessage.ALREADY_PARTICIPATING);
+		}
+		if (!isParticipationPeriod(now)) {
+			throw new ChallengeException(ChallengeExceptionMessage.CHALLENGE_NOT_PARTICIPATABLE);
+		}
+	}
+
+	protected final boolean isParticipationPeriod(LocalDateTime now) {
+		return !now.isBefore(getBeginDateTime()) && !now.isAfter(getEndDateTime());
+	}
+
+	protected abstract boolean isAlreadyParticipated(Long memberId);
+
+	protected abstract void doAddParticipation(Long memberId, LocalDateTime now);
 }

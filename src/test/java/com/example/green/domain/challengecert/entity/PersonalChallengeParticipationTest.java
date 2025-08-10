@@ -15,7 +15,6 @@ import com.example.green.domain.challenge.enums.ChallengeType;
 import com.example.green.domain.challenge.utils.CodeGenerator;
 import com.example.green.domain.member.entity.Member;
 import com.example.green.domain.point.entity.vo.PointAmount;
-import com.example.green.global.error.exception.BusinessException;
 
 /**
  * PersonalChallengeParticipation 테스트
@@ -50,7 +49,7 @@ class PersonalChallengeParticipationTest {
 		// 테스트용 PersonalChallengeParticipation 생성
 		participation = PersonalChallengeParticipation.create(
 			personalChallenge,
-			member,
+			1L,
 			now.minusHours(1)
 		);
 	}
@@ -63,46 +62,13 @@ class PersonalChallengeParticipationTest {
 		// when
 		PersonalChallengeParticipation newParticipation = PersonalChallengeParticipation.create(
 			personalChallenge,
-			member,
+			1L,
 			participatedAt
 		);
 
 		// then
 		assertThat(newParticipation.getPersonalChallenge()).isEqualTo(personalChallenge);
-		assertThat(newParticipation.getMember()).isEqualTo(member);
+		assertThat(newParticipation.getMemberId()).isEqualTo(1L);
 		assertThat(newParticipation.getParticipatedAt()).isEqualTo(participatedAt);
-	}
-
-	@Test
-	void 개인_챌린지가_null이면_예외가_발생한다() {
-		// when & then
-		assertThatThrownBy(() -> PersonalChallengeParticipation.create(
-			null,
-			member,
-			now
-		))
-			.isInstanceOf(BusinessException.class);
-	}
-
-	@Test
-	void 회원이_null이면_예외가_발생한다() {
-		// when & then
-		assertThatThrownBy(() -> PersonalChallengeParticipation.create(
-			personalChallenge,
-			null,
-			now
-		))
-			.isInstanceOf(BusinessException.class);
-	}
-
-	@Test
-	void 참여_시각이_null이면_예외가_발생한다() {
-		// when & then
-		assertThatThrownBy(() -> PersonalChallengeParticipation.create(
-			personalChallenge,
-			member,
-			null
-		))
-			.isInstanceOf(BusinessException.class);
 	}
 }

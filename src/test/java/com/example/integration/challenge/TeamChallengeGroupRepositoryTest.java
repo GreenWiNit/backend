@@ -243,10 +243,10 @@ class TeamChallengeGroupRepositoryTest extends BaseIntegrationTest {
 
 		// 기존 참가 정보가 있는지 확인
 		return teamChallengeParticipationRepository
-			.findByTeamChallengeAndMember(testTeamChallenge, member)
+			.findByTeamChallengeAndMemberId(testTeamChallenge, member.getId())
 			.orElseGet(() -> {
 				TeamChallengeParticipation participation = TeamChallengeParticipation.create(
-					testTeamChallenge, member, testNow.minusHours(1)
+					testTeamChallenge, member.getId(), testNow.minusHours(1)
 				);
 				return teamChallengeParticipationRepository.save(participation);
 			});

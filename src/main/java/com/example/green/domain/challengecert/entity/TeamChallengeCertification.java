@@ -5,6 +5,8 @@ import static com.example.green.global.utils.EntityValidator.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import com.example.green.domain.member.entity.Member;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Index;
@@ -43,6 +45,7 @@ public class TeamChallengeCertification extends BaseChallengeCertification {
 
 	public static TeamChallengeCertification create(
 		TeamChallengeParticipation participation,
+		Member participant,
 		String certificationImageUrl,
 		String certificationReview,
 		LocalDateTime certifiedAt,
@@ -56,6 +59,7 @@ public class TeamChallengeCertification extends BaseChallengeCertification {
 
 		return new TeamChallengeCertification(
 			participation,
+			participant,
 			certificationImageUrl,
 			certificationReview,
 			certifiedAt,
@@ -65,12 +69,13 @@ public class TeamChallengeCertification extends BaseChallengeCertification {
 
 	private TeamChallengeCertification(
 		TeamChallengeParticipation participation,
+		Member participant,
 		String certificationImageUrl,
 		String certificationReview,
 		LocalDateTime certifiedAt,
 		LocalDate certifiedDate
 	) {
-		super(participation.getMember(), certificationImageUrl, certificationReview, certifiedAt, certifiedDate);
+		super(participant, certificationImageUrl, certificationReview, certifiedAt, certifiedDate);
 		this.participation = participation;
 		validateCertificationData();
 	}

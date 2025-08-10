@@ -5,7 +5,6 @@ import static com.example.green.global.utils.EntityValidator.*;
 import java.time.LocalDateTime;
 
 import com.example.green.domain.challenge.entity.PersonalChallenge;
-import com.example.green.domain.member.entity.Member;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -46,27 +45,23 @@ public class PersonalChallengeParticipation extends BaseChallengeParticipation {
 
 	public static PersonalChallengeParticipation create(
 		PersonalChallenge personalChallenge,
-		Member member,
+		Long memberId,
 		LocalDateTime participatedAt
 	) {
 		// 필수 값 validate
 		validateNullData(personalChallenge, "개인 챌린지는 필수값입니다.");
-		validateNullData(member, "회원은 필수값입니다.");
+		validateAutoIncrementId(memberId, "회원 정보는 필수값입니다.");
 		validateNullData(participatedAt, "참여 시각은 필수값입니다.");
 
-		return new PersonalChallengeParticipation(
-			personalChallenge,
-			member,
-			participatedAt
-		);
+		return new PersonalChallengeParticipation(personalChallenge, memberId, participatedAt);
 	}
 
 	private PersonalChallengeParticipation(
 		PersonalChallenge personalChallenge,
-		Member member,
+		Long memberId,
 		LocalDateTime participatedAt
 	) {
-		super(member, participatedAt);
+		super(memberId, participatedAt);
 		this.personalChallenge = personalChallenge;
 	}
 }

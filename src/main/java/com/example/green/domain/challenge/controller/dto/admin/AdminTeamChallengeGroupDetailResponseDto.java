@@ -46,19 +46,22 @@ public record AdminTeamChallengeGroupDetailResponseDto(
 	/**
 	 * TeamChallengeGroup 엔티티와 참여자 목록으로부터 AdminTeamChallengeGroupDetailResponseDto를 생성합니다.
 	 */
+	// todo: challenge
 	public static AdminTeamChallengeGroupDetailResponseDto from(TeamChallengeGroup group,
 		List<TeamChallengeGroupParticipation> participants) {
 		// 팀장 찾기
 		String leaderMemberKey = participants.stream()
 			.filter(p -> p.getGroupRoleType() == GroupRoleType.LEADER)
 			.findFirst()
-			.map(p -> p.getTeamChallengeParticipation().getMember().getMemberKey())
+			//.map(p -> p.getTeamChallengeParticipation().getMemberId().getMemberKey())
+			.map(it -> "TODO: 기능 구현")
 			.orElse("");
 
 		// 참여자 MemberKey 목록 생성
 		String participantMemberKeys = participants.stream()
 			.filter(p -> p.getGroupRoleType() == GroupRoleType.MEMBER)
-			.map(p -> p.getTeamChallengeParticipation().getMember().getMemberKey())
+			//.map(p -> p.getTeamChallengeParticipation().getMemberId().getMemberKey())
+			.map(it -> "TODO: 기능 구현")
 			.reduce((a, b) -> a + ", " + b)
 			.orElse("");
 

@@ -13,6 +13,8 @@ import com.example.green.domain.challenge.controller.docs.ChallengeControllerDoc
 import com.example.green.domain.challenge.controller.message.ChallengeResponseMessage;
 import com.example.green.domain.challenge.service.ChallengeService;
 import com.example.green.global.api.NoContent;
+import com.example.green.global.error.exception.BusinessException;
+import com.example.green.global.error.exception.GlobalExceptionMessage;
 import com.example.green.global.security.PrincipalDetails;
 
 import lombok.RequiredArgsConstructor;
@@ -24,12 +26,34 @@ public class ChallengeController implements ChallengeControllerDocs {
 
 	private final ChallengeService challengeService;
 
+	@Deprecated
 	@PostMapping("/challenges/{chlgNo}/participate")
 	public NoContent joinChallenge(
-		@PathVariable Long chlgNo,
+		@PathVariable Long chlgNo
+	) {/*
+		challengeService.joinChallenge(chlgNo, currentUser);
+		return NoContent.ok(CHALLENGE_JOINED);
+		*/
+		throw new BusinessException(GlobalExceptionMessage.NO_RESOURCE_MESSAGE);
+	}
+
+	@PostMapping("/challenges/team/{chlgNo}/participate")
+	public NoContent joinTeamChallenge(
+		@PathVariable(value = "chlgNo") Long challengeId,
 		@AuthenticationPrincipal PrincipalDetails currentUser
 	) {
-		challengeService.joinChallenge(chlgNo, currentUser);
+		Long memberId = currentUser.getMemberId();
+		challengeService.joinTeamChallenge(challengeId, memberId);
+		return NoContent.ok(CHALLENGE_JOINED);
+	}
+
+	@PostMapping("/challenges/personal/{chlgNo}/participate")
+	public NoContent joinPersonalChallenge(
+		@PathVariable(value = "chlgNo") Long challengeId,
+		@AuthenticationPrincipal PrincipalDetails currentUser
+	) {
+		Long memberId = currentUser.getMemberId();
+		challengeService.joinPersonalChallenge(challengeId, memberId);
 		return NoContent.ok(CHALLENGE_JOINED);
 	}
 

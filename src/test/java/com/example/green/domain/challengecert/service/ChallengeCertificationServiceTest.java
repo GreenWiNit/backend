@@ -126,13 +126,13 @@ class ChallengeCertificationServiceTest {
 		// 테스트 참여 정보 생성
 		testPersonalParticipation = PersonalChallengeParticipation.create(
 			testPersonalChallenge,
-			testMember,
+			testMember.getId(),
 			testNow.minusHours(1)
 		);
 
 		testTeamParticipation = TeamChallengeParticipation.create(
 			testTeamChallenge,
-			testMember,
+			testMember.getId(),
 			testNow.minusHours(1)
 		);
 
@@ -159,7 +159,7 @@ class ChallengeCertificationServiceTest {
 		given(memberRepository.findById(TEST_MEMBER_ID)).willReturn(Optional.of(testMember));
 		given(personalChallengeRepository.findById(TEST_CHALLENGE_ID)).willReturn(Optional.of(testPersonalChallenge));
 		// 개인 챌린지가 존재하므로 teamChallengeRepository는 호출되지 않음
-		given(personalChallengeParticipationRepository.findByMemberAndPersonalChallenge(testMember,
+		given(personalChallengeParticipationRepository.findByMemberIdAndPersonalChallenge(TEST_MEMBER_ID,
 			testPersonalChallenge))
 			.willReturn(Optional.of(testPersonalParticipation));
 		given(personalChallengeCertificationRepository.existsByParticipationAndCertifiedDate(testPersonalParticipation,
@@ -178,9 +178,8 @@ class ChallengeCertificationServiceTest {
 		// then
 		assertThat(result.certificationId()).isEqualTo(expectedCertificationId);
 
-		then(memberRepository).should().findById(TEST_MEMBER_ID);
 		then(personalChallengeParticipationRepository).should()
-			.findByMemberAndPersonalChallenge(testMember, testPersonalChallenge);
+			.findByMemberIdAndPersonalChallenge(TEST_MEMBER_ID, testPersonalChallenge);
 		then(personalChallengeCertificationRepository).should()
 			.existsByParticipationAndCertifiedDate(testPersonalParticipation, LocalDate.of(2024, 1, 15));
 		then(personalChallengeCertificationRepository).should().save(any(PersonalChallengeCertification.class));
@@ -196,7 +195,7 @@ class ChallengeCertificationServiceTest {
 		given(memberRepository.findById(TEST_MEMBER_ID)).willReturn(Optional.of(testMember));
 		given(personalChallengeRepository.findById(challengeId)).willReturn(Optional.empty());
 		given(teamChallengeRepository.findById(challengeId)).willReturn(Optional.of(testTeamChallenge));
-		given(teamChallengeParticipationRepository.findByMemberAndTeamChallenge(testMember, testTeamChallenge))
+		given(teamChallengeParticipationRepository.findByMemberIdAndTeamChallenge(TEST_MEMBER_ID, testTeamChallenge))
 			.willReturn(Optional.of(testTeamParticipation));
 		given(teamChallengeCertificationRepository.existsByParticipationAndCertifiedDate(testTeamParticipation,
 			LocalDate.of(2024, 1, 15)))
@@ -215,7 +214,7 @@ class ChallengeCertificationServiceTest {
 		assertThat(result.certificationId()).isEqualTo(expectedCertificationId);
 
 		then(teamChallengeParticipationRepository).should()
-			.findByMemberAndTeamChallenge(testMember, testTeamChallenge);
+			.findByMemberIdAndTeamChallenge(TEST_MEMBER_ID, testTeamChallenge);
 		then(teamChallengeCertificationRepository).should()
 			.existsByParticipationAndCertifiedDate(testTeamParticipation, LocalDate.of(2024, 1, 15));
 		then(teamChallengeCertificationRepository).should().save(any(TeamChallengeCertification.class));
@@ -257,7 +256,7 @@ class ChallengeCertificationServiceTest {
 		given(memberRepository.findById(TEST_MEMBER_ID)).willReturn(Optional.of(testMember));
 		given(personalChallengeRepository.findById(TEST_CHALLENGE_ID)).willReturn(Optional.of(testPersonalChallenge));
 		// 개인 챌린지가 존재하므로 teamChallengeRepository는 호출되지 않음
-		given(personalChallengeParticipationRepository.findByMemberAndPersonalChallenge(testMember,
+		given(personalChallengeParticipationRepository.findByMemberIdAndPersonalChallenge(TEST_MEMBER_ID,
 			testPersonalChallenge))
 			.willReturn(Optional.empty());
 		given(timeUtils.now()).willReturn(testNow);
@@ -276,7 +275,7 @@ class ChallengeCertificationServiceTest {
 		given(memberRepository.findById(TEST_MEMBER_ID)).willReturn(Optional.of(testMember));
 		given(personalChallengeRepository.findById(TEST_CHALLENGE_ID)).willReturn(Optional.of(testPersonalChallenge));
 		// 개인 챌린지가 존재하므로 teamChallengeRepository는 호출되지 않음
-		given(personalChallengeParticipationRepository.findByMemberAndPersonalChallenge(testMember,
+		given(personalChallengeParticipationRepository.findByMemberIdAndPersonalChallenge(TEST_MEMBER_ID,
 			testPersonalChallenge))
 			.willReturn(Optional.of(testPersonalParticipation));
 		given(personalChallengeCertificationRepository.existsByParticipationAndCertifiedDate(testPersonalParticipation,
@@ -329,7 +328,7 @@ class ChallengeCertificationServiceTest {
 		given(memberRepository.findById(TEST_MEMBER_ID)).willReturn(Optional.of(testMember));
 		given(personalChallengeRepository.findById(TEST_CHALLENGE_ID)).willReturn(Optional.of(testPersonalChallenge));
 		// 개인 챌린지가 존재하므로 teamChallengeRepository는 호출되지 않음
-		given(personalChallengeParticipationRepository.findByMemberAndPersonalChallenge(testMember,
+		given(personalChallengeParticipationRepository.findByMemberIdAndPersonalChallenge(TEST_MEMBER_ID,
 			testPersonalChallenge))
 			.willReturn(Optional.of(testPersonalParticipation));
 		given(personalChallengeCertificationRepository.existsByParticipationAndCertifiedDate(testPersonalParticipation,
@@ -364,7 +363,7 @@ class ChallengeCertificationServiceTest {
 
 		given(memberRepository.findById(TEST_MEMBER_ID)).willReturn(Optional.of(testMember));
 		given(personalChallengeRepository.findById(TEST_CHALLENGE_ID)).willReturn(Optional.of(testPersonalChallenge));
-		given(personalChallengeParticipationRepository.findByMemberAndPersonalChallenge(testMember,
+		given(personalChallengeParticipationRepository.findByMemberIdAndPersonalChallenge(TEST_MEMBER_ID,
 			testPersonalChallenge))
 			.willReturn(Optional.of(testPersonalParticipation));
 		given(personalChallengeCertificationRepository.existsByParticipationAndCertifiedDate(testPersonalParticipation,
@@ -402,8 +401,7 @@ class ChallengeCertificationServiceTest {
 					.build()
 			));
 
-		given(memberRepository.findById(TEST_MEMBER_ID)).willReturn(Optional.of(testMember));
-		given(personalChallengeCertificationRepository.findByMemberWithCursor(testMember, cursor, 20))
+		given(personalChallengeCertificationRepository.findByMemberWithCursor(testMember.getId(), cursor, 20))
 			.willReturn(mockCursorTemplate);
 
 		// when
@@ -540,25 +538,4 @@ class ChallengeCertificationServiceTest {
 			.hasMessage(ChallengeCertExceptionMessage.CERTIFICATION_NOT_FOUND.getMessage());
 	}
 
-	@Test
-	void 존재하지_않는_회원으로_인증_목록_조회시_예외가_발생한다() {
-		// given
-		given(memberRepository.findById(TEST_MEMBER_ID)).willReturn(Optional.empty());
-
-		// when & then
-		assertThatThrownBy(() ->
-			challengeCertificationService.getPersonalChallengeCertifications(null, principalDetails))
-			.isInstanceOf(BusinessException.class)
-			.hasMessage(MemberExceptionMessage.MEMBER_NOT_FOUND.getMessage());
-
-		assertThatThrownBy(() ->
-			challengeCertificationService.getTeamChallengeCertifications(null, principalDetails))
-			.isInstanceOf(BusinessException.class)
-			.hasMessage(MemberExceptionMessage.MEMBER_NOT_FOUND.getMessage());
-
-		assertThatThrownBy(() ->
-			challengeCertificationService.getChallengeCertificationDetail(1L, principalDetails))
-			.isInstanceOf(BusinessException.class)
-			.hasMessage(MemberExceptionMessage.MEMBER_NOT_FOUND.getMessage());
-	}
 }

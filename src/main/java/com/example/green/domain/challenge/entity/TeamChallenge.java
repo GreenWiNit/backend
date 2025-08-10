@@ -11,6 +11,7 @@ import com.example.green.domain.challenge.enums.ChallengeStatus;
 import com.example.green.domain.challenge.enums.ChallengeType;
 import com.example.green.domain.challenge.exception.ChallengeException;
 import com.example.green.domain.challenge.exception.ChallengeExceptionMessage;
+import com.example.green.domain.challengecert.entity.TeamChallengeParticipation;
 import com.example.green.domain.point.entity.vo.PointAmount;
 
 import jakarta.persistence.CascadeType;
@@ -30,7 +31,10 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(
 	indexes = {
-		@Index(name = "idx_team_challenge_active", columnList = "challengeStatus, displayStatus, beginDateTime, endDateTime")
+		@Index(
+			name = "idx_team_challenge_active",
+			columnList = "challengeStatus, displayStatus, beginDateTime, endDateTime"
+		)
 	},
 	uniqueConstraints = {
 		@UniqueConstraint(name = "uk_team_challenge_code", columnNames = "challenge_code")
@@ -48,6 +52,20 @@ public class TeamChallenge extends BaseChallenge {
 
 	@OneToMany(mappedBy = "teamChallenge", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<TeamChallengeGroup> challengeGroups = new ArrayList<>();
+
+	@OneToMany(mappedBy = "teamChallenge", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<TeamChallengeParticipation> participations = new ArrayList<>();
+
+	protected boolean isAlreadyParticipated(Long memberId) {
+		return participations.stream()
+			.anyMatch(p -> p.getMemberId().equals(memberId));
+	}
+
+	protected void doAddParticipation(Long memberId, LocalDateTime now) {
+		TeamChallengeParticipation participation =
+			TeamChallengeParticipation.create(this, memberId, now);
+		participations.add(participation);
+	}
 
 	private TeamChallenge(
 		String challengeCode,

@@ -55,6 +55,7 @@ public class ChallengeQueryController implements ChallengeQueryControllerDocs {
 		return ApiTemplate.ok(CHALLENGE_LIST_FOUND, result);
 	}
 
+	@Deprecated
 	@GetMapping("/challenges/{chlgNo}")
 	public ApiTemplate<ChallengeDetailDto> getChallengeDetail(@PathVariable Long chlgNo) {
 		/*

@@ -42,7 +42,7 @@ public class PersonalChallengeQueryImpl implements PersonalChallengeQuery {
 			.from(personalChallenge)
 			.join(personalChallengeParticipation.personalChallenge)
 			.where(
-				personalChallengeParticipation.member.id.eq(memberId),
+				personalChallengeParticipation.memberId.eq(memberId),
 				cursorCondition(cursor)
 			)
 			.orderBy(personalChallengeParticipation.id.desc())
@@ -86,7 +86,7 @@ public class PersonalChallengeQueryImpl implements PersonalChallengeQuery {
 			.from(personalChallengeParticipation)
 			.where(
 				personalChallengeParticipation.personalChallenge.id.eq(challengeId),
-				personalChallengeParticipation.member.id.eq(memberId)
+				personalChallengeParticipation.memberId.eq(memberId)
 			).exists();
 
 		return queryFactory

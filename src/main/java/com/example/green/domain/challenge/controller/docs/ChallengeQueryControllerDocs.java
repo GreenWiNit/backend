@@ -49,7 +49,6 @@ public interface ChallengeQueryControllerDocs {
 		@Parameter(description = "페이지 사이즈(생략 가능)", example = "20") Integer pageSize
 	);
 
-	@Deprecated
 	ApiTemplate<ChallengeDetailDto> getChallengeDetail(Long chlgNo);
 
 	@Operation(

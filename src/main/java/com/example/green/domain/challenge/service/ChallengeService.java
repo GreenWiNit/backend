@@ -12,6 +12,8 @@ import com.example.green.domain.challenge.repository.PersonalChallengeParticipat
 import com.example.green.domain.challenge.repository.PersonalChallengeRepository;
 import com.example.green.domain.challenge.repository.TeamChallengeParticipationRepository;
 import com.example.green.domain.challenge.repository.TeamChallengeRepository;
+import com.example.green.domain.challenge.repository.query.PersonalChallengeQuery;
+import com.example.green.domain.challenge.repository.query.TeamChallengeQuery;
 import com.example.green.domain.challengecert.entity.PersonalChallengeParticipation;
 import com.example.green.domain.challengecert.entity.TeamChallengeParticipation;
 import com.example.green.domain.challengecert.repository.TeamChallengeGroupParticipationRepository;
@@ -35,21 +37,9 @@ public class ChallengeService {
 	private final TeamChallengeParticipationRepository teamChallengeParticipationRepository;
 	private final TeamChallengeGroupParticipationRepository teamChallengeGroupParticipationRepository;
 	private final MemberRepository memberRepository;
+	private final PersonalChallengeQuery personalChallengeQuery;
+	private final TeamChallengeQuery teamChallengeQuery;
 	private final TimeUtils timeUtils;
-
-	// 챌린지 참여
-	@Transactional
-	public void joinChallenge(Long challengeId, PrincipalDetails currentUser) {
-		BaseChallenge challenge = findChallengeById(challengeId);
-		Member member = getMemberById(currentUser.getMemberId());
-		validateChallengeParticipation(challenge, member);
-
-		if (challenge instanceof PersonalChallenge personalChallenge) {
-			joinPersonalChallenge(personalChallenge, member);
-		} else if (challenge instanceof TeamChallenge teamChallenge) {
-			joinTeamChallenge(teamChallenge, member);
-		}
-	}
 
 	// 챌린지 탈퇴
 	@Transactional
@@ -77,46 +67,21 @@ public class ChallengeService {
 			.orElseThrow(() -> new BusinessException(MemberExceptionMessage.MEMBER_NOT_FOUND));
 	}
 
-	private void validateChallengeParticipation(BaseChallenge challenge, Member member) {
-		if (!challenge.canParticipate(timeUtils.now())) {
-			throw new ChallengeException(ChallengeExceptionMessage.CHALLENGE_NOT_PARTICIPATABLE);
-		}
-
-		boolean isParticipating = false;
-		if (challenge instanceof PersonalChallenge personalChallenge) {
-			isParticipating = personalChallengeParticipationRepository
-				.existsByMemberAndPersonalChallenge(member, personalChallenge);
-		} else if (challenge instanceof TeamChallenge teamChallenge) {
-			isParticipating = teamChallengeParticipationRepository
-				.existsByMemberAndTeamChallenge(member, teamChallenge);
-		}
-
-		if (isParticipating) {
-			throw new ChallengeException(ChallengeExceptionMessage.ALREADY_PARTICIPATING);
-		}
+	@Transactional
+	public void joinPersonalChallenge(Long challengeId, Long memberId) {
+		PersonalChallenge personalChallenge = personalChallengeQuery.getPersonalChallengeById(challengeId);
+		personalChallenge.addParticipation(memberId, timeUtils.now());
 	}
 
-	private void joinPersonalChallenge(PersonalChallenge challenge, Member member) {
-		PersonalChallengeParticipation participation = PersonalChallengeParticipation.create(
-			challenge,
-			member,
-			timeUtils.now()
-		);
-		personalChallengeParticipationRepository.save(participation);
-	}
-
-	private void joinTeamChallenge(TeamChallenge challenge, Member member) {
-		TeamChallengeParticipation participation = TeamChallengeParticipation.create(
-			challenge,
-			member,
-			timeUtils.now()
-		);
-		teamChallengeParticipationRepository.save(participation);
+	@Transactional
+	public void joinTeamChallenge(Long challengeId, Long memberId) {
+		TeamChallenge teamChallenge = teamChallengeQuery.getTeamChallengeById(challengeId);
+		teamChallenge.addParticipation(memberId, timeUtils.now());
 	}
 
 	private void leavePersonalChallenge(PersonalChallenge challenge, Member member) {
 		PersonalChallengeParticipation participation = personalChallengeParticipationRepository
-			.findByMemberAndPersonalChallenge(member, challenge)
+			.findByMemberIdAndPersonalChallenge(member.getId(), challenge)
 			.orElseThrow(() -> new ChallengeException(ChallengeExceptionMessage.NOT_PARTICIPATING));
 
 		if (!challenge.canParticipate(timeUtils.now())) {
@@ -128,7 +93,7 @@ public class ChallengeService {
 
 	private void leaveTeamChallenge(TeamChallenge challenge, Member member) {
 		TeamChallengeParticipation participation = teamChallengeParticipationRepository
-			.findByMemberAndTeamChallenge(member, challenge)
+			.findByMemberIdAndTeamChallenge(member.getId(), challenge)
 			.orElseThrow(() -> new ChallengeException(ChallengeExceptionMessage.NOT_PARTICIPATING));
 
 		if (!challenge.canParticipate(timeUtils.now())) {

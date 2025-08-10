@@ -2,6 +2,7 @@ package com.example.green.domain.challenge.infra;
 
 import static com.example.green.domain.challenge.entity.QPersonalChallenge.*;
 import static com.example.green.domain.challenge.entity.QTeamChallenge.*;
+import static com.example.green.domain.challenge.exception.ChallengeExceptionMessage.*;
 import static com.example.green.domain.challengecert.entity.QPersonalChallengeParticipation.*;
 import static com.example.green.domain.challengecert.entity.QTeamChallengeParticipation.*;
 
@@ -13,7 +14,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.green.domain.challenge.controller.dto.ChallengeDetailDto;
 import com.example.green.domain.challenge.controller.dto.ChallengeListResponseDto;
+import com.example.green.domain.challenge.entity.TeamChallenge;
 import com.example.green.domain.challenge.enums.ChallengeStatus;
+import com.example.green.domain.challenge.exception.ChallengeException;
+import com.example.green.domain.challenge.repository.TeamChallengeRepository;
 import com.example.green.domain.challenge.repository.query.TeamChallengeQuery;
 import com.example.green.global.api.page.CursorTemplate;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -28,6 +32,7 @@ import lombok.RequiredArgsConstructor;
 public class TeamChallengeQueryImpl implements TeamChallengeQuery {
 
 	private final JPAQueryFactory queryFactory;
+	private final TeamChallengeRepository teamChallengeRepository;
 
 	public CursorTemplate<Long, ChallengeListResponseDto> findMyParticipationByCursor(
 		Long memberId,
@@ -39,7 +44,7 @@ public class TeamChallengeQueryImpl implements TeamChallengeQuery {
 			.from(teamChallenge)
 			.join(teamChallengeParticipation.teamChallenge)
 			.where(
-				teamChallengeParticipation.member.id.eq(memberId),
+				teamChallengeParticipation.memberId.eq(memberId),
 				cursorCondition(cursor)
 			)
 			.orderBy(teamChallengeParticipation.id.desc())
@@ -71,13 +76,12 @@ public class TeamChallengeQueryImpl implements TeamChallengeQuery {
 		return CursorTemplate.from(participation, size, ChallengeListResponseDto::id);
 	}
 
-	@Override
 	public ChallengeDetailDto findTeamChallenge(Long challengeId, Long memberId) {
 		BooleanExpression exists = JPAExpressions.selectOne()
 			.from(teamChallengeParticipation)
 			.where(
 				teamChallengeParticipation.teamChallenge.id.eq(challengeId),
-				teamChallengeParticipation.member.id.eq(memberId)
+				teamChallengeParticipation.memberId.eq(memberId)
 			).exists();
 
 		return queryFactory
@@ -85,6 +89,11 @@ public class TeamChallengeQueryImpl implements TeamChallengeQuery {
 			.from(personalChallenge)
 			.where(personalChallenge.id.eq(challengeId))
 			.fetchOne();
+	}
+
+	public TeamChallenge getTeamChallengeById(Long challengeId) {
+		return teamChallengeRepository.findById(challengeId)
+			.orElseThrow(() -> new ChallengeException(CHALLENGE_NOT_FOUND));
 	}
 
 	private BooleanExpression cursorCondition(Long cursor) {

@@ -101,7 +101,7 @@ public class TeamChallengeGroupService {
 		TeamChallengeGroupCreateRequestDto request,
 		Long memberId
 	) {
-		Member member = memberRepository.findById(memberId)
+		memberRepository.findById(memberId)
 			.orElseThrow(() -> new ChallengeException(ChallengeExceptionMessage.MEMBER_NOT_FOUND));
 
 		TeamChallenge teamChallenge = teamChallengeRepository.findById(challengeId)
@@ -109,7 +109,7 @@ public class TeamChallengeGroupService {
 
 		// 팀 챌린지에 참가 중인지 확인
 		TeamChallengeParticipation participation = teamChallengeParticipationRepository
-			.findByTeamChallengeAndMember(teamChallenge, member)
+			.findByTeamChallengeAndMemberId(teamChallenge, memberId)
 			.orElseThrow(() -> new ChallengeException(ChallengeExceptionMessage.NOT_PARTICIPATING_IN_CHALLENGE));
 
 		// 그룹 주소 생성
@@ -249,7 +249,7 @@ public class TeamChallengeGroupService {
 
 		// 3. 팀 챌린지 참가 확인
 		TeamChallengeParticipation participation = teamChallengeParticipationRepository
-			.findByTeamChallengeAndMember(group.getTeamChallenge(), member)
+			.findByTeamChallengeAndMemberId(group.getTeamChallenge(), memberId)
 			.orElseThrow(() -> new ChallengeException(ChallengeExceptionMessage.NOT_PARTICIPATING_IN_CHALLENGE));
 
 		return new ValidationResult(group, member, participation);
