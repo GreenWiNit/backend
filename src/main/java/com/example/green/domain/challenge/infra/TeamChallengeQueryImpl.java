@@ -119,6 +119,14 @@ public class TeamChallengeQueryImpl implements TeamChallengeQuery {
 		return AdminChallengeDetailDto.from(teamChallenge);
 	}
 
+	public List<AdminTeamChallengesDto> findTeamChallengeForExcel() {
+		return queryFactory
+			.select(TeamChallengeProjections.toChallengesForAdmin())
+			.from(teamChallenge)
+			.orderBy(teamChallenge.id.desc())
+			.fetch();
+	}
+
 	private BooleanExpression cursorCondition(Long cursor) {
 		if (cursor == null) {
 			return null;
