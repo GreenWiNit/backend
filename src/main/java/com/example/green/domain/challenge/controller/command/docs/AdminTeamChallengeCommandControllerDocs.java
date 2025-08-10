@@ -17,7 +17,7 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-@Tag(name = "[챌린지] 관리자 팀 챌린지 관리 API", description = "관리자 팀 챌린지 생성/수정/이미지/전시여부 등 관리 API")
+@Tag(name = "[챌린지-관리자] 팀 챌린지 관리 API", description = "관리자 팀 챌린지 생성/수정/이미지/전시여부 등 관리 API")
 public interface AdminTeamChallengeCommandControllerDocs {
 
 	@Operation(summary = "팀 챌린지 생성", description = "팀 챌린지를 생성합니다. (이미지 URL 포함)")

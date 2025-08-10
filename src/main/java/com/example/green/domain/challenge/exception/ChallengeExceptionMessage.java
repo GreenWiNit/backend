@@ -36,7 +36,8 @@ public enum ChallengeExceptionMessage implements ExceptionMessage {
 	ADMIN_INVALID_CHALLENGE_TYPE("관리자 - 지원하지 않는 챌린지 유형입니다.", 400),
 	ADMIN_CHALLENGE_CREATE_FAILED("관리자 - 챌린지 생성에 실패했습니다.", 500),
 	ADMIN_CHALLENGE_UPDATE_FAILED("관리자 - 챌린지 수정에 실패했습니다.", 500),
-	INVALID_MINIMUM_POINT("포인트는 0원 이상입니다.", 400);
+	INVALID_MINIMUM_POINT("포인트는 0원 이상입니다.", 400),
+	INVALID_GROUP_PERIOD("팀 활동 시작일시는 종료일시보다 이전이어야 합니다.", 400);
 
 	private final String message;
 	private final int status;

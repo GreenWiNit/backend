@@ -10,8 +10,7 @@ import com.example.green.domain.challenge.entity.challenge.TeamChallengeParticip
 /**
  * 팀 챌린지 참여 정보를 관리하는 레포지토리
  */
-public interface TeamChallengeParticipationRepository
-	extends JpaRepository<TeamChallengeParticipation, Long>, TeamChallengeParticipationRepositoryCustom {
+public interface TeamChallengeParticipationRepository extends JpaRepository<TeamChallengeParticipation, Long> {
 
 	Optional<TeamChallengeParticipation> findByMemberIdAndTeamChallenge(Long memberId, TeamChallenge challenge);
 

@@ -2,7 +2,6 @@ package com.example.green.domain.challenge.controller.dto.admin;
 
 import java.time.LocalDate;
 
-import com.example.green.domain.challenge.entity.group.TeamChallengeGroup;
 import com.example.green.domain.challenge.entity.group.GroupStatus;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -30,19 +29,4 @@ public record AdminTeamChallengeGroupListResponseDto(
 	@Schema(description = "모집 여부")
 	GroupStatus recruitmentStatus
 ) {
-
-	/**
-	 * TeamChallengeGroup 엔티티로부터 AdminTeamChallengeGroupListResponseDto를 생성합니다.
-	 */
-	public static AdminTeamChallengeGroupListResponseDto from(TeamChallengeGroup group) {
-		return new AdminTeamChallengeGroupListResponseDto(
-			group.getId(),
-			group.getTeamCode(),
-			group.getGroupName(),
-			group.getCreatedDate() != null ? group.getCreatedDate().toLocalDate() : null,
-			group.getMaxParticipants(),
-			group.getCurrentParticipants(),
-			group.getGroupStatus()
-		);
-	}
 }

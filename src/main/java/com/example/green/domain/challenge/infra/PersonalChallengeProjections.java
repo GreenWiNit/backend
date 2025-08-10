@@ -1,6 +1,6 @@
 package com.example.green.domain.challenge.infra;
 
-import static com.example.green.domain.challenge.entity.QPersonalChallenge.*;
+import static com.example.green.domain.challenge.entity.challenge.QPersonalChallenge.*;
 
 import com.example.green.domain.challenge.controller.dto.ChallengeDetailDto;
 import com.example.green.domain.challenge.controller.dto.ChallengeListResponseDto;

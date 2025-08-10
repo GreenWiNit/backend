@@ -1,4 +1,4 @@
-package com.example.green.domain.challengecert.entity;
+package com.example.green.domain.challenge.entity.certification;
 
 import static com.example.green.global.utils.EntityValidator.*;
 

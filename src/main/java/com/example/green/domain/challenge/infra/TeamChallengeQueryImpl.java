@@ -1,8 +1,8 @@
 package com.example.green.domain.challenge.infra;
 
-import static com.example.green.domain.challenge.entity.QTeamChallenge.*;
+import static com.example.green.domain.challenge.entity.challenge.QTeamChallenge.*;
+import static com.example.green.domain.challenge.entity.challenge.QTeamChallengeParticipation.*;
 import static com.example.green.domain.challenge.exception.ChallengeExceptionMessage.*;
-import static com.example.green.domain.challengecert.entity.QTeamChallengeParticipation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;

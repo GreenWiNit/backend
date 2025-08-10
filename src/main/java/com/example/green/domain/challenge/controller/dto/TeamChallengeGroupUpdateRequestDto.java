@@ -21,6 +21,8 @@ public record TeamChallengeGroupUpdateRequestDto(
 
 	@Schema(description = "상세 주소", example = "삼성동 빌딩 3층")
 	String detailAddress,
+	@Schema(description = "시군구 정보", example = "강남구")
+	String sigungu,
 
 	@Schema(description = "그룹 설명", example = "매주 화, 목 저녁 7시에 모여서 5km 러닝합니다.")
 	@Size(max = 500, message = "그룹 설명은 500자 이하여야 합니다.")

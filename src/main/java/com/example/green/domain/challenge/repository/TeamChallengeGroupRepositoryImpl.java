@@ -1,3 +1,4 @@
+/*
 package com.example.green.domain.challenge.repository;
 
 import static com.example.green.domain.challenge.entity.QTeamChallengeGroup.*;
@@ -10,7 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import com.example.green.domain.challenge.controller.dto.TeamChallengeGroupListResponseDto;
 import com.example.green.domain.challenge.controller.dto.admin.AdminTeamChallengeGroupListResponseDto;
-import com.example.green.domain.challenge.entity.group.TeamChallengeGroup;
+import com.example.green.domain.challenge.entity.group.Group;
 import com.example.green.domain.challenge.entity.group.GroupRoleType;
 import com.example.green.global.api.page.CursorTemplate;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -31,7 +32,7 @@ public class TeamChallengeGroupRepositoryImpl implements TeamChallengeGroupRepos
 		int size,
 		Long memberId
 	) {
-		List<TeamChallengeGroup> groups = queryFactory
+		List<Group> groups = queryFactory
 			.selectFrom(teamChallengeGroup)
 			.where(
 				teamChallengeGroup.teamChallenge.id.eq(challengeId),
@@ -64,7 +65,7 @@ public class TeamChallengeGroupRepositoryImpl implements TeamChallengeGroupRepos
 
 	@Override
 	public CursorTemplate<Long, AdminTeamChallengeGroupListResponseDto> findAllForAdminByCursor(Long cursor, int size) {
-		List<TeamChallengeGroup> groups = queryFactory
+		List<Group> groups = queryFactory
 			.selectFrom(teamChallengeGroup)
 			.where(cursorCondition(cursor))
 			.orderBy(teamChallengeGroup.id.desc())
@@ -96,7 +97,7 @@ public class TeamChallengeGroupRepositoryImpl implements TeamChallengeGroupRepos
 		return cursor != null ? teamChallengeGroup.id.lt(cursor) : null;
 	}
 
-	private TeamChallengeGroupListResponseDto toGroupListDto(TeamChallengeGroup group, Long memberId) {
+	private TeamChallengeGroupListResponseDto toGroupListDto(Group group, Long memberId) {
 		// 해당 사용자가 이 그룹의 리더인지 확인
 		Boolean isLeader = isUserLeaderOfGroup(group.getId(), memberId);
 
@@ -104,8 +105,8 @@ public class TeamChallengeGroupRepositoryImpl implements TeamChallengeGroupRepos
 			group.getId(),
 			group.getGroupName(),
 			group.getGroupAddress() != null ? group.getGroupAddress().getFullAddress() : null,
-			group.getGroupBeginDateTime(),
-			group.getGroupEndDateTime(),
+			group.getBeginDateTime(),
+			group.getEndDateTime(),
 			group.getCurrentParticipants(),
 			group.getMaxParticipants(),
 			group.getGroupStatus(),
@@ -132,3 +133,4 @@ public class TeamChallengeGroupRepositoryImpl implements TeamChallengeGroupRepos
 		return count != null && count > 0;
 	}
 }
+*/

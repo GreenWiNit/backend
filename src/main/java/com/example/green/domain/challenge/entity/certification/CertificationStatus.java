@@ -1,4 +1,4 @@
-package com.example.green.domain.challengecert.enums;
+package com.example.green.domain.challenge.entity.certification;
 
 /**
  * 챌린지 인증 상태

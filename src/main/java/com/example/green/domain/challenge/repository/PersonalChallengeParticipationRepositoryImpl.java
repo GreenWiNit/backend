@@ -1,6 +1,6 @@
 package com.example.green.domain.challenge.repository;
 
-import static com.example.green.domain.challengecert.entity.QPersonalChallengeParticipation.*;
+import static com.example.green.domain.challenge.entity.challenge.QPersonalChallengeParticipation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;

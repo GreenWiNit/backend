@@ -18,7 +18,6 @@ import com.example.green.domain.challenge.controller.dto.admin.AdminTeamChalleng
 import com.example.green.domain.challenge.controller.message.AdminChallengeResponseMessage;
 import com.example.green.domain.challenge.controller.query.docs.AdminTeamChallengeQueryControllerDocs;
 import com.example.green.domain.challenge.repository.query.TeamChallengeQuery;
-import com.example.green.domain.challenge.service.AdminChallengeService;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.page.CursorTemplate;
 import com.example.green.global.api.page.PageTemplate;
@@ -32,7 +31,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AdminTeamChallengeQueryController implements AdminTeamChallengeQueryControllerDocs {
 
-	private final AdminChallengeService adminChallengeService;
 	private final TeamChallengeQuery teamChallengeQuery;
 	private final ExcelDownloader excelDownloader;
 
@@ -61,21 +59,20 @@ public class AdminTeamChallengeQueryController implements AdminTeamChallengeQuer
 	public ApiTemplate<CursorTemplate<Long, AdminChallengeParticipantListResponseDto>> getChallengeParticipants(
 		@PathVariable Long challengeId,
 		@RequestParam(required = false) Long cursor) {
-		CursorTemplate<Long, AdminChallengeParticipantListResponseDto> result
-			= adminChallengeService.getChallengeParticipants(challengeId, cursor);
-		return ApiTemplate.ok(AdminChallengeResponseMessage.CHALLENGE_PARTICIPANTS_FOUND, result);
+
+		return ApiTemplate.ok(AdminChallengeResponseMessage.CHALLENGE_PARTICIPANTS_FOUND, null);
 	}
 
 	@GetMapping("/groups")
 	public ApiTemplate<CursorTemplate<Long, AdminTeamChallengeGroupListResponseDto>> getGroups(
 		@RequestParam(required = false) Long cursor) {
-		CursorTemplate<Long, AdminTeamChallengeGroupListResponseDto> result = adminChallengeService.getGroups(cursor);
-		return ApiTemplate.ok(AdminChallengeResponseMessage.GROUP_LIST_FOUND, result);
+		
+		return ApiTemplate.ok(AdminChallengeResponseMessage.GROUP_LIST_FOUND, null);
 	}
 
 	@GetMapping("/groups/{groupId}")
 	public ApiTemplate<AdminTeamChallengeGroupDetailResponseDto> getGroupDetail(@PathVariable Long groupId) {
-		AdminTeamChallengeGroupDetailResponseDto result = adminChallengeService.getGroupDetail(groupId);
-		return ApiTemplate.ok(AdminChallengeResponseMessage.GROUP_DETAIL_FOUND, result);
+		//AdminTeamChallengeGroupDetailResponseDto result = adminChallengeService.getGroupDetail(groupId);
+		return ApiTemplate.ok(AdminChallengeResponseMessage.GROUP_DETAIL_FOUND, null);
 	}
 }

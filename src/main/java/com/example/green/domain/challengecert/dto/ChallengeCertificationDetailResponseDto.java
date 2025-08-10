@@ -3,9 +3,9 @@ package com.example.green.domain.challengecert.dto;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import com.example.green.domain.challengecert.entity.PersonalChallengeCertification;
-import com.example.green.domain.challengecert.entity.TeamChallengeCertification;
-import com.example.green.domain.challengecert.enums.CertificationStatus;
+import com.example.green.domain.challenge.entity.certification.CertificationStatus;
+import com.example.green.domain.challenge.entity.certification.PersonalChallengeCertification;
+import com.example.green.domain.challenge.entity.certification.TeamChallengeCertification;
 
 public record ChallengeCertificationDetailResponseDto(
 	Long id,

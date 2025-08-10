@@ -1,3 +1,4 @@
+/*
 package com.example.green.domain.challengecert.controller;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -77,3 +78,4 @@ public class ChallengeCertificationController implements ChallengeCertificationC
 		return ApiTemplate.ok(ChallengeCertificationResponseMessage.DETAIL_FOUND, response);
 	}
 }
+*/

@@ -1,11 +1,10 @@
-package com.example.green.domain.challengecert.entity;
+package com.example.green.domain.challenge.entity.certification;
 
 import static com.example.green.global.utils.EntityValidator.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import com.example.green.domain.challengecert.enums.CertificationStatus;
 import com.example.green.domain.challengecert.exception.ChallengeCertException;
 import com.example.green.domain.challengecert.exception.ChallengeCertExceptionMessage;
 import com.example.green.domain.common.BaseEntity;
