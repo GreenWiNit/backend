@@ -101,11 +101,28 @@ public class ChallengeGroup extends BaseEntity {
 		addParticipant(participation);
 	}
 
+	public void leaveMember(Long memberId) {
+		if (isLeader(memberId)) {
+			throw new ChallengeException(ChallengeExceptionMessage.LEADER_USE_BE_DELETE);
+		}
+
+		ChallengeGroupParticipation participation = findParticipationByMemberId(memberId);
+		participants.remove(participation);
+		capacity.decrease();
+	}
+
 	private void addParticipant(ChallengeGroupParticipation participation) {
 		if (!participants.add(participation)) {
 			throw new ChallengeException(ChallengeExceptionMessage.ALREADY_PARTICIPATING);
 		}
 		capacity.increase();
+	}
+
+	private ChallengeGroupParticipation findParticipationByMemberId(Long memberId) {
+		return participants.stream()
+			.filter(p -> p.matches(memberId))
+			.findFirst()
+			.orElseThrow(() -> new ChallengeException(ChallengeExceptionMessage.NOT_PARTICIPATING));
 	}
 
 	public void updateBasicInfo(GroupBasicInfo groupBasicInfo) {

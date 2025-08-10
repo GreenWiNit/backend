@@ -56,4 +56,11 @@ public class ChallengeGroupService {
 		ChallengeGroup challengeGroup = challengeGroupQuery.getChallengeGroup(groupId);
 		challengeGroup.joinMember(memberId, timeUtils.now());
 	}
+
+	@Retryable(retryFor = OptimisticLockingFailureException.class)
+	public void leave(Long groupId, Long memberId) {
+		// todo: 나중에 사용할 수도 명확히 모름
+		ChallengeGroup challengeGroup = challengeGroupQuery.getChallengeGroup(groupId);
+		challengeGroup.leaveMember(memberId);
+	}
 }

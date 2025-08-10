@@ -69,4 +69,8 @@ public class ChallengeGroupParticipation extends BaseEntity {
 	public static ChallengeGroupParticipation fromMember(ChallengeGroup challengeGroup, Long memberId) {
 		return new ChallengeGroupParticipation(challengeGroup, memberId, GroupRole.MEMBER);
 	}
+
+	public boolean matches(Long memberId) {
+		return this.memberId.equals(memberId);
+	}
 }
