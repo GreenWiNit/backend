@@ -20,7 +20,6 @@ import com.example.green.domain.challenge.entity.PersonalChallenge;
 import com.example.green.domain.challenge.entity.TeamChallenge;
 import com.example.green.domain.challenge.entity.TeamChallengeGroup;
 import com.example.green.domain.challenge.enums.ChallengeStatus;
-import com.example.green.domain.challenge.enums.ChallengeType;
 import com.example.green.domain.challenge.exception.ChallengeException;
 import com.example.green.domain.challenge.exception.ChallengeExceptionMessage;
 import com.example.green.domain.challenge.repository.PersonalChallengeParticipationRepository;
@@ -52,25 +51,22 @@ public class AdminChallengeService {
 	 * 챌린지를 생성합니다. (이미지는 별도 API로 처리)
 	 */
 	public Long createChallenge(AdminChallengeCreateRequestDto request) {
-		try {
-			String challengeCode = generateChallengeCode(request.challengeType());
-			PointAmount point = PointAmount.of(request.challengePoint().longValue());
+		String challengeCode = CodeGenerator.generateChallengeCode(request.challengeType(), LocalDateTime.now());
+		;
+		PointAmount point = PointAmount.of(request.challengePoint().longValue());
 
-			// 챌린지 타입에 따른 분기 처리
-			return switch (request.challengeType()) {
-				case PERSONAL -> createPersonalChallenge(challengeCode, request, point);
-				case TEAM -> createTeamChallenge(challengeCode, request, point);
-				default -> throw new ChallengeException(ChallengeExceptionMessage.ADMIN_INVALID_CHALLENGE_TYPE);
-			};
-		} catch (ChallengeException e) {
-			throw e; // ChallengeException은 그대로 전파
-		} catch (Exception e) {
-			throw new ChallengeException(ChallengeExceptionMessage.ADMIN_CHALLENGE_CREATE_FAILED);
-		}
+		// 챌린지 타입에 따른 분기 처리
+		return switch (request.challengeType()) {
+			case PERSONAL -> createPersonalChallenge(challengeCode, request, point);
+			case TEAM -> createTeamChallenge(challengeCode, request, point);
+		};
 	}
 
-	private Long createPersonalChallenge(String challengeCode, AdminChallengeCreateRequestDto request,
-		PointAmount point) {
+	private Long createPersonalChallenge(
+		String challengeCode,
+		AdminChallengeCreateRequestDto request,
+		PointAmount point
+	) {
 		PersonalChallenge challenge = PersonalChallenge.create(
 			challengeCode,
 			request.challengeName(),
@@ -102,10 +98,6 @@ public class AdminChallengeService {
 			request.displayStatus()
 		);
 		return teamChallengeRepository.save(challenge).getId();
-	}
-
-	private String generateChallengeCode(ChallengeType challengeType) {
-		return CodeGenerator.generateChallengeCode(challengeType, LocalDateTime.now());
 	}
 
 	/**
