@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.example.green.domain.challenge.controller.dto.GroupCreateDto;
+import com.example.green.domain.challenge.controller.dto.ChallengeGroupCreateDto;
 import com.example.green.domain.challenge.controller.dto.TeamChallengeGroupDetailResponseDto;
 import com.example.green.domain.challenge.controller.dto.TeamChallengeGroupListResponseDto;
 import com.example.green.domain.challenge.controller.dto.TeamChallengeGroupUpdateRequestDto;
@@ -52,7 +52,7 @@ public interface TeamChallengeGroupControllerDocs {
 		@Parameter(description = "팀 챌린지 ID", required = true, example = "1")
 		@PathVariable Long challengeId,
 		@Parameter(description = "그룹 생성 요청 정보", required = true)
-		@Valid @RequestBody GroupCreateDto request,
+		@Valid @RequestBody ChallengeGroupCreateDto request,
 		@Parameter(hidden = true) @AuthenticationPrincipal PrincipalDetails principalDetails
 	);
 

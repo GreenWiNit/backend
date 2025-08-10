@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.green.domain.challenge.controller.command.docs.GroupCommandControllerDocs;
-import com.example.green.domain.challenge.controller.dto.GroupCreateDto;
+import com.example.green.domain.challenge.controller.dto.ChallengeGroupCreateDto;
 import com.example.green.domain.challenge.controller.dto.TeamChallengeGroupUpdateRequestDto;
 import com.example.green.domain.challenge.controller.message.TeamChallengeGroupResponseMessage;
-import com.example.green.domain.challenge.service.GroupService;
+import com.example.green.domain.challenge.service.ChallengeGroupService;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.NoContent;
 import com.example.green.global.security.PrincipalDetails;
@@ -26,16 +26,16 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class GroupCommandController implements GroupCommandControllerDocs {
 
-	private final GroupService groupService;
+	private final ChallengeGroupService challengeGroupService;
 
 	@PostMapping("/{challengeId}/groups")
 	public ApiTemplate<Long> createTeamChallengeGroup(
 		@PathVariable Long challengeId,
-		@Valid @RequestBody GroupCreateDto request,
+		@Valid @RequestBody ChallengeGroupCreateDto request,
 		@AuthenticationPrincipal PrincipalDetails principalDetails
 	) {
-		Long memberId = 1L;
-		Long groupId = groupService.create(challengeId, memberId, request);
+		Long leaderId = 1L;
+		Long groupId = challengeGroupService.create(challengeId, leaderId, request);
 
 		return ApiTemplate.ok(TeamChallengeGroupResponseMessage.GROUP_CREATED, groupId);
 	}
@@ -47,7 +47,7 @@ public class GroupCommandController implements GroupCommandControllerDocs {
 		@AuthenticationPrincipal PrincipalDetails principalDetails
 	) {
 		Long memberId = 1L;
-		groupService.update(groupId, request, memberId);
+		challengeGroupService.update(groupId, request, memberId);
 
 		return NoContent.ok(TeamChallengeGroupResponseMessage.GROUP_UPDATED);
 	}
@@ -58,7 +58,7 @@ public class GroupCommandController implements GroupCommandControllerDocs {
 		@AuthenticationPrincipal PrincipalDetails principalDetails
 	) {
 		Long memberId = 1L;
-		groupService.delete(groupId, memberId);
+		challengeGroupService.delete(groupId, memberId);
 
 		return NoContent.ok(TeamChallengeGroupResponseMessage.GROUP_DELETED);
 	}
@@ -69,7 +69,7 @@ public class GroupCommandController implements GroupCommandControllerDocs {
 		@AuthenticationPrincipal PrincipalDetails principalDetails
 	) {
 		Long memberId = 1L;
-		groupService.join(groupId, memberId);
+		challengeGroupService.join(groupId, memberId);
 
 		return NoContent.ok(TeamChallengeGroupResponseMessage.GROUP_JOINED);
 	}

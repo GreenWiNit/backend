@@ -2,6 +2,11 @@ package com.example.green.domain.challenge.controller.dto;
 
 import java.time.LocalDateTime;
 
+import com.example.green.domain.challenge.entity.group.ChallengeGroup;
+import com.example.green.domain.challenge.entity.group.GroupAddress;
+import com.example.green.domain.challenge.entity.group.GroupBasicInfo;
+import com.example.green.domain.challenge.entity.group.GroupPeriod;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -9,7 +14,7 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
 @Schema(description = "팀 챌린지 그룹 생성 요청")
-public record GroupCreateDto(
+public record ChallengeGroupCreateDto(
 	@Schema(description = "그룹명", example = "강남구 러닝 그룹", requiredMode = Schema.RequiredMode.REQUIRED)
 	@NotBlank(message = "그룹명은 필수값입니다.")
 	@Size(max = 100, message = "그룹명은 100자 이하여야 합니다.")
@@ -45,4 +50,11 @@ public record GroupCreateDto(
 	@Positive(message = "최대 참가자 수는 1명 이상이어야 합니다.")
 	Integer maxParticipants
 ) {
+
+	public ChallengeGroup toEntity(String teamCode, Long challengeId, Long leaderId) {
+		GroupBasicInfo basicInfo = GroupBasicInfo.of(groupName, description, openChatUrl);
+		GroupAddress address = GroupAddress.of(roadAddress, detailAddress, sigungu);
+		GroupPeriod period = GroupPeriod.of(beginDateTime, endDateTime);
+		return ChallengeGroup.create(teamCode, challengeId, leaderId, basicInfo, address, maxParticipants, period);
+	}
 }

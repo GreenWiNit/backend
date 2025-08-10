@@ -3,8 +3,6 @@ package com.example.green.domain.challenge.utils;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import com.example.green.global.utils.UlidUtils;
-
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -14,15 +12,9 @@ public class CodeGenerator {
 	private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd");
 	private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HHmmss");
 
-	public static String generateTeamGroupCode(LocalDateTime now) {
+	public static String generateTeamGroupCode(LocalDateTime now, long lastId) {
 		String dateCode = now.format(DATE_FORMATTER);
-		String timeCode = now.format(TIME_FORMATTER);
-		String ulidSuffix = UlidUtils.generate().substring(22);  // 뒷 4자리
-
-		return String.format("T-%s-%s-%s",
-			dateCode,
-			timeCode,
-			ulidSuffix);
+		return String.format("T-%s-%s", dateCode, lastId);
 	}
 
 	public static String generatePersonalCode(LocalDateTime now, long lastId) {

@@ -24,18 +24,18 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Table(
-	name = "groups",
+	name = "challenge_groups",
 	indexes = {
-		@Index(name = "idx_groups_period", columnList = "begin_date_time, end_date_time"),
-		@Index(name = "idx_groups_team_challenge_id", columnList = "team_challenge_id")
+		@Index(name = "idx_challenge_groups_period", columnList = "begin_date_time, end_date_time"),
+		@Index(name = "idx_challenge_groups_team_challenge_id", columnList = "team_challenge_id")
 	})
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Group extends BaseEntity {
+public class ChallengeGroup extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "group_id")
+	@Column(name = "challenge_group_id")
 	private Long id;
 
 	@Column(length = 30, nullable = false)
@@ -52,10 +52,10 @@ public class Group extends BaseEntity {
 	private GroupCapacity capacity;
 	private GroupPeriod period;
 
-	@OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<GroupParticipation> participants = new ArrayList<>();
+	@OneToMany(mappedBy = "challengeGroup", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<ChallengeGroupParticipation> participants = new ArrayList<>();
 
-	private Group(
+	private ChallengeGroup(
 		String teamCode, Long teamChallengeId, Long leaderId, GroupBasicInfo basicInfo,
 		GroupAddress groupAddress, Integer maxParticipants, GroupPeriod period
 	) {
@@ -71,20 +71,20 @@ public class Group extends BaseEntity {
 		this.period = period;
 	}
 
-	public static Group create(
+	public static ChallengeGroup create(
 		String teamCode, Long teamChallengeId, Long leaderId, GroupBasicInfo basicInfo,
 		GroupAddress groupAddress, Integer maxParticipants, GroupPeriod period
 	) {
-		Group group = new Group(teamCode, teamChallengeId, leaderId, basicInfo,
+		ChallengeGroup challengeGroup = new ChallengeGroup(teamCode, teamChallengeId, leaderId, basicInfo,
 			groupAddress, maxParticipants, period);
 
-		GroupParticipation participation = GroupParticipation.fromLeader(group, leaderId);
-		group.addParticipant(participation);
+		ChallengeGroupParticipation participation = ChallengeGroupParticipation.fromLeader(challengeGroup, leaderId);
+		challengeGroup.addParticipant(participation);
 
-		return group;
+		return challengeGroup;
 	}
 
-	private void addParticipant(GroupParticipation participation) {
+	private void addParticipant(ChallengeGroupParticipation participation) {
 		if (capacity.isFull()) {
 			throw new ChallengeException(ChallengeExceptionMessage.GROUP_IS_FULL);
 		}

@@ -14,7 +14,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,12 +21,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "group_participations")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder(access = AccessLevel.PRIVATE)
-public class GroupParticipation extends BaseEntity {
+public class ChallengeGroupParticipation extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,31 +35,31 @@ public class GroupParticipation extends BaseEntity {
 	private Long memberId;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "group_id", nullable = false)
-	private Group group;
+	@JoinColumn(name = "challenge_group_id", nullable = false)
+	private ChallengeGroup challengeGroup;
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false, length = 20)
-	private GroupRoleType groupRoleType;
+	private GroupRole role;
 
-	private GroupParticipation(
-		Group group,
+	private ChallengeGroupParticipation(
+		ChallengeGroup challengeGroup,
 		Long memberId,
-		GroupRoleType role
+		GroupRole role
 	) {
-		validateNullData(group, "그룹 정보는 필수입니다.");
+		validateNullData(challengeGroup, "그룹 정보는 필수입니다.");
 		validateNullData(role, "역할은 필수입니다.");
 		validateAutoIncrementId(memberId, "그룹원 식별자는 필수입니다.");
-		this.group = group;
+		this.challengeGroup = challengeGroup;
 		this.memberId = memberId;
-		this.groupRoleType = role;
+		this.role = role;
 	}
 
-	public static GroupParticipation fromLeader(Group group, Long leaderId) {
-		return new GroupParticipation(group, leaderId, GroupRoleType.LEADER);
+	public static ChallengeGroupParticipation fromLeader(ChallengeGroup challengeGroup, Long leaderId) {
+		return new ChallengeGroupParticipation(challengeGroup, leaderId, GroupRole.LEADER);
 	}
 
-	public static GroupParticipation fromMember(Group group, Long memberId) {
-		return new GroupParticipation(group, memberId, GroupRoleType.MEMBER);
+	public static ChallengeGroupParticipation fromMember(ChallengeGroup challengeGroup, Long memberId) {
+		return new ChallengeGroupParticipation(challengeGroup, memberId, GroupRole.MEMBER);
 	}
 }

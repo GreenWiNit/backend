@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum GroupRoleType {
+public enum GroupRole {
 
 	LEADER("팀 리더"),
 	MEMBER("팀원");
