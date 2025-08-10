@@ -19,13 +19,13 @@ import com.example.green.domain.challenge.enums.ChallengeDisplayStatus;
 import com.example.green.domain.challenge.enums.ChallengeStatus;
 import com.example.green.domain.challenge.enums.ChallengeType;
 import com.example.green.domain.challenge.repository.TeamChallengeGroupRepository;
+import com.example.green.domain.challenge.repository.TeamChallengeParticipationRepository;
 import com.example.green.domain.challenge.repository.TeamChallengeRepository;
 import com.example.green.domain.challenge.utils.CodeGenerator;
 import com.example.green.domain.challengecert.entity.TeamChallengeGroupParticipation;
 import com.example.green.domain.challengecert.entity.TeamChallengeParticipation;
 import com.example.green.domain.challengecert.entity.enums.GroupRoleType;
 import com.example.green.domain.challengecert.repository.TeamChallengeGroupParticipationRepository;
-import com.example.green.domain.challengecert.repository.TeamChallengeParticipationRepository;
 import com.example.green.domain.member.entity.Member;
 import com.example.green.domain.member.repository.MemberRepository;
 import com.example.green.domain.point.entity.vo.PointAmount;
@@ -243,10 +243,10 @@ class TeamChallengeGroupRepositoryTest extends BaseIntegrationTest {
 
 		// 기존 참가 정보가 있는지 확인
 		return teamChallengeParticipationRepository
-			.findByTeamChallengeAndMember(testTeamChallenge, member)
+			.findByTeamChallengeAndMemberId(testTeamChallenge, member.getId())
 			.orElseGet(() -> {
 				TeamChallengeParticipation participation = TeamChallengeParticipation.create(
-					testTeamChallenge, member, testNow.minusHours(1)
+					testTeamChallenge, member.getId(), testNow.minusHours(1)
 				);
 				return teamChallengeParticipationRepository.save(participation);
 			});

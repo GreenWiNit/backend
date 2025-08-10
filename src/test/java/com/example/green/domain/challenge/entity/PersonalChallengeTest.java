@@ -43,98 +43,6 @@ class PersonalChallengeTest {
 	}
 
 	@Test
-	void 진행중이고_현재_시간이_챌린지_기간_내에_있으면_활성_상태이다() {
-		// given
-		LocalDateTime testNow = now;
-		PersonalChallenge activeChallenge = PersonalChallenge.create(
-			CodeGenerator.generate(ChallengeType.PERSONAL, testNow),
-			"활성 챌린지",
-			ChallengeStatus.PROCEEDING,
-			challengePoint,
-			testNow.minusHours(1), // 1시간 전 시작
-			testNow.plusHours(1),   // 1시간 후 종료
-			"challenge-image.jpg",
-			"챌린지 설명",
-			ChallengeDisplayStatus.VISIBLE
-		);
-
-		// when
-		boolean isActive = activeChallenge.isActive(testNow);
-
-		// then
-		assertTrue(isActive);
-	}
-
-	@Test
-	void 진행중이_아닌_상태면_활성_상태가_아니다() {
-		// given
-		LocalDateTime testNow = now;
-		PersonalChallenge completedChallenge = PersonalChallenge.create(
-			CodeGenerator.generate(ChallengeType.PERSONAL, testNow),
-			"완료된 챌린지",
-			ChallengeStatus.COMPLETED,
-			challengePoint,
-			testNow.minusDays(2),
-			testNow.plusDays(1),
-			"challenge-image.jpg",
-			"챌린지 설명",
-			ChallengeDisplayStatus.VISIBLE
-		);
-
-		// when
-		boolean isActive = completedChallenge.isActive(testNow);
-
-		// then
-		assertFalse(isActive);
-	}
-
-	@Test
-	void 시작_시간_이전이면_활성_상태가_아니다() {
-		// given
-		LocalDateTime testNow = now;
-		PersonalChallenge futureChallenge = PersonalChallenge.create(
-			CodeGenerator.generate(ChallengeType.PERSONAL, testNow),
-			"미래 챌린지",
-			ChallengeStatus.PROCEEDING,
-			challengePoint,
-			testNow.plusHours(1), // 1시간 후 시작
-			testNow.plusDays(1),
-			"challenge-image.jpg",
-			"챌린지 설명",
-			ChallengeDisplayStatus.VISIBLE
-		);
-
-		// when
-		boolean isActive = futureChallenge.isActive(testNow);
-
-		// then
-		assertFalse(isActive);
-	}
-
-	@Test
-	void 종료_시간_이후면_활성_상태가_아니다() {
-		// given
-		LocalDateTime testNow = now;
-		PersonalChallenge expiredChallenge = PersonalChallenge.create(
-			CodeGenerator.generate(ChallengeType.PERSONAL, testNow),
-			"만료된 챌린지",
-			ChallengeStatus.PROCEEDING,
-			challengePoint,
-			testNow.minusDays(2),
-			testNow.minusHours(1), // 1시간 전 종료
-			"challenge-image.jpg",
-			"챌린지 설명",
-			ChallengeDisplayStatus.VISIBLE
-		);
-
-		// when
-		boolean isActive = expiredChallenge.isActive(testNow);
-
-		// then
-		assertFalse(isActive);
-	}
-
-	@Test
 	void 진행중이고_종료_시간_이전이면_참여_가능하다() {
 		// given
 		LocalDateTime testNow = now;
@@ -151,7 +59,7 @@ class PersonalChallengeTest {
 		);
 
 		// when
-		boolean canParticipate = participableChallenge.canParticipate(testNow);
+		boolean canParticipate = participableChallenge.isActive(testNow);
 
 		// then
 		assertTrue(canParticipate);
@@ -174,7 +82,7 @@ class PersonalChallengeTest {
 		);
 
 		// when
-		boolean canParticipate = deadlineChallenge.canParticipate(testNow);
+		boolean canParticipate = deadlineChallenge.isActive(testNow);
 
 		// then
 		assertFalse(canParticipate);
@@ -197,7 +105,7 @@ class PersonalChallengeTest {
 		);
 
 		// when
-		boolean canParticipate = expiredChallenge.canParticipate(testNow);
+		boolean canParticipate = expiredChallenge.isActive(testNow);
 
 		// then
 		assertFalse(canParticipate);

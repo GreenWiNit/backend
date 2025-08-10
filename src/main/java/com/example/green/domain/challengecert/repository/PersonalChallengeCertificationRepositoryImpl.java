@@ -31,7 +31,7 @@ public class PersonalChallengeCertificationRepositoryImpl implements PersonalCha
 
 	@Override
 	public CursorTemplate<Long, ChallengeCertificationListResponseDto> findByMemberWithCursor(
-		Member member,
+		Long memberId,
 		Long cursor,
 		int size
 	) {
@@ -40,7 +40,7 @@ public class PersonalChallengeCertificationRepositoryImpl implements PersonalCha
 			.join(personalChallengeCertification.participation, personalChallengeParticipation).fetchJoin()
 			.join(personalChallengeParticipation.personalChallenge, personalChallenge).fetchJoin()
 			.where(
-				personalChallengeParticipation.member.eq(member),
+				personalChallengeParticipation.memberId.eq(memberId),
 				cursorCondition(cursor)
 			)
 			.orderBy(personalChallengeCertification.id.desc())
@@ -76,7 +76,7 @@ public class PersonalChallengeCertificationRepositoryImpl implements PersonalCha
 			.join(personalChallengeParticipation.personalChallenge, personalChallenge).fetchJoin()
 			.where(
 				personalChallengeCertification.id.eq(id),
-				personalChallengeParticipation.member.eq(member)
+				personalChallengeParticipation.memberId.eq(member.getId())
 			)
 			.fetchOne();
 
@@ -100,7 +100,7 @@ public class PersonalChallengeCertificationRepositoryImpl implements PersonalCha
 			))
 			.from(personalChallengeCertification)
 			.join(personalChallengeCertification.participation, personalChallengeParticipation)
-			.join(personalChallengeParticipation.member, member)
+			.join(personalChallengeParticipation).on(member.id.eq(personalChallengeParticipation.id))
 			.where(personalChallengeParticipation.personalChallenge.id.eq(challengeId))
 			.distinct()
 			.fetch();
@@ -109,12 +109,13 @@ public class PersonalChallengeCertificationRepositoryImpl implements PersonalCha
 	@Override
 	public CursorTemplate<Long, ChallengeCertificationListResponseDto> findPersonalCertificationsWithFilters(
 		AdminPersonalCertificationSearchRequestDto searchRequest, int pageSize) {
-		
+
 		List<PersonalChallengeCertification> certifications = queryFactory
 			.selectFrom(personalChallengeCertification)
 			.join(personalChallengeCertification.participation, personalChallengeParticipation).fetchJoin()
 			.join(personalChallengeParticipation.personalChallenge, personalChallenge).fetchJoin()
-			.join(personalChallengeParticipation.member, member).fetchJoin()
+			.join(personalChallengeParticipation).on(member.id.eq(personalChallengeParticipation.id))
+			.fetchJoin()
 			.where(
 				challengeCondition(searchRequest.challengeId()),
 				memberKeyCondition(searchRequest.memberKey()),
@@ -157,7 +158,7 @@ public class PersonalChallengeCertificationRepositoryImpl implements PersonalCha
 	 * 참여자 memberKey 조건
 	 */
 	private BooleanExpression memberKeyCondition(String memberKey) {
-		return (memberKey != null && !memberKey.trim().isEmpty()) 
+		return (memberKey != null && !memberKey.trim().isEmpty())
 			? member.memberKey.eq(memberKey.trim()) : null;
 	}
 
@@ -165,7 +166,7 @@ public class PersonalChallengeCertificationRepositoryImpl implements PersonalCha
 	 * 인증 상태 조건
 	 */
 	private BooleanExpression statusCondition(List<CertificationStatus> statuses) {
-		return (statuses != null && !statuses.isEmpty()) 
+		return (statuses != null && !statuses.isEmpty())
 			? personalChallengeCertification.status.in(statuses) : null;
 	}
 }

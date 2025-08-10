@@ -5,11 +5,13 @@ import static com.example.green.global.utils.EntityValidator.*;
 import java.time.LocalDateTime;
 
 import com.example.green.domain.challenge.entity.TeamChallenge;
-import com.example.green.domain.member.entity.Member;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
@@ -33,6 +35,10 @@ import lombok.NoArgsConstructor;
 @Builder(access = AccessLevel.PRIVATE)
 public class TeamChallengeParticipation extends BaseChallengeParticipation {
 
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "team_challenge_id", nullable = false)
 	private TeamChallenge teamChallenge;
@@ -42,22 +48,22 @@ public class TeamChallengeParticipation extends BaseChallengeParticipation {
 
 	public static TeamChallengeParticipation create(
 		TeamChallenge challenge,
-		Member member,
+		Long memberId,
 		LocalDateTime participatedAt
 	) {
 		validateNullData(challenge, "팀 챌린지는 필수입니다.");
-		validateNullData(member, "회원은 필수입니다.");
+		validateAutoIncrementId(memberId, "회원 정보는 필수값입니다.");
 		validateNullData(participatedAt, "참여 시각은 필수입니다.");
 
-		return new TeamChallengeParticipation(challenge, member, participatedAt);
+		return new TeamChallengeParticipation(challenge, memberId, participatedAt);
 	}
 
 	private TeamChallengeParticipation(
 		TeamChallenge challenge,
-		Member member,
+		Long memberId,
 		LocalDateTime participatedAt
 	) {
-		super(member, participatedAt);
+		super(memberId, participatedAt);
 		this.teamChallenge = challenge;
 	}
 

@@ -15,13 +15,13 @@ import com.example.green.domain.challenge.entity.vo.GroupAddress;
 import com.example.green.domain.challenge.exception.ChallengeException;
 import com.example.green.domain.challenge.exception.ChallengeExceptionMessage;
 import com.example.green.domain.challenge.repository.TeamChallengeGroupRepository;
+import com.example.green.domain.challenge.repository.TeamChallengeParticipationRepository;
 import com.example.green.domain.challenge.repository.TeamChallengeRepository;
 import com.example.green.domain.challenge.utils.CodeGenerator;
 import com.example.green.domain.challengecert.entity.TeamChallengeGroupParticipation;
 import com.example.green.domain.challengecert.entity.TeamChallengeParticipation;
 import com.example.green.domain.challengecert.entity.enums.GroupRoleType;
 import com.example.green.domain.challengecert.repository.TeamChallengeGroupParticipationRepository;
-import com.example.green.domain.challengecert.repository.TeamChallengeParticipationRepository;
 import com.example.green.domain.member.entity.Member;
 import com.example.green.domain.member.repository.MemberRepository;
 import com.example.green.global.api.page.CursorTemplate;
@@ -101,7 +101,7 @@ public class TeamChallengeGroupService {
 		TeamChallengeGroupCreateRequestDto request,
 		Long memberId
 	) {
-		Member member = memberRepository.findById(memberId)
+		memberRepository.findById(memberId)
 			.orElseThrow(() -> new ChallengeException(ChallengeExceptionMessage.MEMBER_NOT_FOUND));
 
 		TeamChallenge teamChallenge = teamChallengeRepository.findById(challengeId)
@@ -109,7 +109,7 @@ public class TeamChallengeGroupService {
 
 		// 팀 챌린지에 참가 중인지 확인
 		TeamChallengeParticipation participation = teamChallengeParticipationRepository
-			.findByTeamChallengeAndMember(teamChallenge, member)
+			.findByTeamChallengeAndMemberId(teamChallenge, memberId)
 			.orElseThrow(() -> new ChallengeException(ChallengeExceptionMessage.NOT_PARTICIPATING_IN_CHALLENGE));
 
 		// 그룹 주소 생성
@@ -249,7 +249,7 @@ public class TeamChallengeGroupService {
 
 		// 3. 팀 챌린지 참가 확인
 		TeamChallengeParticipation participation = teamChallengeParticipationRepository
-			.findByTeamChallengeAndMember(group.getTeamChallenge(), member)
+			.findByTeamChallengeAndMemberId(group.getTeamChallenge(), memberId)
 			.orElseThrow(() -> new ChallengeException(ChallengeExceptionMessage.NOT_PARTICIPATING_IN_CHALLENGE));
 
 		return new ValidationResult(group, member, participation);

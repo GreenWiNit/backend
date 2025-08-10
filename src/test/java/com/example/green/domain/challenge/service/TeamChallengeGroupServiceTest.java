@@ -29,13 +29,13 @@ import com.example.green.domain.challenge.enums.ChallengeType;
 import com.example.green.domain.challenge.exception.ChallengeException;
 import com.example.green.domain.challenge.exception.ChallengeExceptionMessage;
 import com.example.green.domain.challenge.repository.TeamChallengeGroupRepository;
+import com.example.green.domain.challenge.repository.TeamChallengeParticipationRepository;
 import com.example.green.domain.challenge.repository.TeamChallengeRepository;
 import com.example.green.domain.challenge.utils.CodeGenerator;
 import com.example.green.domain.challengecert.entity.TeamChallengeGroupParticipation;
 import com.example.green.domain.challengecert.entity.TeamChallengeParticipation;
 import com.example.green.domain.challengecert.entity.enums.GroupRoleType;
 import com.example.green.domain.challengecert.repository.TeamChallengeGroupParticipationRepository;
-import com.example.green.domain.challengecert.repository.TeamChallengeParticipationRepository;
 import com.example.green.domain.member.entity.Member;
 import com.example.green.domain.member.repository.MemberRepository;
 import com.example.green.domain.point.entity.vo.PointAmount;
@@ -113,7 +113,7 @@ class TeamChallengeGroupServiceTest {
 		// 테스트용 TeamChallengeParticipation 생성
 		testParticipation = TeamChallengeParticipation.create(
 			testTeamChallenge,
-			testMember,
+			1L,
 			testNow.minusHours(1)
 		);
 	}
@@ -212,7 +212,7 @@ class TeamChallengeGroupServiceTest {
 
 		given(memberRepository.findById(memberId)).willReturn(Optional.of(testMember));
 		given(teamChallengeRepository.findById(challengeId)).willReturn(Optional.of(testTeamChallenge));
-		given(teamChallengeParticipationRepository.findByTeamChallengeAndMember(testTeamChallenge, testMember))
+		given(teamChallengeParticipationRepository.findByTeamChallengeAndMemberId(any(TeamChallenge.class), anyLong()))
 			.willReturn(Optional.of(testParticipation));
 		given(teamChallengeGroupRepository.save(any(TeamChallengeGroup.class)))
 			.willAnswer(invocation -> {
@@ -285,7 +285,7 @@ class TeamChallengeGroupServiceTest {
 
 		given(memberRepository.findById(memberId)).willReturn(Optional.of(testMember));
 		given(teamChallengeRepository.findById(challengeId)).willReturn(Optional.of(testTeamChallenge));
-		given(teamChallengeParticipationRepository.findByTeamChallengeAndMember(testTeamChallenge, testMember))
+		given(teamChallengeParticipationRepository.findByTeamChallengeAndMemberId(any(TeamChallenge.class), anyLong()))
 			.willReturn(Optional.empty());
 
 		// when & then
@@ -305,7 +305,7 @@ class TeamChallengeGroupServiceTest {
 		given(teamChallengeGroupRepository.findById(groupId))
 			.willReturn(Optional.of(testGroup));
 		given(memberRepository.findById(memberId)).willReturn(Optional.of(testMember));
-		given(teamChallengeParticipationRepository.findByTeamChallengeAndMember(testTeamChallenge, testMember))
+		given(teamChallengeParticipationRepository.findByTeamChallengeAndMemberId(any(TeamChallenge.class), anyLong()))
 			.willReturn(Optional.of(testParticipation));
 		given(teamChallengeGroupParticipationRepository
 			.existsByTeamChallengeParticipationAndTeamChallengeGroup(testParticipation, testGroup))
@@ -331,7 +331,7 @@ class TeamChallengeGroupServiceTest {
 		given(teamChallengeGroupRepository.findById(groupId))
 			.willReturn(Optional.of(testGroup));
 		given(memberRepository.findById(memberId)).willReturn(Optional.of(testMember));
-		given(teamChallengeParticipationRepository.findByTeamChallengeAndMember(testTeamChallenge, testMember))
+		given(teamChallengeParticipationRepository.findByTeamChallengeAndMemberId(any(TeamChallenge.class), anyLong()))
 			.willReturn(Optional.of(testParticipation));
 		given(teamChallengeGroupParticipationRepository
 			.existsByTeamChallengeParticipationAndTeamChallengeGroup(testParticipation, testGroup))
@@ -354,7 +354,7 @@ class TeamChallengeGroupServiceTest {
 		given(teamChallengeGroupRepository.findById(groupId))
 			.willReturn(Optional.of(testGroup));
 		given(memberRepository.findById(memberId)).willReturn(Optional.of(testMember));
-		given(teamChallengeParticipationRepository.findByTeamChallengeAndMember(testTeamChallenge, testMember))
+		given(teamChallengeParticipationRepository.findByTeamChallengeAndMemberId(any(TeamChallenge.class), anyLong()))
 			.willReturn(Optional.of(testParticipation));
 		given(teamChallengeGroupParticipationRepository
 			.existsByTeamChallengeGroupIdAndTeamChallengeParticipationMemberIdAndGroupRoleType(
@@ -379,7 +379,7 @@ class TeamChallengeGroupServiceTest {
 		given(teamChallengeGroupRepository.findById(groupId))
 			.willReturn(Optional.of(testGroup));
 		given(memberRepository.findById(memberId)).willReturn(Optional.of(testMember));
-		given(teamChallengeParticipationRepository.findByTeamChallengeAndMember(testTeamChallenge, testMember))
+		given(teamChallengeParticipationRepository.findByTeamChallengeAndMemberId(any(TeamChallenge.class), anyLong()))
 			.willReturn(Optional.of(testParticipation));
 		given(teamChallengeGroupParticipationRepository
 			.existsByTeamChallengeGroupIdAndTeamChallengeParticipationMemberIdAndGroupRoleType(
@@ -413,7 +413,7 @@ class TeamChallengeGroupServiceTest {
 		given(teamChallengeGroupRepository.findById(groupId))
 			.willReturn(Optional.of(testGroup));
 		given(memberRepository.findById(memberId)).willReturn(Optional.of(testMember));
-		given(teamChallengeParticipationRepository.findByTeamChallengeAndMember(testTeamChallenge, testMember))
+		given(teamChallengeParticipationRepository.findByTeamChallengeAndMemberId(any(TeamChallenge.class), anyLong()))
 			.willReturn(Optional.of(testParticipation));
 		given(teamChallengeGroupParticipationRepository
 			.existsByTeamChallengeGroupIdAndTeamChallengeParticipationMemberIdAndGroupRoleType(
@@ -448,7 +448,7 @@ class TeamChallengeGroupServiceTest {
 		given(teamChallengeGroupRepository.findById(groupId))
 			.willReturn(Optional.of(testGroup));
 		given(memberRepository.findById(memberId)).willReturn(Optional.of(testMember));
-		given(teamChallengeParticipationRepository.findByTeamChallengeAndMember(testTeamChallenge, testMember))
+		given(teamChallengeParticipationRepository.findByTeamChallengeAndMemberId(any(TeamChallenge.class), anyLong()))
 			.willReturn(Optional.of(testParticipation));
 		given(teamChallengeGroupParticipationRepository
 			.existsByTeamChallengeGroupIdAndTeamChallengeParticipationMemberIdAndGroupRoleType(

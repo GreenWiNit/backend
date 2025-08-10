@@ -149,7 +149,6 @@ public abstract class BaseChallengeCertification extends BaseEntity {
 	}
 
 	protected void validateCertificationData() {
-		validateNullData(member, "회원은 필수값입니다.");
 		validateEmptyString(certificationImageUrl, "인증 이미지는 필수값입니다.");
 		validateNullData(certifiedAt, "인증 시각은 필수값입니다.");
 		validateNullData(certifiedDate, "인증 날짜는 필수값입니다.");

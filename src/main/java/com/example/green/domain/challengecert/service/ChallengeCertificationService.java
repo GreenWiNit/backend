@@ -12,7 +12,9 @@ import com.example.green.domain.challenge.entity.PersonalChallenge;
 import com.example.green.domain.challenge.entity.TeamChallenge;
 import com.example.green.domain.challenge.exception.ChallengeException;
 import com.example.green.domain.challenge.exception.ChallengeExceptionMessage;
+import com.example.green.domain.challenge.repository.PersonalChallengeParticipationRepository;
 import com.example.green.domain.challenge.repository.PersonalChallengeRepository;
+import com.example.green.domain.challenge.repository.TeamChallengeParticipationRepository;
 import com.example.green.domain.challenge.repository.TeamChallengeRepository;
 import com.example.green.domain.challengecert.dto.AdminChallengeTitleResponseDto;
 import com.example.green.domain.challengecert.dto.AdminGroupCodeResponseDto;
@@ -30,9 +32,7 @@ import com.example.green.domain.challengecert.entity.TeamChallengeParticipation;
 import com.example.green.domain.challengecert.exception.ChallengeCertException;
 import com.example.green.domain.challengecert.exception.ChallengeCertExceptionMessage;
 import com.example.green.domain.challengecert.repository.PersonalChallengeCertificationRepository;
-import com.example.green.domain.challengecert.repository.PersonalChallengeParticipationRepository;
 import com.example.green.domain.challengecert.repository.TeamChallengeCertificationRepository;
-import com.example.green.domain.challengecert.repository.TeamChallengeParticipationRepository;
 import com.example.green.domain.member.entity.Member;
 import com.example.green.domain.member.exception.MemberExceptionMessage;
 import com.example.green.domain.member.repository.MemberRepository;
@@ -111,8 +111,8 @@ public class ChallengeCertificationService {
 	 */
 	public CursorTemplate<Long, ChallengeCertificationListResponseDto> getPersonalChallengeCertifications(
 		Long cursor, PrincipalDetails principalDetails) {
-		Member member = getMemberById(principalDetails.getMemberId());
-		return personalChallengeCertificationRepository.findByMemberWithCursor(member, cursor, DEFAULT_PAGE_SIZE);
+		return personalChallengeCertificationRepository.findByMemberWithCursor(
+			principalDetails.getMemberId(), cursor, DEFAULT_PAGE_SIZE);
 	}
 
 	/**
@@ -172,7 +172,7 @@ public class ChallengeCertificationService {
 	) {
 		// 참여 정보 조회
 		PersonalChallengeParticipation participation = personalChallengeParticipationRepository
-			.findByMemberAndPersonalChallenge(member, challenge)
+			.findByMemberIdAndPersonalChallenge(member.getId(), challenge)
 			.orElseThrow(() -> new ChallengeException(ChallengeExceptionMessage.NOT_PARTICIPATING));
 
 		// 중복 인증 확인 (하루 한 번 제약)
@@ -182,8 +182,10 @@ public class ChallengeCertificationService {
 		}
 
 		// 인증 생성
+		Member participant = getMemberById(participation.getMemberId());
 		PersonalChallengeCertification certification = PersonalChallengeCertification.create(
 			participation,
+			participant,
 			certificationImageUrl,
 			certificationReview,
 			certifiedAt,
@@ -209,7 +211,7 @@ public class ChallengeCertificationService {
 	) {
 		// 참여 정보 조회
 		TeamChallengeParticipation participation = teamChallengeParticipationRepository
-			.findByMemberAndTeamChallenge(member, challenge)
+			.findByMemberIdAndTeamChallenge(member.getId(), challenge)
 			.orElseThrow(() -> new ChallengeException(ChallengeExceptionMessage.NOT_PARTICIPATING));
 
 		// 중복 인증 확인 (하루 한 번 제약)
@@ -218,8 +220,10 @@ public class ChallengeCertificationService {
 		}
 
 		// 인증 생성
+		Member participant = getMemberById(participation.getMemberId());
 		TeamChallengeCertification certification = TeamChallengeCertification.create(
 			participation,
+			participant,
 			certificationImageUrl,
 			certificationReview,
 			certifiedAt,
@@ -296,7 +300,8 @@ public class ChallengeCertificationService {
 			findPersonalChallengeById(searchRequest.challengeId());
 		}
 
-		return personalChallengeCertificationRepository.findPersonalCertificationsWithFilters(searchRequest, ADMIN_PAGE_SIZE);
+		return personalChallengeCertificationRepository.findPersonalCertificationsWithFilters(searchRequest,
+			ADMIN_PAGE_SIZE);
 	}
 
 	/**

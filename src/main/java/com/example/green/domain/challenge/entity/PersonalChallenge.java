@@ -3,14 +3,21 @@ package com.example.green.domain.challenge.entity;
 import static com.example.green.global.utils.EntityValidator.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.example.green.domain.challenge.enums.ChallengeDisplayStatus;
 import com.example.green.domain.challenge.enums.ChallengeStatus;
 import com.example.green.domain.challenge.enums.ChallengeType;
+import com.example.green.domain.challenge.exception.ChallengeException;
+import com.example.green.domain.challenge.exception.ChallengeExceptionMessage;
+import com.example.green.domain.challengecert.entity.PersonalChallengeParticipation;
 import com.example.green.domain.point.entity.vo.PointAmount;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Index;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
@@ -32,6 +39,36 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PersonalChallenge extends BaseChallenge {
+
+	@OneToMany(mappedBy = "personalChallenge", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<PersonalChallengeParticipation> participations = new ArrayList<>();
+
+	protected boolean isAlreadyParticipated(Long memberId) {
+		return participations.stream()
+			.anyMatch(p -> p.getMemberId().equals(memberId));
+	}
+
+	protected void doAddParticipation(Long memberId, LocalDateTime now) {
+		PersonalChallengeParticipation participation =
+			PersonalChallengeParticipation.create(this, memberId, now);
+		participations.add(participation);
+	}
+
+	public void removeParticipation(Long memberId, LocalDateTime now) {
+		PersonalChallengeParticipation participation = findParticipationByMemberId(memberId);
+		if (!isActive(now)) {
+			throw new ChallengeException(ChallengeExceptionMessage.CHALLENGE_NOT_LEAVEABLE);
+		}
+
+		participations.remove(participation);
+	}
+
+	private PersonalChallengeParticipation findParticipationByMemberId(Long memberId) {
+		return participations.stream()
+			.filter(p -> p.isParticipated(memberId))
+			.findFirst()
+			.orElseThrow(() -> new ChallengeException(ChallengeExceptionMessage.NOT_PARTICIPATING));
+	}
 
 	public static PersonalChallenge create(
 		String challengeCode,

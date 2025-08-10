@@ -1,4 +1,4 @@
-package com.example.green.domain.challengecert.repository;
+package com.example.green.domain.challenge.repository;
 
 import static com.example.green.domain.challengecert.entity.QPersonalChallengeParticipation.*;
 
@@ -37,7 +37,7 @@ public class PersonalChallengeParticipationRepositoryImpl implements PersonalCha
 		List<PersonalChallengeParticipation> participations = queryFactory
 			.selectFrom(personalChallengeParticipation)
 			.where(
-				personalChallengeParticipation.member.eq(member),
+				personalChallengeParticipation.memberId.eq(member.getId()),
 				cursorCondition(cursor)
 			)
 			.orderBy(personalChallengeParticipation.id.desc())
@@ -87,8 +87,8 @@ public class PersonalChallengeParticipationRepositoryImpl implements PersonalCha
 
 		List<ChallengeParticipantDao> daos = queryFactory
 			.select(Projections.constructor(ChallengeParticipantDao.class,
-				personalChallengeParticipation.member.id,
-				personalChallengeParticipation.member.memberKey,
+				personalChallengeParticipation.memberId,
+				//personalChallengeParticipation.member.memberKey,
 				personalChallengeParticipation.participatedAt,
 				Expressions.nullExpression(String.class), // teamCode (개인 챌린지는 null)
 				Expressions.nullExpression(LocalDateTime.class), // teamSelectionDateTime (개인 챌린지는 null)
@@ -111,8 +111,6 @@ public class PersonalChallengeParticipationRepositoryImpl implements PersonalCha
 		}
 	}
 
-
-
 	private BooleanExpression cursorCondition(Long cursor) {
 		return cursor != null ? personalChallengeParticipation.id.lt(cursor) : null;
 	}
@@ -122,7 +120,7 @@ public class PersonalChallengeParticipationRepositoryImpl implements PersonalCha
 			.selectOne()
 			.from(personalChallengeParticipation)
 			.where(
-				personalChallengeParticipation.member.eq(member),
+				personalChallengeParticipation.memberId.eq(member.getId()),
 				personalChallengeParticipation.id.lt(cursor)
 			)
 			.fetchFirst();
@@ -138,7 +136,7 @@ public class PersonalChallengeParticipationRepositoryImpl implements PersonalCha
 			challenge.getBeginDateTime(),
 			challenge.getEndDateTime(),
 			challenge.getChallengeImage(),
-			challenge.getChallengePoint().getAmount().intValue()
+			challenge.getChallengePoint().getAmount()
 		);
 	}
 }

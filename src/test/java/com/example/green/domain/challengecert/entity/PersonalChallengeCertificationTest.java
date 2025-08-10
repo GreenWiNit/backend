@@ -31,6 +31,7 @@ class PersonalChallengeCertificationTest {
 	private PersonalChallengeParticipation participation;
 	private PersonalChallenge personalChallenge;
 	private Member member;
+	private Member participant;
 	private LocalDateTime now;
 
 	@BeforeEach
@@ -56,13 +57,14 @@ class PersonalChallengeCertificationTest {
 		// 테스트용 PersonalChallengeParticipation 생성
 		participation = PersonalChallengeParticipation.create(
 			personalChallenge,
-			member,
+			1L,
 			now.minusHours(2)
 		);
 
 		// 테스트용 PersonalChallengeCertification 생성
 		certification = PersonalChallengeCertification.create(
 			participation,
+			participant,
 			"https://example.com/cert-image.jpg",
 			"인증 후기입니다.",
 			now.minusHours(1),
@@ -81,6 +83,7 @@ class PersonalChallengeCertificationTest {
 		// when
 		PersonalChallengeCertification newCertification = PersonalChallengeCertification.create(
 			participation,
+			member,
 			imageUrl,
 			review,
 			certifiedAt,
@@ -102,6 +105,7 @@ class PersonalChallengeCertificationTest {
 		// when & then
 		assertThatThrownBy(() -> PersonalChallengeCertification.create(
 			null,
+			participant,
 			"https://example.com/image.jpg",
 			"후기",
 			now,
@@ -115,6 +119,7 @@ class PersonalChallengeCertificationTest {
 		// when & then
 		assertThatThrownBy(() -> PersonalChallengeCertification.create(
 			participation,
+			participant,
 			null,
 			"후기",
 			now,
@@ -124,6 +129,7 @@ class PersonalChallengeCertificationTest {
 
 		assertThatThrownBy(() -> PersonalChallengeCertification.create(
 			participation,
+			participant,
 			"",
 			"후기",
 			now,
@@ -138,6 +144,7 @@ class PersonalChallengeCertificationTest {
 		// when & then
 		assertThatThrownBy(() -> PersonalChallengeCertification.create(
 			participation,
+			participant,
 			"https://example.com/image.jpg",
 			"후기",
 			null,
@@ -152,6 +159,7 @@ class PersonalChallengeCertificationTest {
 		// when & then
 		assertThatThrownBy(() -> PersonalChallengeCertification.create(
 			participation,
+			participant,
 			"https://example.com/image.jpg",
 			"후기",
 			now,
@@ -161,6 +169,7 @@ class PersonalChallengeCertificationTest {
 
 		assertThatThrownBy(() -> PersonalChallengeCertification.create(
 			participation,
+			participant,
 			"https://example.com/image.jpg",
 			"후기",
 			now,
@@ -175,6 +184,7 @@ class PersonalChallengeCertificationTest {
 		// when & then
 		assertDoesNotThrow(() -> PersonalChallengeCertification.create(
 			participation,
+			participant,
 			"https://example.com/image.jpg",
 			null,
 			now,

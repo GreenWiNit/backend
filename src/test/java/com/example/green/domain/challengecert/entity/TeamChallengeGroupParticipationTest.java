@@ -66,7 +66,7 @@ class TeamChallengeGroupParticipationTest {
 		// 테스트용 TeamChallengeParticipation 생성
 		participation = TeamChallengeParticipation.create(
 			teamChallenge,
-			member,
+			1L,
 			now.minusHours(1)
 		);
 
@@ -83,7 +83,7 @@ class TeamChallengeGroupParticipationTest {
 		// given
 		TeamChallengeParticipation newParticipation = TeamChallengeParticipation.create(
 			teamChallenge,
-			member,
+			1L,
 			now.minusMinutes(30)
 		);
 
