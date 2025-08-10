@@ -116,7 +116,7 @@ public class PersonalChallengeRepositoryImpl implements PersonalChallengeReposit
 			challenge.getBeginDateTime(),
 			challenge.getEndDateTime(),
 			challenge.getChallengeImage(),
-			challenge.getChallengePoint().getAmount()
+			challenge.getChallengePoint()
 		);
 	}
 }

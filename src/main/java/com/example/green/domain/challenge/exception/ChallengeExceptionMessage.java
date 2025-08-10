@@ -35,7 +35,8 @@ public enum ChallengeExceptionMessage implements ExceptionMessage {
 	ADMIN_TEAM_CHALLENGE_GROUP_NOT_FOUND("관리자 - 팀 챌린지 그룹을 찾을 수 없습니다.", 404),
 	ADMIN_INVALID_CHALLENGE_TYPE("관리자 - 지원하지 않는 챌린지 유형입니다.", 400),
 	ADMIN_CHALLENGE_CREATE_FAILED("관리자 - 챌린지 생성에 실패했습니다.", 500),
-	ADMIN_CHALLENGE_UPDATE_FAILED("관리자 - 챌린지 수정에 실패했습니다.", 500);
+	ADMIN_CHALLENGE_UPDATE_FAILED("관리자 - 챌린지 수정에 실패했습니다.", 500),
+	INVALID_MINIMUM_POINT("포인트는 0원 이상입니다.", 400);
 
 	private final String message;
 	private final int status;

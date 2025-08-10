@@ -25,12 +25,10 @@ import com.example.green.domain.challenge.controller.message.AdminChallengeRespo
 import com.example.green.domain.challenge.service.AdminChallengeService;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.page.CursorTemplate;
-import com.example.green.global.security.annotation.AdminApi;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
-@AdminApi(reason = "챌린지 관리는 관리자만 접근 가능")
 @RestController
 @RequestMapping("/api/admin/challenges")
 @RequiredArgsConstructor
@@ -38,10 +36,15 @@ public class AdminChallengeController implements AdminChallengeControllerDocs {
 
 	private final AdminChallengeService adminChallengeService;
 
-	@Override
-	@PostMapping
-	public ApiTemplate<Long> createChallenge(@Valid @RequestBody AdminChallengeCreateRequestDto request) {
-		Long challengeId = adminChallengeService.createChallenge(request);
+	@PostMapping("/team")
+	public ApiTemplate<Long> createTeamChallenge(@Valid @RequestBody AdminChallengeCreateRequestDto request) {
+		Long challengeId = adminChallengeService.createTeamChallenge(request);
+		return ApiTemplate.ok(AdminChallengeResponseMessage.CHALLENGE_CREATED, challengeId);
+	}
+
+	@PostMapping("/personal")
+	public ApiTemplate<Long> createPersonalChallenge(@Valid @RequestBody AdminChallengeCreateRequestDto request) {
+		Long challengeId = adminChallengeService.createPersonalChallenge(request);
 		return ApiTemplate.ok(AdminChallengeResponseMessage.CHALLENGE_CREATED, challengeId);
 	}
 
@@ -85,8 +88,8 @@ public class AdminChallengeController implements AdminChallengeControllerDocs {
 	@GetMapping("/team")
 	public ApiTemplate<CursorTemplate<Long, AdminTeamChallengeListResponseDto>> getTeamChallenges(
 		@RequestParam(required = false) Long cursor) {
-		CursorTemplate<Long, AdminTeamChallengeListResponseDto> result = adminChallengeService.getTeamChallenges(
-			cursor);
+		CursorTemplate<Long, AdminTeamChallengeListResponseDto> result =
+			adminChallengeService.getTeamChallenges(cursor);
 		return ApiTemplate.ok(AdminChallengeResponseMessage.TEAM_CHALLENGE_LIST_FOUND, result);
 	}
 

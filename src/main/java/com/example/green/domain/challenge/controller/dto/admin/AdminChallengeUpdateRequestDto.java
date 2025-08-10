@@ -1,5 +1,6 @@
 package com.example.green.domain.challenge.controller.dto.admin;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -18,7 +19,7 @@ public record AdminChallengeUpdateRequestDto(
 	@Schema(description = "챌린지 포인트", example = "100", requiredMode = Schema.RequiredMode.REQUIRED)
 	@NotNull(message = "챌린지 포인트는 필수값입니다.")
 	@Min(value = 0, message = "챌린지 포인트는 0 이상이어야 합니다.")
-	Integer challengePoint,
+	BigDecimal challengePoint,
 
 	@Schema(description = "시작 일시", requiredMode = Schema.RequiredMode.REQUIRED)
 	@NotNull(message = "시작 일시는 필수값입니다.")

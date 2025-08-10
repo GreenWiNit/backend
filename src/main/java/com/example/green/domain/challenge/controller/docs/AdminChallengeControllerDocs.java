@@ -61,7 +61,7 @@ public interface AdminChallengeControllerDocs {
 	@ApiResponse(responseCode = "200", description = "챌린지 생성 성공", useReturnTypeSchema = true)
 	@ApiResponse(responseCode = "403", description = "관리자 권한이 필요합니다.",
 		content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
-	ApiTemplate<Long> createChallenge(
+	ApiTemplate<Long> createTeamChallenge(
 		@RequestBody(description = "챌린지 생성 요청", required = true, content = @Content(schema =
 		@Schema(implementation = AdminChallengeCreateRequestDto.class))) AdminChallengeCreateRequestDto request
 	);

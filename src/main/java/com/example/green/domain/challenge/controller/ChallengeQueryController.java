@@ -66,7 +66,7 @@ public class ChallengeQueryController implements ChallengeQueryControllerDocs {
 		@PathVariable(value = "chlgNo") Long challengeId,
 		@AuthenticationPrincipal PrincipalDetails principalDetails
 	) {
-		Long memberId = principalDetails.getMemberId();
+		Long memberId = 1L;
 		ChallengeDetailDto result = personalChallengeQuery.findPersonalChallenge(challengeId, memberId);
 		return ApiTemplate.ok(CHALLENGE_DETAIL_FOUND, result);
 	}
@@ -76,7 +76,7 @@ public class ChallengeQueryController implements ChallengeQueryControllerDocs {
 		@PathVariable(value = "chlgNo") Long challengeId,
 		@AuthenticationPrincipal PrincipalDetails principalDetails
 	) {
-		Long memberId = principalDetails.getMemberId();
+		Long memberId = 1L;
 		ChallengeDetailDto result = teamChallengeQuery.findTeamChallenge(challengeId, memberId);
 		return ApiTemplate.ok(CHALLENGE_DETAIL_FOUND, result);
 	}
@@ -87,7 +87,7 @@ public class ChallengeQueryController implements ChallengeQueryControllerDocs {
 		@AuthenticationPrincipal PrincipalDetails currentUser,
 		@RequestParam(required = false, defaultValue = "20") Integer pageSize
 	) {
-		Long memberId = currentUser.getMemberId();
+		Long memberId = 1L;
 		CursorTemplate<Long, ChallengeListResponseDto> result =
 			personalChallengeQuery.findMyParticipationByCursor(memberId, cursor, pageSize);
 
@@ -100,7 +100,7 @@ public class ChallengeQueryController implements ChallengeQueryControllerDocs {
 		@AuthenticationPrincipal PrincipalDetails currentUser,
 		@RequestParam(required = false, defaultValue = "20") Integer pageSize
 	) {
-		Long memberId = currentUser.getMemberId();
+		Long memberId = 1L;
 		CursorTemplate<Long, ChallengeListResponseDto> result =
 			teamChallengeQuery.findMyParticipationByCursor(memberId, cursor, pageSize);
 

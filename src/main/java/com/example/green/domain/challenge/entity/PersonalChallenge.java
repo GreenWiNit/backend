@@ -1,18 +1,14 @@
 package com.example.green.domain.challenge.entity;
 
-import static com.example.green.global.utils.EntityValidator.*;
-
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.example.green.domain.challenge.enums.ChallengeDisplayStatus;
-import com.example.green.domain.challenge.enums.ChallengeStatus;
 import com.example.green.domain.challenge.enums.ChallengeType;
 import com.example.green.domain.challenge.exception.ChallengeException;
 import com.example.green.domain.challenge.exception.ChallengeExceptionMessage;
 import com.example.green.domain.challengecert.entity.PersonalChallengeParticipation;
-import com.example.green.domain.point.entity.vo.PointAmount;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -43,6 +39,23 @@ public class PersonalChallenge extends BaseChallenge {
 	@OneToMany(mappedBy = "personalChallenge", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<PersonalChallengeParticipation> participations = new ArrayList<>();
 
+	private PersonalChallenge(
+		String challengeCode, String challengeName, String challengeImage, String challengeContent,
+		BigDecimal challengePoint, LocalDateTime beginDateTime, LocalDateTime endDateTime
+	) {
+		super(challengeCode, challengeName, challengeImage, challengeContent, challengePoint, beginDateTime,
+			endDateTime, ChallengeType.PERSONAL);
+	}
+
+	public static PersonalChallenge create(
+		String challengeCode, String challengeName, String challengeImage, String challengeContent,
+		BigDecimal challengePoint, LocalDateTime beginDateTime, LocalDateTime endDateTime
+	) {
+		return new PersonalChallenge(
+			challengeCode, challengeName, challengeImage, challengeContent, challengePoint, beginDateTime, endDateTime
+		);
+	}
+
 	protected boolean isAlreadyParticipated(Long memberId) {
 		return participations.stream()
 			.anyMatch(p -> p.getMemberId().equals(memberId));
@@ -68,83 +81,5 @@ public class PersonalChallenge extends BaseChallenge {
 			.filter(p -> p.isParticipated(memberId))
 			.findFirst()
 			.orElseThrow(() -> new ChallengeException(ChallengeExceptionMessage.NOT_PARTICIPATING));
-	}
-
-	public static PersonalChallenge create(
-		String challengeCode,
-		String challengeName,
-		ChallengeStatus challengeStatus,
-		PointAmount challengePoint,
-		LocalDateTime beginDateTime,
-		LocalDateTime endDateTime,
-		String challengeImage,
-		String challengeContent,
-		ChallengeDisplayStatus displayStatus
-	) {
-		// 필수 값 validate
-		validateEmptyString(challengeCode, "챌린지 코드는 필수값입니다.");
-		validateEmptyString(challengeName, "챌린지명은 필수값입니다.");
-		validateNullData(challengeStatus, "챌린지 상태는 필수값입니다.");
-		validateNullData(challengePoint, "챌린지 포인트는 필수값입니다.");
-		validateNullData(beginDateTime, "시작일시는 필수값입니다.");
-		validateNullData(endDateTime, "종료일시는 필수값입니다.");
-		validateDateRange(beginDateTime, endDateTime, "시작일시는 종료일시보다 이전이어야 합니다.");
-		validateNullData(displayStatus, "챌린지 전시 상태는 필수값입니다.");
-
-		return new PersonalChallenge(
-			challengeCode,
-			challengeName,
-			challengeStatus,
-			challengePoint,
-			ChallengeType.PERSONAL,
-			beginDateTime,
-			endDateTime,
-			challengeImage,
-			challengeContent,
-			displayStatus
-		);
-	}
-
-	private PersonalChallenge(
-		String challengeCode,
-		String challengeName,
-		ChallengeStatus challengeStatus,
-		PointAmount challengePoint,
-		ChallengeType challengeType,
-		LocalDateTime beginDateTime,
-		LocalDateTime endDateTime,
-		String challengeImage,
-		String challengeContent,
-		ChallengeDisplayStatus displayStatus
-	) {
-		super(challengeCode, challengeName, challengeStatus, challengePoint, challengeType,
-			beginDateTime, endDateTime, challengeImage, challengeContent, displayStatus);
-	}
-
-	/**
-	 * 챌린지 기본 정보 업데이트
-	 */
-	public void update(
-		String challengeName,
-		PointAmount challengePoint,
-		LocalDateTime beginDateTime,
-		LocalDateTime endDateTime,
-		String challengeContent
-	) {
-		super.updateBasicInfo(challengeName, challengePoint, beginDateTime, endDateTime, challengeContent);
-	}
-
-	/**
-	 * 챌린지 이미지 업데이트
-	 */
-	public void updateImage(String challengeImageUrl) {
-		super.updateChallengeImage(challengeImageUrl);
-	}
-
-	/**
-	 * 챌린지 전시 상태 업데이트
-	 */
-	public void updateDisplayStatus(ChallengeDisplayStatus displayStatus) {
-		super.updateDisplayStatus(displayStatus);
 	}
 }
