@@ -6,6 +6,7 @@ import static com.example.green.domain.challengecert.entity.QPersonalChallengePa
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +21,8 @@ import com.example.green.domain.challenge.exception.ChallengeException;
 import com.example.green.domain.challenge.repository.PersonalChallengeRepository;
 import com.example.green.domain.challenge.repository.query.PersonalChallengeQuery;
 import com.example.green.global.api.page.CursorTemplate;
+import com.example.green.global.api.page.PageTemplate;
+import com.example.green.global.api.page.Pagination;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -112,6 +115,26 @@ public class PersonalChallengeQueryImpl implements PersonalChallengeQuery {
 	public AdminChallengeDetailDto getChallengeDetail(Long challengeId) {
 		PersonalChallenge personalChallenge = getPersonalChallengeById(challengeId);
 		return AdminChallengeDetailDto.from(personalChallenge);
+	}
+
+	@Override
+	public PageTemplate<AdminPersonalChallengesDto> findChallengePage(Integer page, Integer size) {
+		Long totalCount = Optional.ofNullable(queryFactory.select(personalChallenge.count())
+				.from(personalChallenge)
+				.fetchOne())
+			.orElseThrow(() -> new IllegalStateException("카운트 조회 중 예외 발생"));
+
+		Pagination pagination = Pagination.of(totalCount, page, size);
+
+		List<AdminPersonalChallengesDto> result = queryFactory
+			.select(PersonalChallengeProjections.toChallengesForAdmin())
+			.from(personalChallenge)
+			.orderBy(personalChallenge.id.desc())
+			.offset(pagination.calculateOffset())
+			.limit(pagination.getPageSize())
+			.fetch();
+
+		return PageTemplate.of(result, pagination);
 	}
 
 	private BooleanExpression cursorCondition(Long cursor) {

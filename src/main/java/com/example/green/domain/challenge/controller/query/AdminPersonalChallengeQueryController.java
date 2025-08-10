@@ -14,7 +14,7 @@ import com.example.green.domain.challenge.controller.message.AdminChallengeRespo
 import com.example.green.domain.challenge.controller.query.docs.AdminPersonalChallengeQueryControllerDocs;
 import com.example.green.domain.challenge.repository.query.PersonalChallengeQuery;
 import com.example.green.global.api.ApiTemplate;
-import com.example.green.global.api.page.CursorTemplate;
+import com.example.green.global.api.page.PageTemplate;
 
 import lombok.RequiredArgsConstructor;
 
@@ -26,12 +26,11 @@ public class AdminPersonalChallengeQueryController implements AdminPersonalChall
 	private final PersonalChallengeQuery personalChallengeQuery;
 
 	@GetMapping
-	public ApiTemplate<CursorTemplate<Long, AdminPersonalChallengesDto>> getPersonalChallenges(
-		@RequestParam(required = false) Long cursor,
-		@RequestParam(required = false, defaultValue = "20") Integer size
+	public ApiTemplate<PageTemplate<AdminPersonalChallengesDto>> getPersonalChallenges(
+		@RequestParam(required = false) Integer page,
+		@RequestParam(required = false, defaultValue = "10") Integer size
 	) {
-		CursorTemplate<Long, AdminPersonalChallengesDto> result =
-			personalChallengeQuery.findAllForAdminByCursor(cursor, size);
+		PageTemplate<AdminPersonalChallengesDto> result = personalChallengeQuery.findChallengePage(page, size);
 		return ApiTemplate.ok(PERSONAL_CHALLENGE_LIST_FOUND, result);
 	}
 
