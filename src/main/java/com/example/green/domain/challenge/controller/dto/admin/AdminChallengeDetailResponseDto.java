@@ -1,5 +1,6 @@
 package com.example.green.domain.challenge.controller.dto.admin;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import com.example.green.domain.challenge.entity.PersonalChallenge;
@@ -28,7 +29,7 @@ public record AdminChallengeDetailResponseDto(
 	ChallengeType challengeType,
 
 	@Schema(description = "챌린지 포인트", example = "100")
-	Integer challengePoint,
+	BigDecimal challengePoint,
 
 	@Schema(description = "시작 일시")
 	LocalDateTime beginDateTime,
@@ -59,7 +60,7 @@ public record AdminChallengeDetailResponseDto(
 			challenge.getChallengeName(),
 			challenge.getChallengeStatus(),
 			challenge.getChallengeType(),
-			challenge.getChallengePoint().getAmount().intValue(),
+			challenge.getChallengePoint(),
 			challenge.getBeginDateTime(),
 			challenge.getEndDateTime(),
 			challenge.getDisplayStatus(),
@@ -79,7 +80,7 @@ public record AdminChallengeDetailResponseDto(
 			challenge.getChallengeName(),
 			challenge.getChallengeStatus(),
 			challenge.getChallengeType(),
-			challenge.getChallengePoint().getAmount().intValue(),
+			challenge.getChallengePoint(),
 			challenge.getBeginDateTime(),
 			challenge.getEndDateTime(),
 			challenge.getDisplayStatus(),

@@ -126,14 +126,12 @@ public class TeamChallengeGroup extends BaseEntity {
 			openChatUrl,
 			teamChallenge
 		);
-
-		teamChallenge.addChallengeGroup(group);
 		return group;
 	}
 
 	/**
 	 * 그룹 정보를 수정합니다.
-	 * 
+	 *
 	 * @param groupName 수정할 그룹명
 	 * @param groupAddress 수정할 그룹 주소
 	 * @param groupDescription 수정할 그룹 설명

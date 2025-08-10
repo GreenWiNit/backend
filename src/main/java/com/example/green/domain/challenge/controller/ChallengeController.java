@@ -37,7 +37,7 @@ public class ChallengeController implements ChallengeControllerDocs {
 		@PathVariable(value = "chlgNo") Long challengeId,
 		@AuthenticationPrincipal PrincipalDetails currentUser
 	) {
-		Long memberId = currentUser.getMemberId();
+		Long memberId = 1L;
 		challengeService.joinTeamChallenge(challengeId, memberId);
 		return NoContent.ok(CHALLENGE_JOINED);
 	}
@@ -47,7 +47,7 @@ public class ChallengeController implements ChallengeControllerDocs {
 		@PathVariable(value = "chlgNo") Long challengeId,
 		@AuthenticationPrincipal PrincipalDetails currentUser
 	) {
-		Long memberId = currentUser.getMemberId();
+		Long memberId = 1L;
 		challengeService.joinPersonalChallenge(challengeId, memberId);
 		return NoContent.ok(CHALLENGE_JOINED);
 	}
@@ -63,7 +63,7 @@ public class ChallengeController implements ChallengeControllerDocs {
 		@PathVariable(value = "chlgNo") Long challengeId,
 		@AuthenticationPrincipal PrincipalDetails currentUser
 	) {
-		Long memberId = currentUser.getMemberId();
+		Long memberId = 1L;
 		challengeService.leavePersonalChallenge(challengeId, memberId);
 		return NoContent.ok(ChallengeResponseMessage.CHALLENGE_LEFT);
 	}
@@ -73,7 +73,7 @@ public class ChallengeController implements ChallengeControllerDocs {
 		@PathVariable(value = "chlgNo") Long challengeId,
 		@AuthenticationPrincipal PrincipalDetails currentUser
 	) {
-		Long memberId = currentUser.getMemberId();
+		Long memberId = 1L;
 		challengeService.leaveTeamChallenge(challengeId, memberId);
 		return NoContent.ok(ChallengeResponseMessage.CHALLENGE_LEFT);
 	}

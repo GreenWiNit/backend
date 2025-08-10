@@ -18,7 +18,7 @@ public class PersonalChallengeProjections {
 			personalChallenge.beginDateTime,
 			personalChallenge.endDateTime,
 			personalChallenge.challengeImage,
-			personalChallenge.challengePoint.amount
+			personalChallenge.challengePoint
 		);
 	}
 
@@ -30,7 +30,7 @@ public class PersonalChallengeProjections {
 			personalChallenge.beginDateTime,
 			personalChallenge.endDateTime,
 			personalChallenge.challengeImage,
-			personalChallenge.challengePoint.amount,
+			personalChallenge.challengePoint,
 			exists
 		);
 	}

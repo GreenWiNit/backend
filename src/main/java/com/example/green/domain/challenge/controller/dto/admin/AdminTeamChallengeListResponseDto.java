@@ -1,5 +1,6 @@
 package com.example.green.domain.challenge.controller.dto.admin;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import com.example.green.domain.challenge.entity.TeamChallenge;
@@ -27,7 +28,7 @@ public record AdminTeamChallengeListResponseDto(
 	ChallengeType challengeType,
 
 	@Schema(description = "챌린지 포인트", example = "100")
-	Integer challengePoint,
+	BigDecimal challengePoint,
 
 	@Schema(description = "시작 일시")
 	LocalDateTime beginDateTime,
@@ -44,13 +45,6 @@ public record AdminTeamChallengeListResponseDto(
 	@Schema(description = "참여자 수", example = "150")
 	Integer participantCount,
 
-	// 팀 챌린지 전용 필드
-	@Schema(description = "현재 그룹 수", example = "5")
-	Integer currentGroupCount,
-
-	@Schema(description = "최대 그룹 수", example = "10")
-	Integer maxGroupCount,
-
 	@Schema(description = "생성 일시")
 	LocalDateTime createdDate
 ) {
@@ -65,14 +59,12 @@ public record AdminTeamChallengeListResponseDto(
 			challenge.getChallengeName(),
 			challenge.getChallengeStatus(),
 			challenge.getChallengeType(),
-			challenge.getChallengePoint().getAmount().intValue(),
+			challenge.getChallengePoint(),
 			challenge.getBeginDateTime(),
 			challenge.getEndDateTime(),
 			challenge.getDisplayStatus(),
 			challenge.getChallengeImage(),
 			participantCount,
-			challenge.getCurrentGroupCount(),
-			challenge.getMaxGroupCount(),
 			challenge.getCreatedDate()
 		);
 	}

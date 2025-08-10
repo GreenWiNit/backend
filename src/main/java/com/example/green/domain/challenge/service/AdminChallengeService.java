@@ -1,6 +1,5 @@
 package com.example.green.domain.challenge.service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -19,8 +18,6 @@ import com.example.green.domain.challenge.controller.dto.admin.AdminTeamChalleng
 import com.example.green.domain.challenge.entity.PersonalChallenge;
 import com.example.green.domain.challenge.entity.TeamChallenge;
 import com.example.green.domain.challenge.entity.TeamChallengeGroup;
-import com.example.green.domain.challenge.enums.ChallengeStatus;
-import com.example.green.domain.challenge.enums.ChallengeType;
 import com.example.green.domain.challenge.exception.ChallengeException;
 import com.example.green.domain.challenge.exception.ChallengeExceptionMessage;
 import com.example.green.domain.challenge.repository.PersonalChallengeParticipationRepository;
@@ -31,8 +28,8 @@ import com.example.green.domain.challenge.utils.CodeGenerator;
 import com.example.green.domain.challengecert.entity.TeamChallengeGroupParticipation;
 import com.example.green.domain.challengecert.repository.TeamChallengeGroupParticipationRepository;
 import com.example.green.domain.challengecert.repository.dao.ChallengeParticipantDao;
-import com.example.green.domain.point.entity.vo.PointAmount;
 import com.example.green.global.api.page.CursorTemplate;
+import com.example.green.global.utils.TimeUtils;
 
 import lombok.RequiredArgsConstructor;
 
@@ -47,78 +44,39 @@ public class AdminChallengeService {
 	private final TeamChallengeGroupRepository teamChallengeGroupRepository;
 	private final PersonalChallengeParticipationRepository personalChallengeParticipationRepository;
 	private final TeamChallengeGroupParticipationRepository teamChallengeGroupParticipationRepository;
+	private final TimeUtils timeUtils;
 
-	/**
-	 * 챌린지를 생성합니다. (이미지는 별도 API로 처리)
-	 */
-	public Long createChallenge(AdminChallengeCreateRequestDto request) {
-		try {
-			String challengeCode = generateChallengeCode(request.challengeType());
-			PointAmount point = PointAmount.of(request.challengePoint().longValue());
-
-			// 챌린지 타입에 따른 분기 처리
-			return switch (request.challengeType()) {
-				case PERSONAL -> createPersonalChallenge(challengeCode, request, point);
-				case TEAM -> createTeamChallenge(challengeCode, request, point);
-				default -> throw new ChallengeException(ChallengeExceptionMessage.ADMIN_INVALID_CHALLENGE_TYPE);
-			};
-		} catch (ChallengeException e) {
-			throw e; // ChallengeException은 그대로 전파
-		} catch (Exception e) {
-			throw new ChallengeException(ChallengeExceptionMessage.ADMIN_CHALLENGE_CREATE_FAILED);
-		}
-	}
-
-	private Long createPersonalChallenge(String challengeCode, AdminChallengeCreateRequestDto request,
-		PointAmount point) {
+	public Long createPersonalChallenge(AdminChallengeCreateRequestDto request) {
+		long count = personalChallengeRepository.countChallengesByCreatedDate(timeUtils.now());
+		String challengeCode = CodeGenerator.generatePersonalCode(timeUtils.now(), count + 1);
 		PersonalChallenge challenge = PersonalChallenge.create(
-			challengeCode,
-			request.challengeName(),
-			ChallengeStatus.PROCEEDING, // 기본값
-			point,
-			request.beginDateTime(),
-			request.endDateTime(),
-			request.challengeImageUrl(),
-			request.challengeContent(),
-			request.displayStatus()
+			challengeCode, request.challengeName(), request.challengeImageUrl(), request.challengeContent(),
+			request.challengePoint(), request.beginDateTime(), request.endDateTime()
 		);
-		return personalChallengeRepository.save(challenge).getId();
+
+		PersonalChallenge savedChallenge = personalChallengeRepository.save(challenge);
+		return savedChallenge.getId();
 	}
 
-	private Long createTeamChallenge(String challengeCode, AdminChallengeCreateRequestDto request, PointAmount point) {
-		// maxGroupCount가 없으면 기본값 5 사용
-		Integer maxGroupCount = request.maxGroupCount() != null ? request.maxGroupCount() : 5;
-
+	public Long createTeamChallenge(AdminChallengeCreateRequestDto request) {
+		long count = teamChallengeRepository.countChallengesByCreatedDate(timeUtils.now());
+		String challengeCode = CodeGenerator.generateTeamCode(timeUtils.now(), count + 1);
 		TeamChallenge challenge = TeamChallenge.create(
-			challengeCode,
-			request.challengeName(),
-			ChallengeStatus.PROCEEDING, // 기본값
-			point,
-			request.beginDateTime(),
-			request.endDateTime(),
-			maxGroupCount,
-			request.challengeImageUrl(),
-			request.challengeContent(),
-			request.displayStatus()
+			challengeCode, request.challengeName(), request.challengeImageUrl(), request.challengeContent(),
+			request.challengePoint(), request.beginDateTime(), request.endDateTime()
 		);
-		return teamChallengeRepository.save(challenge).getId();
+
+		TeamChallenge saved = teamChallengeRepository.save(challenge);
+		return saved.getId();
 	}
 
-	private String generateChallengeCode(ChallengeType challengeType) {
-		return CodeGenerator.generateChallengeCode(challengeType, LocalDateTime.now());
-	}
-
-	/**
-	 * 챌린지 정보를 수정합니다.
-	 */
 	public void updateChallenge(Long challengeId, AdminChallengeUpdateRequestDto request) {
 		try {
-			// PersonalChallenge인지 확인
 			var personalChallenge = personalChallengeRepository.findById(challengeId);
 			if (personalChallenge.isPresent()) {
-				personalChallenge.get().update(
+				personalChallenge.get().updateBasicInfo(
 					request.challengeName(),
-					PointAmount.of(request.challengePoint().longValue()),
+					request.challengePoint(),
 					request.beginDateTime(),
 					request.endDateTime(),
 					request.challengeContent()
@@ -126,16 +84,14 @@ public class AdminChallengeService {
 				return;
 			}
 
-			// TeamChallenge인지 확인
 			var teamChallenge = teamChallengeRepository.findById(challengeId);
 			if (teamChallenge.isPresent()) {
-				teamChallenge.get().update(
+				teamChallenge.get().updateBasicInfo(
 					request.challengeName(),
-					PointAmount.of(request.challengePoint().longValue()),
+					request.challengePoint(),
 					request.beginDateTime(),
 					request.endDateTime(),
-					request.challengeContent(),
-					request.maxGroupCount()
+					request.challengeContent()
 				);
 				return;
 			}

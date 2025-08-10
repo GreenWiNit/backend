@@ -138,7 +138,7 @@ public class TeamChallengeParticipationRepositoryImpl implements TeamChallengePa
 			challenge.getBeginDateTime(),
 			challenge.getEndDateTime(),
 			challenge.getChallengeImage(),
-			challenge.getChallengePoint().getAmount()
+			challenge.getChallengePoint()
 		);
 	}
 }
