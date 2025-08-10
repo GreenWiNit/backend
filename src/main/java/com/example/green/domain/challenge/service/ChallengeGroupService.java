@@ -45,7 +45,8 @@ public class ChallengeGroupService {
 	}
 
 	public void delete(Long groupId, Long memberId) {
-
+		challengeGroupQuery.validateLeader(groupId, memberId);
+		challengeGroupRepository.deleteById(groupId);
 	}
 
 	public void join(Long groupId, Long memberId) {

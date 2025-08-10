@@ -21,4 +21,11 @@ public class ChallengeGroupQueryImpl implements ChallengeGroupQuery {
 		return challengeGroupRepository.findById(groupId)
 			.orElseThrow(() -> new ChallengeException(ChallengeExceptionMessage.CHALLENGE_GROUP_NOT_FOUND));
 	}
+
+	@Override
+	public void validateLeader(Long groupId, Long leaderId) {
+		if (!challengeGroupRepository.existsByIdAndLeaderId(groupId, leaderId)) {
+			throw new ChallengeException(ChallengeExceptionMessage.NOT_GROUP_LEADER);
+		}
+	}
 }

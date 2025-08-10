@@ -58,7 +58,6 @@ public class GroupCommandController implements GroupCommandControllerDocs {
 	) {
 		Long memberId = 1L;
 		challengeGroupService.delete(groupId, memberId);
-
 		return NoContent.ok(TeamChallengeGroupResponseMessage.GROUP_DELETED);
 	}
 
