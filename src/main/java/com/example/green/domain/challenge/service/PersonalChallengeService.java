@@ -8,7 +8,8 @@ import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeUpd
 import com.example.green.domain.challenge.entity.challenge.PersonalChallenge;
 import com.example.green.domain.challenge.repository.PersonalChallengeRepository;
 import com.example.green.domain.challenge.repository.query.PersonalChallengeQuery;
-import com.example.green.domain.challenge.utils.CodeGenerator;
+import com.example.green.domain.common.sequence.SequenceService;
+import com.example.green.domain.common.sequence.SequenceType;
 import com.example.green.domain.common.service.FileManager;
 import com.example.green.global.utils.TimeUtils;
 
@@ -22,11 +23,11 @@ public class PersonalChallengeService {
 	private final PersonalChallengeRepository personalChallengeRepository;
 	private final PersonalChallengeQuery personalChallengeQuery;
 	private final FileManager fileManager;
+	private final SequenceService sequenceService;
 	private final TimeUtils timeUtils;
 
 	public Long create(AdminChallengeCreateDto request) {
-		long count = personalChallengeRepository.countChallengesByCreatedDate(timeUtils.now());
-		String challengeCode = CodeGenerator.generatePersonalCode(timeUtils.now(), count + 1);
+		String challengeCode = sequenceService.generateCode(SequenceType.PERSONAL_CHALLENGE, timeUtils.now());
 		PersonalChallenge challenge = PersonalChallenge.create(
 			challengeCode, request.challengeName(), request.challengeImageUrl(), request.challengeContent(),
 			request.challengePoint(), request.beginDateTime(), request.endDateTime()
