@@ -113,11 +113,11 @@ public class TeamChallengeGroupService {
 		GroupAddress sigungu = GroupAddress.of(dto.roadAddress(), dto.detailAddress(), dto.sigungu());
 
 		// 팀 코드 생성
-		String teamCode = CodeGenerator.generateTeamGroupCode(LocalDateTime.now());
+		String groupCode = CodeGenerator.generateTeamGroupCode(LocalDateTime.now());
 
 		// 그룹 생성
 		Group group = Group.create(
-			teamCode,
+			groupCode,
 			dto.groupName(),
 			dto.beginDateTime(),
 			dto.endDateTime(),

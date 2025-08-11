@@ -100,7 +100,7 @@
 // 	public List<AdminGroupCodeResponseDto> findGroupCodesByChallengeId(Long challengeId) {
 // 		return queryFactory
 // 			.select(Projections.constructor(AdminGroupCodeResponseDto.class,
-// 				group.teamCode,
+// 				group.groupCode,
 // 				group.groupName,
 // 				group.currentParticipants
 // 			))
@@ -163,7 +163,7 @@
 // 	 */
 // 	private BooleanExpression groupCodeCondition(String groupCode) {
 // 		return (groupCode != null && !groupCode.trim().isEmpty())
-// 			? teamChallengeGroup.teamCode.eq(groupCode.trim()) : null;
+// 			? teamChallengeGroup.groupCode.eq(groupCode.trim()) : null;
 // 	}
 //
 // 	/**

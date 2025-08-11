@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeDetailDto;
 import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeParticipantListResponseDto;
 import com.example.green.domain.challenge.controller.dto.admin.AdminTeamChallengeGroupDetailResponseDto;
-import com.example.green.domain.challenge.controller.dto.admin.AdminTeamChallengeGroupListResponseDto;
 import com.example.green.domain.challenge.controller.dto.admin.AdminTeamChallengesDto;
 import com.example.green.domain.challenge.controller.message.AdminChallengeResponseMessage;
 import com.example.green.domain.challenge.controller.query.docs.AdminTeamChallengeQueryControllerDocs;
@@ -59,15 +58,8 @@ public class AdminTeamChallengeQueryController implements AdminTeamChallengeQuer
 	public ApiTemplate<CursorTemplate<Long, AdminChallengeParticipantListResponseDto>> getChallengeParticipants(
 		@PathVariable Long challengeId,
 		@RequestParam(required = false) Long cursor) {
-
+		// todo: 해야 댐
 		return ApiTemplate.ok(AdminChallengeResponseMessage.CHALLENGE_PARTICIPANTS_FOUND, null);
-	}
-
-	@GetMapping("/groups")
-	public ApiTemplate<CursorTemplate<Long, AdminTeamChallengeGroupListResponseDto>> getGroups(
-		@RequestParam(required = false) Long cursor) {
-		
-		return ApiTemplate.ok(AdminChallengeResponseMessage.GROUP_LIST_FOUND, null);
 	}
 
 	@GetMapping("/groups/{groupId}")

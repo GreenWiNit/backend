@@ -11,12 +11,15 @@ import org.springframework.stereotype.Repository;
 import com.example.green.domain.challenge.controller.dto.ChallengeGroupDetailDto;
 import com.example.green.domain.challenge.controller.dto.ChallengeGroupDto;
 import com.example.green.domain.challenge.controller.dto.MyChallengeGroupDto;
+import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeGroupDto;
 import com.example.green.domain.challenge.entity.group.ChallengeGroup;
 import com.example.green.domain.challenge.exception.ChallengeException;
 import com.example.green.domain.challenge.exception.ChallengeExceptionMessage;
 import com.example.green.domain.challenge.repository.ChallengeGroupRepository;
 import com.example.green.domain.challenge.repository.query.ChallengeGroupQuery;
 import com.example.green.global.api.page.CursorTemplate;
+import com.example.green.global.api.page.PageTemplate;
+import com.example.green.global.api.page.Pagination;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -107,6 +110,30 @@ public class ChallengeGroupQueryImpl implements ChallengeGroupQuery {
 			.fetch();
 
 		return CursorTemplate.from(groups, size, dto -> dto.createdDate() + "," + dto.id());
+	}
+
+	@Override
+	public PageTemplate<AdminChallengeGroupDto> findGroupPaging(Integer page, Integer size) {
+		long count = challengeGroupRepository.count();
+		Pagination pagination = Pagination.of(count, page, size);
+
+		List<AdminChallengeGroupDto> result = queryFactory
+			.select(Projections.constructor(AdminChallengeGroupDto.class,
+				challengeGroup.id,
+				challengeGroup.teamCode,
+				challengeGroup.basicInfo.groupName,
+				challengeGroup.createdDate,
+				challengeGroup.capacity.maxParticipants,
+				challengeGroup.capacity.currentParticipants,
+				challengeGroup.status
+			))
+			.from(challengeGroup)
+			.orderBy(challengeGroup.createdDate.desc())
+			.offset(pagination.calculateOffset())
+			.limit(pagination.getPageSize())
+			.fetch();
+
+		return PageTemplate.of(result, pagination);
 	}
 
 	public BooleanExpression fromCondition(String cursor) {

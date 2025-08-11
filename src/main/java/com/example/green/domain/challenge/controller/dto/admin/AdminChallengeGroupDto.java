@@ -1,24 +1,25 @@
 package com.example.green.domain.challenge.controller.dto.admin;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import com.example.green.domain.challenge.entity.group.GroupStatus;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "어드민 팀 챌린지 그룹 목록 응답")
-public record AdminTeamChallengeGroupListResponseDto(
+public record AdminChallengeGroupDto(
 	@Schema(description = "그룹 ID", example = "1")
 	Long id,
 
-	@Schema(description = "팀코드", example = "T-20250109-143523-C8NQ")
-	String teamCode,
+	@Schema(description = "그룹 코드", example = "T-20250809-001")
+	String groupCode,
 
 	@Schema(description = "그룹명", example = "함께 플로길 해요~")
-	String teamTitle,
+	String groupName,
 
 	@Schema(description = "등록 날짜", example = "2025-08-09")
-	LocalDate registrationDate,
+	LocalDateTime registrationDate,
 
 	@Schema(description = "최대 인원", example = "15")
 	Integer maxParticipants,
@@ -29,4 +30,8 @@ public record AdminTeamChallengeGroupListResponseDto(
 	@Schema(description = "모집 여부")
 	GroupStatus recruitmentStatus
 ) {
+
+	public LocalDate getRegistrationDate() {
+		return registrationDate.toLocalDate();
+	}
 }

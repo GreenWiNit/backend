@@ -57,6 +57,7 @@ public class ChallengeGroup extends BaseEntity {
 	private GroupAddress groupAddress;
 	private GroupCapacity capacity;
 	private GroupPeriod period;
+	private GroupStatus status;
 
 	@OneToMany(mappedBy = "challengeGroup", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Set<ChallengeGroupParticipation> participants = new LinkedHashSet<>();
@@ -75,6 +76,7 @@ public class ChallengeGroup extends BaseEntity {
 		this.groupAddress = groupAddress;
 		this.capacity = GroupCapacity.of(maxParticipants);
 		this.period = period;
+		this.status = GroupStatus.RECRUITING;
 	}
 
 	public static ChallengeGroup create(
@@ -109,6 +111,7 @@ public class ChallengeGroup extends BaseEntity {
 		ChallengeGroupParticipation participation = findParticipationByMemberId(memberId);
 		participants.remove(participation);
 		capacity.decrease();
+		this.status = determineStatus();
 	}
 
 	private void addParticipant(ChallengeGroupParticipation participation) {
@@ -116,6 +119,7 @@ public class ChallengeGroup extends BaseEntity {
 			throw new ChallengeException(ChallengeExceptionMessage.ALREADY_PARTICIPATING_IN_GROUP);
 		}
 		capacity.increase();
+		this.status = determineStatus();
 	}
 
 	private ChallengeGroupParticipation findParticipationByMemberId(Long memberId) {
@@ -135,6 +139,7 @@ public class ChallengeGroup extends BaseEntity {
 
 	public void updateCapacity(Integer maxParticipants) {
 		this.capacity = GroupCapacity.update(capacity.getCurrentParticipants(), maxParticipants);
+		this.status = determineStatus();
 	}
 
 	public void updatePeriod(GroupPeriod period) {
@@ -143,5 +148,12 @@ public class ChallengeGroup extends BaseEntity {
 
 	public boolean isLeader(Long memberId) {
 		return memberId.equals(this.leaderId);
+	}
+
+	private GroupStatus determineStatus() {
+		if (capacity.isFull()) {
+			return GroupStatus.COMPLETED;
+		}
+		return GroupStatus.RECRUITING;
 	}
 }

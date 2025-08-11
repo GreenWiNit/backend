@@ -91,7 +91,7 @@ public class PersonalChallengeParticipationRepositoryImpl implements PersonalCha
 				personalChallengeParticipation.memberId,
 				//personalChallengeParticipation.member.memberKey,
 				personalChallengeParticipation.participatedAt,
-				Expressions.nullExpression(String.class), // teamCode (개인 챌린지는 null)
+				Expressions.nullExpression(String.class), // groupCode (개인 챌린지는 null)
 				Expressions.nullExpression(LocalDateTime.class), // teamSelectionDateTime (개인 챌린지는 null)
 				Expressions.nullExpression(Integer.class) // certificationCount (추후 구현시 사용)
 			))
