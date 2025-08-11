@@ -1,4 +1,4 @@
-package com.example.green.domain.challengecert.exception;
+package com.example.green.domain.certification.exception;
 
 import org.springframework.http.HttpStatus;
 
