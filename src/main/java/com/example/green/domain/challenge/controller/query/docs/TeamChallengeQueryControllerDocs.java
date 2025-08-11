@@ -20,7 +20,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public interface TeamChallengeQueryControllerDocs {
 
 	@Operation(
-		summary = "팀 챌린지 목록 조회",
+		summary = "팀 챌린지 목록 조회 (B01_002)",
 		description = """
 			현재 진행 중인 팀 챌린지 목록을 조회합니다.
 			커서 기반 페이지네이션이 적용되어 있어 다음 페이지 조회 시 이전 응답의 마지막 챌린지 ID를 커서로 사용합니다.
@@ -35,7 +35,7 @@ public interface TeamChallengeQueryControllerDocs {
 	);
 
 	@Operation(
-		summary = "팀 챌린지 상세 조회",
+		summary = "팀 챌린지 상세 조회 (B01_005)",
 		description = """
 			챌린지 ID로 상세 정보를 조회합니다.
 			- 비로그인 상태: 참여하기 버튼 표시
@@ -57,7 +57,7 @@ public interface TeamChallengeQueryControllerDocs {
 	);
 
 	@Operation(
-		summary = "내 팀 챌린지 목록 조회",
+		summary = "참여중인 팀 챌린지 목록 조회 (B01_006), 참여 챌린지",
 		description = """
 			내가 참여 중인 팀 챌린지 목록을 조회합니다.
 			커서 기반 페이지네이션이 적용되어 있어 다음 페이지 조회 시 이전 응답의 마지막 챌린지 ID를 커서로 사용합니다.

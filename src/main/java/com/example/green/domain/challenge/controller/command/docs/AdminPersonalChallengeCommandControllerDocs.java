@@ -20,7 +20,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "[챌린지-관리자] 개인 챌린지 관리 API", description = "관리자 개인 챌린지 생성/수정/이미지/전시여부 등 관리 API")
 public interface AdminPersonalChallengeCommandControllerDocs {
 
-	@Operation(summary = "개인 챌린지 생성", description = "개인 챌린지를 생성합니다. (이미지 URL 포함)")
+	@Operation(
+		summary = "개인 챌린지 생성 (ad_B01_009), 카테고리 전시여부 필요없음",
+		description = "개인 챌린지를 생성합니다. (이미지 URL 포함)")
 	@ApiErrorStandard
 	@ApiResponse(responseCode = "200", description = "챌린지 생성 성공", useReturnTypeSchema = true)
 	@ApiResponse(responseCode = "403", description = "관리자 권한이 필요합니다.",
@@ -30,7 +32,7 @@ public interface AdminPersonalChallengeCommandControllerDocs {
 		@Schema(implementation = AdminChallengeCreateDto.class))) AdminChallengeCreateDto request
 	);
 
-	@Operation(summary = "개인 챌린지 수정", description = "개인 챌린지를 수정합니다.")
+	@Operation(summary = "개인 챌린지 수정 (ad_B01_008), 카테고리 필요없음", description = "개인 챌린지를 수정합니다.")
 	@ApiErrorStandard
 	@ApiResponse(responseCode = "200", description = "챌린지 수정 성공", useReturnTypeSchema = true)
 	@ApiResponse(responseCode = "403", description = "관리자 권한이 필요합니다.",
@@ -43,7 +45,7 @@ public interface AdminPersonalChallengeCommandControllerDocs {
 			content = @Content(schema = @Schema(implementation = AdminChallengeUpdateDto.class))
 		) AdminChallengeUpdateDto request);
 
-	@Operation(summary = "개인 챌린지 전시", description = "개인 챌린지를 전시 상태로 변경합니다.")
+	@Operation(summary = "개인 챌린지 전시 (SB에서 안보임)", description = "개인 챌린지를 전시 상태로 변경합니다.")
 	@ApiErrorStandard
 	@ApiResponse(responseCode = "200", description = "전시 상태 변경 성공", useReturnTypeSchema = true)
 	@ApiResponse(responseCode = "403", description = "관리자 권한이 필요합니다.",
@@ -53,7 +55,7 @@ public interface AdminPersonalChallengeCommandControllerDocs {
 		Long challengeId
 	);
 
-	@Operation(summary = "개인 챌린지 미전시", description = "개인 챌린지를 미전시 상태로 변경합니다.")
+	@Operation(summary = "개인 챌린지 미전시 (SB에서 안보임)", description = "개인 챌린지를 미전시 상태로 변경합니다.")
 	@ApiErrorStandard
 	@ApiResponse(responseCode = "200", description = "전시 상태 변경 성공", useReturnTypeSchema = true)
 	@ApiResponse(responseCode = "403", description = "관리자 권한이 필요합니다.",
