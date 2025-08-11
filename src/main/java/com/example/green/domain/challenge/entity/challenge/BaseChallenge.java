@@ -150,7 +150,6 @@ public abstract class BaseChallenge extends BaseEntity {
 		this.challengeContent = challengeContent;
 	}
 
-	// 템플릿 메서드 패턴
 	public final void addParticipation(Long memberId, LocalDateTime now) {
 		validateParticipation(memberId, now);
 		doAddParticipation(memberId, now);

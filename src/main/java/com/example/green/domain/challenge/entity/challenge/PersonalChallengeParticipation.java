@@ -20,9 +20,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-/**
- * 개인 챌린지 참여 엔티티
- */
 @Entity
 @Table(
 	indexes = {
@@ -48,25 +45,16 @@ public class PersonalChallengeParticipation extends BaseChallengeParticipation {
 	@JoinColumn(name = "personal_challenge_id", nullable = false)
 	private PersonalChallenge personalChallenge;
 
-	public static PersonalChallengeParticipation create(
-		PersonalChallenge personalChallenge,
-		Long memberId,
-		LocalDateTime participatedAt
-	) {
-		// 필수 값 validate
-		validateNullData(personalChallenge, "개인 챌린지는 필수값입니다.");
+	public static PersonalChallengeParticipation create(PersonalChallenge challenge, Long memberId, LocalDateTime now) {
+		validateNullData(challenge, "개인 챌린지는 필수값입니다.");
 		validateAutoIncrementId(memberId, "회원 정보는 필수값입니다.");
-		validateNullData(participatedAt, "참여 시각은 필수값입니다.");
+		validateNullData(now, "참여 시각은 필수값입니다.");
 
-		return new PersonalChallengeParticipation(personalChallenge, memberId, participatedAt);
+		return new PersonalChallengeParticipation(challenge, memberId, now);
 	}
 
-	private PersonalChallengeParticipation(
-		PersonalChallenge personalChallenge,
-		Long memberId,
-		LocalDateTime participatedAt
-	) {
-		super(memberId, participatedAt);
+	private PersonalChallengeParticipation(PersonalChallenge personalChallenge, Long memberId, LocalDateTime now) {
+		super(memberId, now);
 		this.personalChallenge = personalChallenge;
 	}
 }

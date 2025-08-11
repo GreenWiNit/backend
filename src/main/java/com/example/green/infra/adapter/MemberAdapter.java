@@ -1,6 +1,9 @@
 package com.example.green.infra.adapter;
 
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
@@ -25,5 +28,11 @@ public class MemberAdapter implements MemberClient {
 			.stream()
 			.map(MemberDto::from)
 			.toList();
+	}
+
+	public Map<Long, MemberDto> getMemberByIds(List<Long> memberIds) {
+		return getMembers(memberIds)
+			.stream()
+			.collect(Collectors.toMap(MemberDto::getId, Function.identity()));
 	}
 }
