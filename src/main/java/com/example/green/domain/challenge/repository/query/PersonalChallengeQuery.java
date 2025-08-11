@@ -3,10 +3,11 @@ package com.example.green.domain.challenge.repository.query;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDetailDto;
-import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDto;
 import com.example.green.domain.challenge.controller.query.dto.challenge.AdminChallengeDetailDto;
 import com.example.green.domain.challenge.controller.query.dto.challenge.AdminPersonalChallengesDto;
+import com.example.green.domain.challenge.controller.query.dto.challenge.AdminPersonalParticipationDto;
+import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDetailDto;
+import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDto;
 import com.example.green.domain.challenge.entity.challenge.PersonalChallenge;
 import com.example.green.domain.challenge.entity.challenge.vo.ChallengeStatus;
 import com.example.green.global.api.page.CursorTemplate;
@@ -32,4 +33,9 @@ public interface PersonalChallengeQuery {
 	PageTemplate<AdminPersonalChallengesDto> findChallengePage(Integer page, Integer size);
 
 	List<AdminPersonalChallengesDto> findChallengePageForExcel();
+
+	PageTemplate<AdminPersonalParticipationDto> findParticipantByChallenge(
+		Long challengeId, Integer page, Integer size);
+
+	List<AdminPersonalParticipationDto> findParticipantByChallengeForExcel(Long challengeId);
 }

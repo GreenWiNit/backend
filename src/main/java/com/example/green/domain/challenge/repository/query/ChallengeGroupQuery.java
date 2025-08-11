@@ -1,10 +1,13 @@
 package com.example.green.domain.challenge.repository.query;
 
+import java.util.List;
+
+import com.example.green.domain.challenge.controller.query.dto.challenge.AdminChallengeGroupDetailDto;
+import com.example.green.domain.challenge.controller.query.dto.challenge.AdminTeamParticipantDto;
+import com.example.green.domain.challenge.controller.query.dto.group.AdminChallengeGroupDto;
 import com.example.green.domain.challenge.controller.query.dto.group.ChallengeGroupDetailDto;
 import com.example.green.domain.challenge.controller.query.dto.group.ChallengeGroupDto;
 import com.example.green.domain.challenge.controller.query.dto.group.MyChallengeGroupDto;
-import com.example.green.domain.challenge.controller.query.dto.challenge.AdminChallengeGroupDetailDto;
-import com.example.green.domain.challenge.controller.query.dto.group.AdminChallengeGroupDto;
 import com.example.green.domain.challenge.entity.group.ChallengeGroup;
 import com.example.green.global.api.page.CursorTemplate;
 import com.example.green.global.api.page.PageTemplate;
@@ -26,4 +29,8 @@ public interface ChallengeGroupQuery {
 	PageTemplate<AdminChallengeGroupDto> findGroupPaging(Integer page, Integer size);
 
 	AdminChallengeGroupDetailDto getGroupDetailForAdmin(Long groupId);
+
+	PageTemplate<AdminTeamParticipantDto> findParticipantByChallenge(Long challengeId, Integer page, Integer size);
+
+	List<AdminTeamParticipantDto> findParticipantByChallengeForExcel(Long challengeId);
 }

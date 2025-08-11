@@ -34,6 +34,8 @@ public class ChallengeGroupCommandController implements ChallengeGroupCommandCon
 		@Valid @RequestBody ChallengeGroupCreateDto request,
 		@AuthenticationPrincipal PrincipalDetails principalDetails
 	) {
+		// todo: 오늘 날짜로 가입하거나 등록한 팀이 있으면 더 생성 불가
+		// todo: 챌린지 참여했는지 확인하는 로직
 		Long leaderId = 1L;
 		Long groupId = challengeGroupService.create(challengeId, leaderId, request);
 
@@ -66,6 +68,8 @@ public class ChallengeGroupCommandController implements ChallengeGroupCommandCon
 		@PathVariable Long groupId,
 		@AuthenticationPrincipal PrincipalDetails principalDetails
 	) {
+		// todo: 오늘 날짜로 가입하거나 등록한 팀이 있으면 가입 불가
+		// todo: 해당 챌린지에 참여했는지 확인
 		Long memberId = 2L;
 		challengeGroupService.join(groupId, memberId);
 		return NoContent.ok(TeamChallengeGroupResponseMessage.GROUP_JOINED);

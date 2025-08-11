@@ -1,6 +1,8 @@
 package com.example.green.domain.challenge.util;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
@@ -24,5 +26,12 @@ public class ClientHelper {
 			.stream()
 			.map(MemberDto::getMemberKey)
 			.toList();
+	}
+
+	public Map<Long, String> requestMemberKeyById(List<Long> memberIds) {
+		return memberClient.getMemberByIds(memberIds)
+			.entrySet()
+			.stream()
+			.collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getMemberKey()));
 	}
 }

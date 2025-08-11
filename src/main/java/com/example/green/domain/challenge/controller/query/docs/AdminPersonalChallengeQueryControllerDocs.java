@@ -4,6 +4,7 @@ import static io.swagger.v3.oas.annotations.enums.ParameterIn.*;
 
 import com.example.green.domain.challenge.controller.query.dto.challenge.AdminChallengeDetailDto;
 import com.example.green.domain.challenge.controller.query.dto.challenge.AdminPersonalChallengesDto;
+import com.example.green.domain.challenge.controller.query.dto.challenge.AdminPersonalParticipationDto;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.page.PageTemplate;
 import com.example.green.global.docs.ApiErrorStandard;
@@ -38,8 +39,7 @@ public interface AdminPersonalChallengeQueryControllerDocs {
 	@ApiResponse(responseCode = "403", description = "관리자 권한이 필요합니다.",
 		content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
 	ApiTemplate<AdminChallengeDetailDto> getPersonalChallengeDetail(
-		@Parameter(name = "challengeId", description = "챌린지 ID", in = PATH, required = true, example = "1")
-		Long challengeId);
+		@Parameter(description = "챌린지 ID", in = PATH, required = true, example = "1") Long challengeId);
 
 	@Operation(
 		summary = "개인 챌린지 목록 엑셀 다운로드 (ad_B01_001), 개인 챌린지 목록",
@@ -48,7 +48,27 @@ public interface AdminPersonalChallengeQueryControllerDocs {
 	@ApiResponse(responseCode = "200")
 	@ApiResponse(responseCode = "403", description = "관리자 권한이 필요합니다.",
 		content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
-	void downloadExcel(HttpServletResponse response);
+	void downloadChallengeExcel(HttpServletResponse response);
 
-	// todo: 참여자 정보, 다운로드
+	@Operation(summary = "개인 챌린지 참여자 목록 조회 (ad_B01_002), 참여자 정보", description = "개인 챌린지 참여자 정보를 조회합니다.")
+	@ApiErrorStandard
+	@ApiResponse(responseCode = "200", description = "챌린지 참여자 목록 조회에 성공했습니다.", useReturnTypeSchema = true)
+	@ApiResponse(responseCode = "403", description = "관리자 권한이 필요합니다.",
+		content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
+	ApiTemplate<PageTemplate<AdminPersonalParticipationDto>> getChallengeParticipant(
+		@Parameter(description = "챌린지 ID", in = PATH, required = true, example = "1") Long challengeId,
+		@Parameter(description = "페이지 수 (생략가능)") Integer page,
+		@Parameter(description = "페이지 사이즈(생략 가능)", example = "10") Integer size
+	);
+
+	@Operation(
+		summary = "개인 챌린지 참여자 목록 엑셀 다운로드 (ad_B01_002), 참여자 정보",
+		description = "개인 챌린지 참여자 정보를 엑셀 파일로 다운로드합니다.")
+	@ApiErrorStandard
+	@ApiResponse(responseCode = "200")
+	@ApiResponse(responseCode = "403", description = "관리자 권한이 필요합니다.",
+		content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
+	void downloadParticipantExcel(
+		@Parameter(description = "챌린지 ID", in = PATH, required = true, example = "1") Long challengeId,
+		HttpServletResponse response);
 }

@@ -9,11 +9,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.green.domain.challenge.controller.message.TeamChallengeGroupResponseMessage;
+import com.example.green.domain.challenge.controller.query.docs.ChallengeGroupQueryControllerDocs;
 import com.example.green.domain.challenge.controller.query.dto.group.ChallengeGroupDetailDto;
 import com.example.green.domain.challenge.controller.query.dto.group.ChallengeGroupDto;
 import com.example.green.domain.challenge.controller.query.dto.group.MyChallengeGroupDto;
-import com.example.green.domain.challenge.controller.message.TeamChallengeGroupResponseMessage;
-import com.example.green.domain.challenge.controller.query.docs.ChallengeGroupQueryControllerDocs;
 import com.example.green.domain.challenge.repository.query.ChallengeGroupQuery;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.page.CursorTemplate;
@@ -47,6 +47,7 @@ public class ChallengeGroupQueryController implements ChallengeGroupQueryControl
 		@PathVariable Long groupId,
 		@AuthenticationPrincipal PrincipalDetails principalDetails
 	) {
+		// todo: 오늘 가입한 팀이 있는지 정보 추가 반환
 		Long memberId = 1L;
 		ChallengeGroupDetailDto result = challengeGroupQuery.getGroupDetail(groupId, memberId);
 		return ApiTemplate.ok(TeamChallengeGroupResponseMessage.GROUP_DETAIL_FOUND, result);

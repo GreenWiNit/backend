@@ -2,13 +2,17 @@ package com.example.green.domain.challenge.infra.querydsl.projections;
 
 import static com.example.green.domain.challenge.entity.challenge.QTeamChallenge.*;
 
+import com.example.green.domain.challenge.controller.query.dto.challenge.AdminTeamChallengesDto;
 import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDetailDto;
 import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDto;
-import com.example.green.domain.challenge.controller.query.dto.challenge.AdminTeamChallengesDto;
 import com.querydsl.core.types.ConstructorExpression;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TeamChallengeProjections {
 
 	public static ConstructorExpression<ChallengeDto> toChallenges() {

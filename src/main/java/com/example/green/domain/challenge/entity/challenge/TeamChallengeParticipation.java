@@ -39,23 +39,15 @@ public class TeamChallengeParticipation extends BaseChallengeParticipation {
 	@JoinColumn(name = "team_challenge_id", nullable = false)
 	private TeamChallenge teamChallenge;
 
-	public static TeamChallengeParticipation create(
-		TeamChallenge challenge,
-		Long memberId,
-		LocalDateTime participatedAt
-	) {
+	public static TeamChallengeParticipation create(TeamChallenge challenge, Long memberId, LocalDateTime now) {
 		validateNullData(challenge, "팀 챌린지는 필수입니다.");
 		validateAutoIncrementId(memberId, "회원 정보는 필수값입니다.");
-		validateNullData(participatedAt, "참여 시각은 필수입니다.");
+		validateNullData(now, "참여 시각은 필수입니다.");
 
-		return new TeamChallengeParticipation(challenge, memberId, participatedAt);
+		return new TeamChallengeParticipation(challenge, memberId, now);
 	}
 
-	private TeamChallengeParticipation(
-		TeamChallenge challenge,
-		Long memberId,
-		LocalDateTime participatedAt
-	) {
+	private TeamChallengeParticipation(TeamChallenge challenge, Long memberId, LocalDateTime participatedAt) {
 		super(memberId, participatedAt);
 		this.teamChallenge = challenge;
 	}

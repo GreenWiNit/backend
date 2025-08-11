@@ -10,14 +10,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.green.domain.challenge.controller.query.dto.challenge.AdminChallengeParticipantListResponseDto;
-import com.example.green.domain.challenge.controller.query.dto.challenge.AdminTeamChallengesDto;
 import com.example.green.domain.challenge.controller.message.AdminChallengeResponseMessage;
 import com.example.green.domain.challenge.controller.query.docs.AdminTeamChallengeQueryControllerDocs;
 import com.example.green.domain.challenge.controller.query.dto.challenge.AdminChallengeDetailDto;
+import com.example.green.domain.challenge.controller.query.dto.challenge.AdminTeamChallengesDto;
 import com.example.green.domain.challenge.repository.query.TeamChallengeQuery;
 import com.example.green.global.api.ApiTemplate;
-import com.example.green.global.api.page.CursorTemplate;
 import com.example.green.global.api.page.PageTemplate;
 import com.example.green.global.excel.core.ExcelDownloader;
 
@@ -51,13 +49,5 @@ public class AdminTeamChallengeQueryController implements AdminTeamChallengeQuer
 	public ApiTemplate<AdminChallengeDetailDto> getTeamChallengeDetail(@PathVariable Long challengeId) {
 		AdminChallengeDetailDto result = teamChallengeQuery.getChallengeDetail(challengeId);
 		return ApiTemplate.ok(AdminChallengeResponseMessage.CHALLENGE_DETAIL_FOUND, result);
-	}
-
-	@GetMapping("/{challengeId}/participants")
-	public ApiTemplate<CursorTemplate<Long, AdminChallengeParticipantListResponseDto>> getChallengeParticipants(
-		@PathVariable Long challengeId,
-		@RequestParam(required = false) Long cursor) {
-		// todo: 해야 댐
-		return ApiTemplate.ok(AdminChallengeResponseMessage.CHALLENGE_PARTICIPANTS_FOUND, null);
 	}
 }

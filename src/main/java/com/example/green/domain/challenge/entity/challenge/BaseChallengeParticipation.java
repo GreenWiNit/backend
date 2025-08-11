@@ -15,16 +15,20 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class BaseChallengeParticipation extends BaseEntity {
 
+	@Column(nullable = false)
 	private Long memberId;
+
+	@Column(nullable = false)
+	private Integer certCount;
 
 	@Column(nullable = false)
 	private LocalDateTime participatedAt;
 
-	// 하위 클래스를 위한 protected 생성자
 	protected BaseChallengeParticipation(
 		Long memberId,
 		LocalDateTime participatedAt
 	) {
+		this.certCount = 0;
 		this.memberId = memberId;
 		this.participatedAt = participatedAt;
 	}
