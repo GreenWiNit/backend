@@ -1,7 +1,6 @@
 package com.example.green.domain.challenge.controller.query;
 
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,9 +15,12 @@ import com.example.green.domain.challenge.controller.query.dto.challenge.AdminTe
 import com.example.green.domain.challenge.controller.query.dto.group.AdminChallengeGroupDto;
 import com.example.green.domain.challenge.repository.query.ChallengeGroupQuery;
 import com.example.green.domain.challenge.util.ClientHelper;
+import com.example.green.domain.challenge.util.MemberKeyConverter;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.page.PageTemplate;
+import com.example.green.global.excel.core.ExcelDownloader;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -27,7 +29,9 @@ import lombok.RequiredArgsConstructor;
 public class AdminChallengeGroupQueryController implements AdminChallengeGroupQueryControllerDocs {
 
 	private final ClientHelper clientHelper;
+	private final MemberKeyConverter converter;
 	private final ChallengeGroupQuery challengeGroupQuery;
+	private final ExcelDownloader excelDownloader;
 
 	@GetMapping("/groups")
 	public ApiTemplate<PageTemplate<AdminChallengeGroupDto>> getGroups(
@@ -55,11 +59,14 @@ public class AdminChallengeGroupQueryController implements AdminChallengeGroupQu
 	) {
 		PageTemplate<AdminTeamParticipantDto> result =
 			challengeGroupQuery.findParticipantByChallenge(challengeId, page, size);
-		
-		List<Long> participantIds = result.content().stream().map(AdminTeamParticipantDto::getMemberId).toList();
-		Map<Long, String> memberKeyById = clientHelper.requestMemberKeyById(participantIds);
-		result.content().forEach(dto -> dto.setMemberKey(memberKeyById.get(dto.getMemberId())));
-
+		converter.convertPage(result);
 		return ApiTemplate.ok(AdminChallengeResponseMessage.CHALLENGE_PARTICIPANTS_FOUND, result);
+	}
+
+	@GetMapping("/{challengeId}/groups/participants/excel")
+	public void downloadChallengeParticipant(@PathVariable Long challengeId, HttpServletResponse response) {
+		List<AdminTeamParticipantDto> result = challengeGroupQuery.findParticipantByChallengeForExcel(challengeId);
+		converter.convert(result);
+		excelDownloader.downloadAsStream(result, response);
 	}
 }

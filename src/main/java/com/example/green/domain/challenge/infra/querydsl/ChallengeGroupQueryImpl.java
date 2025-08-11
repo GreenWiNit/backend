@@ -173,6 +173,25 @@ public class ChallengeGroupQueryImpl implements ChallengeGroupQuery {
 		return PageTemplate.of(result, pagination);
 	}
 
+	@Override
+	public List<AdminTeamParticipantDto> findParticipantByChallengeForExcel(Long challengeId) {
+		return queryFactory
+			.select(Projections.constructor(
+				AdminTeamParticipantDto.class,
+				challengeGroup.teamCode,
+				challengeGroupParticipation.memberId,
+				teamChallengeParticipation.participatedAt,
+				challengeGroupParticipation.createdDate
+			))
+			.from(challengeGroup)
+			.join(challengeGroup.participants, challengeGroupParticipation)
+			.join(teamChallengeParticipation).on(teamChallengeParticipation.teamChallenge.id.eq(challengeId)
+				.and(teamChallengeParticipation.memberId.eq(challengeGroupParticipation.memberId)))
+			.where(challengeGroup.teamChallengeId.eq(challengeId))
+			.orderBy(challengeGroupParticipation.createdDate.desc())
+			.fetch();
+	}
+
 	public long executeParticipationDetailCountQuery(Long challengeId) {
 		return Optional.ofNullable(queryFactory
 				.select(challengeGroupParticipation.count())

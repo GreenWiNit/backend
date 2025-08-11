@@ -1,5 +1,7 @@
 package com.example.green.domain.challenge.repository.query;
 
+import java.util.List;
+
 import com.example.green.domain.challenge.controller.query.dto.challenge.AdminChallengeGroupDetailDto;
 import com.example.green.domain.challenge.controller.query.dto.challenge.AdminTeamParticipantDto;
 import com.example.green.domain.challenge.controller.query.dto.group.AdminChallengeGroupDto;
@@ -29,4 +31,6 @@ public interface ChallengeGroupQuery {
 	AdminChallengeGroupDetailDto getGroupDetailForAdmin(Long groupId);
 
 	PageTemplate<AdminTeamParticipantDto> findParticipantByChallenge(Long challengeId, Integer page, Integer size);
+
+	List<AdminTeamParticipantDto> findParticipantByChallengeForExcel(Long challengeId);
 }

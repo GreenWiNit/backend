@@ -3,7 +3,6 @@ package com.example.green.domain.challenge.controller.query;
 import static com.example.green.domain.challenge.controller.message.AdminChallengeResponseMessage.*;
 
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,7 +16,7 @@ import com.example.green.domain.challenge.controller.query.dto.challenge.AdminCh
 import com.example.green.domain.challenge.controller.query.dto.challenge.AdminPersonalChallengesDto;
 import com.example.green.domain.challenge.controller.query.dto.challenge.AdminPersonalParticipationDto;
 import com.example.green.domain.challenge.repository.query.PersonalChallengeQuery;
-import com.example.green.domain.challenge.util.ClientHelper;
+import com.example.green.domain.challenge.util.MemberKeyConverter;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.page.PageTemplate;
 import com.example.green.global.excel.core.ExcelDownloader;
@@ -32,7 +31,7 @@ public class AdminPersonalChallengeQueryController implements AdminPersonalChall
 
 	private final PersonalChallengeQuery personalChallengeQuery;
 	private final ExcelDownloader excelDownloader;
-	private final ClientHelper clientHelper;
+	private final MemberKeyConverter converter;
 
 	@GetMapping
 	public ApiTemplate<PageTemplate<AdminPersonalChallengesDto>> getPersonalChallenges(
@@ -63,11 +62,7 @@ public class AdminPersonalChallengeQueryController implements AdminPersonalChall
 	) {
 		PageTemplate<AdminPersonalParticipationDto> result =
 			personalChallengeQuery.findParticipantByChallenge(challengeId, page, size);
-
-		List<Long> participantIds = result.content().stream().map(AdminPersonalParticipationDto::getMemberId).toList();
-		Map<Long, String> memberKeyById = clientHelper.requestMemberKeyById(participantIds);
-		result.content().forEach(dto -> dto.setMemberKey(memberKeyById.get(dto.getMemberId())));
-
+		converter.convertPage(result);
 		return ApiTemplate.ok(CHALLENGE_PARTICIPANTS_FOUND, result);
 	}
 
@@ -76,10 +71,7 @@ public class AdminPersonalChallengeQueryController implements AdminPersonalChall
 		List<AdminPersonalParticipationDto> result =
 			personalChallengeQuery.findParticipantByChallengeForExcel(challengeId);
 
-		List<Long> participantIds = result.stream().map(AdminPersonalParticipationDto::getMemberId).toList();
-		Map<Long, String> memberKeyById = clientHelper.requestMemberKeyById(participantIds);
-		result.forEach(dto -> dto.setMemberKey(memberKeyById.get(dto.getMemberId())));
-
+		converter.convert(result);
 		excelDownloader.downloadAsStream(result, response);
 	}
 }

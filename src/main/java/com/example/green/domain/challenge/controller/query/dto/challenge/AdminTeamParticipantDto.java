@@ -3,6 +3,7 @@ package com.example.green.domain.challenge.controller.query.dto.challenge;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import com.example.green.domain.challenge.controller.query.dto.MemberKeySettable;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -12,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Schema(description = "어드민 챌린지 참가자 목록 응답")
 @Data
 @NoArgsConstructor
-public class AdminTeamParticipantDto {
+public class AdminTeamParticipantDto implements MemberKeySettable {
 	@Schema(description = "그룹(팀) 코드", example = "T-20250109-143523-C8NQ")
 	private String groupCode;
 
