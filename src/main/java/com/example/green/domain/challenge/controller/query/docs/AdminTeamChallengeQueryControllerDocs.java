@@ -2,9 +2,9 @@ package com.example.green.domain.challenge.controller.query.docs;
 
 import static io.swagger.v3.oas.annotations.enums.ParameterIn.*;
 
-import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeDetailDto;
-import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeParticipantListResponseDto;
-import com.example.green.domain.challenge.controller.dto.admin.AdminTeamChallengesDto;
+import com.example.green.domain.challenge.controller.query.dto.challenge.AdminChallengeDetailDto;
+import com.example.green.domain.challenge.controller.query.dto.challenge.AdminChallengeParticipantListResponseDto;
+import com.example.green.domain.challenge.controller.query.dto.challenge.AdminTeamChallengesDto;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.page.CursorTemplate;
 import com.example.green.global.api.page.PageTemplate;

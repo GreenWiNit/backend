@@ -2,8 +2,8 @@ package com.example.green.domain.challenge.controller.command.docs;
 
 import static io.swagger.v3.oas.annotations.enums.ParameterIn.*;
 
-import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeCreateDto;
-import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeUpdateDto;
+import com.example.green.domain.challenge.controller.command.dto.AdminChallengeCreateDto;
+import com.example.green.domain.challenge.controller.command.dto.AdminChallengeUpdateDto;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.NoContent;
 import com.example.green.global.docs.ApiErrorStandard;

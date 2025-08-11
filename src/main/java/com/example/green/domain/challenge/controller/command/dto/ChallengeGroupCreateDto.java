@@ -1,7 +1,8 @@
-package com.example.green.domain.challenge.controller.dto;
+package com.example.green.domain.challenge.controller.command.dto;
 
 import java.time.LocalDateTime;
 
+import com.example.green.domain.challenge.entity.group.ChallengeGroup;
 import com.example.green.domain.challenge.entity.group.GroupAddress;
 import com.example.green.domain.challenge.entity.group.GroupBasicInfo;
 import com.example.green.domain.challenge.entity.group.GroupPeriod;
@@ -12,8 +13,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
-@Schema(description = "팀 챌린지 그룹 수정 요청")
-public record TeamChallengeGroupUpdateRequestDto(
+@Schema(description = "팀 챌린지 그룹 생성 요청")
+public record ChallengeGroupCreateDto(
 	@Schema(description = "그룹명", example = "강남구 러닝 그룹", requiredMode = Schema.RequiredMode.REQUIRED)
 	@NotBlank(message = "그룹명은 필수값입니다.")
 	@Size(max = 100, message = "그룹명은 100자 이하여야 합니다.")
@@ -23,9 +24,10 @@ public record TeamChallengeGroupUpdateRequestDto(
 	@NotBlank(message = "도로명 주소는 필수값입니다.")
 	String roadAddress,
 
-	@Schema(description = "상세 주소", example = "삼성동 빌딩 3층")
+	@Schema(description = "상세 주소", example = "삼성동 빌딩 1층")
 	String detailAddress,
-	@Schema(description = "시군구 정보", example = "강남구")
+
+	@Schema(description = "시군구", example = "강남구")
 	String sigungu,
 
 	@Schema(description = "그룹 설명", example = "매주 화, 목 저녁 7시에 모여서 5km 러닝합니다.")
@@ -49,15 +51,10 @@ public record TeamChallengeGroupUpdateRequestDto(
 	Integer maxParticipants
 ) {
 
-	public GroupBasicInfo toBasicinfo() {
-		return GroupBasicInfo.of(groupName, description, openChatUrl);
-	}
-
-	public GroupPeriod toPeriod() {
-		return GroupPeriod.of(beginDateTime, endDateTime);
-	}
-
-	public GroupAddress toAddress() {
-		return GroupAddress.of(roadAddress, detailAddress, sigungu);
+	public ChallengeGroup toEntity(String teamCode, Long challengeId, Long leaderId) {
+		GroupBasicInfo basicInfo = GroupBasicInfo.of(groupName, description, openChatUrl);
+		GroupAddress address = GroupAddress.of(roadAddress, detailAddress, sigungu);
+		GroupPeriod period = GroupPeriod.of(beginDateTime, endDateTime);
+		return ChallengeGroup.create(teamCode, challengeId, leaderId, basicInfo, address, maxParticipants, period);
 	}
 }

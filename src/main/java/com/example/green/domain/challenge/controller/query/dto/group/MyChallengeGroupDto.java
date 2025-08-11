@@ -1,4 +1,4 @@
-package com.example.green.domain.challenge.controller.dto;
+package com.example.green.domain.challenge.controller.query.dto.group;
 
 import java.time.LocalDateTime;
 
@@ -8,7 +8,7 @@ import com.example.green.domain.challenge.entity.group.GroupPeriod;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "팀 챌린지 그룹 목록 응답")
-public record ChallengeGroupDto(
+public record MyChallengeGroupDto(
 	@Schema(description = "그룹 ID", example = "1")
 	Long id,
 	@Schema(description = "그룹명", example = "강남구 러닝 그룹")
@@ -23,17 +23,19 @@ public record ChallengeGroupDto(
 	Integer currentParticipants,
 	@Schema(description = "최대 참가자 수", example = "10")
 	Integer maxParticipants,
+	@Schema(description = "리더 여부", example = "true")
+	boolean leaderMe,
 	@Schema(description = "페이징 용, 무시 가능")
 	LocalDateTime createdDate
 ) {
 
-	public ChallengeGroupDto(
+	public MyChallengeGroupDto(
 		Long id, String groupName, String sigungu, GroupPeriod period,
-		GroupCapacity capacity, LocalDateTime createdDate
+		GroupCapacity capacity, Boolean isLeader, LocalDateTime createdDate
 	) {
 		this(
 			id, groupName, sigungu, period.getBeginDateTime(), period.getEndDateTime(),
-			capacity.getCurrentParticipants(), capacity.getMaxParticipants(), createdDate
+			capacity.getCurrentParticipants(), capacity.getMaxParticipants(), isLeader, createdDate
 		);
 	}
 }

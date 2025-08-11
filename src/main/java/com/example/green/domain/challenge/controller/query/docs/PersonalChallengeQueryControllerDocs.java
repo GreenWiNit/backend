@@ -1,7 +1,7 @@
 package com.example.green.domain.challenge.controller.query.docs;
 
-import com.example.green.domain.challenge.controller.dto.ChallengeDetailDto;
-import com.example.green.domain.challenge.controller.dto.ChallengeListResponseDto;
+import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDetailDto;
+import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDto;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.page.CursorTemplate;
 import com.example.green.global.docs.ApiErrorStandard;
@@ -29,7 +29,7 @@ public interface PersonalChallengeQueryControllerDocs {
 	)
 	@ApiErrorStandard
 	@ApiResponse(responseCode = "200", description = "개인 챌린지 목록 조회 성공", useReturnTypeSchema = true)
-	ApiTemplate<CursorTemplate<Long, ChallengeListResponseDto>> getPersonalChallenges(
+	ApiTemplate<CursorTemplate<Long, ChallengeDto>> getPersonalChallenges(
 		@Parameter(description = "다음 페이지 조회를 위한 마지막 챌린지 ID (선택, 첫 페이지 조회 시 생략)", example = "1") Long cursor,
 		@Parameter(description = "페이지 사이즈(생략 가능)", example = "20") Integer pageSize
 	);
@@ -66,7 +66,7 @@ public interface PersonalChallengeQueryControllerDocs {
 	)
 	@ApiErrorStandard
 	@ApiResponse(responseCode = "200", description = "내 개인 챌린지 목록 조회 성공", useReturnTypeSchema = true)
-	ApiTemplate<CursorTemplate<Long, ChallengeListResponseDto>> getMyPersonalChallenges(
+	ApiTemplate<CursorTemplate<Long, ChallengeDto>> getMyPersonalChallenges(
 		@Parameter(description = "다음 페이지 조회를 위한 마지막 챌린지 ID (선택, 첫 페이지 조회 시 생략)", example = "1") Long cursor,
 		@Parameter(hidden = true) PrincipalDetails currentUser,
 		@Parameter(description = "페이지 사이즈(생략 가능)", example = "20") Integer pageSize

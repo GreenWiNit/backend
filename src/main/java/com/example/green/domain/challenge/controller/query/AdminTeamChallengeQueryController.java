@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeDetailDto;
-import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeParticipantListResponseDto;
-import com.example.green.domain.challenge.controller.dto.admin.AdminTeamChallengesDto;
+import com.example.green.domain.challenge.controller.query.dto.challenge.AdminChallengeParticipantListResponseDto;
+import com.example.green.domain.challenge.controller.query.dto.challenge.AdminTeamChallengesDto;
 import com.example.green.domain.challenge.controller.message.AdminChallengeResponseMessage;
 import com.example.green.domain.challenge.controller.query.docs.AdminTeamChallengeQueryControllerDocs;
+import com.example.green.domain.challenge.controller.query.dto.challenge.AdminChallengeDetailDto;
 import com.example.green.domain.challenge.repository.query.TeamChallengeQuery;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.page.CursorTemplate;

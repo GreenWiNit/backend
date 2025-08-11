@@ -1,4 +1,4 @@
-package com.example.green.domain.challenge.controller.dto.admin;
+package com.example.green.domain.challenge.controller.query.dto.challenge;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -24,7 +24,7 @@ public class AdminChallengeGroupDetailDto {
 	private Long groupId;
 
 	@Schema(description = "그룹(팀) 코드", example = "T-20250109-001")
-	private String teamCode;
+	private String groupCode;
 
 	@Schema(description = "그룹(팀) 리더 MemberKey", example = "google_4534")
 	private String leaderMemberKey;
@@ -61,7 +61,7 @@ public class AdminChallengeGroupDetailDto {
 	public static AdminChallengeGroupDetailDto from(ChallengeGroup challengeGroup) {
 		return AdminChallengeGroupDetailDto.builder()
 			.groupId(challengeGroup.getId())
-			.teamCode(challengeGroup.getTeamCode())
+			.groupCode(challengeGroup.getTeamCode())
 			.groupName(challengeGroup.getBasicInfo().getGroupName())
 			.date(challengeGroup.getPeriod().getDate())
 			.startTime(challengeGroup.getPeriod().getStartTime())

@@ -3,8 +3,8 @@ package com.example.green.domain.challenge.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeCreateDto;
-import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeUpdateDto;
+import com.example.green.domain.challenge.controller.command.dto.AdminChallengeCreateDto;
+import com.example.green.domain.challenge.controller.command.dto.AdminChallengeUpdateDto;
 import com.example.green.domain.challenge.entity.challenge.PersonalChallenge;
 import com.example.green.domain.challenge.repository.PersonalChallengeRepository;
 import com.example.green.domain.challenge.repository.query.PersonalChallengeQuery;

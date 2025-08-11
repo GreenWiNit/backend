@@ -9,11 +9,11 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.green.domain.challenge.controller.dto.ChallengeGroupDetailDto;
-import com.example.green.domain.challenge.controller.dto.ChallengeGroupDto;
-import com.example.green.domain.challenge.controller.dto.MyChallengeGroupDto;
-import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeGroupDetailDto;
-import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeGroupDto;
+import com.example.green.domain.challenge.controller.query.dto.group.ChallengeGroupDetailDto;
+import com.example.green.domain.challenge.controller.query.dto.group.ChallengeGroupDto;
+import com.example.green.domain.challenge.controller.query.dto.group.MyChallengeGroupDto;
+import com.example.green.domain.challenge.controller.query.dto.challenge.AdminChallengeGroupDetailDto;
+import com.example.green.domain.challenge.controller.query.dto.group.AdminChallengeGroupDto;
 import com.example.green.domain.challenge.entity.group.ChallengeGroup;
 import com.example.green.domain.challenge.exception.ChallengeException;
 import com.example.green.domain.challenge.exception.ChallengeExceptionMessage;

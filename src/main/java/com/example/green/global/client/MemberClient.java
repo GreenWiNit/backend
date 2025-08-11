@@ -2,9 +2,11 @@ package com.example.green.global.client;
 
 import java.util.List;
 
+import com.example.green.global.client.dto.MemberDto;
+
 public interface MemberClient {
 
-	String getMemberKey(Long memberId);
+	MemberDto getMember(Long memberId);
 
-	List<String> getMemberKeys(List<Long> memberIds);
+	List<MemberDto> getMembers(List<Long> memberIds);
 }

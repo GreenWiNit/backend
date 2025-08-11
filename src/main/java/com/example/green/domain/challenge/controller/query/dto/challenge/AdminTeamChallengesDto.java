@@ -1,4 +1,4 @@
-package com.example.green.domain.challenge.controller.dto.admin;
+package com.example.green.domain.challenge.controller.query.dto.challenge;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

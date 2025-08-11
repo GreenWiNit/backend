@@ -1,4 +1,4 @@
-package com.example.green.domain.challenge.controller.dto.admin;
+package com.example.green.domain.challenge.controller.command.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -9,8 +9,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-@Schema(description = "어드민 챌린지 수정 요청")
-public record AdminChallengeUpdateDto(
+@Schema(description = "어드민 챌린지 생성 요청")
+public record AdminChallengeCreateDto(
 	@Schema(description = "챌린지명", example = "30일 운동 챌린지", requiredMode = Schema.RequiredMode.REQUIRED)
 	@NotBlank(message = "챌린지명은 필수값입니다.")
 	@Size(max = 90, message = "챌린지명은 90자 이하여야 합니다.")
@@ -32,8 +32,7 @@ public record AdminChallengeUpdateDto(
 	@Schema(description = "챌린지 설명 및 참여방법", example = "매일 30분 이상 운동하기")
 	String challengeContent,
 
-	@Schema(description = "챌린지 이미지 URL", example = "https://example.com/challenge-image.jpg")
-	@NotBlank(message = "챌린지 이미지 URL은 필수값입니다.")
+	@Schema(description = "챌린지 이미지 URL", example = "https://example.com/challenge.jpg")
 	String challengeImageUrl
 ) {
 }

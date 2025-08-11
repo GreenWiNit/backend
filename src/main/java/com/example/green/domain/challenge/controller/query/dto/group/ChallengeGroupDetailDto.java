@@ -1,4 +1,4 @@
-package com.example.green.domain.challenge.controller.dto;
+package com.example.green.domain.challenge.controller.query.dto.group;
 
 import java.time.LocalDateTime;
 

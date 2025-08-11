@@ -10,10 +10,10 @@ import java.util.List;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.green.domain.challenge.controller.dto.ChallengeDetailDto;
-import com.example.green.domain.challenge.controller.dto.ChallengeListResponseDto;
-import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeDetailDto;
-import com.example.green.domain.challenge.controller.dto.admin.AdminTeamChallengesDto;
+import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDetailDto;
+import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDto;
+import com.example.green.domain.challenge.controller.query.dto.challenge.AdminChallengeDetailDto;
+import com.example.green.domain.challenge.controller.query.dto.challenge.AdminTeamChallengesDto;
 import com.example.green.domain.challenge.entity.challenge.TeamChallenge;
 import com.example.green.domain.challenge.entity.challenge.vo.ChallengeStatus;
 import com.example.green.domain.challenge.exception.ChallengeException;
@@ -37,12 +37,12 @@ public class TeamChallengeQueryImpl implements TeamChallengeQuery {
 	private final JPAQueryFactory queryFactory;
 	private final TeamChallengeRepository teamChallengeRepository;
 
-	public CursorTemplate<Long, ChallengeListResponseDto> findMyParticipationByCursor(
+	public CursorTemplate<Long, ChallengeDto> findMyParticipationByCursor(
 		Long memberId,
 		Long cursor,
 		int size
 	) {
-		List<ChallengeListResponseDto> participation = queryFactory
+		List<ChallengeDto> participation = queryFactory
 			.select(TeamChallengeProjections.toChallenges())
 			.from(teamChallenge)
 			.join(teamChallenge.participations, teamChallengeParticipation)
@@ -54,16 +54,16 @@ public class TeamChallengeQueryImpl implements TeamChallengeQuery {
 			.limit(size + 1)
 			.fetch();
 
-		return CursorTemplate.from(participation, size, ChallengeListResponseDto::id);
+		return CursorTemplate.from(participation, size, ChallengeDto::id);
 	}
 
-	public CursorTemplate<Long, ChallengeListResponseDto> findTeamChallengesByCursor(
+	public CursorTemplate<Long, ChallengeDto> findTeamChallengesByCursor(
 		Long cursor,
 		int size,
 		ChallengeStatus status,
 		LocalDateTime now
 	) {
-		List<ChallengeListResponseDto> participation = queryFactory
+		List<ChallengeDto> participation = queryFactory
 			.select(TeamChallengeProjections.toChallenges())
 			.from(teamChallenge)
 			.where(
@@ -76,7 +76,7 @@ public class TeamChallengeQueryImpl implements TeamChallengeQuery {
 			.limit(size + 1)
 			.fetch();
 
-		return CursorTemplate.from(participation, size, ChallengeListResponseDto::id);
+		return CursorTemplate.from(participation, size, ChallengeDto::id);
 	}
 
 	public ChallengeDetailDto findTeamChallenge(Long challengeId, Long memberId) {

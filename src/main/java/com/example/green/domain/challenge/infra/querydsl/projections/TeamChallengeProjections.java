@@ -2,18 +2,18 @@ package com.example.green.domain.challenge.infra.querydsl.projections;
 
 import static com.example.green.domain.challenge.entity.challenge.QTeamChallenge.*;
 
-import com.example.green.domain.challenge.controller.dto.ChallengeDetailDto;
-import com.example.green.domain.challenge.controller.dto.ChallengeListResponseDto;
-import com.example.green.domain.challenge.controller.dto.admin.AdminTeamChallengesDto;
+import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDetailDto;
+import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDto;
+import com.example.green.domain.challenge.controller.query.dto.challenge.AdminTeamChallengesDto;
 import com.querydsl.core.types.ConstructorExpression;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 
 public class TeamChallengeProjections {
 
-	public static ConstructorExpression<ChallengeListResponseDto> toChallenges() {
+	public static ConstructorExpression<ChallengeDto> toChallenges() {
 		return Projections.constructor(
-			ChallengeListResponseDto.class,
+			ChallengeDto.class,
 			teamChallenge.id,
 			teamChallenge.challengeName,
 			teamChallenge.beginDateTime,

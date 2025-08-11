@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
-import com.example.green.domain.member.entity.Member;
 import com.example.green.domain.member.repository.MemberQueryRepository;
 import com.example.green.global.client.MemberClient;
+import com.example.green.global.client.dto.MemberDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -16,15 +16,14 @@ public class MemberAdapter implements MemberClient {
 
 	private final MemberQueryRepository memberQuery;
 
-	public String getMemberKey(Long memberId) {
-		Member member = memberQuery.getMember(memberId);
-		return member.getMemberKey();
+	public MemberDto getMember(Long memberId) {
+		return MemberDto.from(memberQuery.getMember(memberId));
 	}
 
-	public List<String> getMemberKeys(List<Long> memberIds) {
+	public List<MemberDto> getMembers(List<Long> memberIds) {
 		return memberQuery.getMembers(memberIds)
 			.stream()
-			.map(Member::getMemberKey)
+			.map(MemberDto::from)
 			.toList();
 	}
 }

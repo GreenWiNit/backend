@@ -4,8 +4,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import com.example.green.domain.challenge.controller.dto.ChallengeGroupCreateDto;
-import com.example.green.domain.challenge.controller.dto.TeamChallengeGroupUpdateRequestDto;
+import com.example.green.domain.challenge.controller.command.dto.ChallengeGroupCreateDto;
+import com.example.green.domain.challenge.controller.command.dto.ChallengeGroupUpdateDto;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.NoContent;
 import com.example.green.global.docs.ApiError400;
@@ -64,7 +64,7 @@ public interface ChallengeGroupCommandControllerDocs {
 		@Parameter(description = "그룹 ID", required = true, example = "1")
 		@PathVariable Long groupId,
 		@Parameter(description = "그룹 수정 요청 정보", required = true)
-		@Valid @RequestBody TeamChallengeGroupUpdateRequestDto request,
+		@Valid @RequestBody ChallengeGroupUpdateDto request,
 		@Parameter(hidden = true) @AuthenticationPrincipal PrincipalDetails principalDetails
 	);
 

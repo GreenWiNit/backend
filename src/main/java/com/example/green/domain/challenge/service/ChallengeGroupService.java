@@ -5,8 +5,8 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.green.domain.challenge.controller.dto.ChallengeGroupCreateDto;
-import com.example.green.domain.challenge.controller.dto.TeamChallengeGroupUpdateRequestDto;
+import com.example.green.domain.challenge.controller.command.dto.ChallengeGroupCreateDto;
+import com.example.green.domain.challenge.controller.command.dto.ChallengeGroupUpdateDto;
 import com.example.green.domain.challenge.entity.group.ChallengeGroup;
 import com.example.green.domain.challenge.exception.ChallengeException;
 import com.example.green.domain.challenge.exception.ChallengeExceptionMessage;
@@ -38,12 +38,12 @@ public class ChallengeGroupService {
 		return savedChallengeGroup.getId();
 	}
 
-	public void update(Long groupId, Long leaderId, TeamChallengeGroupUpdateRequestDto request) {
+	public void update(Long groupId, Long leaderId, ChallengeGroupUpdateDto request) {
 		ChallengeGroup group = challengeGroupQuery.getChallengeGroup(groupId);
 		if (!group.isLeader(leaderId)) {
 			throw new ChallengeException(ChallengeExceptionMessage.NOT_GROUP_LEADER);
 		}
-		group.updateBasicInfo(request.toBasicinfo());
+		group.updateBasicInfo(request.toBasicInfo());
 		group.updateAddress(request.toAddress());
 		group.updatePeriod(request.toPeriod());
 		group.updateCapacity(request.maxParticipants());

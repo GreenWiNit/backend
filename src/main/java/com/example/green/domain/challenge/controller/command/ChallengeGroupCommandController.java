@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.green.domain.challenge.controller.command.docs.ChallengeGroupCommandControllerDocs;
-import com.example.green.domain.challenge.controller.dto.ChallengeGroupCreateDto;
-import com.example.green.domain.challenge.controller.dto.TeamChallengeGroupUpdateRequestDto;
+import com.example.green.domain.challenge.controller.command.dto.ChallengeGroupCreateDto;
+import com.example.green.domain.challenge.controller.command.dto.ChallengeGroupUpdateDto;
 import com.example.green.domain.challenge.controller.message.TeamChallengeGroupResponseMessage;
 import com.example.green.domain.challenge.service.ChallengeGroupService;
 import com.example.green.global.api.ApiTemplate;
@@ -43,7 +43,7 @@ public class ChallengeGroupCommandController implements ChallengeGroupCommandCon
 	@PutMapping("/groups/{groupId}")
 	public NoContent updateTeamChallengeGroup(
 		@PathVariable Long groupId,
-		@Valid @RequestBody TeamChallengeGroupUpdateRequestDto request,
+		@Valid @RequestBody ChallengeGroupUpdateDto request,
 		@AuthenticationPrincipal PrincipalDetails principalDetails
 	) {
 		Long leaderId = 1L;

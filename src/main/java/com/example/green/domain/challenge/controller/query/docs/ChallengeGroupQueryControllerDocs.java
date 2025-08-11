@@ -5,9 +5,9 @@ import static io.swagger.v3.oas.annotations.enums.ParameterIn.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PathVariable;
 
-import com.example.green.domain.challenge.controller.dto.ChallengeGroupDetailDto;
-import com.example.green.domain.challenge.controller.dto.ChallengeGroupDto;
-import com.example.green.domain.challenge.controller.dto.MyChallengeGroupDto;
+import com.example.green.domain.challenge.controller.query.dto.group.ChallengeGroupDetailDto;
+import com.example.green.domain.challenge.controller.query.dto.group.ChallengeGroupDto;
+import com.example.green.domain.challenge.controller.query.dto.group.MyChallengeGroupDto;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.page.CursorTemplate;
 import com.example.green.global.docs.ApiErrorStandard;
