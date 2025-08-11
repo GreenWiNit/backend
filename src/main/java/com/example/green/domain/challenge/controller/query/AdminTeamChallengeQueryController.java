@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeDetailDto;
 import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeParticipantListResponseDto;
-import com.example.green.domain.challenge.controller.dto.admin.AdminTeamChallengeGroupDetailResponseDto;
 import com.example.green.domain.challenge.controller.dto.admin.AdminTeamChallengesDto;
 import com.example.green.domain.challenge.controller.message.AdminChallengeResponseMessage;
 import com.example.green.domain.challenge.controller.query.docs.AdminTeamChallengeQueryControllerDocs;
@@ -60,11 +59,5 @@ public class AdminTeamChallengeQueryController implements AdminTeamChallengeQuer
 		@RequestParam(required = false) Long cursor) {
 		// todo: 해야 댐
 		return ApiTemplate.ok(AdminChallengeResponseMessage.CHALLENGE_PARTICIPANTS_FOUND, null);
-	}
-
-	@GetMapping("/groups/{groupId}")
-	public ApiTemplate<AdminTeamChallengeGroupDetailResponseDto> getGroupDetail(@PathVariable Long groupId) {
-		//AdminTeamChallengeGroupDetailResponseDto result = adminChallengeService.getGroupDetail(groupId);
-		return ApiTemplate.ok(AdminChallengeResponseMessage.GROUP_DETAIL_FOUND, null);
 	}
 }

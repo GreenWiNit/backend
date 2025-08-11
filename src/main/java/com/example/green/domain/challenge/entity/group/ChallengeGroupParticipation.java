@@ -73,4 +73,8 @@ public class ChallengeGroupParticipation extends BaseEntity {
 	public boolean matches(Long memberId) {
 		return this.memberId.equals(memberId);
 	}
+
+	public boolean isLeader() {
+		return this.role == GroupRole.LEADER;
+	}
 }

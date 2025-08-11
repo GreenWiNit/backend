@@ -2,8 +2,8 @@ package com.example.green.domain.challenge.controller.query.docs;
 
 import static io.swagger.v3.oas.annotations.enums.ParameterIn.*;
 
+import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeGroupDetailDto;
 import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeGroupDto;
-import com.example.green.domain.challenge.controller.dto.admin.AdminTeamChallengeGroupDetailResponseDto;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.page.PageTemplate;
 import com.example.green.global.docs.ApiErrorStandard;
@@ -29,13 +29,12 @@ public interface AdminChallengeGroupQueryControllerDocs {
 		@Parameter(description = "페이지 사이즈(생략 가능)", example = "10") Integer size
 	);
 
-	@Operation(summary = "그룹 상세 조회", description = "챌린지 그룹 상세 정보를 조회합니다.")
+	@Operation(summary = "그룹 상세 조회 (ad_B01-007, 팀 상세 정보", description = "챌린지 그룹 상세 정보를 조회합니다.")
 	@ApiErrorStandard
 	@ApiResponse(responseCode = "200", description = "그룹 상세 조회 성공", useReturnTypeSchema = true)
 	@ApiResponse(responseCode = "403", description = "관리자 권한이 필요합니다.",
 		content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
-	ApiTemplate<AdminTeamChallengeGroupDetailResponseDto> getGroupDetail(
-		@Parameter(name = "groupId", description = "그룹 ID",
-			in = PATH, required = true, example = "1") Long groupId
+	ApiTemplate<AdminChallengeGroupDetailDto> getGroupDetail(
+		@Parameter(description = "그룹 ID", in = PATH, required = true, example = "1") Long groupId
 	);
 }

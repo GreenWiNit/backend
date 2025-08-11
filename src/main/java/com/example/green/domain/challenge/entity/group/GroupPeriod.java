@@ -1,6 +1,8 @@
 package com.example.green.domain.challenge.entity.group;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 import com.example.green.domain.challenge.exception.ChallengeException;
 import com.example.green.domain.challenge.exception.ChallengeExceptionMessage;
@@ -38,5 +40,17 @@ public class GroupPeriod {
 
 	public boolean canParticipate(LocalDateTime now) {
 		return now.isBefore(endDateTime);
+	}
+
+	public LocalDate getDate() {
+		return beginDateTime.toLocalDate();
+	}
+
+	public LocalTime getStartTime() {
+		return beginDateTime.toLocalTime();
+	}
+
+	public LocalTime getEndTime() {
+		return endDateTime.toLocalTime();
 	}
 }

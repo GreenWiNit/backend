@@ -7,10 +7,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.green.domain.challenge.controller.dto.ChallengeGroupDetailDto;
 import com.example.green.domain.challenge.controller.dto.ChallengeGroupDto;
 import com.example.green.domain.challenge.controller.dto.MyChallengeGroupDto;
+import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeGroupDetailDto;
 import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeGroupDto;
 import com.example.green.domain.challenge.entity.group.ChallengeGroup;
 import com.example.green.domain.challenge.exception.ChallengeException;
@@ -28,6 +30,7 @@ import lombok.RequiredArgsConstructor;
 
 @Repository
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class ChallengeGroupQueryImpl implements ChallengeGroupQuery {
 
 	private final ChallengeGroupRepository challengeGroupRepository;
@@ -134,6 +137,12 @@ public class ChallengeGroupQueryImpl implements ChallengeGroupQuery {
 			.fetch();
 
 		return PageTemplate.of(result, pagination);
+	}
+
+	@Override
+	public AdminChallengeGroupDetailDto getGroupDetailForAdmin(Long groupId) {
+		ChallengeGroup challengeGroup = getChallengeGroup(groupId);
+		return AdminChallengeGroupDetailDto.from(challengeGroup);
 	}
 
 	public BooleanExpression fromCondition(String cursor) {

@@ -4,6 +4,7 @@ import static com.example.green.global.utils.EntityValidator.*;
 
 import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import com.example.green.domain.challenge.exception.ChallengeException;
@@ -148,6 +149,13 @@ public class ChallengeGroup extends BaseEntity {
 
 	public boolean isLeader(Long memberId) {
 		return memberId.equals(this.leaderId);
+	}
+
+	public List<Long> getParticipantIds() {
+		return this.participants.stream()
+			.filter(participant -> !participant.isLeader())
+			.map(ChallengeGroupParticipation::getMemberId)
+			.toList();
 	}
 
 	private GroupStatus determineStatus() {
