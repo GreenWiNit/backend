@@ -2,9 +2,9 @@ package com.example.green.domain.challengecert.dto;
 
 import java.time.LocalDate;
 
-import com.example.green.domain.challengecert.entity.PersonalChallengeCertification;
-import com.example.green.domain.challengecert.entity.TeamChallengeCertification;
-import com.example.green.domain.challengecert.enums.CertificationStatus;
+import com.example.green.domain.challenge.entity.certification.CertificationStatus;
+import com.example.green.domain.challenge.entity.certification.PersonalChallengeCertification;
+import com.example.green.domain.challenge.entity.certification.TeamChallengeCertification;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;

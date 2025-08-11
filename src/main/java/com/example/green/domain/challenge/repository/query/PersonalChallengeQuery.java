@@ -3,10 +3,10 @@ package com.example.green.domain.challenge.repository.query;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.example.green.domain.challenge.controller.dto.ChallengeDetailDto;
-import com.example.green.domain.challenge.controller.dto.ChallengeListResponseDto;
-import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeDetailDto;
-import com.example.green.domain.challenge.controller.dto.admin.AdminPersonalChallengesDto;
+import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDetailDto;
+import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDto;
+import com.example.green.domain.challenge.controller.query.dto.challenge.AdminChallengeDetailDto;
+import com.example.green.domain.challenge.controller.query.dto.challenge.AdminPersonalChallengesDto;
 import com.example.green.domain.challenge.entity.challenge.PersonalChallenge;
 import com.example.green.domain.challenge.entity.challenge.vo.ChallengeStatus;
 import com.example.green.global.api.page.CursorTemplate;
@@ -14,9 +14,9 @@ import com.example.green.global.api.page.PageTemplate;
 
 public interface PersonalChallengeQuery {
 
-	CursorTemplate<Long, ChallengeListResponseDto> findMyParticipationByCursor(Long memberId, Long cursor, int size);
+	CursorTemplate<Long, ChallengeDto> findMyParticipationByCursor(Long memberId, Long cursor, int size);
 
-	CursorTemplate<Long, ChallengeListResponseDto> findPersonalChallengesByCursor(
+	CursorTemplate<Long, ChallengeDto> findPersonalChallengesByCursor(
 		Long cursor,
 		int size,
 		ChallengeStatus status,

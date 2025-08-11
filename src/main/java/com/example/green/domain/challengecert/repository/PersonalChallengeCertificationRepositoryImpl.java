@@ -1,8 +1,9 @@
+/*
 package com.example.green.domain.challengecert.repository;
 
-import static com.example.green.domain.challenge.entity.QPersonalChallenge.*;
+import static com.example.green.domain.challenge.entity.challenge.QPersonalChallenge.*;
+import static com.example.green.domain.challenge.entity.challenge.QPersonalChallengeParticipation.*;
 import static com.example.green.domain.challengecert.entity.QPersonalChallengeCertification.*;
-import static com.example.green.domain.challengecert.entity.QPersonalChallengeParticipation.*;
 import static com.example.green.domain.member.entity.QMember.*;
 
 import java.util.List;
@@ -10,11 +11,11 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
+import com.example.green.domain.challenge.entity.certification.CertificationStatus;
+import com.example.green.domain.challenge.entity.certification.PersonalChallengeCertification;
 import com.example.green.domain.challengecert.dto.AdminParticipantMemberKeyResponseDto;
 import com.example.green.domain.challengecert.dto.AdminPersonalCertificationSearchRequestDto;
 import com.example.green.domain.challengecert.dto.ChallengeCertificationListResponseDto;
-import com.example.green.domain.challengecert.entity.PersonalChallengeCertification;
-import com.example.green.domain.challengecert.enums.CertificationStatus;
 import com.example.green.domain.member.entity.Member;
 import com.example.green.global.api.page.CursorTemplate;
 import com.querydsl.core.types.Projections;
@@ -147,26 +148,33 @@ public class PersonalChallengeCertificationRepositoryImpl implements PersonalCha
 		}
 	}
 
-	/**
-	 * 챌린지 ID 조건
-	 */
+	*/
+/**
+ * 챌린지 ID 조건
+ *//*
+
 	private BooleanExpression challengeCondition(Long challengeId) {
 		return challengeId != null ? personalChallengeParticipation.personalChallenge.id.eq(challengeId) : null;
 	}
 
-	/**
-	 * 참여자 memberKey 조건
-	 */
+	*/
+/**
+ * 참여자 memberKey 조건
+ *//*
+
 	private BooleanExpression memberKeyCondition(String memberKey) {
 		return (memberKey != null && !memberKey.trim().isEmpty())
 			? member.memberKey.eq(memberKey.trim()) : null;
 	}
 
-	/**
-	 * 인증 상태 조건
-	 */
+	*/
+/**
+ * 인증 상태 조건
+ *//*
+
 	private BooleanExpression statusCondition(List<CertificationStatus> statuses) {
 		return (statuses != null && !statuses.isEmpty())
 			? personalChallengeCertification.status.in(statuses) : null;
 	}
 }
+*/

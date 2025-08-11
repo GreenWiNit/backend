@@ -1,7 +1,7 @@
 package com.example.green.domain.challenge.controller.query.docs;
 
-import com.example.green.domain.challenge.controller.dto.ChallengeDetailDto;
-import com.example.green.domain.challenge.controller.dto.ChallengeListResponseDto;
+import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDetailDto;
+import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDto;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.page.CursorTemplate;
 import com.example.green.global.docs.ApiErrorStandard;
@@ -16,11 +16,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-@Tag(name = "[챌린지] 개인 챌린지 API", description = "개인 챌린지 조회, 참여, 탈퇴 API")
+@Tag(name = "[챌린지-클라이언트] 개인 챌린지 API", description = "개인 챌린지 조회, 참여, 탈퇴 API")
 public interface PersonalChallengeQueryControllerDocs {
 
 	@Operation(
-		summary = "개인 챌린지 목록 조회",
+		summary = "개인 챌린지 목록 조회 (B01_001)",
 		description = """
 			현재 진행 중인 개인 챌린지 목록을 조회합니다.
 			커서 기반 페이지네이션이 적용되어 있어 다음 페이지 조회 시 이전 응답의 마지막 챌린지 ID를 커서로 사용합니다.
@@ -29,13 +29,13 @@ public interface PersonalChallengeQueryControllerDocs {
 	)
 	@ApiErrorStandard
 	@ApiResponse(responseCode = "200", description = "개인 챌린지 목록 조회 성공", useReturnTypeSchema = true)
-	ApiTemplate<CursorTemplate<Long, ChallengeListResponseDto>> getPersonalChallenges(
+	ApiTemplate<CursorTemplate<Long, ChallengeDto>> getPersonalChallenges(
 		@Parameter(description = "다음 페이지 조회를 위한 마지막 챌린지 ID (선택, 첫 페이지 조회 시 생략)", example = "1") Long cursor,
 		@Parameter(description = "페이지 사이즈(생략 가능)", example = "20") Integer pageSize
 	);
 
 	@Operation(
-		summary = "개인 챌린지 상세 조회",
+		summary = "개인 챌린지 상세 조회 (B01_003)",
 		description = """
 			챌린지 ID로 상세 정보를 조회합니다.
 			- 비로그인 상태: 참여하기 버튼 표시
@@ -57,7 +57,7 @@ public interface PersonalChallengeQueryControllerDocs {
 	);
 
 	@Operation(
-		summary = "내 개인 챌린지 목록 조회",
+		summary = "참여중인 개인 챌린지 목록 조회 (B01_004)",
 		description = """
 			내가 참여 중인 개인 챌린지 목록을 조회합니다.
 			커서 기반 페이지네이션이 적용되어 있어 다음 페이지 조회 시 이전 응답의 마지막 챌린지 ID를 커서로 사용합니다.
@@ -66,7 +66,7 @@ public interface PersonalChallengeQueryControllerDocs {
 	)
 	@ApiErrorStandard
 	@ApiResponse(responseCode = "200", description = "내 개인 챌린지 목록 조회 성공", useReturnTypeSchema = true)
-	ApiTemplate<CursorTemplate<Long, ChallengeListResponseDto>> getMyPersonalChallenges(
+	ApiTemplate<CursorTemplate<Long, ChallengeDto>> getMyPersonalChallenges(
 		@Parameter(description = "다음 페이지 조회를 위한 마지막 챌린지 ID (선택, 첫 페이지 조회 시 생략)", example = "1") Long cursor,
 		@Parameter(hidden = true) PrincipalDetails currentUser,
 		@Parameter(description = "페이지 사이즈(생략 가능)", example = "20") Integer pageSize

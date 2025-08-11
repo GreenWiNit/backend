@@ -2,12 +2,12 @@ package com.example.green.domain.challengecert.controller.docs;
 
 import java.util.List;
 
+import com.example.green.domain.challenge.entity.certification.CertificationStatus;
 import com.example.green.domain.challengecert.dto.AdminCertificationStatusUpdateRequestDto;
 import com.example.green.domain.challengecert.dto.AdminChallengeTitleResponseDto;
 import com.example.green.domain.challengecert.dto.AdminGroupCodeResponseDto;
 import com.example.green.domain.challengecert.dto.AdminParticipantMemberKeyResponseDto;
 import com.example.green.domain.challengecert.dto.ChallengeCertificationListResponseDto;
-import com.example.green.domain.challengecert.enums.CertificationStatus;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.page.CursorTemplate;
 import com.example.green.global.docs.ApiError400;

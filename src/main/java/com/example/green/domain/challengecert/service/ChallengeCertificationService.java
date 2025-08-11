@@ -1,3 +1,4 @@
+/*
 package com.example.green.domain.challengecert.service;
 
 import java.time.LocalDate;
@@ -25,9 +26,9 @@ import com.example.green.domain.challengecert.dto.ChallengeCertificationCreateRe
 import com.example.green.domain.challengecert.dto.ChallengeCertificationCreateResponseDto;
 import com.example.green.domain.challengecert.dto.ChallengeCertificationDetailResponseDto;
 import com.example.green.domain.challengecert.dto.ChallengeCertificationListResponseDto;
-import com.example.green.domain.challengecert.entity.PersonalChallengeCertification;
+import com.example.green.domain.challenge.entity.certification.PersonalChallengeCertification;
 import com.example.green.domain.challenge.entity.challenge.PersonalChallengeParticipation;
-import com.example.green.domain.challengecert.entity.TeamChallengeCertification;
+import com.example.green.domain.challenge.entity.certification.TeamChallengeCertification;
 import com.example.green.domain.challenge.entity.challenge.TeamChallengeParticipation;
 import com.example.green.domain.challengecert.exception.ChallengeCertException;
 import com.example.green.domain.challengecert.exception.ChallengeCertExceptionMessage;
@@ -60,9 +61,11 @@ public class ChallengeCertificationService {
 	private final MemberRepository memberRepository;
 	private final TimeUtils timeUtils;
 
-	/**
-	 * 챌린지 인증을 생성합니다.
-	 */
+	*/
+/**
+ * 챌린지 인증을 생성합니다.
+ *//*
+
 	@Transactional
 	public ChallengeCertificationCreateResponseDto createCertification(
 		Long challengeId,
@@ -106,27 +109,33 @@ public class ChallengeCertificationService {
 		}
 	}
 
-	/**
-	 * 개인 챌린지 인증 목록을 커서 기반으로 조회합니다.
-	 */
+	*/
+/**
+ * 개인 챌린지 인증 목록을 커서 기반으로 조회합니다.
+ *//*
+
 	public CursorTemplate<Long, ChallengeCertificationListResponseDto> getPersonalChallengeCertifications(
 		Long cursor, PrincipalDetails principalDetails) {
 		return personalChallengeCertificationRepository.findByMemberWithCursor(
 			principalDetails.getMemberId(), cursor, DEFAULT_PAGE_SIZE);
 	}
 
-	/**
-	 * 팀 챌린지 인증 목록을 커서 기반으로 조회합니다.
-	 */
+	*/
+/**
+ * 팀 챌린지 인증 목록을 커서 기반으로 조회합니다.
+ *//*
+
 	public CursorTemplate<Long, ChallengeCertificationListResponseDto> getTeamChallengeCertifications(
 		Long cursor, PrincipalDetails principalDetails) {
 		Member member = getMemberById(principalDetails.getMemberId());
 		return teamChallengeCertificationRepository.findByMemberWithCursor(member, cursor, DEFAULT_PAGE_SIZE);
 	}
 
-	/**
-	 * 챌린지 인증 상세 정보를 조회합니다.
-	 */
+	*/
+/**
+ * 챌린지 인증 상세 정보를 조회합니다.
+ *//*
+
 	public ChallengeCertificationDetailResponseDto getChallengeCertificationDetail(
 		Long certificationId, PrincipalDetails principalDetails) {
 		Member member = getMemberById(principalDetails.getMemberId());
@@ -238,9 +247,11 @@ public class ChallengeCertificationService {
 			.build();
 	}
 
-	/**
-	 * 인증 날짜 유효성 검증 (미래 날짜만 차단)
-	 */
+	*/
+/**
+ * 인증 날짜 유효성 검증 (미래 날짜만 차단)
+ *//*
+
 	private void validateCertificationDate(LocalDate requestDate) {
 		LocalDate today = timeUtils.now().toLocalDate();
 
@@ -251,9 +262,11 @@ public class ChallengeCertificationService {
 
 	// ================= 관리자용 메서드들 =================
 
-	/**
-	 * 개인 챌린지 제목 목록을 조회합니다. (관리자용)
-	 */
+	*/
+/**
+ * 개인 챌린지 제목 목록을 조회합니다. (관리자용)
+ *//*
+
 	public List<AdminChallengeTitleResponseDto> getPersonalChallengeTitles() {
 		List<PersonalChallenge> challenges = personalChallengeRepository.findAll();
 		return challenges.stream()
@@ -261,9 +274,11 @@ public class ChallengeCertificationService {
 			.toList();
 	}
 
-	/**
-	 * 팀 챌린지 제목 목록을 조회합니다. (관리자용)
-	 */
+	*/
+/**
+ * 팀 챌린지 제목 목록을 조회합니다. (관리자용)
+ *//*
+
 	public List<AdminChallengeTitleResponseDto> getTeamChallengeTitles() {
 		List<TeamChallenge> challenges = teamChallengeRepository.findAll();
 		return challenges.stream()
@@ -271,27 +286,33 @@ public class ChallengeCertificationService {
 			.toList();
 	}
 
-	/**
-	 * 개인 챌린지 참여자 memberKey 목록을 조회합니다. (관리자용)
-	 */
+	*/
+/**
+ * 개인 챌린지 참여자 memberKey 목록을 조회합니다. (관리자용)
+ *//*
+
 	public List<AdminParticipantMemberKeyResponseDto> getPersonalChallengeParticipantMemberKeys(Long challengeId) {
 		// 챌린지 존재 여부 확인
 		findPersonalChallengeById(challengeId);
 		return personalChallengeCertificationRepository.findParticipantMemberKeysByChallengeId(challengeId);
 	}
 
-	/**
-	 * 팀 챌린지 그룹 코드 목록을 조회합니다. (관리자용)
-	 */
+	*/
+/**
+ * 팀 챌린지 그룹 코드 목록을 조회합니다. (관리자용)
+ *//*
+
 	public List<AdminGroupCodeResponseDto> getTeamChallengeGroupCodes(Long challengeId) {
 		// 챌린지 존재 여부 확인
 		findTeamChallengeById(challengeId);
 		return teamChallengeCertificationRepository.findGroupCodesByChallengeId(challengeId);
 	}
 
-	/**
-	 * 관리자용 개인 챌린지 인증 목록을 복합 조건으로 조회합니다. (커서 기반 페이징)
-	 */
+	*/
+/**
+ * 관리자용 개인 챌린지 인증 목록을 복합 조건으로 조회합니다. (커서 기반 페이징)
+ *//*
+
 	public CursorTemplate<Long, ChallengeCertificationListResponseDto> getPersonalCertificationsWithFilters(
 		AdminPersonalCertificationSearchRequestDto searchRequest) {
 
@@ -304,9 +325,11 @@ public class ChallengeCertificationService {
 			ADMIN_PAGE_SIZE);
 	}
 
-	/**
-	 * 관리자용 팀 챌린지 인증 목록을 복합 조건으로 조회합니다. (커서 기반 페이징)
-	 */
+	*/
+/**
+ * 관리자용 팀 챌린지 인증 목록을 복합 조건으로 조회합니다. (커서 기반 페이징)
+ *//*
+
 	public CursorTemplate<Long, ChallengeCertificationListResponseDto> getTeamCertificationsWithFilters(
 		AdminTeamCertificationSearchRequestDto searchRequest) {
 
@@ -318,9 +341,11 @@ public class ChallengeCertificationService {
 		return teamChallengeCertificationRepository.findTeamCertificationsWithFilters(searchRequest, ADMIN_PAGE_SIZE);
 	}
 
-	/**
-	 * 인증 상태를 업데이트합니다. (관리자용)
-	 */
+	*/
+/**
+ * 인증 상태를 업데이트합니다. (관리자용)
+ *//*
+
 	@Transactional
 	public void updateCertificationStatus(Long certificationId, String status) {
 		// 먼저 개인 챌린지 인증에서 찾아보기
@@ -341,9 +366,11 @@ public class ChallengeCertificationService {
 		updateCertificationStatusInternal(teamCertification, status);
 	}
 
-	/**
-	 * 인증 상태 업데이트 내부 로직
-	 */
+	*/
+/**
+ * 인증 상태 업데이트 내부 로직
+ *//*
+
 	private void updateCertificationStatusInternal(Object certification, String status) {
 		switch (status.toUpperCase()) {
 			case "PAID" -> approveCertification(certification);
@@ -352,9 +379,11 @@ public class ChallengeCertificationService {
 		}
 	}
 
-	/**
-	 * 인증을 승인합니다.
-	 */
+	*/
+/**
+ * 인증을 승인합니다.
+ *//*
+
 	private void approveCertification(Object certification) {
 		if (certification instanceof PersonalChallengeCertification personal) {
 			personal.approve();
@@ -363,9 +392,11 @@ public class ChallengeCertificationService {
 		}
 	}
 
-	/**
-	 * 인증을 거절합니다.
-	 */
+	*/
+/**
+ * 인증을 거절합니다.
+ *//*
+
 	private void rejectCertification(Object certification) {
 		if (certification instanceof PersonalChallengeCertification personal) {
 			personal.reject();
@@ -374,19 +405,24 @@ public class ChallengeCertificationService {
 		}
 	}
 
-	/**
-	 * 개인 챌린지를 ID로 조회합니다.
-	 */
+	*/
+/**
+ * 개인 챌린지를 ID로 조회합니다.
+ *//*
+
 	private PersonalChallenge findPersonalChallengeById(Long challengeId) {
 		return personalChallengeRepository.findById(challengeId)
 			.orElseThrow(() -> new ChallengeException(ChallengeExceptionMessage.CHALLENGE_NOT_FOUND));
 	}
 
-	/**
-	 * 팀 챌린지를 ID로 조회합니다.
-	 */
+	*/
+/**
+ * 팀 챌린지를 ID로 조회합니다.
+ *//*
+
 	private TeamChallenge findTeamChallengeById(Long challengeId) {
 		return teamChallengeRepository.findById(challengeId)
 			.orElseThrow(() -> new ChallengeException(ChallengeExceptionMessage.CHALLENGE_NOT_FOUND));
 	}
 }
+*/

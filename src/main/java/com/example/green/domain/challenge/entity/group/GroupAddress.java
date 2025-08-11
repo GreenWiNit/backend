@@ -20,15 +20,15 @@ public class GroupAddress {
 	@Column(nullable = false)
 	private String roadAddress;
 
-	@Column
 	private String detailAddress;
 
-	private String zoneCode;
 	private String sigungu;
 
-	public static GroupAddress of(String roadAddress, String detailAddress, String zoneCode, String sigungu) {
+	public static GroupAddress of(String roadAddress, String detailAddress, String sigungu) {
 		validateEmptyString(roadAddress, "도로명 주소는 필수 값입니다.");
-		return new GroupAddress(roadAddress, detailAddress, zoneCode, sigungu);
+		validateEmptyString(roadAddress, "상세 주소는 필수 값입니다.");
+		validateEmptyString(roadAddress, "시군구 정보는 필수 값입니다.");
+		return new GroupAddress(roadAddress, detailAddress, sigungu);
 	}
 
 	public String getFullAddress() {

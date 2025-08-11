@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.green.domain.challenge.controller.dto.ChallengeDetailDto;
-import com.example.green.domain.challenge.controller.dto.ChallengeListResponseDto;
+import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDto;
 import com.example.green.domain.challenge.controller.query.docs.TeamChallengeQueryControllerDocs;
+import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDetailDto;
 import com.example.green.domain.challenge.repository.query.TeamChallengeQuery;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.page.CursorTemplate;
@@ -30,11 +30,11 @@ public class TeamChallengeQueryController implements TeamChallengeQueryControlle
 	private final TimeUtils timeUtils;
 
 	@GetMapping
-	public ApiTemplate<CursorTemplate<Long, ChallengeListResponseDto>> getTeamChallenges(
+	public ApiTemplate<CursorTemplate<Long, ChallengeDto>> getTeamChallenges(
 		@RequestParam(required = false) Long cursor,
 		@RequestParam(required = false, defaultValue = "20") Integer pageSize
 	) {
-		CursorTemplate<Long, ChallengeListResponseDto> result =
+		CursorTemplate<Long, ChallengeDto> result =
 			teamChallengeQuery.findTeamChallengesByCursor(cursor, pageSize, PROCEEDING, timeUtils.now());
 
 		return ApiTemplate.ok(CHALLENGE_LIST_FOUND, result);
@@ -51,13 +51,13 @@ public class TeamChallengeQueryController implements TeamChallengeQueryControlle
 	}
 
 	@GetMapping("/me")
-	public ApiTemplate<CursorTemplate<Long, ChallengeListResponseDto>> getMyTeamChallenges(
+	public ApiTemplate<CursorTemplate<Long, ChallengeDto>> getMyTeamChallenges(
 		@RequestParam(required = false) Long cursor,
 		@AuthenticationPrincipal PrincipalDetails currentUser,
 		@RequestParam(required = false, defaultValue = "20") Integer pageSize
 	) {
 		Long memberId = 1L;
-		CursorTemplate<Long, ChallengeListResponseDto> result =
+		CursorTemplate<Long, ChallengeDto> result =
 			teamChallengeQuery.findMyParticipationByCursor(memberId, cursor, pageSize);
 
 		return ApiTemplate.ok(MY_TEAM_CHALLENGE_LIST_FOUND, result);

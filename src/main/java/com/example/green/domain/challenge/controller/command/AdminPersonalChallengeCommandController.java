@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.green.domain.challenge.controller.command.docs.AdminPersonalChallengeCommandControllerDocs;
-import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeCreateDto;
-import com.example.green.domain.challenge.controller.dto.admin.AdminChallengeUpdateDto;
+import com.example.green.domain.challenge.controller.command.dto.AdminChallengeCreateDto;
+import com.example.green.domain.challenge.controller.command.dto.AdminChallengeUpdateDto;
 import com.example.green.domain.challenge.controller.message.AdminChallengeResponseMessage;
 import com.example.green.domain.challenge.service.PersonalChallengeService;
 import com.example.green.global.api.ApiTemplate;

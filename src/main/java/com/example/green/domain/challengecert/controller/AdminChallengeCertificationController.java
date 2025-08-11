@@ -1,3 +1,4 @@
+/*
 package com.example.green.domain.challengecert.controller;
 
 import java.util.List;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.green.domain.challenge.entity.certification.CertificationStatus;
 import com.example.green.domain.challengecert.controller.docs.AdminChallengeCertificationControllerDocs;
 import com.example.green.domain.challengecert.controller.message.ChallengeCertificationResponseMessage;
 import com.example.green.domain.challengecert.dto.AdminCertificationStatusUpdateRequestDto;
@@ -20,7 +22,6 @@ import com.example.green.domain.challengecert.dto.AdminParticipantMemberKeyRespo
 import com.example.green.domain.challengecert.dto.AdminPersonalCertificationSearchRequestDto;
 import com.example.green.domain.challengecert.dto.AdminTeamCertificationSearchRequestDto;
 import com.example.green.domain.challengecert.dto.ChallengeCertificationListResponseDto;
-import com.example.green.domain.challengecert.enums.CertificationStatus;
 import com.example.green.domain.challengecert.service.ChallengeCertificationService;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.page.CursorTemplate;
@@ -28,9 +29,11 @@ import com.example.green.global.api.page.CursorTemplate;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+*/
 /**
  * 관리자용 챌린지 인증 관리 컨트롤러
- */
+ *//*
+
 @RestController
 @RequestMapping("/api/admin")
 @RequiredArgsConstructor
@@ -112,3 +115,4 @@ public class AdminChallengeCertificationController implements AdminChallengeCert
 		return ApiTemplate.ok(ChallengeCertificationResponseMessage.ADMIN_CERTIFICATION_STATUS_UPDATED);
 	}
 }
+*/

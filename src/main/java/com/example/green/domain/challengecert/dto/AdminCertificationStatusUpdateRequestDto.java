@@ -1,6 +1,6 @@
 package com.example.green.domain.challengecert.dto;
 
-import com.example.green.domain.challengecert.enums.CertificationStatus;
+import com.example.green.domain.challenge.entity.certification.CertificationStatus;
 
 import jakarta.validation.constraints.NotNull;
 

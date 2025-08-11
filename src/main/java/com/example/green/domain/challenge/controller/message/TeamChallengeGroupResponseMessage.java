@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum TeamChallengeGroupResponseMessage implements ResponseMessage {
 
+	MY_TEAM_GROUP_FOUND("내 팀 목록을 조회했습니다."),
 	GROUP_LIST_FOUND("그룹 목록을 조회했습니다."),
 	GROUP_DETAIL_FOUND("그룹 상세 정보를 조회했습니다."),
 	GROUP_CREATED("그룹을 생성했습니다."),

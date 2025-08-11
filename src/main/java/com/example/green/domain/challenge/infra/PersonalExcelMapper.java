@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
-import com.example.green.domain.challenge.controller.dto.admin.AdminPersonalChallengesDto;
+import com.example.green.domain.challenge.controller.query.dto.challenge.AdminPersonalChallengesDto;
 import com.example.green.global.excel.core.ExcelDataMapper;
 import com.example.green.global.excel.style.BackGroundColor;
 import com.example.green.global.excel.style.ExcelField;

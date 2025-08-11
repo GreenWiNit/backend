@@ -14,10 +14,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-@Tag(name = "[챌린지] 개인 챌린지 API", description = "개인 챌린지 조회, 참여, 탈퇴 API")
+@Tag(name = "[챌린지-클라이언트] 개인 챌린지 API", description = "개인 챌린지 조회, 참여, 탈퇴 API")
 public interface PersonalChallengeCommandControllerDocs {
 
-	@Operation(summary = "개인 챌린지 참여", description = "개인 챌린지에 참여합니다.")
+	@Operation(summary = "개인 챌린지 참여 (B01_003)", description = "개인 챌린지에 참여합니다.")
 	@ApiErrorStandard
 	@ApiResponse(responseCode = "200", description = "챌린지 참여 성공", useReturnTypeSchema = true)
 	@ApiResponse(
@@ -38,7 +38,7 @@ public interface PersonalChallengeCommandControllerDocs {
 		Long challengeId, PrincipalDetails currentUser
 	);
 
-	@Operation(summary = "개인 챌린지 탈퇴", description = "참여 중인 개인 챌린지에서 탈퇴합니다.")
+	@Operation(summary = "개인 챌린지 탈퇴 (없음)", description = "참여 중인 개인 챌린지에서 탈퇴합니다.")
 	@ApiErrorStandard
 	@ApiResponse(responseCode = "200", description = "챌린지 탈퇴 성공", useReturnTypeSchema = true)
 	@ApiResponse(

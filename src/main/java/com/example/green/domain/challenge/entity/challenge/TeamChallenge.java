@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.example.green.domain.challenge.entity.group.TeamChallengeGroup;
 import com.example.green.domain.challenge.entity.challenge.vo.ChallengeType;
 import com.example.green.domain.challenge.exception.ChallengeException;
 import com.example.green.domain.challenge.exception.ChallengeExceptionMessage;
@@ -41,9 +40,6 @@ public class TeamChallenge extends BaseChallenge {
 	private Integer teamCount;
 
 	@OneToMany(mappedBy = "teamChallenge", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<TeamChallengeGroup> challengeGroups = new ArrayList<>();
-
-	@OneToMany(mappedBy = "teamChallenge", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<TeamChallengeParticipation> participations = new ArrayList<>();
 
 	private TeamChallenge(
@@ -71,8 +67,7 @@ public class TeamChallenge extends BaseChallenge {
 	}
 
 	protected void doAddParticipation(Long memberId, LocalDateTime now) {
-		TeamChallengeParticipation participation =
-			TeamChallengeParticipation.create(this, memberId, now);
+		TeamChallengeParticipation participation = TeamChallengeParticipation.create(this, memberId, now);
 		participations.add(participation);
 	}
 

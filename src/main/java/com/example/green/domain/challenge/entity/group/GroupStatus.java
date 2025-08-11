@@ -1,5 +1,7 @@
 package com.example.green.domain.challenge.entity.group;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -12,5 +14,6 @@ public enum GroupStatus {
 	RECRUITING("모집중"),
 	COMPLETED("완료");
 
+	@JsonValue
 	private final String description;
 }

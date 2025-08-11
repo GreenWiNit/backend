@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.green.domain.challenge.controller.dto.ChallengeDetailDto;
-import com.example.green.domain.challenge.controller.dto.ChallengeListResponseDto;
+import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDto;
 import com.example.green.domain.challenge.controller.query.docs.PersonalChallengeQueryControllerDocs;
+import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDetailDto;
 import com.example.green.domain.challenge.repository.query.PersonalChallengeQuery;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.page.CursorTemplate;
@@ -30,11 +30,11 @@ public class PersonalChallengeQueryController implements PersonalChallengeQueryC
 	private final TimeUtils timeUtils;
 
 	@GetMapping
-	public ApiTemplate<CursorTemplate<Long, ChallengeListResponseDto>> getPersonalChallenges(
+	public ApiTemplate<CursorTemplate<Long, ChallengeDto>> getPersonalChallenges(
 		@RequestParam(required = false) Long cursor,
 		@RequestParam(required = false, defaultValue = "20") Integer pageSize
 	) {
-		CursorTemplate<Long, ChallengeListResponseDto> result =
+		CursorTemplate<Long, ChallengeDto> result =
 			personalChallengeQuery.findPersonalChallengesByCursor(cursor, pageSize, PROCEEDING, timeUtils.now());
 
 		return ApiTemplate.ok(CHALLENGE_LIST_FOUND, result);
@@ -51,13 +51,13 @@ public class PersonalChallengeQueryController implements PersonalChallengeQueryC
 	}
 
 	@GetMapping("/me")
-	public ApiTemplate<CursorTemplate<Long, ChallengeListResponseDto>> getMyPersonalChallenges(
+	public ApiTemplate<CursorTemplate<Long, ChallengeDto>> getMyPersonalChallenges(
 		@RequestParam(required = false) Long cursor,
 		@AuthenticationPrincipal PrincipalDetails currentUser,
 		@RequestParam(required = false, defaultValue = "20") Integer pageSize
 	) {
 		Long memberId = 1L;
-		CursorTemplate<Long, ChallengeListResponseDto> result =
+		CursorTemplate<Long, ChallengeDto> result =
 			personalChallengeQuery.findMyParticipationByCursor(memberId, cursor, pageSize);
 
 		return ApiTemplate.ok(MY_PERSONAL_CHALLENGE_LIST_FOUND, result);
