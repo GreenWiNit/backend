@@ -113,7 +113,7 @@ public class ChallengeGroup extends BaseEntity {
 
 	private void addParticipant(ChallengeGroupParticipation participation) {
 		if (!participants.add(participation)) {
-			throw new ChallengeException(ChallengeExceptionMessage.ALREADY_PARTICIPATING);
+			throw new ChallengeException(ChallengeExceptionMessage.ALREADY_PARTICIPATING_IN_GROUP);
 		}
 		capacity.increase();
 	}

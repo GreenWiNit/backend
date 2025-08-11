@@ -25,8 +25,8 @@ public enum ChallengeExceptionMessage implements ExceptionMessage {
 	CANNOT_LEAVE_WHILE_IN_GROUP("그룹에 참여 중인 상태에서는 팀 챌린지에서 탈퇴할 수 없습니다.", 400),
 	CHALLENGE_GROUP_NOT_FOUND("챌린지 그룹을 찾을 수 없습니다.", 404),
 	MEMBER_NOT_FOUND("회원을 찾을 수 없습니다.", 404),
-	NOT_PARTICIPATING_IN_CHALLENGE("해당 챌린지에 참여하지 않았습니다.", 400),
-	ALREADY_PARTICIPATING_IN_GROUP("이미 해당 그룹에 참여 중입니다.", 400),
+	INVALID_GROUP_MEMBERSHIP("해당 팀 챌린지 그룹의 권한이 없습니다.", 403),
+	ALREADY_PARTICIPATING_IN_GROUP("이미 해당 팀(그룹)에 참여 중입니다.", 400),
 	CANNOT_PARTICIPATE_IN_GROUP("그룹에 참여할 수 없습니다.", 400),
 	NOT_GROUP_LEADER("그룹 리더가 아닙니다.", 403),
 

@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
+import com.example.green.domain.challenge.controller.dto.ChallengeGroupDetailDto;
 import com.example.green.domain.challenge.controller.dto.ChallengeGroupDto;
 import com.example.green.domain.challenge.entity.group.ChallengeGroup;
 import com.example.green.domain.challenge.exception.ChallengeException;
@@ -68,6 +69,13 @@ public class ChallengeGroupQueryImpl implements ChallengeGroupQuery {
 			.fetch();
 
 		return CursorTemplate.from(groups, size, dto -> dto.beginDateTime() + "," + dto.id());
+	}
+
+	@Override
+	public ChallengeGroupDetailDto getGroupDetail(Long groupId, Long memberId) {
+		boolean participating = challengeGroupRepository.existMembership(groupId, memberId);
+		ChallengeGroup challengeGroup = getChallengeGroup(groupId);
+		return ChallengeGroupDetailDto.from(challengeGroup, participating);
 	}
 
 	public BooleanExpression fromCondition(String cursor) {

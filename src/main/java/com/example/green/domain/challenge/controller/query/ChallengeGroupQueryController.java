@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.green.domain.challenge.controller.dto.ChallengeGroupDetailDto;
 import com.example.green.domain.challenge.controller.dto.ChallengeGroupDto;
-import com.example.green.domain.challenge.controller.dto.TeamChallengeGroupDetailResponseDto;
 import com.example.green.domain.challenge.controller.message.TeamChallengeGroupResponseMessage;
 import com.example.green.domain.challenge.controller.query.docs.ChallengeGroupQueryControllerDocs;
 import com.example.green.domain.challenge.repository.query.ChallengeGroupQuery;
@@ -35,7 +35,6 @@ public class ChallengeGroupQueryController implements ChallengeGroupQueryControl
 		@AuthenticationPrincipal PrincipalDetails principalDetails
 	) {
 		Long memberId = 1L;
-
 		CursorTemplate<String, ChallengeGroupDto> result =
 			challengeGroupQuery.findMyGroup(challengeId, cursor, size, memberId);
 
@@ -43,15 +42,13 @@ public class ChallengeGroupQueryController implements ChallengeGroupQueryControl
 	}
 
 	@GetMapping("/groups/{groupId}")
-	public ApiTemplate<TeamChallengeGroupDetailResponseDto> getTeamChallengeGroupDetail(
+	public ApiTemplate<ChallengeGroupDetailDto> getTeamChallengeGroupDetail(
 		@PathVariable Long groupId,
 		@AuthenticationPrincipal PrincipalDetails principalDetails
 	) {
 		Long memberId = 1L;
-
-		//TeamChallengeGroupDetailResponseDto result = teamChallengeGroupService.getTeamChallengeGroupDetail(groupId,memberId);
-
-		return ApiTemplate.ok(TeamChallengeGroupResponseMessage.GROUP_DETAIL_FOUND, null);
+		ChallengeGroupDetailDto result = challengeGroupQuery.getGroupDetail(groupId, memberId);
+		return ApiTemplate.ok(TeamChallengeGroupResponseMessage.GROUP_DETAIL_FOUND, result);
 	}
 
 }

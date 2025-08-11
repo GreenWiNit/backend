@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.green.domain.challenge.controller.dto.ChallengeGroupCreateDto;
+import com.example.green.domain.challenge.controller.dto.ChallengeGroupDetailDto;
 import com.example.green.domain.challenge.controller.dto.ChallengeGroupDto;
-import com.example.green.domain.challenge.controller.dto.TeamChallengeGroupDetailResponseDto;
 import com.example.green.domain.challenge.controller.dto.TeamChallengeGroupUpdateRequestDto;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.NoContent;
@@ -63,7 +63,7 @@ public interface TeamChallengeGroupControllerDocs {
 	)
 	@ApiResponse(responseCode = "200", description = "그룹 상세 조회 성공")
 	@ApiErrorStandard
-	ApiTemplate<TeamChallengeGroupDetailResponseDto> getTeamChallengeGroupDetail(
+	ApiTemplate<ChallengeGroupDetailDto> getTeamChallengeGroupDetail(
 		@Parameter(description = "그룹 ID", required = true, example = "1")
 		@PathVariable Long groupId,
 		@Parameter(hidden = true) @AuthenticationPrincipal PrincipalDetails principalDetails
