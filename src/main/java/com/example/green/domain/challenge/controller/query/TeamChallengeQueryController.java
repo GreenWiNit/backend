@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDto;
 import com.example.green.domain.challenge.controller.query.docs.TeamChallengeQueryControllerDocs;
 import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDetailDto;
+import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDto;
 import com.example.green.domain.challenge.repository.query.TeamChallengeQuery;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.page.CursorTemplate;
@@ -34,6 +34,7 @@ public class TeamChallengeQueryController implements TeamChallengeQueryControlle
 		@RequestParam(required = false) Long cursor,
 		@RequestParam(required = false, defaultValue = "20") Integer pageSize
 	) {
+		// todo: 누적 참여자 수 반환
 		CursorTemplate<Long, ChallengeDto> result =
 			teamChallengeQuery.findTeamChallengesByCursor(cursor, pageSize, PROCEEDING, timeUtils.now());
 
@@ -56,6 +57,7 @@ public class TeamChallengeQueryController implements TeamChallengeQueryControlle
 		@AuthenticationPrincipal PrincipalDetails currentUser,
 		@RequestParam(required = false, defaultValue = "20") Integer pageSize
 	) {
+		// todo: 누적 참여자 수 반환
 		Long memberId = 1L;
 		CursorTemplate<Long, ChallengeDto> result =
 			teamChallengeQuery.findMyParticipationByCursor(memberId, cursor, pageSize);

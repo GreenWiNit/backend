@@ -3,10 +3,8 @@ package com.example.green.domain.challenge.controller.query.docs;
 import static io.swagger.v3.oas.annotations.enums.ParameterIn.*;
 
 import com.example.green.domain.challenge.controller.query.dto.challenge.AdminChallengeDetailDto;
-import com.example.green.domain.challenge.controller.query.dto.challenge.AdminChallengeParticipantListResponseDto;
 import com.example.green.domain.challenge.controller.query.dto.challenge.AdminTeamChallengesDto;
 import com.example.green.global.api.ApiTemplate;
-import com.example.green.global.api.page.CursorTemplate;
 import com.example.green.global.api.page.PageTemplate;
 import com.example.green.global.docs.ApiErrorStandard;
 import com.example.green.global.error.dto.ExceptionResponse;
@@ -46,18 +44,4 @@ public interface AdminTeamChallengeQueryControllerDocs {
 		content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
 	ApiTemplate<AdminChallengeDetailDto> getTeamChallengeDetail(
 		@Parameter(description = "챌린지 ID", in = PATH, required = true, example = "1") Long challengeId);
-
-	@Operation(
-		summary = "팀 챌린지 참여자 목록 조회 (ad_B01_005), 참여자 정보 - 다음 작업. 까먹고 못함",
-		description = "챌린지의 참여자 목록을 조회합니다. (10개씩 조회)")
-	@ApiErrorStandard
-	@ApiResponse(responseCode = "200", description = "참여자 목록 조회 성공", useReturnTypeSchema = true)
-	@ApiResponse(responseCode = "403", description = "관리자 권한이 필요합니다.",
-		content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
-	ApiTemplate<CursorTemplate<Long, AdminChallengeParticipantListResponseDto>> getChallengeParticipants(
-		@Parameter(description = "챌린지 ID", in = PATH, required = true, example = "1") Long challengeId,
-		@Parameter(description = "커서 (마지막 참여자 ID) - 첫 번째 조회 시에는 아무것도 넣지 말고 조회하세요") Long cursor
-	);
-
-	// todo: 참여자 다운로드
 }

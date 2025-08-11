@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class PersonalParticipationDto {
+public class AdminPersonalParticipationDto {
 	@Schema(description = "사용자 식별 키", example = "google 12421424")
 	private String memberKey;
 	@Schema(description = "챌린지 참여 일자", example = "2025-08-10")
@@ -24,7 +24,7 @@ public class PersonalParticipationDto {
 	@JsonIgnore
 	Long memberId;
 
-	public PersonalParticipationDto(Long memberId, LocalDateTime participatingDate, Integer certCount) {
+	public AdminPersonalParticipationDto(Long memberId, LocalDateTime participatingDate, Integer certCount) {
 		this.memberId = memberId;
 		this.participatingDate = participatingDate;
 		this.certCount = certCount;

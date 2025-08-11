@@ -8,9 +8,9 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 
 import com.example.green.domain.challenge.controller.query.dto.challenge.AdminPersonalChallengesDto;
+import com.example.green.domain.challenge.controller.query.dto.challenge.AdminPersonalParticipationDto;
 import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDetailDto;
 import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDto;
-import com.example.green.domain.challenge.controller.query.dto.challenge.PersonalParticipationDto;
 import com.example.green.domain.challenge.infra.querydsl.projections.PersonalChallengeProjections;
 import com.example.green.global.api.page.Pagination;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -68,7 +68,9 @@ public class PersonalChallengeQueryExecutor {
 			.fetch();
 	}
 
-	public List<PersonalParticipationDto> executeParticipantQueryForAdmin(Pagination pagination, Long challengeId) {
+	public List<AdminPersonalParticipationDto> executeParticipantQueryForAdmin(
+		Pagination pagination, Long challengeId
+	) {
 		return queryFactory
 			.select(PersonalChallengeProjections.toParticipationForAdmin())
 			.from(personalChallengeParticipation)
@@ -79,7 +81,7 @@ public class PersonalChallengeQueryExecutor {
 			.fetch();
 	}
 
-	public List<PersonalParticipationDto> executeParticipantQueryForExcel(Long challengeId) {
+	public List<AdminPersonalParticipationDto> executeParticipantQueryForExcel(Long challengeId) {
 		return queryFactory
 			.select(PersonalChallengeProjections.toParticipationForAdmin())
 			.from(personalChallengeParticipation)

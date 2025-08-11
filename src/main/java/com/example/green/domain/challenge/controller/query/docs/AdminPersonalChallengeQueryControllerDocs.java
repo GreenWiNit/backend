@@ -4,7 +4,7 @@ import static io.swagger.v3.oas.annotations.enums.ParameterIn.*;
 
 import com.example.green.domain.challenge.controller.query.dto.challenge.AdminChallengeDetailDto;
 import com.example.green.domain.challenge.controller.query.dto.challenge.AdminPersonalChallengesDto;
-import com.example.green.domain.challenge.controller.query.dto.challenge.PersonalParticipationDto;
+import com.example.green.domain.challenge.controller.query.dto.challenge.AdminPersonalParticipationDto;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.page.PageTemplate;
 import com.example.green.global.docs.ApiErrorStandard;
@@ -55,7 +55,7 @@ public interface AdminPersonalChallengeQueryControllerDocs {
 	@ApiResponse(responseCode = "200", description = "챌린지 참여자 목록 조회에 성공했습니다.", useReturnTypeSchema = true)
 	@ApiResponse(responseCode = "403", description = "관리자 권한이 필요합니다.",
 		content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
-	ApiTemplate<PageTemplate<PersonalParticipationDto>> getChallengeParticipant(
+	ApiTemplate<PageTemplate<AdminPersonalParticipationDto>> getChallengeParticipant(
 		@Parameter(description = "챌린지 ID", in = PATH, required = true, example = "1") Long challengeId,
 		@Parameter(description = "페이지 수 (생략가능)") Integer page,
 		@Parameter(description = "페이지 사이즈(생략 가능)", example = "10") Integer size

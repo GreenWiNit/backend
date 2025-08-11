@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
-import com.example.green.domain.challenge.controller.query.dto.challenge.PersonalParticipationDto;
+import com.example.green.domain.challenge.controller.query.dto.challenge.AdminPersonalParticipationDto;
 import com.example.green.global.excel.core.ExcelDataMapper;
 import com.example.green.global.excel.style.BackGroundColor;
 import com.example.green.global.excel.style.ExcelField;
@@ -15,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
-public class PersonalParticipantExcelMapper implements ExcelDataMapper<PersonalParticipationDto> {
+public class PersonalParticipantExcelMapper implements ExcelDataMapper<AdminPersonalParticipationDto> {
 
 	private final TimeUtils timeUtils;
 
@@ -25,8 +25,8 @@ public class PersonalParticipantExcelMapper implements ExcelDataMapper<PersonalP
 	}
 
 	@Override
-	public Class<PersonalParticipationDto> getDataType() {
-		return PersonalParticipationDto.class;
+	public Class<AdminPersonalParticipationDto> getDataType() {
+		return AdminPersonalParticipationDto.class;
 	}
 
 	@Override
@@ -40,7 +40,7 @@ public class PersonalParticipantExcelMapper implements ExcelDataMapper<PersonalP
 	}
 
 	@Override
-	public Object[] extractRowData(PersonalParticipationDto data) {
+	public Object[] extractRowData(AdminPersonalParticipationDto data) {
 		return new Object[] {
 			data.getMemberKey(),
 			data.getParticipatingDate(),

@@ -1,5 +1,8 @@
 package com.example.green.domain.challenge.controller.query;
 
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -9,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.green.domain.challenge.controller.message.AdminChallengeResponseMessage;
 import com.example.green.domain.challenge.controller.query.docs.AdminChallengeGroupQueryControllerDocs;
 import com.example.green.domain.challenge.controller.query.dto.challenge.AdminChallengeGroupDetailDto;
+import com.example.green.domain.challenge.controller.query.dto.challenge.AdminTeamParticipantDto;
 import com.example.green.domain.challenge.controller.query.dto.group.AdminChallengeGroupDto;
 import com.example.green.domain.challenge.repository.query.ChallengeGroupQuery;
 import com.example.green.domain.challenge.util.ClientHelper;
@@ -41,5 +45,21 @@ public class AdminChallengeGroupQueryController implements AdminChallengeGroupQu
 		result.setParticipantMemberKeys(clientHelper.requestMemberKeys(result.getParticipantIds()));
 
 		return ApiTemplate.ok(AdminChallengeResponseMessage.GROUP_DETAIL_FOUND, result);
+	}
+
+	@GetMapping("/{challengeId}/groups/participants")
+	public ApiTemplate<PageTemplate<AdminTeamParticipantDto>> getChallengeParticipant(
+		@PathVariable Long challengeId,
+		@RequestParam(required = false) Integer page,
+		@RequestParam(required = false, defaultValue = "10") Integer size
+	) {
+		PageTemplate<AdminTeamParticipantDto> result =
+			challengeGroupQuery.findParticipantByChallenge(challengeId, page, size);
+		
+		List<Long> participantIds = result.content().stream().map(AdminTeamParticipantDto::getMemberId).toList();
+		Map<Long, String> memberKeyById = clientHelper.requestMemberKeyById(participantIds);
+		result.content().forEach(dto -> dto.setMemberKey(memberKeyById.get(dto.getMemberId())));
+
+		return ApiTemplate.ok(AdminChallengeResponseMessage.CHALLENGE_PARTICIPANTS_FOUND, result);
 	}
 }

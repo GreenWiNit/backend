@@ -30,7 +30,7 @@ public class TeamChallengeCommandController implements TeamChallengeCommandContr
 		@AuthenticationPrincipal PrincipalDetails currentUser
 	) {
 		// todo: 동시성 이슈 해결
-		Long memberId = 1L;
+		Long memberId = 2L;
 		challengeService.join(challengeId, memberId);
 		return NoContent.ok(CHALLENGE_JOINED);
 	}

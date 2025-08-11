@@ -11,9 +11,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.green.domain.challenge.controller.query.dto.challenge.AdminChallengeDetailDto;
 import com.example.green.domain.challenge.controller.query.dto.challenge.AdminPersonalChallengesDto;
+import com.example.green.domain.challenge.controller.query.dto.challenge.AdminPersonalParticipationDto;
 import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDetailDto;
 import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDto;
-import com.example.green.domain.challenge.controller.query.dto.challenge.PersonalParticipationDto;
 import com.example.green.domain.challenge.entity.challenge.PersonalChallenge;
 import com.example.green.domain.challenge.entity.challenge.vo.ChallengeStatus;
 import com.example.green.domain.challenge.exception.ChallengeException;
@@ -82,17 +82,17 @@ public class PersonalChallengeQueryImpl implements PersonalChallengeQuery {
 	}
 
 	@Override
-	public PageTemplate<PersonalParticipationDto> findParticipantByChallenge(
+	public PageTemplate<AdminPersonalParticipationDto> findParticipantByChallenge(
 		Long challengeId, Integer page, Integer size
 	) {
 		long count = personalChallengeRepository.countParticipantByChallenge(challengeId);
 		Pagination pagination = Pagination.of(count, page, size);
-		List<PersonalParticipationDto> result = executor.executeParticipantQueryForAdmin(pagination, challengeId);
+		List<AdminPersonalParticipationDto> result = executor.executeParticipantQueryForAdmin(pagination, challengeId);
 		return PageTemplate.of(result, pagination);
 	}
 
 	@Override
-	public List<PersonalParticipationDto> findParticipantByChallengeForExcel(Long challengeId) {
+	public List<AdminPersonalParticipationDto> findParticipantByChallengeForExcel(Long challengeId) {
 		return executor.executeParticipantQueryForExcel(challengeId);
 	}
 }

@@ -1,19 +1,22 @@
 package com.example.green.domain.challenge.infra.querydsl;
 
+import static com.example.green.domain.challenge.entity.challenge.QTeamChallengeParticipation.*;
 import static com.example.green.domain.challenge.entity.group.QChallengeGroup.*;
 import static com.example.green.domain.challenge.entity.group.QChallengeGroupParticipation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.green.domain.challenge.controller.query.dto.challenge.AdminChallengeGroupDetailDto;
+import com.example.green.domain.challenge.controller.query.dto.challenge.AdminTeamParticipantDto;
+import com.example.green.domain.challenge.controller.query.dto.group.AdminChallengeGroupDto;
 import com.example.green.domain.challenge.controller.query.dto.group.ChallengeGroupDetailDto;
 import com.example.green.domain.challenge.controller.query.dto.group.ChallengeGroupDto;
 import com.example.green.domain.challenge.controller.query.dto.group.MyChallengeGroupDto;
-import com.example.green.domain.challenge.controller.query.dto.challenge.AdminChallengeGroupDetailDto;
-import com.example.green.domain.challenge.controller.query.dto.group.AdminChallengeGroupDto;
 import com.example.green.domain.challenge.entity.group.ChallengeGroup;
 import com.example.green.domain.challenge.exception.ChallengeException;
 import com.example.green.domain.challenge.exception.ChallengeExceptionMessage;
@@ -139,10 +142,48 @@ public class ChallengeGroupQueryImpl implements ChallengeGroupQuery {
 		return PageTemplate.of(result, pagination);
 	}
 
-	@Override
 	public AdminChallengeGroupDetailDto getGroupDetailForAdmin(Long groupId) {
 		ChallengeGroup challengeGroup = getChallengeGroup(groupId);
 		return AdminChallengeGroupDetailDto.from(challengeGroup);
+	}
+
+	public PageTemplate<AdminTeamParticipantDto> findParticipantByChallenge(
+		Long challengeId, Integer page, Integer size
+	) {
+		long count = executeParticipationDetailCountQuery(challengeId);
+		Pagination pagination = Pagination.of(count, page, size);
+
+		List<AdminTeamParticipantDto> result = queryFactory
+			.select(Projections.constructor(
+				AdminTeamParticipantDto.class,
+				challengeGroup.teamCode,
+				challengeGroupParticipation.memberId,
+				teamChallengeParticipation.participatedAt,
+				challengeGroupParticipation.createdDate
+			))
+			.from(challengeGroup)
+			.join(challengeGroup.participants, challengeGroupParticipation)
+			.join(teamChallengeParticipation).on(teamChallengeParticipation.teamChallenge.id.eq(challengeId)
+				.and(teamChallengeParticipation.memberId.eq(challengeGroupParticipation.memberId)))
+			.where(challengeGroup.teamChallengeId.eq(challengeId))
+			.orderBy(challengeGroupParticipation.createdDate.desc())
+			.offset(pagination.calculateOffset())
+			.limit(pagination.getPageSize())
+			.fetch();
+		return PageTemplate.of(result, pagination);
+	}
+
+	public long executeParticipationDetailCountQuery(Long challengeId) {
+		return Optional.ofNullable(queryFactory
+				.select(challengeGroupParticipation.count())
+				.from(challengeGroup)
+				.join(challengeGroup.participants, challengeGroupParticipation)
+				.join(teamChallengeParticipation)
+				.on(teamChallengeParticipation.teamChallenge.id.eq(challengeId)
+					.and(teamChallengeParticipation.memberId.eq(challengeGroupParticipation.memberId)))
+				.where(challengeGroup.teamChallengeId.eq(challengeId))
+				.fetchOne())
+			.orElseThrow(() -> new IllegalStateException("팀 챌린지 참가자 카운트 실패"));
 	}
 
 	public BooleanExpression fromCondition(String cursor) {

@@ -15,7 +15,7 @@ import com.example.green.domain.challenge.controller.message.AdminChallengeRespo
 import com.example.green.domain.challenge.controller.query.docs.AdminPersonalChallengeQueryControllerDocs;
 import com.example.green.domain.challenge.controller.query.dto.challenge.AdminChallengeDetailDto;
 import com.example.green.domain.challenge.controller.query.dto.challenge.AdminPersonalChallengesDto;
-import com.example.green.domain.challenge.controller.query.dto.challenge.PersonalParticipationDto;
+import com.example.green.domain.challenge.controller.query.dto.challenge.AdminPersonalParticipationDto;
 import com.example.green.domain.challenge.repository.query.PersonalChallengeQuery;
 import com.example.green.domain.challenge.util.ClientHelper;
 import com.example.green.global.api.ApiTemplate;
@@ -56,15 +56,15 @@ public class AdminPersonalChallengeQueryController implements AdminPersonalChall
 	}
 
 	@GetMapping("/{challengeId}/participants")
-	public ApiTemplate<PageTemplate<PersonalParticipationDto>> getChallengeParticipant(
+	public ApiTemplate<PageTemplate<AdminPersonalParticipationDto>> getChallengeParticipant(
 		@PathVariable Long challengeId,
 		@RequestParam(required = false) Integer page,
 		@RequestParam(required = false, defaultValue = "10") Integer size
 	) {
-		PageTemplate<PersonalParticipationDto> result =
+		PageTemplate<AdminPersonalParticipationDto> result =
 			personalChallengeQuery.findParticipantByChallenge(challengeId, page, size);
 
-		List<Long> participantIds = result.content().stream().map(PersonalParticipationDto::getMemberId).toList();
+		List<Long> participantIds = result.content().stream().map(AdminPersonalParticipationDto::getMemberId).toList();
 		Map<Long, String> memberKeyById = clientHelper.requestMemberKeyById(participantIds);
 		result.content().forEach(dto -> dto.setMemberKey(memberKeyById.get(dto.getMemberId())));
 
@@ -73,9 +73,10 @@ public class AdminPersonalChallengeQueryController implements AdminPersonalChall
 
 	@GetMapping("/{challengeId}/participants/excel")
 	public void downloadParticipantExcel(@PathVariable Long challengeId, HttpServletResponse response) {
-		List<PersonalParticipationDto> result = personalChallengeQuery.findParticipantByChallengeForExcel(challengeId);
+		List<AdminPersonalParticipationDto> result =
+			personalChallengeQuery.findParticipantByChallengeForExcel(challengeId);
 
-		List<Long> participantIds = result.stream().map(PersonalParticipationDto::getMemberId).toList();
+		List<Long> participantIds = result.stream().map(AdminPersonalParticipationDto::getMemberId).toList();
 		Map<Long, String> memberKeyById = clientHelper.requestMemberKeyById(participantIds);
 		result.forEach(dto -> dto.setMemberKey(memberKeyById.get(dto.getMemberId())));
 

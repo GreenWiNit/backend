@@ -5,9 +5,9 @@ import java.util.List;
 
 import com.example.green.domain.challenge.controller.query.dto.challenge.AdminChallengeDetailDto;
 import com.example.green.domain.challenge.controller.query.dto.challenge.AdminPersonalChallengesDto;
+import com.example.green.domain.challenge.controller.query.dto.challenge.AdminPersonalParticipationDto;
 import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDetailDto;
 import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDto;
-import com.example.green.domain.challenge.controller.query.dto.challenge.PersonalParticipationDto;
 import com.example.green.domain.challenge.entity.challenge.PersonalChallenge;
 import com.example.green.domain.challenge.entity.challenge.vo.ChallengeStatus;
 import com.example.green.global.api.page.CursorTemplate;
@@ -34,7 +34,8 @@ public interface PersonalChallengeQuery {
 
 	List<AdminPersonalChallengesDto> findChallengePageForExcel();
 
-	PageTemplate<PersonalParticipationDto> findParticipantByChallenge(Long challengeId, Integer page, Integer size);
+	PageTemplate<AdminPersonalParticipationDto> findParticipantByChallenge(
+		Long challengeId, Integer page, Integer size);
 
-	List<PersonalParticipationDto> findParticipantByChallengeForExcel(Long challengeId);
+	List<AdminPersonalParticipationDto> findParticipantByChallengeForExcel(Long challengeId);
 }

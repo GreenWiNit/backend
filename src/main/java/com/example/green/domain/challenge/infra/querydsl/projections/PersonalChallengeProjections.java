@@ -4,9 +4,9 @@ import static com.example.green.domain.challenge.entity.challenge.QPersonalChall
 import static com.example.green.domain.challenge.entity.challenge.QPersonalChallengeParticipation.*;
 
 import com.example.green.domain.challenge.controller.query.dto.challenge.AdminPersonalChallengesDto;
+import com.example.green.domain.challenge.controller.query.dto.challenge.AdminPersonalParticipationDto;
 import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDetailDto;
 import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDto;
-import com.example.green.domain.challenge.controller.query.dto.challenge.PersonalParticipationDto;
 import com.querydsl.core.types.ConstructorExpression;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -56,9 +56,9 @@ public class PersonalChallengeProjections {
 		);
 	}
 
-	public static ConstructorExpression<PersonalParticipationDto> toParticipationForAdmin() {
+	public static ConstructorExpression<AdminPersonalParticipationDto> toParticipationForAdmin() {
 		return Projections.constructor(
-			PersonalParticipationDto.class,
+			AdminPersonalParticipationDto.class,
 			personalChallengeParticipation.memberId,
 			personalChallengeParticipation.participatedAt,
 			personalChallengeParticipation.certCount
