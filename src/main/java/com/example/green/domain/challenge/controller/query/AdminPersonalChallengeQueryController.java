@@ -55,7 +55,7 @@ public class AdminPersonalChallengeQueryController implements AdminPersonalChall
 		excelDownloader.downloadAsStream(result, response);
 	}
 
-	@GetMapping("/{challengeId}/participation")
+	@GetMapping("/{challengeId}/participants")
 	public ApiTemplate<PageTemplate<PersonalParticipationDto>> getChallengeParticipant(
 		@PathVariable Long challengeId,
 		@RequestParam(required = false) Integer page,
@@ -71,7 +71,7 @@ public class AdminPersonalChallengeQueryController implements AdminPersonalChall
 		return ApiTemplate.ok(CHALLENGE_PARTICIPANTS_FOUND, result);
 	}
 
-	@GetMapping("/{challengeId}/participation/excel")
+	@GetMapping("/{challengeId}/participants/excel")
 	public void downloadParticipantExcel(@PathVariable Long challengeId, HttpServletResponse response) {
 		List<PersonalParticipationDto> result = personalChallengeQuery.findParticipantByChallengeForExcel(challengeId);
 
