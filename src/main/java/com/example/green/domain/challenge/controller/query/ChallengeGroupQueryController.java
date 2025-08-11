@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.green.domain.challenge.controller.dto.ChallengeGroupDetailDto;
 import com.example.green.domain.challenge.controller.dto.ChallengeGroupDto;
+import com.example.green.domain.challenge.controller.dto.MyChallengeGroupDto;
 import com.example.green.domain.challenge.controller.message.TeamChallengeGroupResponseMessage;
 import com.example.green.domain.challenge.controller.query.docs.ChallengeGroupQueryControllerDocs;
 import com.example.green.domain.challenge.repository.query.ChallengeGroupQuery;
@@ -28,14 +29,14 @@ public class ChallengeGroupQueryController implements ChallengeGroupQueryControl
 	private final ChallengeGroupQuery challengeGroupQuery;
 
 	@GetMapping("/{challengeId}/groups/me")
-	public ApiTemplate<CursorTemplate<String, ChallengeGroupDto>> getTeamChallengeGroups(
+	public ApiTemplate<CursorTemplate<String, MyChallengeGroupDto>> getMyTeamChallengeGroups(
 		@PathVariable Long challengeId,
 		@RequestParam(required = false) String cursor,
 		@RequestParam(required = false, defaultValue = "20") Integer size,
 		@AuthenticationPrincipal PrincipalDetails principalDetails
 	) {
 		Long memberId = 1L;
-		CursorTemplate<String, ChallengeGroupDto> result =
+		CursorTemplate<String, MyChallengeGroupDto> result =
 			challengeGroupQuery.findMyGroup(challengeId, cursor, size, memberId);
 
 		return ApiTemplate.ok(MY_TEAM_GROUP_FOUND, result);
@@ -51,4 +52,16 @@ public class ChallengeGroupQueryController implements ChallengeGroupQueryControl
 		return ApiTemplate.ok(TeamChallengeGroupResponseMessage.GROUP_DETAIL_FOUND, result);
 	}
 
+	@GetMapping("/{challengeId}/groups")
+	public ApiTemplate<CursorTemplate<String, ChallengeGroupDto>> getTeamChallengeGroups(
+		@PathVariable Long challengeId,
+		@RequestParam(required = false) String cursor,
+		@RequestParam(required = false, defaultValue = "20") Integer size,
+		@AuthenticationPrincipal PrincipalDetails principalDetails
+	) {
+		Long memberId = 1L;
+		CursorTemplate<String, ChallengeGroupDto> result =
+			challengeGroupQuery.findAllGroupByCursor(challengeId, cursor, size, memberId);
+		return ApiTemplate.ok(MY_TEAM_GROUP_FOUND, result);
+	}
 }

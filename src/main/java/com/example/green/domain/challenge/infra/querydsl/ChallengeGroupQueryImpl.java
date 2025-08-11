@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import com.example.green.domain.challenge.controller.dto.ChallengeGroupDetailDto;
 import com.example.green.domain.challenge.controller.dto.ChallengeGroupDto;
+import com.example.green.domain.challenge.controller.dto.MyChallengeGroupDto;
 import com.example.green.domain.challenge.entity.group.ChallengeGroup;
 import com.example.green.domain.challenge.exception.ChallengeException;
 import com.example.green.domain.challenge.exception.ChallengeExceptionMessage;
@@ -42,17 +43,18 @@ public class ChallengeGroupQueryImpl implements ChallengeGroupQuery {
 		}
 	}
 
-	public CursorTemplate<String, ChallengeGroupDto> findMyGroup(
+	public CursorTemplate<String, MyChallengeGroupDto> findMyGroup(
 		Long challengeId, String cursor, Integer size, Long memberId
 	) {
-		List<ChallengeGroupDto> groups = queryFactory
-			.select(Projections.constructor(ChallengeGroupDto.class,
+		List<MyChallengeGroupDto> groups = queryFactory
+			.select(Projections.constructor(MyChallengeGroupDto.class,
 				challengeGroup.id,
 				challengeGroup.basicInfo.groupName,
 				challengeGroup.groupAddress.sigungu,
 				challengeGroup.period,
 				challengeGroup.capacity,
-				challengeGroup.leaderId.eq(memberId)
+				challengeGroup.leaderId.eq(memberId),
+				challengeGroup.createdDate
 			))
 			.from(challengeGroup)
 			.join(challengeGroup.participants, challengeGroupParticipation)
@@ -62,13 +64,13 @@ public class ChallengeGroupQueryImpl implements ChallengeGroupQuery {
 				fromCondition(cursor)
 			)
 			.orderBy(
-				challengeGroup.period.beginDateTime.desc(),
+				challengeGroup.createdDate.desc(),
 				challengeGroup.id.desc()
 			)
 			.limit(size + 1)
 			.fetch();
 
-		return CursorTemplate.from(groups, size, dto -> dto.beginDateTime() + "," + dto.id());
+		return CursorTemplate.from(groups, size, dto -> dto.createdDate() + "," + dto.id());
 	}
 
 	@Override
@@ -76,6 +78,35 @@ public class ChallengeGroupQueryImpl implements ChallengeGroupQuery {
 		boolean participating = challengeGroupRepository.existMembership(groupId, memberId);
 		ChallengeGroup challengeGroup = getChallengeGroup(groupId);
 		return ChallengeGroupDetailDto.from(challengeGroup, participating);
+	}
+
+	@Override
+	public CursorTemplate<String, ChallengeGroupDto> findAllGroupByCursor(Long challengeId, String cursor, Integer size,
+		Long memberId) {
+		List<ChallengeGroupDto> groups = queryFactory
+			.select(Projections.constructor(ChallengeGroupDto.class,
+				challengeGroup.id,
+				challengeGroup.basicInfo.groupName,
+				challengeGroup.groupAddress.sigungu,
+				challengeGroup.period,
+				challengeGroup.capacity,
+				challengeGroup.createdDate
+			))
+			.from(challengeGroup)
+			.join(challengeGroup.participants, challengeGroupParticipation)
+			.where(
+				challengeGroup.teamChallengeId.eq(challengeId),
+				challengeGroup.leaderId.ne(memberId),
+				fromCondition(cursor)
+			)
+			.orderBy(
+				challengeGroup.createdDate.desc(),
+				challengeGroup.id.desc()
+			)
+			.limit(size + 1)
+			.fetch();
+
+		return CursorTemplate.from(groups, size, dto -> dto.createdDate() + "," + dto.id());
 	}
 
 	public BooleanExpression fromCondition(String cursor) {
@@ -86,8 +117,8 @@ public class ChallengeGroupQueryImpl implements ChallengeGroupQuery {
 		String[] parts = cursor.split(",");
 		LocalDateTime dateCursor = LocalDateTime.parse(parts[0]);
 		Long idCursor = Long.parseLong(parts[1]);
-		return challengeGroup.period.beginDateTime.lt(dateCursor)
-			.or(challengeGroup.period.beginDateTime.eq(dateCursor)
+		return challengeGroup.createdDate.lt(dateCursor)
+			.or(challengeGroup.createdDate.eq(dateCursor)
 				.and(challengeGroup.id.lt(idCursor)));
 	}
 }

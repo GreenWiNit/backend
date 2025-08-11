@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import com.example.green.domain.challenge.controller.dto.ChallengeGroupDetailDto;
 import com.example.green.domain.challenge.controller.dto.ChallengeGroupDto;
+import com.example.green.domain.challenge.controller.dto.MyChallengeGroupDto;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.page.CursorTemplate;
 import com.example.green.global.docs.ApiErrorStandard;
@@ -23,7 +24,7 @@ public interface ChallengeGroupQueryControllerDocs {
 	@Operation(summary = "챌린지 별 나의 팀(그룹) 목록 조회 - B01_006 (나의 팀)", description = "팀 목록을 조회합니다.")
 	@ApiErrorStandard
 	@ApiResponse(responseCode = "200", description = "내 팀 목록을 조회했습니다.")
-	ApiTemplate<CursorTemplate<String, ChallengeGroupDto>> getTeamChallengeGroups(
+	ApiTemplate<CursorTemplate<String, MyChallengeGroupDto>> getMyTeamChallengeGroups(
 		@Parameter(description = "챌린지 ID", in = PATH, required = true, example = "1") Long challengeId,
 		@Parameter(description = "커서 (시간,ID) - 생략 시 첫 조회") String cursor,
 		@Parameter(description = "페이지 사이즈 (생략 가능)", example = "20") Integer size,
@@ -37,4 +38,13 @@ public interface ChallengeGroupQueryControllerDocs {
 		@PathVariable Long groupId,
 		@AuthenticationPrincipal PrincipalDetails principalDetails
 	);
+
+	@Operation(summary = "챌린지 별 팀(그룹) 목록 조회 - B01_007 (팀 선택하기)", description = "팀 목록을 조회합니다.")
+	@ApiErrorStandard
+	@ApiResponse(responseCode = "200", description = "팀 목록을 조회했습니다.")
+	ApiTemplate<CursorTemplate<String, ChallengeGroupDto>> getTeamChallengeGroups(
+		@Parameter(description = "챌린지 ID", in = PATH, required = true, example = "1") Long challengeId,
+		@Parameter(description = "커서 (시간,ID) - 생략 시 첫 조회") String cursor,
+		@Parameter(description = "페이지 사이즈 (생략 가능)", example = "20") Integer size,
+		PrincipalDetails principalDetails);
 }

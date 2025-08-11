@@ -1,6 +1,6 @@
 package com.example.green.domain.challenge.repository;
 
-import com.example.green.domain.challenge.controller.dto.ChallengeGroupDto;
+import com.example.green.domain.challenge.controller.dto.MyChallengeGroupDto;
 import com.example.green.domain.challenge.controller.dto.admin.AdminTeamChallengeGroupListResponseDto;
 import com.example.green.global.api.page.CursorTemplate;
 
@@ -18,7 +18,7 @@ public interface TeamChallengeGroupRepositoryCustom {
 	 * @param memberId 현재 사용자 ID (리더 여부 확인용)
 	 * @return 커서 템플릿에 담긴 팀 챌린지 그룹 목록
 	 */
-	CursorTemplate<Long, ChallengeGroupDto> findGroupsByChallengeIdAndCursor(
+	CursorTemplate<Long, MyChallengeGroupDto> findGroupsByChallengeIdAndCursor(
 		Long challengeId,
 		Long cursor,
 		int size,
