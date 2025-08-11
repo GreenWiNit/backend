@@ -39,9 +39,9 @@ public record TeamChallengeGroupDetailResponseDto(
 	GroupStatus groupStatus,
 
 	@Schema(description = "리더 여부", example = "true")
-	Boolean isLeader,
+	boolean leaderMe,
 
 	@Schema(description = "참가 여부", example = "true")
-	Boolean isParticipant
+	Boolean participating
 ) {
 }

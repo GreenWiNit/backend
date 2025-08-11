@@ -99,7 +99,7 @@ public class TeamChallengeGroupRepositoryImpl implements TeamChallengeGroupRepos
 
 	private TeamChallengeGroupListResponseDto toGroupListDto(Group group, Long memberId) {
 		// 해당 사용자가 이 그룹의 리더인지 확인
-		Boolean isLeader = isUserLeaderOfGroup(group.getId(), memberId);
+		Boolean leaderMe = isUserLeaderOfGroup(group.getId(), memberId);
 
 		return new TeamChallengeGroupListResponseDto(
 			group.getId(),
@@ -110,7 +110,7 @@ public class TeamChallengeGroupRepositoryImpl implements TeamChallengeGroupRepos
 			group.getCurrentParticipants(),
 			group.getMaxParticipants(),
 			group.getGroupStatus(),
-			isLeader
+			leaderMe
 		);
 	}
 

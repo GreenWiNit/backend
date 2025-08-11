@@ -1,4 +1,4 @@
-package com.example.green.domain.challenge.infra;
+package com.example.green.domain.challenge.infra.querydsl.projections;
 
 import static com.example.green.domain.challenge.entity.challenge.QPersonalChallenge.*;
 

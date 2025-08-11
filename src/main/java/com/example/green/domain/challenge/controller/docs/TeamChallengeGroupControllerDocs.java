@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.green.domain.challenge.controller.dto.ChallengeGroupCreateDto;
+import com.example.green.domain.challenge.controller.dto.ChallengeGroupDto;
 import com.example.green.domain.challenge.controller.dto.TeamChallengeGroupDetailResponseDto;
-import com.example.green.domain.challenge.controller.dto.TeamChallengeGroupListResponseDto;
 import com.example.green.domain.challenge.controller.dto.TeamChallengeGroupUpdateRequestDto;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.NoContent;
@@ -32,7 +32,7 @@ public interface TeamChallengeGroupControllerDocs {
 	)
 	@ApiResponse(responseCode = "200", description = "그룹 목록 조회 성공")
 	@ApiErrorStandard
-	ApiTemplate<CursorTemplate<Long, TeamChallengeGroupListResponseDto>> getTeamChallengeGroups(
+	ApiTemplate<CursorTemplate<Long, ChallengeGroupDto>> getTeamChallengeGroups(
 		@Parameter(description = "팀 챌린지 ID", required = true, example = "1")
 		@PathVariable Long challengeId,
 		@Parameter(description = "커서 (마지막으로 조회한 그룹 ID), 처음 조회시 생략")

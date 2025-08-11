@@ -1,4 +1,4 @@
-package com.example.green.domain.challenge.infra;
+package com.example.green.domain.challenge.infra.querydsl;
 
 import static com.example.green.domain.challenge.entity.challenge.QTeamChallenge.*;
 import static com.example.green.domain.challenge.entity.challenge.QTeamChallengeParticipation.*;
@@ -17,6 +17,7 @@ import com.example.green.domain.challenge.controller.dto.admin.AdminTeamChalleng
 import com.example.green.domain.challenge.entity.challenge.TeamChallenge;
 import com.example.green.domain.challenge.entity.challenge.vo.ChallengeStatus;
 import com.example.green.domain.challenge.exception.ChallengeException;
+import com.example.green.domain.challenge.infra.querydsl.projections.TeamChallengeProjections;
 import com.example.green.domain.challenge.repository.TeamChallengeRepository;
 import com.example.green.domain.challenge.repository.query.TeamChallengeQuery;
 import com.example.green.global.api.page.CursorTemplate;
