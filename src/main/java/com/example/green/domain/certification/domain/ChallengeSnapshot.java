@@ -1,6 +1,5 @@
 package com.example.green.domain.certification.domain;
 
-import com.example.green.domain.challenge.entity.challenge.vo.ChallengeType;
 import com.example.green.global.utils.EntityValidator;
 
 import jakarta.persistence.Column;
@@ -16,32 +15,35 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ChallengeSnapshot {
 
+	private static final String TEAM_TYPE = "T";
+	private static final String PERSONAL_TYPE = "P";
+
 	@Column(nullable = false)
 	private Long challengeId;
 	@Column(nullable = false)
-	private String challengeTitle;
+	private String challengeName;
 	@Column(nullable = false)
 	private String challengeCode;
-	private String teamCode;
-	private ChallengeType type;
+	private String groupCode;
+	private String type;
 
-	private ChallengeSnapshot(Long id, String title, String code, String teamCode, ChallengeType type) {
+	private ChallengeSnapshot(Long id, String name, String code, String groupCode, String type) {
 		EntityValidator.validateAutoIncrementId(id, "challengeId 필수 값 입니다.");
-		EntityValidator.validateEmptyString(title, "challengeTitle 필수 값 입니다.");
+		EntityValidator.validateEmptyString(name, "challengeName 필수 값 입니다.");
 		EntityValidator.validateEmptyString(code, "challengeCode 필수 값 입니다.");
-		EntityValidator.validateEmptyString(teamCode, "teamCode 필수 값입니다.");
+		EntityValidator.validateEmptyString(groupCode, "teamCode 필수 값입니다.");
 		this.challengeId = id;
-		this.challengeTitle = title;
+		this.challengeName = name;
 		this.challengeCode = code;
-		this.teamCode = teamCode;
+		this.groupCode = groupCode;
 		this.type = type;
 	}
 
-	public static ChallengeSnapshot ofPersonal(Long id, String title, String code) {
-		return new ChallengeSnapshot(id, title, code, null, ChallengeType.PERSONAL);
+	public static ChallengeSnapshot ofPersonal(Long id, String name, String code) {
+		return new ChallengeSnapshot(id, name, code, null, TEAM_TYPE);
 	}
 
-	public static ChallengeSnapshot ofTeam(Long id, String title, String code, String teamCode) {
-		return new ChallengeSnapshot(id, title, code, teamCode, ChallengeType.TEAM);
+	public static ChallengeSnapshot ofTeam(Long id, String name, String code, String groupCode) {
+		return new ChallengeSnapshot(id, name, code, groupCode, PERSONAL_TYPE);
 	}
 }

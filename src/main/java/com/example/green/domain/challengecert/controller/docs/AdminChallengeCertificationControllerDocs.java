@@ -2,7 +2,7 @@ package com.example.green.domain.challengecert.controller.docs;
 
 import java.util.List;
 
-import com.example.green.domain.challenge.entity.certification.CertificationStatus;
+import com.example.green.domain.certification.domain.CertificationStatus;
 import com.example.green.domain.challengecert.dto.AdminCertificationStatusUpdateRequestDto;
 import com.example.green.domain.challengecert.dto.AdminChallengeTitleResponseDto;
 import com.example.green.domain.challengecert.dto.AdminGroupCodeResponseDto;

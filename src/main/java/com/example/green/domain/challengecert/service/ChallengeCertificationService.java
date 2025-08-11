@@ -30,8 +30,8 @@ import com.example.green.domain.challenge.entity.certification.PersonalChallenge
 import com.example.green.domain.challenge.entity.challenge.PersonalChallengeParticipation;
 import com.example.green.domain.challenge.entity.certification.TeamChallengeCertification;
 import com.example.green.domain.challenge.entity.challenge.TeamChallengeParticipation;
-import com.example.green.domain.challengecert.exception.ChallengeCertException;
-import com.example.green.domain.challengecert.exception.ChallengeCertExceptionMessage;
+import com.example.green.domain.certification.exception.ChallengeCertException;
+import com.example.green.domain.certification.exception.ChallengeCertExceptionMessage;
 import com.example.green.domain.challengecert.repository.PersonalChallengeCertificationRepository;
 import com.example.green.domain.challengecert.repository.TeamChallengeCertificationRepository;
 import com.example.green.domain.member.entity.Member;

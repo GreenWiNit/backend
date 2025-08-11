@@ -115,15 +115,7 @@ public class ChallengeGroup extends BaseEntity {
 		this.status = determineStatus();
 	}
 
-	private void addParticipant(ChallengeGroupParticipation participation) {
-		if (!participants.add(participation)) {
-			throw new ChallengeException(ChallengeExceptionMessage.ALREADY_PARTICIPATING_IN_GROUP);
-		}
-		capacity.increase();
-		this.status = determineStatus();
-	}
-
-	private ChallengeGroupParticipation findParticipationByMemberId(Long memberId) {
+	public ChallengeGroupParticipation findParticipationByMemberId(Long memberId) {
 		return participants.stream()
 			.filter(p -> p.matches(memberId))
 			.findFirst()
@@ -156,6 +148,14 @@ public class ChallengeGroup extends BaseEntity {
 			.filter(participant -> !participant.isLeader())
 			.map(ChallengeGroupParticipation::getMemberId)
 			.toList();
+	}
+
+	private void addParticipant(ChallengeGroupParticipation participation) {
+		if (!participants.add(participation)) {
+			throw new ChallengeException(ChallengeExceptionMessage.ALREADY_PARTICIPATING_IN_GROUP);
+		}
+		capacity.increase();
+		this.status = determineStatus();
 	}
 
 	private GroupStatus determineStatus() {

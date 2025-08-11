@@ -192,6 +192,12 @@ public class ChallengeGroupQueryImpl implements ChallengeGroupQuery {
 			.fetch();
 	}
 
+	public ChallengeGroup getChallengeGroup(Long groupId, Long memberId) {
+		ChallengeGroup group = getChallengeGroup(groupId);
+		group.findParticipationByMemberId(memberId);
+		return group;
+	}
+
 	public long executeParticipationDetailCountQuery(Long challengeId) {
 		return Optional.ofNullable(queryFactory
 				.select(challengeGroupParticipation.count())
