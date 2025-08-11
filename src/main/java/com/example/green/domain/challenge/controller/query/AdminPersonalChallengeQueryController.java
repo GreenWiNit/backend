@@ -62,12 +62,23 @@ public class AdminPersonalChallengeQueryController implements AdminPersonalChall
 		@RequestParam(required = false, defaultValue = "10") Integer size
 	) {
 		PageTemplate<PersonalParticipationDto> result =
-			personalChallengeQuery.findParticipationByChallenge(challengeId, page, size);
+			personalChallengeQuery.findParticipantByChallenge(challengeId, page, size);
 
 		List<Long> participantIds = result.content().stream().map(PersonalParticipationDto::getMemberId).toList();
 		Map<Long, String> memberKeyById = clientHelper.requestMemberKeyById(participantIds);
 		result.content().forEach(dto -> dto.setMemberKey(memberKeyById.get(dto.getMemberId())));
 
 		return ApiTemplate.ok(CHALLENGE_PARTICIPANTS_FOUND, result);
+	}
+
+	@GetMapping("/{challengeId}/participation/excel")
+	public void downloadParticipantExcel(@PathVariable Long challengeId, HttpServletResponse response) {
+		List<PersonalParticipationDto> result = personalChallengeQuery.findParticipantByChallengeForExcel(challengeId);
+
+		List<Long> participantIds = result.stream().map(PersonalParticipationDto::getMemberId).toList();
+		Map<Long, String> memberKeyById = clientHelper.requestMemberKeyById(participantIds);
+		result.forEach(dto -> dto.setMemberKey(memberKeyById.get(dto.getMemberId())));
+
+		excelDownloader.downloadAsStream(result, response);
 	}
 }

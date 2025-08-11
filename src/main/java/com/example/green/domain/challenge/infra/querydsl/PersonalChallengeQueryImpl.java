@@ -82,12 +82,17 @@ public class PersonalChallengeQueryImpl implements PersonalChallengeQuery {
 	}
 
 	@Override
-	public PageTemplate<PersonalParticipationDto> findParticipationByChallenge(
+	public PageTemplate<PersonalParticipationDto> findParticipantByChallenge(
 		Long challengeId, Integer page, Integer size
 	) {
-		long count = personalChallengeRepository.countParticipationsByPersonalChallengeId(challengeId);
+		long count = personalChallengeRepository.countParticipantByChallenge(challengeId);
 		Pagination pagination = Pagination.of(count, page, size);
-		List<PersonalParticipationDto> result = executor.executeParticipationQueryForAdmin(pagination, challengeId);
+		List<PersonalParticipationDto> result = executor.executeParticipantQueryForAdmin(pagination, challengeId);
 		return PageTemplate.of(result, pagination);
+	}
+
+	@Override
+	public List<PersonalParticipationDto> findParticipantByChallengeForExcel(Long challengeId) {
+		return executor.executeParticipantQueryForExcel(challengeId);
 	}
 }

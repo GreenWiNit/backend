@@ -68,7 +68,7 @@ public class PersonalChallengeQueryExecutor {
 			.fetch();
 	}
 
-	public List<PersonalParticipationDto> executeParticipationQueryForAdmin(Pagination pagination, Long challengeId) {
+	public List<PersonalParticipationDto> executeParticipantQueryForAdmin(Pagination pagination, Long challengeId) {
 		return queryFactory
 			.select(PersonalChallengeProjections.toParticipationForAdmin())
 			.from(personalChallengeParticipation)
@@ -76,6 +76,15 @@ public class PersonalChallengeQueryExecutor {
 			.orderBy(personalChallengeParticipation.participatedAt.desc())
 			.offset(pagination.calculateOffset())
 			.limit(pagination.getPageSize())
+			.fetch();
+	}
+
+	public List<PersonalParticipationDto> executeParticipantQueryForExcel(Long challengeId) {
+		return queryFactory
+			.select(PersonalChallengeProjections.toParticipationForAdmin())
+			.from(personalChallengeParticipation)
+			.where(personalChallengeParticipation.personalChallenge.id.eq(challengeId))
+			.orderBy(personalChallengeParticipation.participatedAt.desc())
 			.fetch();
 	}
 }

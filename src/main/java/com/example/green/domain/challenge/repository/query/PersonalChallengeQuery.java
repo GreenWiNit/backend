@@ -34,5 +34,7 @@ public interface PersonalChallengeQuery {
 
 	List<AdminPersonalChallengesDto> findChallengePageForExcel();
 
-	PageTemplate<PersonalParticipationDto> findParticipationByChallenge(Long challengeId, Integer page, Integer size);
+	PageTemplate<PersonalParticipationDto> findParticipantByChallenge(Long challengeId, Integer page, Integer size);
+
+	List<PersonalParticipationDto> findParticipantByChallengeForExcel(Long challengeId);
 }

@@ -60,4 +60,15 @@ public interface AdminPersonalChallengeQueryControllerDocs {
 		@Parameter(description = "페이지 수 (생략가능)") Integer page,
 		@Parameter(description = "페이지 사이즈(생략 가능)", example = "10") Integer size
 	);
+
+	@Operation(
+		summary = "개인 챌린지 참여자 목록 엑셀 다운로드 (ad_B01_002), 참여자 정보",
+		description = "개인 챌린지 참여자 정보를 엑셀 파일로 다운로드합니다.")
+	@ApiErrorStandard
+	@ApiResponse(responseCode = "200")
+	@ApiResponse(responseCode = "403", description = "관리자 권한이 필요합니다.",
+		content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
+	void downloadParticipantExcel(
+		@Parameter(description = "챌린지 ID", in = PATH, required = true, example = "1") Long challengeId,
+		HttpServletResponse response);
 }

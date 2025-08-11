@@ -1,5 +1,6 @@
 package com.example.green.domain.challenge.controller.query.dto.challenge;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -27,5 +28,9 @@ public class PersonalParticipationDto {
 		this.memberId = memberId;
 		this.participatingDate = participatingDate;
 		this.certCount = certCount;
+	}
+
+	public LocalDate getParticipatingDate() {
+		return participatingDate.toLocalDate();
 	}
 }
