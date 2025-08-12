@@ -15,8 +15,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ChallengeSnapshot {
 
-	private static final String TEAM_TYPE = "T";
-	private static final String PERSONAL_TYPE = "P";
+	public static final String TEAM_TYPE = "T";
+	public static final String PERSONAL_TYPE = "P";
 
 	@Column(nullable = false)
 	private Long challengeId;
