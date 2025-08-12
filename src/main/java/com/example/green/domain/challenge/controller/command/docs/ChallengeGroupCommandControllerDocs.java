@@ -23,8 +23,7 @@ public interface ChallengeGroupCommandControllerDocs {
 
 	@Operation(
 		summary = "팀 챌린지 그룹 생성 (B01_008), 팀 등록하기",
-		description = "새로운 팀 챌린지 그룹을 생성하고 생성자를 리더로 등록합니다.",
-		tags = {"팀 챌린지 그룹 관리"}
+		description = "새로운 팀 챌린지 그룹을 생성하고 생성자를 리더로 등록합니다."
 	)
 	@ApiResponse(responseCode = "200", description = "그룹 생성 성공")
 	@ApiError400
@@ -39,8 +38,7 @@ public interface ChallengeGroupCommandControllerDocs {
 
 	@Operation(
 		summary = "팀 챌린지 그룹 참가 (B01_007), 팀 가입 신청",
-		description = "특정 그룹에 참가합니다. 해당 팀 챌린지에 먼저 참가되어 있어야 합니다.",
-		tags = {"팀 챌린지 그룹 관리"}
+		description = "특정 그룹에 참가합니다. 해당 팀 챌린지에 먼저 참가되어 있어야 합니다."
 	)
 	@ApiResponse(responseCode = "200", description = "그룹 참가 성공")
 	@ApiError400
@@ -53,8 +51,7 @@ public interface ChallengeGroupCommandControllerDocs {
 
 	@Operation(
 		summary = "팀 챌린지 그룹 수정 (B01_009)",
-		description = "그룹 정보를 수정합니다. 리더만 수정할 수 있습니다.",
-		tags = {"팀 챌린지 그룹 관리"}
+		description = "그룹 정보를 수정합니다. 리더만 수정할 수 있습니다."
 	)
 	@ApiResponse(responseCode = "200", description = "그룹 수정 성공")
 	@ApiResponse(responseCode = "403", description = "권한 없음 (리더가 아님)")
@@ -70,8 +67,7 @@ public interface ChallengeGroupCommandControllerDocs {
 
 	@Operation(
 		summary = "팀 챌린지 그룹 삭제 (B01_009)",
-		description = "그룹을 삭제합니다. 리더만 삭제할 수 있습니다.",
-		tags = {"팀 챌린지 그룹 관리"}
+		description = "그룹을 삭제합니다. 리더만 삭제할 수 있습니다."
 	)
 	@ApiResponse(responseCode = "200", description = "그룹 삭제 성공")
 	@ApiResponse(responseCode = "403", description = "권한 없음 (리더가 아님)")

@@ -2,7 +2,7 @@ package com.example.green.domain.certification.domain;
 
 import static com.example.green.global.utils.EntityValidator.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import com.example.green.domain.common.TimeBaseEntity;
 
@@ -44,7 +44,7 @@ public class ChallengeCertification extends TimeBaseEntity {
 	private String review;
 
 	@Column(nullable = false)
-	private LocalDateTime certifiedAt;
+	private LocalDate certifiedDate;
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
@@ -52,25 +52,25 @@ public class ChallengeCertification extends TimeBaseEntity {
 	private CertificationStatus status = CertificationStatus.PENDING;
 
 	public static ChallengeCertification create(
-		MemberSnapshot member, ChallengeSnapshot challenge, String imageUrl, String review, LocalDateTime certifiedAt
+		MemberSnapshot member, ChallengeSnapshot challenge, String imageUrl, String review, LocalDate certifiedDate
 	) {
-		validateCreateInputs(member, challenge, imageUrl, review, certifiedAt);
+		validateCreateInputs(member, challenge, imageUrl, review, certifiedDate);
 		return ChallengeCertification.builder()
 			.member(member)
 			.challenge(challenge)
 			.imageUrl(imageUrl)
 			.review(review)
-			.certifiedAt(certifiedAt)
+			.certifiedDate(certifiedDate)
 			.build();
 	}
 
 	private static void validateCreateInputs(
-		MemberSnapshot member, ChallengeSnapshot challenge, String imageUrl, String review, LocalDateTime certifiedAt
+		MemberSnapshot member, ChallengeSnapshot challenge, String imageUrl, String review, LocalDate certifiedDate
 	) {
 		validateNullData(member, "회원 정보는 필수값입니다.");
 		validateNullData(challenge, "챌린지 정보는 필수값입니다.");
 		validateNullData(review, "리뷰는 NULL 만 아니면 됩니다.");
 		validateEmptyString(imageUrl, "인증 이미지는 필수값입니다.");
-		validateNullData(certifiedAt, "인증 시각은 필수값입니다.");
+		validateNullData(certifiedDate, "인증 시각은 필수값입니다.");
 	}
 }
