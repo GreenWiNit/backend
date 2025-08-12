@@ -6,9 +6,6 @@ import java.util.Map;
 
 import org.springframework.stereotype.Component;
 
-import com.example.green.domain.challenge.client.PointEarnClient;
-import com.example.green.domain.challenge.client.request.PointEarnRequest;
-import com.example.green.domain.member.client.PointClient;
 import com.example.green.domain.mypage.client.PointTotalGetClient;
 import com.example.green.domain.point.entity.vo.PointAmount;
 import com.example.green.domain.point.entity.vo.PointSource;
@@ -17,12 +14,15 @@ import com.example.green.domain.point.repository.PointTransactionQueryRepository
 import com.example.green.domain.point.service.PointTransactionService;
 import com.example.green.domain.pointshop.order.client.PointSpendClient;
 import com.example.green.domain.pointshop.order.client.dto.PointSpendRequest;
+import com.example.green.global.client.PointClient;
+import com.example.green.global.client.request.PointEarnRequest;
 
 import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
-public class PointTransactionAdaptor implements PointSpendClient, PointEarnClient, PointClient, PointTotalGetClient {
+public class PointTransactionAdaptor implements PointSpendClient, PointClient,
+	com.example.green.domain.member.client.PointClient, PointTotalGetClient {
 
 	private final PointTransactionService pointTransactionService;
 	private final PointTransactionQueryRepository pointTransactionQueryRepository;
@@ -35,10 +35,15 @@ public class PointTransactionAdaptor implements PointSpendClient, PointEarnClien
 	}
 
 	@Override
-	public void earnPoints(PointEarnRequest dto) {
+	public void earnPoint(PointEarnRequest dto) {
 		PointSource pointSource = PointSource.ofTarget(dto.targetId(), dto.description(), TargetType.CHALLENGE);
 		PointAmount amount = PointAmount.of(dto.amount());
 		pointTransactionService.earnPoints(dto.memberId(), amount, pointSource);
+	}
+
+	@Override
+	public void earnPoints(List<PointEarnRequest> requests) {
+		// todo:
 	}
 
 	@Override

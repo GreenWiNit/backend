@@ -1,5 +1,7 @@
 package com.example.green.domain.certification.application;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,6 +13,7 @@ import com.example.green.domain.certification.domain.ChallengeCertificationRepos
 import com.example.green.domain.certification.domain.ChallengeSnapshot;
 import com.example.green.domain.certification.domain.MemberSnapshot;
 import com.example.green.domain.certification.util.CertificationClientHelper;
+import com.example.green.domain.challenge.util.ClientHelper;
 import com.example.green.global.client.dto.ChallengeGroupDto;
 
 import lombok.RequiredArgsConstructor;
@@ -25,6 +28,7 @@ public class ChallengeCertificationService {
 	private final ChallengeCertificationRepository challengeCertificationRepository;
 	private final ChallengeCertificationQuery challengeCertificationQuery;
 	private final CertificationClientHelper certificationClientHelper;
+	private final ClientHelper clientHelper;
 
 	public void certificatePersonalChallenge(PersonalChallengeCertificateCommand cmd) {
 		challengeCertificationQuery.checkAlreadyPersonalCert(cmd.challengeId(), cmd.challengeDate(), cmd.memberId());
@@ -47,5 +51,15 @@ public class ChallengeCertificationService {
 
 		challengeCertificationRepository.save(certification);
 		certificationClientHelper.processCertSideEffect(certification.getImageUrl());
+	}
+
+	public void approve(List<Long> certificationIds) {
+		List<ChallengeCertification> approvedCerts = challengeCertificationRepository.findAllById(certificationIds)
+			.stream()
+			.filter(ChallengeCertification::canApprove)
+			.peek(ChallengeCertification::approve)
+			.toList();
+
+		clientHelper.processApproveSideEffect(approvedCerts);
 	}
 }

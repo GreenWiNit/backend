@@ -79,4 +79,12 @@ public class ChallengeCertification extends TimeBaseEntity {
 		validateEmptyString(imageUrl, "인증 이미지는 필수값입니다.");
 		validateNullData(certifiedDate, "인증 시각은 필수값입니다.");
 	}
+
+	public void approve() {
+		this.status = CertificationStatus.APPROVED;
+	}
+
+	public void reject() {
+		this.status = CertificationStatus.REJECTED;
+	}
 }
