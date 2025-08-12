@@ -15,7 +15,6 @@ public interface TeamChallengeRepository extends JpaRepository<TeamChallenge, Lo
 		SELECT COUNT(tc) > 0
 		FROM TeamChallenge tc
 		WHERE tc.id = :challengeId
-		AND tc.challengeStatus = 'PROCEEDING'
 		AND tc.displayStatus = 'VISIBLE'
 		AND tc.beginDate <= :challengeDate
 		AND tc.endDate >= :challengeDate

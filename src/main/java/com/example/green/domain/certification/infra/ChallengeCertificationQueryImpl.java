@@ -24,4 +24,11 @@ public class ChallengeCertificationQueryImpl implements ChallengeCertificationQu
 			throw new CertificationException(EXISTS_TEAM_CHALLENGE_CERT_OF_DAY);
 		}
 	}
+
+	@Override
+	public void checkAlreadyPersonalCert(Long challengeId, LocalDate challengeDate, Long memberId) {
+		if (challengeCertificationRepository.existsByPersonalChallenge(challengeId, challengeDate, memberId)) {
+			throw new CertificationException(EXISTS_TEAM_CHALLENGE_CERT_OF_DAY);
+		}
+	}
 }

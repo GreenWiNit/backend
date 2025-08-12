@@ -130,7 +130,7 @@ public class TeamChallengeQueryImpl implements TeamChallengeQuery {
 	}
 
 	public void validateGroupPeriod(Long challengeId, LocalDate challengeDate) {
-		if (teamChallengeRepository.isGroupPeriodValidForChallenge(challengeId, challengeDate)) {
+		if (!teamChallengeRepository.isGroupPeriodValidForChallenge(challengeId, challengeDate)) {
 			throw new ChallengeException(MISMATCH_GROUP_PERIOD_RANGE);
 		}
 	}

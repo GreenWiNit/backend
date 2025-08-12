@@ -11,7 +11,7 @@ public interface PersonalChallengeRepository extends JpaRepository<PersonalChall
 	long countParticipantByChallenge(Long personalChallengeId);
 
 	@Query("""
-		SELECT count(p) FROM PersonalChallengeParticipation p
+		SELECT count(p) > 0 FROM PersonalChallengeParticipation p
 		WHERE p.personalChallenge.id=:challengeId
 		AND p.memberId=:memberId
 		""")

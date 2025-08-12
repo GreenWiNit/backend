@@ -31,7 +31,6 @@ public class ChallengeSnapshot {
 		EntityValidator.validateAutoIncrementId(id, "challengeId 필수 값 입니다.");
 		EntityValidator.validateEmptyString(name, "challengeName 필수 값 입니다.");
 		EntityValidator.validateEmptyString(code, "challengeCode 필수 값 입니다.");
-		EntityValidator.validateEmptyString(groupCode, "teamCode 필수 값입니다.");
 		this.challengeId = id;
 		this.challengeName = name;
 		this.challengeCode = code;
@@ -44,6 +43,7 @@ public class ChallengeSnapshot {
 	}
 
 	public static ChallengeSnapshot ofTeam(Long id, String name, String code, String groupCode) {
+		EntityValidator.validateEmptyString(groupCode, "GroupCode 필수 값입니다.");
 		return new ChallengeSnapshot(id, name, code, groupCode, TEAM_TYPE);
 	}
 }

@@ -104,17 +104,13 @@ public class PersonalChallengeQueryImpl implements PersonalChallengeQuery {
 	public PersonalChallenge getPersonalChallengeByMemberAndDate(
 		Long challengeId, Long memberId, LocalDate challengeDate
 	) {
-		log.error("진입1");
 		if (!personalChallengeRepository.existsMembership(challengeId, memberId)) {
 			throw new ChallengeException(ChallengeExceptionMessage.NOT_PARTICIPATING);
 		}
-		log.error("진입2");
 		PersonalChallenge challenge = getPersonalChallengeById(challengeId);
-		log.error("진입3");
 		if (!challenge.isActive(challengeDate)) {
 			throw new ChallengeException(INACTIVE_CHALLENGE);
 		}
-		log.error("진입4");
 		return challenge;
 	}
 }

@@ -27,6 +27,7 @@ public class ChallengeCertificationService {
 	private final CertificationClientHelper certificationClientHelper;
 
 	public void certificatePersonalChallenge(PersonalChallengeCertificateCommand cmd) {
+		challengeCertificationQuery.checkAlreadyPersonalCert(cmd.challengeId(), cmd.challengeDate(), cmd.memberId());
 		ChallengeSnapshot challenge =
 			certificationClientHelper.getPersonalSnapshot(cmd.challengeId(), cmd.memberId(), cmd.challengeDate());
 		MemberSnapshot member = certificationClientHelper.getMemberSnapshot(cmd.memberId());
