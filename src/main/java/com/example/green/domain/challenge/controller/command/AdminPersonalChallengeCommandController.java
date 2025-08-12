@@ -15,6 +15,7 @@ import com.example.green.domain.challenge.controller.message.AdminChallengeRespo
 import com.example.green.domain.challenge.service.PersonalChallengeService;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.NoContent;
+import com.example.green.global.security.annotation.AdminApi;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/admin/challenges/personal")
 @RequiredArgsConstructor
+@AdminApi
 public class AdminPersonalChallengeCommandController implements AdminPersonalChallengeCommandControllerDocs {
 
 	private final PersonalChallengeService challengeService;

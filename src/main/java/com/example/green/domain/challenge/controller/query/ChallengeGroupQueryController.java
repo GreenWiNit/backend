@@ -18,12 +18,14 @@ import com.example.green.domain.challenge.repository.query.ChallengeGroupQuery;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.page.CursorTemplate;
 import com.example.green.global.security.PrincipalDetails;
+import com.example.green.global.security.annotation.AuthenticatedApi;
 
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/challenges")
 @RequiredArgsConstructor
+@AuthenticatedApi
 public class ChallengeGroupQueryController implements ChallengeGroupQueryControllerDocs {
 
 	private final ChallengeGroupQuery challengeGroupQuery;
@@ -35,7 +37,7 @@ public class ChallengeGroupQueryController implements ChallengeGroupQueryControl
 		@RequestParam(required = false, defaultValue = "20") Integer size,
 		@AuthenticationPrincipal PrincipalDetails principalDetails
 	) {
-		Long memberId = 1L;
+		Long memberId = principalDetails.getMemberId();
 		CursorTemplate<String, MyChallengeGroupDto> result =
 			challengeGroupQuery.findMyGroup(challengeId, cursor, size, memberId);
 
@@ -48,7 +50,7 @@ public class ChallengeGroupQueryController implements ChallengeGroupQueryControl
 		@AuthenticationPrincipal PrincipalDetails principalDetails
 	) {
 		// todo: 오늘 가입한 팀이 있는지 정보 추가 반환
-		Long memberId = 1L;
+		Long memberId = principalDetails.getMemberId();
 		ChallengeGroupDetailDto result = challengeGroupQuery.getGroupDetail(groupId, memberId);
 		return ApiTemplate.ok(TeamChallengeGroupResponseMessage.GROUP_DETAIL_FOUND, result);
 	}
@@ -60,7 +62,7 @@ public class ChallengeGroupQueryController implements ChallengeGroupQueryControl
 		@RequestParam(required = false, defaultValue = "20") Integer size,
 		@AuthenticationPrincipal PrincipalDetails principalDetails
 	) {
-		Long memberId = 1L;
+		Long memberId = principalDetails.getMemberId();
 		CursorTemplate<String, ChallengeGroupDto> result =
 			challengeGroupQuery.findAllGroupByCursor(challengeId, cursor, size, memberId);
 		return ApiTemplate.ok(MY_TEAM_GROUP_FOUND, result);

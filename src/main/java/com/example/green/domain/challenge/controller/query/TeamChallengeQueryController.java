@@ -17,6 +17,7 @@ import com.example.green.domain.challenge.repository.query.TeamChallengeQuery;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.page.CursorTemplate;
 import com.example.green.global.security.PrincipalDetails;
+import com.example.green.global.security.annotation.AuthenticatedApi;
 import com.example.green.global.utils.TimeUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -41,16 +42,18 @@ public class TeamChallengeQueryController implements TeamChallengeQueryControlle
 		return ApiTemplate.ok(CHALLENGE_LIST_FOUND, result);
 	}
 
+	@AuthenticatedApi
 	@GetMapping("/{challengeId}")
 	public ApiTemplate<ChallengeDetailDto> getTeamChallenge(
 		@PathVariable Long challengeId,
 		@AuthenticationPrincipal PrincipalDetails principalDetails
 	) {
-		Long memberId = 1L;
+		Long memberId = principalDetails.getMemberId();
 		ChallengeDetailDto result = teamChallengeQuery.findTeamChallenge(challengeId, memberId);
 		return ApiTemplate.ok(CHALLENGE_DETAIL_FOUND, result);
 	}
 
+	@AuthenticatedApi
 	@GetMapping("/me")
 	public ApiTemplate<CursorTemplate<Long, ChallengeDto>> getMyTeamChallenges(
 		@RequestParam(required = false) Long cursor,
@@ -58,7 +61,7 @@ public class TeamChallengeQueryController implements TeamChallengeQueryControlle
 		@RequestParam(required = false, defaultValue = "20") Integer pageSize
 	) {
 		// todo: 누적 참여자 수 반환
-		Long memberId = 1L;
+		Long memberId = currentUser.getMemberId();
 		CursorTemplate<Long, ChallengeDto> result =
 			teamChallengeQuery.findMyParticipationByCursor(memberId, cursor, pageSize);
 

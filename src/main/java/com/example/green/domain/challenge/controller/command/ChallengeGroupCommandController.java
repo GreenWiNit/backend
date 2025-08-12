@@ -17,6 +17,7 @@ import com.example.green.domain.challenge.service.ChallengeGroupService;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.NoContent;
 import com.example.green.global.security.PrincipalDetails;
+import com.example.green.global.security.annotation.AuthenticatedApi;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,7 @@ public class ChallengeGroupCommandController implements ChallengeGroupCommandCon
 
 	private final ChallengeGroupService challengeGroupService;
 
+	@AuthenticatedApi
 	@PostMapping("/{challengeId}/groups")
 	public ApiTemplate<Long> createTeamChallengeGroup(
 		@PathVariable Long challengeId,
@@ -36,7 +38,7 @@ public class ChallengeGroupCommandController implements ChallengeGroupCommandCon
 	) {
 		// todo: 오늘 날짜로 가입하거나 등록한 팀이 있으면 더 생성 불가
 		// todo: 챌린지 참여했는지 확인하는 로직
-		Long leaderId = 1L;
+		Long leaderId = principalDetails.getMemberId();
 		Long groupId = challengeGroupService.create(challengeId, leaderId, request);
 
 		return ApiTemplate.ok(TeamChallengeGroupResponseMessage.GROUP_CREATED, groupId);
@@ -48,21 +50,23 @@ public class ChallengeGroupCommandController implements ChallengeGroupCommandCon
 		@Valid @RequestBody ChallengeGroupUpdateDto request,
 		@AuthenticationPrincipal PrincipalDetails principalDetails
 	) {
-		Long leaderId = 1L;
+		Long leaderId = principalDetails.getMemberId();
 		challengeGroupService.update(groupId, leaderId, request);
 		return NoContent.ok(TeamChallengeGroupResponseMessage.GROUP_UPDATED);
 	}
 
+	@AuthenticatedApi
 	@DeleteMapping("/groups/{groupId}")
 	public NoContent deleteTeamChallengeGroup(
 		@PathVariable Long groupId,
 		@AuthenticationPrincipal PrincipalDetails principalDetails
 	) {
-		Long memberId = 1L;
+		Long memberId = principalDetails.getMemberId();
 		challengeGroupService.delete(groupId, memberId);
 		return NoContent.ok(TeamChallengeGroupResponseMessage.GROUP_DELETED);
 	}
 
+	@AuthenticatedApi
 	@PostMapping("/groups/{groupId}")
 	public NoContent joinTeamChallengeGroup(
 		@PathVariable Long groupId,
@@ -70,7 +74,7 @@ public class ChallengeGroupCommandController implements ChallengeGroupCommandCon
 	) {
 		// todo: 오늘 날짜로 가입하거나 등록한 팀이 있으면 가입 불가
 		// todo: 해당 챌린지에 참여했는지 확인
-		Long memberId = 2L;
+		Long memberId = principalDetails.getMemberId();
 		challengeGroupService.join(groupId, memberId);
 		return NoContent.ok(TeamChallengeGroupResponseMessage.GROUP_JOINED);
 	}

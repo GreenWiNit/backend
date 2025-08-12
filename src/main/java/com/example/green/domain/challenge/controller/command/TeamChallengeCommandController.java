@@ -14,6 +14,7 @@ import com.example.green.domain.challenge.controller.message.ChallengeResponseMe
 import com.example.green.domain.challenge.service.TeamChallengeService;
 import com.example.green.global.api.NoContent;
 import com.example.green.global.security.PrincipalDetails;
+import com.example.green.global.security.annotation.AuthenticatedApi;
 
 import lombok.RequiredArgsConstructor;
 
@@ -24,23 +25,25 @@ public class TeamChallengeCommandController implements TeamChallengeCommandContr
 
 	private final TeamChallengeService challengeService;
 
+	@AuthenticatedApi
 	@PostMapping("/{challengeId}/participate")
 	public NoContent joinTeamChallenge(
 		@PathVariable Long challengeId,
 		@AuthenticationPrincipal PrincipalDetails currentUser
 	) {
 		// todo: 동시성 이슈 해결
-		Long memberId = 2L;
+		Long memberId = currentUser.getMemberId();
 		challengeService.join(challengeId, memberId);
 		return NoContent.ok(CHALLENGE_JOINED);
 	}
 
+	@AuthenticatedApi
 	@DeleteMapping("/{challengeId}/leave")
 	public NoContent leaveTeamChallenge(
 		@PathVariable Long challengeId,
 		@AuthenticationPrincipal PrincipalDetails currentUser
 	) {
-		Long memberId = 1L;
+		Long memberId = currentUser.getMemberId();
 		challengeService.leave(challengeId, memberId);
 		return NoContent.ok(ChallengeResponseMessage.CHALLENGE_LEFT);
 	}

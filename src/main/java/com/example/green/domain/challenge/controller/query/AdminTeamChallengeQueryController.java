@@ -18,6 +18,7 @@ import com.example.green.domain.challenge.repository.query.TeamChallengeQuery;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.page.PageTemplate;
 import com.example.green.global.excel.core.ExcelDownloader;
+import com.example.green.global.security.annotation.AdminApi;
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/admin/challenges/team")
 @RequiredArgsConstructor
+@AdminApi
 public class AdminTeamChallengeQueryController implements AdminTeamChallengeQueryControllerDocs {
 
 	private final TeamChallengeQuery teamChallengeQuery;

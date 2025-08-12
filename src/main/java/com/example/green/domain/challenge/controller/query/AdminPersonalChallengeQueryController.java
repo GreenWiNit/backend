@@ -20,6 +20,7 @@ import com.example.green.domain.challenge.util.MemberKeyConverter;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.page.PageTemplate;
 import com.example.green.global.excel.core.ExcelDownloader;
+import com.example.green.global.security.annotation.AdminApi;
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/admin/challenges/personal")
 @RequiredArgsConstructor
+@AdminApi
 public class AdminPersonalChallengeQueryController implements AdminPersonalChallengeQueryControllerDocs {
 
 	private final PersonalChallengeQuery personalChallengeQuery;
