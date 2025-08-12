@@ -13,7 +13,6 @@ import com.example.green.domain.certification.domain.ChallengeCertificationRepos
 import com.example.green.domain.certification.domain.ChallengeSnapshot;
 import com.example.green.domain.certification.domain.MemberSnapshot;
 import com.example.green.domain.certification.util.CertificationClientHelper;
-import com.example.green.domain.challenge.util.ClientHelper;
 import com.example.green.global.client.dto.ChallengeGroupDto;
 
 import lombok.RequiredArgsConstructor;
@@ -28,7 +27,6 @@ public class ChallengeCertificationService {
 	private final ChallengeCertificationRepository challengeCertificationRepository;
 	private final ChallengeCertificationQuery challengeCertificationQuery;
 	private final CertificationClientHelper certificationClientHelper;
-	private final ClientHelper clientHelper;
 
 	public void certificatePersonalChallenge(PersonalChallengeCertificateCommand cmd) {
 		challengeCertificationQuery.checkAlreadyPersonalCert(cmd.challengeId(), cmd.challengeDate(), cmd.memberId());
@@ -60,6 +58,11 @@ public class ChallengeCertificationService {
 			.peek(ChallengeCertification::approve)
 			.toList();
 
-		clientHelper.processApproveSideEffect(approvedCerts);
+		certificationClientHelper.processApproveSideEffect(approvedCerts);
+	}
+
+	public void reject(List<Long> certificationIds) {
+		challengeCertificationRepository.findAllById(certificationIds)
+			.forEach(ChallengeCertification::reject);
 	}
 }

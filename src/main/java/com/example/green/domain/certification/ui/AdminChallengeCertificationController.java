@@ -13,7 +13,7 @@ import com.example.green.domain.certification.domain.ChallengeCertificationQuery
 import com.example.green.domain.certification.infra.filter.ChallengeCertificationFilter;
 import com.example.green.domain.certification.ui.docs.AdminChallengeCertificationControllerDocs;
 import com.example.green.domain.certification.ui.dto.AdminCertificateSearchDto;
-import com.example.green.domain.certification.ui.dto.CertificationVerifyDto;
+import com.example.green.domain.certification.ui.dto.CertificationIdentifierDto;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.NoContent;
 import com.example.green.global.api.page.PageTemplate;
@@ -40,8 +40,14 @@ public class AdminChallengeCertificationController implements AdminChallengeCert
 	}
 
 	@PatchMapping("/approve")
-	public NoContent approveCertification(@RequestBody @Valid CertificationVerifyDto dto) {
+	public NoContent approveCertification(@RequestBody @Valid CertificationIdentifierDto dto) {
 		challengeCertificationService.approve(dto.certificationIds());
 		return NoContent.ok(CertificationResponseMessage.CERTIFICATIONS_APPROVE_SUCCESS);
+	}
+
+	@PatchMapping("/reject")
+	public NoContent rejectCertification(@RequestBody @Valid CertificationIdentifierDto dto) {
+		challengeCertificationService.reject(dto.certificationIds());
+		return NoContent.ok(CertificationResponseMessage.CERTIFICATIONS_REJECT_SUCCESS);
 	}
 }

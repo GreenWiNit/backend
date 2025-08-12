@@ -16,7 +16,7 @@ public enum CertificationExceptionMessage implements ExceptionMessage {
 	NOT_FOUND_CHALLENGE_CERTIFICATION(HttpStatus.BAD_REQUEST, "챌린지 인증 정보를 찾을 수 없습니다."),
 	INVALID_CHALLENGE_TYPE(HttpStatus.BAD_REQUEST, "챌린지 유형을 명확히 해주세요. (T or P)"),
 	INVALID_ACCESS(HttpStatus.UNAUTHORIZED, "챌린지 인증은 본인 것만 확인할 수 있습니다."),
-	;
+	ALREADY_APPROVED_CERT(HttpStatus.BAD_REQUEST, "이미 포인트가 지급된 인증은 미지급 처리 할 수 없습니다.");
 
 	private final HttpStatus httpStatus;
 	private final String message;
