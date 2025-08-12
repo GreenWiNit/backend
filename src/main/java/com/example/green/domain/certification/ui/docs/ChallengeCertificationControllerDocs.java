@@ -2,9 +2,12 @@ package com.example.green.domain.certification.ui.docs;
 
 import static io.swagger.v3.oas.annotations.enums.ParameterIn.*;
 
+import com.example.green.domain.certification.ui.dto.ChallengeCertificationDto;
 import com.example.green.domain.certification.ui.dto.PersonalChallengeCertificateDto;
 import com.example.green.domain.certification.ui.dto.TeamChallengeCertificateDto;
+import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.NoContent;
+import com.example.green.global.api.page.CursorTemplate;
 import com.example.green.global.docs.ApiErrorStandard;
 import com.example.green.global.security.PrincipalDetails;
 
@@ -31,6 +34,24 @@ public interface ChallengeCertificationControllerDocs {
 	NoContent certificateTeamChallenge(
 		@Parameter(description = "그룹 ID", in = PATH, required = true, example = "1") Long groupId,
 		TeamChallengeCertificateDto dto,
+		PrincipalDetails principalDetails
+	);
+
+	@Operation(summary = "팀 챌린지 인증 목록 조회 (G01_003)", description = "팀 챌린지 인증 목록 조회")
+	@ApiErrorStandard
+	@ApiResponse(responseCode = "200", description = "팀 챌린지 인증 목록 조회에 성공")
+	ApiTemplate<CursorTemplate<String, ChallengeCertificationDto>> getPersonalCertifications(
+		@Parameter(description = "다음 페이지 조회를 위한 마지막 커서 (선택, 첫 페이지 조회 시 생략)", example = "1") String cursor,
+		@Parameter(description = "페이지 사이즈(생략 가능)") Integer size,
+		PrincipalDetails principalDetails
+	);
+
+	@Operation(summary = "개인 챌린지 인증 목록 조회 (G01_003)", description = "개인 챌린지 인증 목록 조회")
+	@ApiErrorStandard
+	@ApiResponse(responseCode = "200", description = "개인 챌린지 인증 목록 조회에 성공")
+	ApiTemplate<CursorTemplate<String, ChallengeCertificationDto>> getTeamCertifications(
+		@Parameter(description = "다음 페이지 조회를 위한 마지막 커서 (선택, 첫 페이지 조회 시 생략)", example = "1") String cursor,
+		@Parameter(description = "페이지 사이즈(생략 가능)") Integer size,
 		PrincipalDetails principalDetails
 	);
 }

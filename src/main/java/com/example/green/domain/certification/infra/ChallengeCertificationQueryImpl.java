@@ -66,6 +66,29 @@ public class ChallengeCertificationQueryImpl implements ChallengeCertificationQu
 		return CursorTemplate.from(result, size, dto -> dto.certifiedDate() + "," + dto.id());
 	}
 
+	@Override
+	public CursorTemplate<String, ChallengeCertificationDto> findCertificationByTeam(
+		String cursor, Long memberId, Integer size) {
+		List<ChallengeCertificationDto> result = jpaQueryFactory.select(
+				Projections.constructor(ChallengeCertificationDto.class,
+					challengeCertification.id,
+					challengeCertification.challenge.challengeName,
+					challengeCertification.certifiedDate,
+					challengeCertification.status
+				))
+			.from(challengeCertification)
+			.where(
+				fromCondition(cursor),
+				challengeCertification.member.memberId.eq(memberId),
+				challengeCertification.challenge.type.eq(ChallengeSnapshot.TEAM_TYPE)
+			)
+			.orderBy(challengeCertification.certifiedDate.desc(), challengeCertification.id.desc())
+			.limit(size + 1)
+			.fetch();
+
+		return CursorTemplate.from(result, size, dto -> dto.certifiedDate() + "," + dto.id());
+	}
+
 	public BooleanExpression fromCondition(String cursor) {
 		if (cursor == null) {
 			return null;

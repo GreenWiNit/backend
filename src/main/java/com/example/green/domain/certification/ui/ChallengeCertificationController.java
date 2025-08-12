@@ -60,7 +60,7 @@ public class ChallengeCertificationController implements ChallengeCertificationC
 	}
 
 	@GetMapping("/personal/me")
-	public ApiTemplate<CursorTemplate<String, ChallengeCertificationDto>> getChallengeCertifications(
+	public ApiTemplate<CursorTemplate<String, ChallengeCertificationDto>> getPersonalCertifications(
 		@RequestParam(required = false) String cursor,
 		@RequestParam(required = false, defaultValue = "20") Integer size,
 		@AuthenticationPrincipal PrincipalDetails principalDetails
@@ -69,5 +69,17 @@ public class ChallengeCertificationController implements ChallengeCertificationC
 		CursorTemplate<String, ChallengeCertificationDto> result =
 			challengeCertificationQuery.findCertificationByPersonal(cursor, memberId, size);
 		return ApiTemplate.ok(CertificationResponseMessage.PERSONAL_CERTIFICATIONS_READ_SUCCESS, result);
+	}
+
+	@GetMapping("/team/me")
+	public ApiTemplate<CursorTemplate<String, ChallengeCertificationDto>> getTeamCertifications(
+		@RequestParam(required = false) String cursor,
+		@RequestParam(required = false, defaultValue = "20") Integer size,
+		@AuthenticationPrincipal PrincipalDetails principalDetails
+	) {
+		Long memberId = principalDetails.getMemberId();
+		CursorTemplate<String, ChallengeCertificationDto> result =
+			challengeCertificationQuery.findCertificationByTeam(cursor, memberId, size);
+		return ApiTemplate.ok(CertificationResponseMessage.TEAM_CERTIFICATIONS_READ_SUCCESS, result);
 	}
 }
