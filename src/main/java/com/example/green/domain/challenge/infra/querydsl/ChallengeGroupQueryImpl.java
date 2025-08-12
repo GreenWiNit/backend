@@ -30,10 +30,12 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Repository
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class ChallengeGroupQueryImpl implements ChallengeGroupQuery {
 
 	private final ChallengeGroupRepository challengeGroupRepository;
@@ -190,6 +192,13 @@ public class ChallengeGroupQueryImpl implements ChallengeGroupQuery {
 			.where(challengeGroup.teamChallengeId.eq(challengeId))
 			.orderBy(challengeGroupParticipation.createdDate.desc())
 			.fetch();
+	}
+
+	public ChallengeGroup getChallengeGroup(Long groupId, Long memberId) {
+		if (!challengeGroupRepository.existMembership(groupId, memberId)) {
+			throw new ChallengeException(ChallengeExceptionMessage.INVALID_GROUP_MEMBERSHIP);
+		}
+		return getChallengeGroup(groupId);
 	}
 
 	public long executeParticipationDetailCountQuery(Long challengeId) {

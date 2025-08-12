@@ -44,11 +44,11 @@ public record ChallengeGroupCreateDto(
 	@NotNull(message = "챌린지 활동 일자는 필수값입니다.")
 	LocalDate challengeData,
 
-	@Schema(description = "그룹 시작 일시", requiredMode = Schema.RequiredMode.REQUIRED)
+	@Schema(description = "그룹 시작 일시", example = "00:00")
 	@NotNull(message = "그룹 시작 일시는 필수값입니다.")
 	LocalTime startTime,
 
-	@Schema(description = "그룹 종료 일시", requiredMode = Schema.RequiredMode.REQUIRED)
+	@Schema(description = "그룹 종료 일시", example = "23:59")
 	@NotNull(message = "그룹 종료 일시는 필수값입니다.")
 	LocalTime endTime,
 

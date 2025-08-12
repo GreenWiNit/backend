@@ -17,7 +17,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Index;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
@@ -26,13 +25,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(
-	name = "challenge_groups",
-	indexes = {
-		@Index(name = "idx_challenge_groups_period", columnList = "begin_date_time, end_date_time"),
-		@Index(name = "idx_challenge_groups_team_challenge_id", columnList = "team_challenge_id")
-	}
-)
+@Table(name = "challenge_groups")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ChallengeGroup extends BaseEntity {
@@ -98,7 +91,7 @@ public class ChallengeGroup extends BaseEntity {
 			throw new ChallengeException(ChallengeExceptionMessage.GROUP_IS_FULL);
 		}
 		if (!period.canParticipate(now)) {
-			throw new ChallengeException(ChallengeExceptionMessage.CHALLENGE_NOT_PARTICIPATABLE);
+			throw new ChallengeException(ChallengeExceptionMessage.INACTIVE_GROUP);
 		}
 		ChallengeGroupParticipation participation = ChallengeGroupParticipation.fromMember(this, memberId);
 		addParticipant(participation);
@@ -113,21 +106,6 @@ public class ChallengeGroup extends BaseEntity {
 		participants.remove(participation);
 		capacity.decrease();
 		this.status = determineStatus();
-	}
-
-	private void addParticipant(ChallengeGroupParticipation participation) {
-		if (!participants.add(participation)) {
-			throw new ChallengeException(ChallengeExceptionMessage.ALREADY_PARTICIPATING_IN_GROUP);
-		}
-		capacity.increase();
-		this.status = determineStatus();
-	}
-
-	private ChallengeGroupParticipation findParticipationByMemberId(Long memberId) {
-		return participants.stream()
-			.filter(p -> p.matches(memberId))
-			.findFirst()
-			.orElseThrow(() -> new ChallengeException(ChallengeExceptionMessage.NOT_PARTICIPATING));
 	}
 
 	public void updateBasicInfo(GroupBasicInfo groupBasicInfo) {
@@ -156,6 +134,21 @@ public class ChallengeGroup extends BaseEntity {
 			.filter(participant -> !participant.isLeader())
 			.map(ChallengeGroupParticipation::getMemberId)
 			.toList();
+	}
+
+	private ChallengeGroupParticipation findParticipationByMemberId(Long memberId) {
+		return participants.stream()
+			.filter(p -> p.matches(memberId))
+			.findFirst()
+			.orElseThrow(() -> new ChallengeException(ChallengeExceptionMessage.NOT_PARTICIPATING));
+	}
+
+	private void addParticipant(ChallengeGroupParticipation participation) {
+		if (!participants.add(participation)) {
+			throw new ChallengeException(ChallengeExceptionMessage.ALREADY_PARTICIPATING_IN_GROUP);
+		}
+		capacity.increase();
+		this.status = determineStatus();
 	}
 
 	private GroupStatus determineStatus() {

@@ -1,6 +1,7 @@
 package com.example.green.domain.challenge.controller.query.dto.challenge;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -20,10 +21,10 @@ public record AdminPersonalChallengesDto(
 	String challengeName,
 
 	@Schema(description = "시작 일시")
-	LocalDateTime beginDateTime,
+	LocalDate beginDate,
 
 	@Schema(description = "종료 일시")
-	LocalDateTime endDateTime,
+	LocalDate endDate,
 
 	@Schema(description = "챌린지 포인트", example = "100")
 	BigDecimal challengePoint,
@@ -38,9 +39,6 @@ public record AdminPersonalChallengesDto(
 	private static final DateTimeFormatter PERIOD_FORMATTER = DateTimeFormatter.ofPattern("yyyy.MM.dd");
 
 	public String getPeriod() {
-		String startDate = beginDateTime.format(PERIOD_FORMATTER);
-		String endDate = endDateTime.format(PERIOD_FORMATTER);
-
-		return startDate + " ~ " + endDate + ".";
+		return beginDate.format(PERIOD_FORMATTER) + " ~ " + endDate.format(PERIOD_FORMATTER) + ".";
 	}
 }

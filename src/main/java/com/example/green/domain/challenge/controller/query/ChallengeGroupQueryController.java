@@ -65,6 +65,6 @@ public class ChallengeGroupQueryController implements ChallengeGroupQueryControl
 		Long memberId = principalDetails.getMemberId();
 		CursorTemplate<String, ChallengeGroupDto> result =
 			challengeGroupQuery.findAllGroupByCursor(challengeId, cursor, size, memberId);
-		return ApiTemplate.ok(MY_TEAM_GROUP_FOUND, result);
+		return ApiTemplate.ok(GROUP_LIST_FOUND, result);
 	}
 }

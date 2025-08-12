@@ -25,11 +25,11 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/challenges")
 @RequiredArgsConstructor
+@AuthenticatedApi
 public class ChallengeGroupCommandController implements ChallengeGroupCommandControllerDocs {
 
 	private final ChallengeGroupService challengeGroupService;
 
-	@AuthenticatedApi
 	@PostMapping("/{challengeId}/groups")
 	public ApiTemplate<Long> createTeamChallengeGroup(
 		@PathVariable Long challengeId,
@@ -55,7 +55,6 @@ public class ChallengeGroupCommandController implements ChallengeGroupCommandCon
 		return NoContent.ok(TeamChallengeGroupResponseMessage.GROUP_UPDATED);
 	}
 
-	@AuthenticatedApi
 	@DeleteMapping("/groups/{groupId}")
 	public NoContent deleteTeamChallengeGroup(
 		@PathVariable Long groupId,
@@ -66,7 +65,6 @@ public class ChallengeGroupCommandController implements ChallengeGroupCommandCon
 		return NoContent.ok(TeamChallengeGroupResponseMessage.GROUP_DELETED);
 	}
 
-	@AuthenticatedApi
 	@PostMapping("/groups/{groupId}")
 	public NoContent joinTeamChallengeGroup(
 		@PathVariable Long groupId,

@@ -21,11 +21,11 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/challenges/personal")
 @RequiredArgsConstructor
+@AuthenticatedApi
 public class PersonalChallengeCommandController implements PersonalChallengeCommandControllerDocs {
 
 	private final PersonalChallengeService challengeService;
 
-	@AuthenticatedApi
 	@PostMapping("/{challengeId}/participate")
 	public NoContent join(@PathVariable Long challengeId, @AuthenticationPrincipal PrincipalDetails currentUser) {
 		// todo: 동시성 이슈 해결
@@ -34,7 +34,6 @@ public class PersonalChallengeCommandController implements PersonalChallengeComm
 		return NoContent.ok(CHALLENGE_JOINED);
 	}
 
-	@AuthenticatedApi
 	@DeleteMapping("/{challengeId}/leave")
 	public NoContent leave(@PathVariable Long challengeId, @AuthenticationPrincipal PrincipalDetails currentUser) {
 		Long memberId = currentUser.getMemberId();

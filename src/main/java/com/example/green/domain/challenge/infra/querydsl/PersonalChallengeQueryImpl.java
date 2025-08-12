@@ -3,6 +3,7 @@ package com.example.green.domain.challenge.infra.querydsl;
 import static com.example.green.domain.challenge.exception.ChallengeExceptionMessage.*;
 import static com.example.green.domain.challenge.infra.querydsl.predicates.PersonalChallengePredicates.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -17,6 +18,7 @@ import com.example.green.domain.challenge.controller.query.dto.challenge.Challen
 import com.example.green.domain.challenge.entity.challenge.PersonalChallenge;
 import com.example.green.domain.challenge.entity.challenge.vo.ChallengeStatus;
 import com.example.green.domain.challenge.exception.ChallengeException;
+import com.example.green.domain.challenge.exception.ChallengeExceptionMessage;
 import com.example.green.domain.challenge.infra.querydsl.executor.PersonalChallengeQueryExecutor;
 import com.example.green.domain.challenge.infra.querydsl.predicates.PersonalChallengePredicates;
 import com.example.green.domain.challenge.repository.PersonalChallengeRepository;
@@ -27,10 +29,12 @@ import com.example.green.global.api.page.Pagination;
 import com.querydsl.core.types.dsl.BooleanExpression;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Repository
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class PersonalChallengeQueryImpl implements PersonalChallengeQuery {
 
 	private final PersonalChallengeRepository personalChallengeRepository;
@@ -94,5 +98,19 @@ public class PersonalChallengeQueryImpl implements PersonalChallengeQuery {
 	@Override
 	public List<AdminPersonalParticipationDto> findParticipantByChallengeForExcel(Long challengeId) {
 		return executor.executeParticipantQueryForExcel(challengeId);
+	}
+
+	@Override
+	public PersonalChallenge getPersonalChallengeByMemberAndDate(
+		Long challengeId, Long memberId, LocalDate challengeDate
+	) {
+		if (!personalChallengeRepository.existsMembership(challengeId, memberId)) {
+			throw new ChallengeException(ChallengeExceptionMessage.NOT_PARTICIPATING);
+		}
+		PersonalChallenge challenge = getPersonalChallengeById(challengeId);
+		if (!challenge.isActive(challengeDate)) {
+			throw new ChallengeException(INACTIVE_CHALLENGE);
+		}
+		return challenge;
 	}
 }

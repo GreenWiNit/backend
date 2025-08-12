@@ -9,11 +9,9 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,16 +19,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(
-	indexes = {
-		@Index(name = "idx_personal_participation_challenge", columnList = "personal_challenge_id"),
-		@Index(name = "idx_personal_participation_member", columnList = "member_id")
-	},
-	uniqueConstraints = {
-		@UniqueConstraint(
-			name = "uk_personal_participation_challenge_member",
-			columnNames = {"personal_challenge_id", "member_id"})}
-)
+@Table(name = "personal_challenge_participations")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)

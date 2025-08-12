@@ -21,11 +21,11 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/challenges/team")
 @RequiredArgsConstructor
+@AuthenticatedApi
 public class TeamChallengeCommandController implements TeamChallengeCommandControllerDocs {
 
 	private final TeamChallengeService challengeService;
 
-	@AuthenticatedApi
 	@PostMapping("/{challengeId}/participate")
 	public NoContent joinTeamChallenge(
 		@PathVariable Long challengeId,
@@ -37,7 +37,6 @@ public class TeamChallengeCommandController implements TeamChallengeCommandContr
 		return NoContent.ok(CHALLENGE_JOINED);
 	}
 
-	@AuthenticatedApi
 	@DeleteMapping("/{challengeId}/leave")
 	public NoContent leaveTeamChallenge(
 		@PathVariable Long challengeId,

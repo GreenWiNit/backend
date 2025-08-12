@@ -33,4 +33,6 @@ public interface ChallengeGroupQuery {
 	PageTemplate<AdminTeamParticipantDto> findParticipantByChallenge(Long challengeId, Integer page, Integer size);
 
 	List<AdminTeamParticipantDto> findParticipantByChallengeForExcel(Long challengeId);
+
+	ChallengeGroup getChallengeGroup(Long groupId, Long memberId);
 }

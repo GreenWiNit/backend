@@ -1,6 +1,7 @@
 package com.example.green.domain.challenge.entity.challenge;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,10 +12,8 @@ import com.example.green.domain.challenge.exception.ChallengeExceptionMessage;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Index;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,14 +22,7 @@ import lombok.NoArgsConstructor;
  * 개인 챌린지 엔티티
  */
 @Entity
-@Table(
-	indexes = {
-		@Index(name = "idx_personal_challenge_active", columnList = "challengeStatus, displayStatus, beginDateTime, endDateTime")
-	},
-	uniqueConstraints = {
-		@UniqueConstraint(name = "uk_personal_challenge_code", columnNames = "challenge_code")
-	}
-)
+@Table(name = "personal_challenges")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PersonalChallenge extends BaseChallenge {
@@ -40,18 +32,18 @@ public class PersonalChallenge extends BaseChallenge {
 
 	private PersonalChallenge(
 		String challengeCode, String challengeName, String challengeImage, String challengeContent,
-		BigDecimal challengePoint, LocalDateTime beginDateTime, LocalDateTime endDateTime
+		BigDecimal challengePoint, LocalDate beginDate, LocalDate endDate
 	) {
-		super(challengeCode, challengeName, challengeImage, challengeContent, challengePoint, beginDateTime,
-			endDateTime, ChallengeType.PERSONAL);
+		super(challengeCode, challengeName, challengeImage, challengeContent, challengePoint, beginDate,
+			endDate, ChallengeType.PERSONAL);
 	}
 
 	public static PersonalChallenge create(
 		String challengeCode, String challengeName, String challengeImage, String challengeContent,
-		BigDecimal challengePoint, LocalDateTime beginDateTime, LocalDateTime endDateTime
+		BigDecimal challengePoint, LocalDate beginDate, LocalDate endDate
 	) {
 		return new PersonalChallenge(
-			challengeCode, challengeName, challengeImage, challengeContent, challengePoint, beginDateTime, endDateTime
+			challengeCode, challengeName, challengeImage, challengeContent, challengePoint, beginDate, endDate
 		);
 	}
 
@@ -68,8 +60,8 @@ public class PersonalChallenge extends BaseChallenge {
 
 	public void removeParticipation(Long memberId, LocalDateTime now) {
 		PersonalChallengeParticipation participation = findParticipationByMemberId(memberId);
-		if (!isActive(now)) {
-			throw new ChallengeException(ChallengeExceptionMessage.CHALLENGE_NOT_LEAVEABLE);
+		if (!isActive(now.toLocalDate())) {
+			throw new ChallengeException(ChallengeExceptionMessage.INACTIVE_CHALLENGE);
 		}
 
 		participations.remove(participation);

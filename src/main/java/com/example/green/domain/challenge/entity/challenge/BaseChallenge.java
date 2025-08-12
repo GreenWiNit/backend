@@ -3,6 +3,7 @@ package com.example.green.domain.challenge.entity.challenge;
 import static com.example.green.global.utils.EntityValidator.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import com.example.green.domain.challenge.entity.challenge.vo.ChallengeDisplayStatus;
@@ -48,10 +49,10 @@ public abstract class BaseChallenge extends BaseEntity {
 	private String challengeContent;
 
 	@Column(nullable = false)
-	private LocalDateTime beginDateTime;
+	private LocalDate beginDate;
 
 	@Column(nullable = false)
-	private LocalDateTime endDateTime;
+	private LocalDate endDate;
 
 	@Enumerated(EnumType.STRING)
 	@Column(length = 20, nullable = false)
@@ -71,22 +72,25 @@ public abstract class BaseChallenge extends BaseEntity {
 		String challengeImage,
 		String challengeContent,
 		BigDecimal challengePoint,
-		LocalDateTime beginDateTime,
-		LocalDateTime endDateTime,
+		LocalDate beginDate,
+		LocalDate endDate,
 		ChallengeType challengeType
 	) {
+		validateCreateParameters(challengeCode, challengeName, challengeImage, challengeContent,
+			beginDate, endDate, challengeType);
 		if (challengePoint.compareTo(BigDecimal.ZERO) < 0) {
 			throw new ChallengeException(ChallengeExceptionMessage.INVALID_MINIMUM_POINT);
 		}
-		validateCreateParameters(challengeCode, challengeName, challengeImage, challengeContent,
-			beginDateTime, endDateTime, challengeType);
+		if (beginDate.isAfter(endDate)) {
+			throw new ChallengeException(ChallengeExceptionMessage.INVALID_CHALLENGE_PERIOD);
+		}
 		this.challengeCode = challengeCode;
 		this.challengeName = challengeName;
 		this.challengeImage = challengeImage;
 		this.challengeContent = challengeContent;
 		this.challengePoint = challengePoint;
-		this.beginDateTime = beginDateTime;
-		this.endDateTime = endDateTime;
+		this.beginDate = beginDate;
+		this.endDate = endDate;
 		this.challengeType = challengeType;
 		this.challengeStatus = ChallengeStatus.PROCEEDING;
 		this.displayStatus = ChallengeDisplayStatus.VISIBLE;
@@ -97,24 +101,24 @@ public abstract class BaseChallenge extends BaseEntity {
 		String challengeName,
 		String challengeImage,
 		String challengeContent,
-		LocalDateTime beginDateTime,
-		LocalDateTime endDateTime,
+		LocalDate beginDate,
+		LocalDate endDate,
 		ChallengeType challengeType
 	) {
 		validateEmptyString(challengeCode, "챌린지 코드는 필수값입니다.");
 		validateEmptyString(challengeName, "챌린지명은 필수값입니다.");
 		validateEmptyString(challengeImage, "챌린지 이미지는 필수값입니다.");
 		validateEmptyString(challengeContent, "챌린지 내용은 필수값입니다.");
-		validateNullData(beginDateTime, "시작일시는 필수값입니다.");
-		validateNullData(endDateTime, "종료일시는 필수값입니다.");
-		validateDateRange(beginDateTime, endDateTime, "시작일시는 종료일시보다 이전이어야 합니다.");
+		validateNullData(beginDate, "시작일시는 필수값입니다.");
+		validateNullData(endDate, "종료일시는 필수값입니다.");
 		validateNullData(challengeType, "챌린지 타입은 필수값입니다.");
 	}
 
-	public boolean isActive(LocalDateTime now) {
+	public boolean isActive(LocalDate now) {
 		return challengeStatus == ChallengeStatus.PROCEEDING
 			&& displayStatus == ChallengeDisplayStatus.VISIBLE
-			&& now.isBefore(endDateTime);
+			&& !now.isBefore(beginDate)
+			&& !now.isAfter(endDate);
 	}
 
 	public void show() {
@@ -133,20 +137,22 @@ public abstract class BaseChallenge extends BaseEntity {
 	public void updateBasicInfo(
 		String challengeName,
 		BigDecimal challengePoint,
-		LocalDateTime beginDateTime,
-		LocalDateTime endDateTime,
+		LocalDate beginDate,
+		LocalDate endDate,
 		String challengeContent
 	) {
 		validateEmptyString(challengeName, "챌린지명은 필수값입니다.");
 		validateNullData(challengePoint, "챌린지 포인트는 필수값입니다.");
-		validateNullData(beginDateTime, "시작일시는 필수값입니다.");
-		validateNullData(endDateTime, "종료일시는 필수값입니다.");
-		validateDateRange(beginDateTime, endDateTime, "시작일시는 종료일시보다 이전이어야 합니다.");
+		validateNullData(beginDate, "시작일시는 필수값입니다.");
+		validateNullData(endDate, "종료일시는 필수값입니다.");
+		if (beginDate.isAfter(endDate)) {
+			throw new ChallengeException(ChallengeExceptionMessage.INVALID_CHALLENGE_PERIOD);
+		}
 
 		this.challengeName = challengeName;
 		this.challengePoint = challengePoint;
-		this.beginDateTime = beginDateTime;
-		this.endDateTime = endDateTime;
+		this.beginDate = beginDate;
+		this.endDate = endDate;
 		this.challengeContent = challengeContent;
 	}
 
@@ -159,13 +165,9 @@ public abstract class BaseChallenge extends BaseEntity {
 		if (isAlreadyParticipated(memberId)) {
 			throw new ChallengeException(ChallengeExceptionMessage.ALREADY_PARTICIPATING);
 		}
-		if (!isParticipationPeriod(now)) {
-			throw new ChallengeException(ChallengeExceptionMessage.CHALLENGE_NOT_PARTICIPATABLE);
+		if (!isActive(now.toLocalDate())) {
+			throw new ChallengeException(ChallengeExceptionMessage.INACTIVE_CHALLENGE);
 		}
-	}
-
-	protected final boolean isParticipationPeriod(LocalDateTime now) {
-		return !now.isBefore(getBeginDateTime()) && !now.isAfter(getEndDateTime());
 	}
 
 	protected abstract boolean isAlreadyParticipated(Long memberId);

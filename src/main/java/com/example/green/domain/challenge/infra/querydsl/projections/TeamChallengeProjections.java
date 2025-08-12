@@ -20,8 +20,8 @@ public class TeamChallengeProjections {
 			ChallengeDto.class,
 			teamChallenge.id,
 			teamChallenge.challengeName,
-			teamChallenge.beginDateTime,
-			teamChallenge.endDateTime,
+			teamChallenge.beginDate,
+			teamChallenge.endDate,
 			teamChallenge.challengeImage,
 			teamChallenge.challengePoint
 		);
@@ -32,8 +32,8 @@ public class TeamChallengeProjections {
 			ChallengeDetailDto.class,
 			teamChallenge.id,
 			teamChallenge.challengeName,
-			teamChallenge.beginDateTime,
-			teamChallenge.endDateTime,
+			teamChallenge.beginDate,
+			teamChallenge.endDate,
 			teamChallenge.challengeImage,
 			teamChallenge.challengePoint,
 			exists
@@ -46,8 +46,8 @@ public class TeamChallengeProjections {
 			teamChallenge.id,
 			teamChallenge.challengeCode,
 			teamChallenge.challengeName,
-			teamChallenge.beginDateTime,
-			teamChallenge.endDateTime,
+			teamChallenge.beginDate,
+			teamChallenge.endDate,
 			teamChallenge.challengePoint,
 			teamChallenge.teamCount,
 			teamChallenge.displayStatus,
