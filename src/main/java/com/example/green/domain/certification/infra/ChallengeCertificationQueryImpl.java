@@ -9,9 +9,12 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
+import com.example.green.domain.certification.domain.ChallengeCertification;
 import com.example.green.domain.certification.domain.ChallengeCertificationQuery;
 import com.example.green.domain.certification.domain.ChallengeCertificationRepository;
 import com.example.green.domain.certification.exception.CertificationException;
+import com.example.green.domain.certification.exception.CertificationExceptionMessage;
+import com.example.green.domain.certification.ui.dto.ChallengeCertificationDetailDto;
 import com.example.green.domain.certification.ui.dto.ChallengeCertificationDto;
 import com.example.green.global.api.page.CursorTemplate;
 import com.querydsl.core.types.Projections;
@@ -27,21 +30,18 @@ public class ChallengeCertificationQueryImpl implements ChallengeCertificationQu
 	private final ChallengeCertificationRepository challengeCertificationRepository;
 	private final JPAQueryFactory jpaQueryFactory;
 
-	@Override
 	public void checkAlreadyTeamCert(Long challengeId, LocalDate challengeDate, Long memberId) {
 		if (challengeCertificationRepository.existsByTeamChallenge(challengeId, challengeDate, memberId)) {
 			throw new CertificationException(EXISTS_TEAM_CHALLENGE_CERT_OF_DAY);
 		}
 	}
 
-	@Override
 	public void checkAlreadyPersonalCert(Long challengeId, LocalDate challengeDate, Long memberId) {
 		if (challengeCertificationRepository.existsByPersonalChallenge(challengeId, challengeDate, memberId)) {
 			throw new CertificationException(EXISTS_TEAM_CHALLENGE_CERT_OF_DAY);
 		}
 	}
 
-	@Override
 	public CursorTemplate<String, ChallengeCertificationDto> findCertificationByPersonal(
 		String cursor, Long memberId, Integer size, String type
 	) {
@@ -63,6 +63,19 @@ public class ChallengeCertificationQueryImpl implements ChallengeCertificationQu
 			.fetch();
 
 		return CursorTemplate.from(result, size, dto -> dto.certifiedDate() + "," + dto.id());
+	}
+
+	public ChallengeCertification getCertificationById(Long certificationId) {
+		return challengeCertificationRepository.findById(certificationId)
+			.orElseThrow(() -> new CertificationException(NOT_FOUND_CHALLENGE_CERTIFICATION));
+	}
+
+	public ChallengeCertificationDetailDto findCertificationDetail(Long certificationId, Long memberId) {
+		ChallengeCertification certification = getCertificationById(certificationId);
+		if (!certification.getMember().getMemberId().equals(memberId)) {
+			throw new CertificationException(CertificationExceptionMessage.INVALID_ACCESS);
+		}
+		return ChallengeCertificationDetailDto.from(certification);
 	}
 
 	public BooleanExpression fromCondition(String cursor) {

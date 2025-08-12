@@ -17,6 +17,7 @@ import com.example.green.domain.certification.domain.ChallengeSnapshot;
 import com.example.green.domain.certification.exception.CertificationException;
 import com.example.green.domain.certification.exception.CertificationExceptionMessage;
 import com.example.green.domain.certification.ui.docs.ChallengeCertificationControllerDocs;
+import com.example.green.domain.certification.ui.dto.ChallengeCertificationDetailDto;
 import com.example.green.domain.certification.ui.dto.ChallengeCertificationDto;
 import com.example.green.domain.certification.ui.dto.PersonalChallengeCertificateDto;
 import com.example.green.domain.certification.ui.dto.TeamChallengeCertificateDto;
@@ -75,6 +76,17 @@ public class ChallengeCertificationController implements ChallengeCertificationC
 		Long memberId = principalDetails.getMemberId();
 		CursorTemplate<String, ChallengeCertificationDto> result =
 			challengeCertificationQuery.findCertificationByPersonal(cursor, memberId, size, type);
+		return ApiTemplate.ok(CertificationResponseMessage.CERTIFICATIONS_READ_SUCCESS, result);
+	}
+
+	@GetMapping("/{certificationId}")
+	public ApiTemplate<ChallengeCertificationDetailDto> getCertificationDetail(
+		@PathVariable Long certificationId,
+		@AuthenticationPrincipal PrincipalDetails principalDetails
+	) {
+		Long memberId = principalDetails.getMemberId();
+		ChallengeCertificationDetailDto result =
+			challengeCertificationQuery.findCertificationDetail(certificationId, memberId);
 		return ApiTemplate.ok(CertificationResponseMessage.CERTIFICATIONS_READ_SUCCESS, result);
 	}
 }
