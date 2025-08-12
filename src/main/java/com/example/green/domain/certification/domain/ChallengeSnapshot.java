@@ -46,4 +46,8 @@ public class ChallengeSnapshot {
 		EntityValidator.validateEmptyString(groupCode, "GroupCode 필수 값입니다.");
 		return new ChallengeSnapshot(id, name, code, groupCode, TEAM_TYPE);
 	}
+
+	public static boolean isValidType(String type) {
+		return type.equals(TEAM_TYPE) || type.equals(PERSONAL_TYPE);
+	}
 }

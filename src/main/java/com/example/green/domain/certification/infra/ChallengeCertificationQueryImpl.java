@@ -1,8 +1,6 @@
 package com.example.green.domain.certification.infra;
 
-import static com.example.green.domain.certification.domain.QChallengeCertification.*;
 import static com.example.green.domain.certification.exception.CertificationExceptionMessage.*;
-import static com.example.green.domain.challenge.entity.group.QChallengeGroup.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -12,14 +10,19 @@ import org.springframework.stereotype.Repository;
 import com.example.green.domain.certification.domain.ChallengeCertification;
 import com.example.green.domain.certification.domain.ChallengeCertificationQuery;
 import com.example.green.domain.certification.domain.ChallengeCertificationRepository;
+import com.example.green.domain.certification.domain.ChallengeSnapshot;
 import com.example.green.domain.certification.exception.CertificationException;
 import com.example.green.domain.certification.exception.CertificationExceptionMessage;
+import com.example.green.domain.certification.infra.executor.ChallengeCertificationQueryExecutor;
+import com.example.green.domain.certification.infra.filter.ChallengeCertificationFilter;
+import com.example.green.domain.certification.infra.predicates.ChallengeCertificationPredicates;
+import com.example.green.domain.certification.ui.dto.AdminCertificateSearchDto;
 import com.example.green.domain.certification.ui.dto.ChallengeCertificationDetailDto;
 import com.example.green.domain.certification.ui.dto.ChallengeCertificationDto;
 import com.example.green.global.api.page.CursorTemplate;
-import com.querydsl.core.types.Projections;
+import com.example.green.global.api.page.PageTemplate;
+import com.example.green.global.api.page.Pagination;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
 
@@ -28,7 +31,7 @@ import lombok.RequiredArgsConstructor;
 public class ChallengeCertificationQueryImpl implements ChallengeCertificationQuery {
 
 	private final ChallengeCertificationRepository challengeCertificationRepository;
-	private final JPAQueryFactory jpaQueryFactory;
+	private final ChallengeCertificationQueryExecutor executor;
 
 	public void checkAlreadyTeamCert(Long challengeId, LocalDate challengeDate, Long memberId) {
 		if (challengeCertificationRepository.existsByTeamChallenge(challengeId, challengeDate, memberId)) {
@@ -42,27 +45,19 @@ public class ChallengeCertificationQueryImpl implements ChallengeCertificationQu
 		}
 	}
 
-	public CursorTemplate<String, ChallengeCertificationDto> findCertificationByPersonal(
+	public CursorTemplate<String, ChallengeCertificationDto> findCertByPersonal(
 		String cursor, Long memberId, Integer size, String type
 	) {
-		List<ChallengeCertificationDto> result = jpaQueryFactory.select(
-				Projections.constructor(ChallengeCertificationDto.class,
-					challengeCertification.id,
-					challengeCertification.challenge.challengeName,
-					challengeCertification.certifiedDate,
-					challengeCertification.status
-				))
-			.from(challengeCertification)
-			.where(
-				fromCondition(cursor),
-				challengeCertification.member.memberId.eq(memberId),
-				challengeCertification.challenge.type.eq(type)
-			)
-			.orderBy(challengeCertification.certifiedDate.desc(), challengeCertification.id.desc())
-			.limit(size + 1)
-			.fetch();
+		validateChallengeType(type);
+		List<ChallengeCertificationDto> result = executor.executeCertByPersonalQuery(cursor, memberId, size, type);
 
 		return CursorTemplate.from(result, size, dto -> dto.certifiedDate() + "," + dto.id());
+	}
+
+	private static void validateChallengeType(String type) {
+		if (!ChallengeSnapshot.isValidType(type)) {
+			throw new CertificationException(INVALID_CHALLENGE_TYPE);
+		}
 	}
 
 	public ChallengeCertification getCertificationById(Long certificationId) {
@@ -78,16 +73,16 @@ public class ChallengeCertificationQueryImpl implements ChallengeCertificationQu
 		return ChallengeCertificationDetailDto.from(certification);
 	}
 
-	public BooleanExpression fromCondition(String cursor) {
-		if (cursor == null) {
-			return null;
-		}
+	@Override
+	public PageTemplate<AdminCertificateSearchDto> search(ChallengeCertificationFilter filter) {
+		validateChallengeType(filter.type());
 
-		String[] parts = cursor.split(",");
-		LocalDate dateCursor = LocalDate.parse(parts[0]);
-		Long idCursor = Long.parseLong(parts[1]);
-		return challengeCertification.certifiedDate.lt(dateCursor)
-			.or(challengeCertification.certifiedDate.eq(dateCursor)
-				.and(challengeGroup.id.lt(idCursor)));
+		BooleanExpression expression = ChallengeCertificationPredicates.searchCondition(filter);
+		long count = executor.executeSearchCountQuery(expression);
+
+		Pagination pagination = Pagination.fromCondition(filter, count);
+		List<AdminCertificateSearchDto> content = executor.executeSearchQuery(expression, pagination);
+
+		return PageTemplate.of(content, pagination);
 	}
 }

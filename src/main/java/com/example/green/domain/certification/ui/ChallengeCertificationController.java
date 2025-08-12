@@ -75,7 +75,7 @@ public class ChallengeCertificationController implements ChallengeCertificationC
 		}
 		Long memberId = principalDetails.getMemberId();
 		CursorTemplate<String, ChallengeCertificationDto> result =
-			challengeCertificationQuery.findCertificationByPersonal(cursor, memberId, size, type);
+			challengeCertificationQuery.findCertByPersonal(cursor, memberId, size, type);
 		return ApiTemplate.ok(CertificationResponseMessage.CERTIFICATIONS_READ_SUCCESS, result);
 	}
 
