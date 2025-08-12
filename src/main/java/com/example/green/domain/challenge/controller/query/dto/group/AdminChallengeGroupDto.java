@@ -19,7 +19,7 @@ public record AdminChallengeGroupDto(
 	String groupName,
 
 	@Schema(description = "등록 날짜", example = "2025-08-09")
-	LocalDateTime registrationDate,
+	LocalDateTime challengeDate,
 
 	@Schema(description = "최대 인원", example = "15")
 	Integer maxParticipants,
@@ -32,6 +32,6 @@ public record AdminChallengeGroupDto(
 ) {
 
 	public LocalDate getRegistrationDate() {
-		return registrationDate.toLocalDate();
+		return challengeDate.toLocalDate();
 	}
 }

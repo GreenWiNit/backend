@@ -1,6 +1,8 @@
 package com.example.green.domain.challenge.controller.query.dto.group;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 import com.example.green.domain.challenge.entity.group.GroupCapacity;
 import com.example.green.domain.challenge.entity.group.GroupPeriod;
@@ -15,10 +17,12 @@ public record ChallengeGroupDto(
 	String groupName,
 	@Schema(description = "시군구 주소", example = "강남구")
 	String sigungu,
-	@Schema(description = "그룹 시작 일시")
-	LocalDateTime beginDateTime,
-	@Schema(description = "그룹 종료 일시")
-	LocalDateTime endDateTime,
+	@Schema(description = "챌린지 시작 일자")
+	LocalDate challengeDate,
+	@Schema(description = "챌린지 시작 시간")
+	LocalTime startTime,
+	@Schema(description = "챌린지 종료 시간")
+	LocalTime endTime,
 	@Schema(description = "현재 참가자 수", example = "5")
 	Integer currentParticipants,
 	@Schema(description = "최대 참가자 수", example = "10")
@@ -32,7 +36,7 @@ public record ChallengeGroupDto(
 		GroupCapacity capacity, LocalDateTime createdDate
 	) {
 		this(
-			id, groupName, sigungu, period.getBeginDateTime(), period.getEndDateTime(),
+			id, groupName, sigungu, period.getDate(), period.getStartTime(), period.getEndTime(),
 			capacity.getCurrentParticipants(), capacity.getMaxParticipants(), createdDate
 		);
 	}

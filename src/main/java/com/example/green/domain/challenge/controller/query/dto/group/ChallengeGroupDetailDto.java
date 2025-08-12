@@ -1,6 +1,7 @@
 package com.example.green.domain.challenge.controller.query.dto.group;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 import com.example.green.domain.challenge.entity.group.ChallengeGroup;
 
@@ -16,10 +17,12 @@ public record ChallengeGroupDetailDto(
 	Integer currentParticipants,
 	@Schema(description = "그룹 설명", example = "매주 화, 목 저녁 7시에 모여서 5km 러닝합니다.")
 	String description,
-	@Schema(description = "그룹 시작 일시")
-	LocalDateTime beginDateTime,
-	@Schema(description = "그룹 종료 일시")
-	LocalDateTime endDateTime,
+	@Schema(description = "챌린지 시작 일자")
+	LocalDate challengeDate,
+	@Schema(description = "챌린지 시작 시간")
+	LocalTime startTime,
+	@Schema(description = "챌린지 종료 시간")
+	LocalTime endTime,
 	@Schema(description = "그룹 주소", example = "서울시 강남구 테헤란로 123")
 	String fullAddress,
 	@Schema(description = "오픈 채팅 URL", example = "https://open.kakao.com/o/abc123")
@@ -34,8 +37,9 @@ public record ChallengeGroupDetailDto(
 			challengeGroup.getBasicInfo().getGroupName(),
 			challengeGroup.getCapacity().getCurrentParticipants(),
 			challengeGroup.getBasicInfo().getDescription(),
-			challengeGroup.getPeriod().getBeginDateTime(),
-			challengeGroup.getPeriod().getEndDateTime(),
+			challengeGroup.getPeriod().getDate(),
+			challengeGroup.getPeriod().getStartTime(),
+			challengeGroup.getPeriod().getEndTime(),
 			challengeGroup.getGroupAddress().getFullAddress(),
 			challengeGroup.getBasicInfo().getOpenChatUrl(),
 			participating

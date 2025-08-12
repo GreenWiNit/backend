@@ -1,6 +1,8 @@
 package com.example.green.domain.challenge.controller.command.dto;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 import com.example.green.domain.challenge.entity.group.GroupAddress;
 import com.example.green.domain.challenge.entity.group.GroupBasicInfo;
@@ -37,13 +39,17 @@ public record ChallengeGroupUpdateDto(
 	@Size(max = 500, message = "오픈 채팅 URL은 500자 이하여야 합니다.")
 	String openChatUrl,
 
+	@Schema(description = "챌린지 활동 일자", requiredMode = Schema.RequiredMode.REQUIRED)
+	@NotNull(message = "챌린지 활동 일자는 필수값입니다.")
+	LocalDate challengeData,
+
 	@Schema(description = "그룹 시작 일시", requiredMode = Schema.RequiredMode.REQUIRED)
 	@NotNull(message = "그룹 시작 일시는 필수값입니다.")
-	LocalDateTime beginDateTime,
+	LocalTime startTime,
 
 	@Schema(description = "그룹 종료 일시", requiredMode = Schema.RequiredMode.REQUIRED)
 	@NotNull(message = "그룹 종료 일시는 필수값입니다.")
-	LocalDateTime endDateTime,
+	LocalTime endTime,
 
 	@Schema(description = "최대 참가자 수", example = "10")
 	@Positive(message = "최대 참가자 수는 1명 이상이어야 합니다.")
@@ -55,7 +61,7 @@ public record ChallengeGroupUpdateDto(
 	}
 
 	public GroupPeriod toPeriod() {
-		return GroupPeriod.of(beginDateTime, endDateTime);
+		return GroupPeriod.of(LocalDateTime.of(challengeData, startTime), LocalDateTime.of(challengeData, endTime));
 	}
 
 	public GroupAddress toAddress() {
