@@ -9,4 +9,11 @@ public interface PersonalChallengeRepository extends JpaRepository<PersonalChall
 
 	@Query("SELECT COUNT(p) FROM PersonalChallengeParticipation p WHERE p.personalChallenge.id = :personalChallengeId")
 	long countParticipantByChallenge(Long personalChallengeId);
+
+	@Query("""
+		SELECT count(p) FROM PersonalChallengeParticipation p
+		WHERE p.personalChallenge.id=:challengeId
+		AND p.memberId=:memberId
+		""")
+	boolean existsMembership(Long challengeId, Long memberId);
 }

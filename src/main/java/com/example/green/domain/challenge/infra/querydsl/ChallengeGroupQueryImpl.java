@@ -195,7 +195,6 @@ public class ChallengeGroupQueryImpl implements ChallengeGroupQuery {
 	}
 
 	public ChallengeGroup getChallengeGroup(Long groupId, Long memberId) {
-		log.info("select group by member -> groupId: {}, memberId: {}", groupId, memberId);
 		if (!challengeGroupRepository.existMembership(groupId, memberId)) {
 			throw new ChallengeException(ChallengeExceptionMessage.INVALID_GROUP_MEMBERSHIP);
 		}

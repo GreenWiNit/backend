@@ -1,7 +1,11 @@
 package com.example.green.domain.challenge.controller.command.dto;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+
+import com.example.green.domain.challenge.entity.challenge.PersonalChallenge;
+import com.example.green.domain.challenge.entity.challenge.TeamChallenge;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
@@ -35,4 +39,26 @@ public record AdminChallengeCreateDto(
 	@Schema(description = "챌린지 이미지 URL", example = "https://example.com/challenge.jpg")
 	String challengeImageUrl
 ) {
+
+	public TeamChallenge toTeamChallenge(String challengeCode) {
+		return TeamChallenge.create(
+			challengeCode, challengeName, challengeImageUrl, challengeContent,
+			challengePoint, toBeginDate(), toEndDate()
+		);
+	}
+
+	public PersonalChallenge toPersonalChallenge(String challengeCode) {
+		return PersonalChallenge.create(
+			challengeCode, challengeName, challengeImageUrl, challengeContent,
+			challengePoint, toBeginDate(), toEndDate()
+		);
+	}
+
+	public LocalDate toBeginDate() {
+		return beginDateTime.toLocalDate();
+	}
+
+	public LocalDate toEndDate() {
+		return endDateTime.toLocalDate();
+	}
 }

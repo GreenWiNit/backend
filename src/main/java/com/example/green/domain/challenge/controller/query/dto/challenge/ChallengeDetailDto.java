@@ -1,7 +1,7 @@
 package com.example.green.domain.challenge.controller.query.dto.challenge;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -12,9 +12,9 @@ public record ChallengeDetailDto(
 	@Schema(description = "챌린지명", example = "플러깅")
 	String title,
 	@Schema(description = "챌린지 시작일")
-	LocalDateTime beginDateTime,
+	LocalDate beginDate,
 	@Schema(description = "챌린지 종료일")
-	LocalDateTime endDateTime,
+	LocalDate endDate,
 	@Schema(description = "챌린지 이미지")
 	String challengeImage,
 	@Schema(description = "챌린지 포인트", example = "100")

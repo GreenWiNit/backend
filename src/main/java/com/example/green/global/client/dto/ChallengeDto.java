@@ -9,6 +9,8 @@ public record ChallengeDto(
 ) {
 
 	public static ChallengeDto from(BaseChallenge challenge) {
-		return new ChallengeDto(challenge.getId(), challenge.getChallengeName(), challenge.getChallengeCode());
+		return new ChallengeDto(
+			challenge.getId(), challenge.getChallengeName(), challenge.getChallengeCode()
+		);
 	}
 }

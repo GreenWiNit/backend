@@ -1,7 +1,7 @@
 package com.example.green.domain.challenge.controller.query.dto.challenge;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import com.example.green.domain.challenge.entity.challenge.BaseChallenge;
 import com.example.green.domain.challenge.entity.challenge.vo.ChallengeDisplayStatus;
@@ -26,11 +26,11 @@ public record AdminChallengeDetailDto(
 	@Schema(description = "챌린지 포인트", example = "100")
 	BigDecimal challengePoint,
 
-	@Schema(description = "시작 일시")
-	LocalDateTime beginDateTime,
+	@Schema(description = "시작 일자")
+	LocalDate beginDate,
 
-	@Schema(description = "종료 일시")
-	LocalDateTime endDateTime,
+	@Schema(description = "종료 일자")
+	LocalDate endDateTime,
 
 	@Schema(description = "전시 상태", example = "VISIBLE")
 	ChallengeDisplayStatus displayStatus,
@@ -49,8 +49,8 @@ public record AdminChallengeDetailDto(
 			challenge.getChallengeName(),
 			challenge.getChallengeType(),
 			challenge.getChallengePoint(),
-			challenge.getBeginDateTime(),
-			challenge.getEndDateTime(),
+			challenge.getBeginDate(),
+			challenge.getEndDate(),
 			challenge.getDisplayStatus(),
 			challenge.getChallengeImage(),
 			challenge.getChallengeContent()

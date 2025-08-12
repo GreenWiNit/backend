@@ -39,7 +39,7 @@ public class GroupPeriod {
 	}
 
 	public boolean canParticipate(LocalDateTime now) {
-		return now.isBefore(endDateTime);
+		return now.isBefore(beginDateTime);
 	}
 
 	public LocalDate getDate() {

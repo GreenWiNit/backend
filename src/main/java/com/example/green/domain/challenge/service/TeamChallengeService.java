@@ -26,13 +26,9 @@ public class TeamChallengeService {
 	private final SequenceService sequenceService;
 	private final TimeUtils timeUtils;
 
-	public Long create(AdminChallengeCreateDto request) {
+	public Long create(AdminChallengeCreateDto dto) {
 		String challengeCode = sequenceService.generateCode(SequenceType.TEAM_CHALLENGE, timeUtils.now());
-		TeamChallenge challenge = TeamChallenge.create(
-			challengeCode, request.challengeName(), request.challengeImageUrl(), request.challengeContent(),
-			request.challengePoint(), request.beginDateTime(), request.endDateTime()
-		);
-
+		TeamChallenge challenge = dto.toTeamChallenge(challengeCode);
 		TeamChallenge savedChallenge = teamChallengeRepository.save(challenge);
 		fileManager.confirmUsingImage(savedChallenge.getChallengeImage());
 
@@ -63,7 +59,7 @@ public class TeamChallengeService {
 	public void update(Long challengeId, AdminChallengeUpdateDto dto) {
 		TeamChallenge teamChallenge = teamChallengeQuery.getTeamChallengeById(challengeId);
 		teamChallenge.updateBasicInfo(
-			dto.challengeName(), dto.challengePoint(), dto.beginDateTime(), dto.endDateTime(), dto.challengeContent()
+			dto.challengeName(), dto.challengePoint(), dto.toBeginDate(), dto.toEndDate(), dto.challengeContent()
 		);
 
 		String beforeImageUrl = teamChallenge.getChallengeImage();

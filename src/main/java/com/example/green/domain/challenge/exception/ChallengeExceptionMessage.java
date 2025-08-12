@@ -12,8 +12,8 @@ import lombok.RequiredArgsConstructor;
 public enum ChallengeExceptionMessage implements ExceptionMessage {
 
 	CHALLENGE_NOT_FOUND("챌린지를 찾을 수 없습니다.", 404),
-	CHALLENGE_NOT_PARTICIPATABLE("챌린지 참여 기간이 아닙니다.", 400),
-	CHALLENGE_NOT_LEAVEABLE("챌린지 탈퇴 기간이 아닙니다.", 400),
+	INACTIVE_CHALLENGE("현재 활성화된 챌린지가 아닙니다.", 400),
+	INACTIVE_GROUP("현재 활성화된 그룹이 아닙니다.", 400),
 	ALREADY_PARTICIPATING("이미 참여 중인 챌린지입니다.", 400),
 	NOT_PARTICIPATING("참여하지 않은 챌린지입니다.", 400),
 	INVALID_MAX_GROUP_COUNT("최대 그룹 수는 0보다 커야 합니다.", 400),
@@ -29,6 +29,7 @@ public enum ChallengeExceptionMessage implements ExceptionMessage {
 	ALREADY_PARTICIPATING_IN_GROUP("이미 해당 팀(그룹)에 참여 중입니다.", 400),
 	CANNOT_PARTICIPATE_IN_GROUP("그룹에 참여할 수 없습니다.", 400),
 	NOT_GROUP_LEADER("그룹 리더가 아닙니다.", 403),
+	INVALID_CHALLENGE_PERIOD("챌린지 시작일시는 종료일시보다 이전이어야 합니다.", 400),
 
 	// Admin 전용 예외 메시지
 	ADMIN_CHALLENGE_NOT_FOUND("관리자 - 챌린지를 찾을 수 없습니다.", 404),

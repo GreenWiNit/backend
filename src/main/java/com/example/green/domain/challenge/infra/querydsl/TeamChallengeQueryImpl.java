@@ -4,8 +4,10 @@ import static com.example.green.domain.challenge.entity.challenge.QTeamChallenge
 import static com.example.green.domain.challenge.entity.challenge.QTeamChallengeParticipation.*;
 import static com.example.green.domain.challenge.exception.ChallengeExceptionMessage.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,7 +17,7 @@ import com.example.green.domain.challenge.controller.query.dto.challenge.AdminTe
 import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDetailDto;
 import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDto;
 import com.example.green.domain.challenge.entity.challenge.TeamChallenge;
-import com.example.green.domain.challenge.entity.challenge.vo.ChallengeStatus;
+import com.example.green.domain.challenge.entity.challenge.vo.ChallengeDisplayStatus;
 import com.example.green.domain.challenge.exception.ChallengeException;
 import com.example.green.domain.challenge.infra.querydsl.projections.TeamChallengeProjections;
 import com.example.green.domain.challenge.repository.TeamChallengeRepository;
@@ -60,7 +62,6 @@ public class TeamChallengeQueryImpl implements TeamChallengeQuery {
 	public CursorTemplate<Long, ChallengeDto> findTeamChallengesByCursor(
 		Long cursor,
 		int size,
-		ChallengeStatus status,
 		LocalDateTime now
 	) {
 		List<ChallengeDto> participation = queryFactory
@@ -68,14 +69,13 @@ public class TeamChallengeQueryImpl implements TeamChallengeQuery {
 			.from(teamChallenge)
 			.where(
 				cursorCondition(cursor),
-				teamChallenge.challengeStatus.eq(status),
-				teamChallenge.beginDateTime.loe(now),
-				teamChallenge.endDateTime.goe(now)
+				teamChallenge.displayStatus.eq(ChallengeDisplayStatus.VISIBLE),
+				teamChallenge.beginDate.loe(now.toLocalDate()),
+				teamChallenge.endDate.goe(now.toLocalDate())
 			)
 			.orderBy(teamChallenge.id.desc())
 			.limit(size + 1)
 			.fetch();
-
 		return CursorTemplate.from(participation, size, ChallengeDto::id);
 	}
 
@@ -87,11 +87,12 @@ public class TeamChallengeQueryImpl implements TeamChallengeQuery {
 				teamChallengeParticipation.memberId.eq(memberId)
 			).exists();
 
-		return queryFactory
-			.select(TeamChallengeProjections.toChallengeByMember(exists))
-			.from(teamChallenge)
-			.where(teamChallenge.id.eq(challengeId))
-			.fetchOne();
+		return Optional.ofNullable(queryFactory
+				.select(TeamChallengeProjections.toChallengeByMember(exists))
+				.from(teamChallenge)
+				.where(teamChallenge.id.eq(challengeId), teamChallenge.displayStatus.eq(ChallengeDisplayStatus.VISIBLE))
+				.fetchOne())
+			.orElseThrow(() -> new ChallengeException(CHALLENGE_NOT_FOUND));
 	}
 
 	public TeamChallenge getTeamChallengeById(Long challengeId) {
@@ -128,8 +129,8 @@ public class TeamChallengeQueryImpl implements TeamChallengeQuery {
 			.fetch();
 	}
 
-	public void validateGroupPeriod(Long challengeId, LocalDateTime beginDateTime, LocalDateTime endDateTime) {
-		if (teamChallengeRepository.isGroupPeriodValidForChallenge(challengeId, beginDateTime, endDateTime)) {
+	public void validateGroupPeriod(Long challengeId, LocalDate challengeDate) {
+		if (teamChallengeRepository.isGroupPeriodValidForChallenge(challengeId, challengeDate)) {
 			throw new ChallengeException(MISMATCH_GROUP_PERIOD_RANGE);
 		}
 	}

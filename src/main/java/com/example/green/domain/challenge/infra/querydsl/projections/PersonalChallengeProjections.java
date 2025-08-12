@@ -22,8 +22,8 @@ public class PersonalChallengeProjections {
 			ChallengeDto.class,
 			personalChallenge.id,
 			personalChallenge.challengeName,
-			personalChallenge.beginDateTime,
-			personalChallenge.endDateTime,
+			personalChallenge.beginDate,
+			personalChallenge.endDate,
 			personalChallenge.challengeImage,
 			personalChallenge.challengePoint
 		);
@@ -34,8 +34,8 @@ public class PersonalChallengeProjections {
 			ChallengeDetailDto.class,
 			personalChallenge.id,
 			personalChallenge.challengeName,
-			personalChallenge.beginDateTime,
-			personalChallenge.endDateTime,
+			personalChallenge.beginDate,
+			personalChallenge.endDate,
 			personalChallenge.challengeImage,
 			personalChallenge.challengePoint,
 			exists
@@ -48,8 +48,8 @@ public class PersonalChallengeProjections {
 			personalChallenge.id,
 			personalChallenge.challengeCode,
 			personalChallenge.challengeName,
-			personalChallenge.beginDateTime,
-			personalChallenge.endDateTime,
+			personalChallenge.beginDate,
+			personalChallenge.endDate,
 			personalChallenge.challengePoint,
 			personalChallenge.displayStatus,
 			personalChallenge.createdDate

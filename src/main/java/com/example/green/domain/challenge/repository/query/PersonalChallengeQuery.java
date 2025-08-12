@@ -1,5 +1,6 @@
 package com.example.green.domain.challenge.repository.query;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -38,4 +39,6 @@ public interface PersonalChallengeQuery {
 		Long challengeId, Integer page, Integer size);
 
 	List<AdminPersonalParticipationDto> findParticipantByChallengeForExcel(Long challengeId);
+
+	PersonalChallenge getPersonalChallengeByMemberAndDate(Long challengeId, Long memberId, LocalDate challengeDate);
 }

@@ -25,8 +25,8 @@ public class PersonalChallengePredicates {
 
 	public static BooleanExpression activeChallengeCondition(Long cursor, ChallengeStatus status, LocalDateTime now) {
 		BooleanExpression expression = personalChallenge.challengeStatus.eq(status)
-			.and(personalChallenge.beginDateTime.loe(now))
-			.and(personalChallenge.endDateTime.goe(now));
+			.and(personalChallenge.beginDate.loe(now.toLocalDate()))
+			.and(personalChallenge.endDate.goe(now.toLocalDate()));
 		if (cursor == null) {
 			return expression;
 		}

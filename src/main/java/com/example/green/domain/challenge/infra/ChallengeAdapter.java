@@ -1,8 +1,9 @@
 package com.example.green.domain.challenge.infra;
 
+import java.time.LocalDate;
+
 import org.springframework.stereotype.Component;
 
-import com.example.green.domain.certification.ui.dto.ChallengeGroupDto;
 import com.example.green.domain.challenge.entity.challenge.PersonalChallenge;
 import com.example.green.domain.challenge.entity.challenge.TeamChallenge;
 import com.example.green.domain.challenge.entity.group.ChallengeGroup;
@@ -11,11 +12,14 @@ import com.example.green.domain.challenge.repository.query.PersonalChallengeQuer
 import com.example.green.domain.challenge.repository.query.TeamChallengeQuery;
 import com.example.green.global.client.ChallengeClient;
 import com.example.green.global.client.dto.ChallengeDto;
+import com.example.green.global.client.dto.ChallengeGroupDto;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class ChallengeAdapter implements ChallengeClient {
 
 	private final PersonalChallengeQuery personalChallengeQuery;
@@ -29,8 +33,9 @@ public class ChallengeAdapter implements ChallengeClient {
 	}
 
 	@Override
-	public ChallengeDto getPersonalChallenge(Long challengeId) {
-		PersonalChallenge challenge = personalChallengeQuery.getPersonalChallengeById(challengeId);
+	public ChallengeDto getPersonalChallengeByMemberAndDate(Long challengeId, Long memberId, LocalDate challengeDate) {
+		PersonalChallenge challenge =
+			personalChallengeQuery.getPersonalChallengeByMemberAndDate(challengeId, memberId, challengeDate);
 		return ChallengeDto.from(challenge);
 	}
 

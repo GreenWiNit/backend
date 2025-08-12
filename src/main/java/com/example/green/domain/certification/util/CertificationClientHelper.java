@@ -1,14 +1,16 @@
 package com.example.green.domain.certification.util;
 
+import java.time.LocalDate;
+
 import org.springframework.stereotype.Component;
 
 import com.example.green.domain.certification.domain.ChallengeSnapshot;
 import com.example.green.domain.certification.domain.MemberSnapshot;
-import com.example.green.domain.certification.ui.dto.ChallengeGroupDto;
 import com.example.green.domain.common.service.FileManager;
 import com.example.green.global.client.ChallengeClient;
 import com.example.green.global.client.MemberClient;
 import com.example.green.global.client.dto.ChallengeDto;
+import com.example.green.global.client.dto.ChallengeGroupDto;
 import com.example.green.global.client.dto.MemberDto;
 
 import lombok.RequiredArgsConstructor;
@@ -21,8 +23,8 @@ public class CertificationClientHelper {
 	private final MemberClient memberClient;
 	private final FileManager fileManager;
 
-	public ChallengeSnapshot getPersonalSnapshot(Long challengeId) {
-		ChallengeDto dto = challengeClient.getPersonalChallenge(challengeId);
+	public ChallengeSnapshot getPersonalSnapshot(Long challengeId, Long memberId, LocalDate challengeDate) {
+		ChallengeDto dto = challengeClient.getPersonalChallengeByMemberAndDate(challengeId, memberId, challengeDate);
 		return ChallengeSnapshot.ofPersonal(dto.id(), dto.name(), dto.code());
 	}
 

@@ -1,6 +1,7 @@
 package com.example.green.domain.challenge.entity.challenge;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,26 +13,14 @@ import com.example.green.domain.challenge.exception.ChallengeExceptionMessage;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Index;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(
-	indexes = {
-		@Index(
-			name = "idx_team_challenge_active",
-			columnList = "challengeStatus, displayStatus, beginDateTime, endDateTime"
-		)
-	},
-	uniqueConstraints = {
-		@UniqueConstraint(name = "uk_team_challenge_code", columnNames = "challenge_code")
-	}
-)
+@Table(name = "team_challenges")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class TeamChallenge extends BaseChallenge {
@@ -44,20 +33,20 @@ public class TeamChallenge extends BaseChallenge {
 
 	private TeamChallenge(
 		String challengeCode, String challengeName, String challengeImage, String challengeContent,
-		BigDecimal challengePoint, LocalDateTime beginDateTime, LocalDateTime endDateTime
+		BigDecimal challengePoint, LocalDate beginDate, LocalDate endDate
 	) {
-		super(challengeCode, challengeName, challengeImage, challengeContent, challengePoint, beginDateTime,
-			endDateTime, ChallengeType.TEAM);
+		super(challengeCode, challengeName, challengeImage, challengeContent, challengePoint, beginDate,
+			endDate, ChallengeType.TEAM);
 		this.teamCount = 0;
 	}
 
 	public static TeamChallenge create(
 		String challengeCode, String challengeName, String challengeImage, String challengeContent,
-		BigDecimal challengePoint, LocalDateTime beginDateTime, LocalDateTime endDateTime
+		BigDecimal challengePoint, LocalDate beginDate, LocalDate endDate
 	) {
 		return new TeamChallenge(
 			challengeCode, challengeName, challengeImage, challengeContent,
-			challengePoint, beginDateTime, endDateTime
+			challengePoint, beginDate, endDate
 		);
 	}
 
@@ -73,8 +62,8 @@ public class TeamChallenge extends BaseChallenge {
 
 	public void removeParticipation(Long memberId, LocalDateTime now) {
 		TeamChallengeParticipation participation = findParticipationByMemberId(memberId);
-		if (!isActive(now)) {
-			throw new ChallengeException(ChallengeExceptionMessage.CHALLENGE_NOT_LEAVEABLE);
+		if (!isActive(now.toLocalDate())) {
+			throw new ChallengeException(ChallengeExceptionMessage.INACTIVE_CHALLENGE);
 		}
 
 		participations.remove(participation);

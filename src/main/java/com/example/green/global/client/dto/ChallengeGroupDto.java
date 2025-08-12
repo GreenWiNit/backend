@@ -1,4 +1,4 @@
-package com.example.green.domain.certification.ui.dto;
+package com.example.green.global.client.dto;
 
 import java.time.LocalDate;
 

@@ -1,7 +1,6 @@
 package com.example.green.domain.challenge.controller.query;
 
 import static com.example.green.domain.challenge.controller.message.ChallengeResponseMessage.*;
-import static com.example.green.domain.challenge.entity.challenge.vo.ChallengeStatus.*;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping("/api/challenges/team")
 @RestController
+@AuthenticatedApi
 public class TeamChallengeQueryController implements TeamChallengeQueryControllerDocs {
 
 	private final TeamChallengeQuery teamChallengeQuery;
@@ -37,12 +37,11 @@ public class TeamChallengeQueryController implements TeamChallengeQueryControlle
 	) {
 		// todo: 누적 참여자 수 반환
 		CursorTemplate<Long, ChallengeDto> result =
-			teamChallengeQuery.findTeamChallengesByCursor(cursor, pageSize, PROCEEDING, timeUtils.now());
+			teamChallengeQuery.findTeamChallengesByCursor(cursor, pageSize, timeUtils.now());
 
 		return ApiTemplate.ok(CHALLENGE_LIST_FOUND, result);
 	}
 
-	@AuthenticatedApi
 	@GetMapping("/{challengeId}")
 	public ApiTemplate<ChallengeDetailDto> getTeamChallenge(
 		@PathVariable Long challengeId,
@@ -53,7 +52,6 @@ public class TeamChallengeQueryController implements TeamChallengeQueryControlle
 		return ApiTemplate.ok(CHALLENGE_DETAIL_FOUND, result);
 	}
 
-	@AuthenticatedApi
 	@GetMapping("/me")
 	public ApiTemplate<CursorTemplate<Long, ChallengeDto>> getMyTeamChallenges(
 		@RequestParam(required = false) Long cursor,

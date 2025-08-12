@@ -28,11 +28,7 @@ public class PersonalChallengeService {
 
 	public Long create(AdminChallengeCreateDto request) {
 		String challengeCode = sequenceService.generateCode(SequenceType.PERSONAL_CHALLENGE, timeUtils.now());
-		PersonalChallenge challenge = PersonalChallenge.create(
-			challengeCode, request.challengeName(), request.challengeImageUrl(), request.challengeContent(),
-			request.challengePoint(), request.beginDateTime(), request.endDateTime()
-		);
-
+		PersonalChallenge challenge = request.toPersonalChallenge(challengeCode);
 		PersonalChallenge savedChallenge = personalChallengeRepository.save(challenge);
 		fileManager.confirmUsingImage(savedChallenge.getChallengeImage());
 
@@ -62,7 +58,7 @@ public class PersonalChallengeService {
 	public void update(Long challengeId, AdminChallengeUpdateDto dto) {
 		PersonalChallenge personalChallenge = personalChallengeQuery.getPersonalChallengeById(challengeId);
 		personalChallenge.updateBasicInfo(
-			dto.challengeName(), dto.challengePoint(), dto.beginDateTime(), dto.endDateTime(), dto.challengeContent()
+			dto.challengeName(), dto.challengePoint(), dto.toBeginDate(), dto.toEndDate(), dto.challengeContent()
 		);
 
 		String beforeImageUrl = personalChallenge.getChallengeImage();
