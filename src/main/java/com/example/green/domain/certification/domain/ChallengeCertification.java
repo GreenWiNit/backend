@@ -4,6 +4,8 @@ import static com.example.green.global.utils.EntityValidator.*;
 
 import java.time.LocalDate;
 
+import com.example.green.domain.certification.exception.CertificationException;
+import com.example.green.domain.certification.exception.CertificationExceptionMessage;
 import com.example.green.domain.common.TimeBaseEntity;
 
 import jakarta.persistence.Column;
@@ -55,6 +57,10 @@ public class ChallengeCertification extends TimeBaseEntity {
 		MemberSnapshot member, ChallengeSnapshot challenge, String imageUrl, String review, LocalDate certifiedDate
 	) {
 		validateCreateInputs(member, challenge, imageUrl, review, certifiedDate);
+		if (certifiedDate.isAfter(LocalDate.now())) {
+			throw new CertificationException(CertificationExceptionMessage.FUTURE_DATE_NOT_ALLOWED);
+		}
+
 		return ChallengeCertification.builder()
 			.member(member)
 			.challenge(challenge)

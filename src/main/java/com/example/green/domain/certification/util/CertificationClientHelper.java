@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import com.example.green.domain.certification.domain.ChallengeSnapshot;
 import com.example.green.domain.certification.domain.MemberSnapshot;
 import com.example.green.domain.certification.ui.dto.ChallengeGroupDto;
+import com.example.green.domain.common.service.FileManager;
 import com.example.green.global.client.ChallengeClient;
 import com.example.green.global.client.MemberClient;
 import com.example.green.global.client.dto.ChallengeDto;
@@ -18,6 +19,7 @@ public class CertificationClientHelper {
 
 	private final ChallengeClient challengeClient;
 	private final MemberClient memberClient;
+	private final FileManager fileManager;
 
 	public ChallengeSnapshot getPersonalSnapshot(Long challengeId) {
 		ChallengeDto dto = challengeClient.getPersonalChallenge(challengeId);
@@ -36,5 +38,9 @@ public class CertificationClientHelper {
 	public MemberSnapshot getMemberSnapshot(Long memberId) {
 		MemberDto dto = memberClient.getMember(memberId);
 		return MemberSnapshot.of(dto.getId(), dto.getMemberKey());
+	}
+
+	public void processCertSideEffect(String imageUrl) {
+		fileManager.confirmUsingImage(imageUrl);
 	}
 }

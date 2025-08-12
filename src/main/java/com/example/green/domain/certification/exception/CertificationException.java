@@ -3,9 +3,9 @@ package com.example.green.domain.certification.exception;
 import com.example.green.global.error.exception.BusinessException;
 import com.example.green.global.error.exception.ExceptionMessage;
 
-public class ChallengeCertException extends BusinessException {
+public class CertificationException extends BusinessException {
 
-	public ChallengeCertException(ExceptionMessage exceptionMessage) {
+	public CertificationException(ExceptionMessage exceptionMessage) {
 		super(exceptionMessage);
 	}
 }

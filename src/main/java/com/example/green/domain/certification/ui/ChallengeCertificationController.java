@@ -23,13 +23,8 @@ public class ChallengeCertificationController {
 	private final ChallengeCertificationService challengeCertificationService;
 	// todo: 개인 챌린지 인증
 
-	/*
-	 * todo: 팀 챌린지 인증
-	 *  1. 유효한 팀 챌린지여야 한다. (날짜, 존재하는)
-	 *  2. 멤버십이 있어야 한다. (그룹에 참여 중)
-	 * */
 	@PostMapping("/team/{groupId}")
-	public NoContent temp(
+	public NoContent certificateTeamChallenge(
 		@PathVariable Long groupId,
 		@RequestBody TeamChallengeCertificateDto dto,
 		@AuthenticationPrincipal PrincipalDetails principalDetails

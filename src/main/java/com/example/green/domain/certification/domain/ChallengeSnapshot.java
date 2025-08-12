@@ -40,10 +40,10 @@ public class ChallengeSnapshot {
 	}
 
 	public static ChallengeSnapshot ofPersonal(Long id, String name, String code) {
-		return new ChallengeSnapshot(id, name, code, null, TEAM_TYPE);
+		return new ChallengeSnapshot(id, name, code, null, PERSONAL_TYPE);
 	}
 
 	public static ChallengeSnapshot ofTeam(Long id, String name, String code, String groupCode) {
-		return new ChallengeSnapshot(id, name, code, groupCode, PERSONAL_TYPE);
+		return new ChallengeSnapshot(id, name, code, groupCode, TEAM_TYPE);
 	}
 }
