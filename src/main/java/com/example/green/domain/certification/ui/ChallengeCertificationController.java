@@ -13,6 +13,9 @@ import com.example.green.domain.certification.application.ChallengeCertification
 import com.example.green.domain.certification.application.command.PersonalChallengeCertificateCommand;
 import com.example.green.domain.certification.application.command.TeamChallengeCertificateCommand;
 import com.example.green.domain.certification.domain.ChallengeCertificationQuery;
+import com.example.green.domain.certification.domain.ChallengeSnapshot;
+import com.example.green.domain.certification.exception.CertificationException;
+import com.example.green.domain.certification.exception.CertificationExceptionMessage;
 import com.example.green.domain.certification.ui.docs.ChallengeCertificationControllerDocs;
 import com.example.green.domain.certification.ui.dto.ChallengeCertificationDto;
 import com.example.green.domain.certification.ui.dto.PersonalChallengeCertificateDto;
@@ -59,27 +62,19 @@ public class ChallengeCertificationController implements ChallengeCertificationC
 		return NoContent.ok(CertificationResponseMessage.TEAM_CHALLENGE_CERTIFICATE_SUCCESS);
 	}
 
-	@GetMapping("/personal/me")
+	@GetMapping("/me")
 	public ApiTemplate<CursorTemplate<String, ChallengeCertificationDto>> getPersonalCertifications(
+		@RequestParam(required = false, defaultValue = "P") String type,
 		@RequestParam(required = false) String cursor,
 		@RequestParam(required = false, defaultValue = "20") Integer size,
 		@AuthenticationPrincipal PrincipalDetails principalDetails
 	) {
+		if (!type.equals(ChallengeSnapshot.PERSONAL_TYPE) && !type.equals(ChallengeSnapshot.TEAM_TYPE)) {
+			throw new CertificationException(CertificationExceptionMessage.INVALID_CHALLENGE_TYPE);
+		}
 		Long memberId = principalDetails.getMemberId();
 		CursorTemplate<String, ChallengeCertificationDto> result =
-			challengeCertificationQuery.findCertificationByPersonal(cursor, memberId, size);
-		return ApiTemplate.ok(CertificationResponseMessage.PERSONAL_CERTIFICATIONS_READ_SUCCESS, result);
-	}
-
-	@GetMapping("/team/me")
-	public ApiTemplate<CursorTemplate<String, ChallengeCertificationDto>> getTeamCertifications(
-		@RequestParam(required = false) String cursor,
-		@RequestParam(required = false, defaultValue = "20") Integer size,
-		@AuthenticationPrincipal PrincipalDetails principalDetails
-	) {
-		Long memberId = principalDetails.getMemberId();
-		CursorTemplate<String, ChallengeCertificationDto> result =
-			challengeCertificationQuery.findCertificationByTeam(cursor, memberId, size);
-		return ApiTemplate.ok(CertificationResponseMessage.TEAM_CERTIFICATIONS_READ_SUCCESS, result);
+			challengeCertificationQuery.findCertificationByPersonal(cursor, memberId, size, type);
+		return ApiTemplate.ok(CertificationResponseMessage.CERTIFICATIONS_READ_SUCCESS, result);
 	}
 }

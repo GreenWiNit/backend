@@ -11,7 +11,6 @@ import org.springframework.stereotype.Repository;
 
 import com.example.green.domain.certification.domain.ChallengeCertificationQuery;
 import com.example.green.domain.certification.domain.ChallengeCertificationRepository;
-import com.example.green.domain.certification.domain.ChallengeSnapshot;
 import com.example.green.domain.certification.exception.CertificationException;
 import com.example.green.domain.certification.ui.dto.ChallengeCertificationDto;
 import com.example.green.global.api.page.CursorTemplate;
@@ -44,7 +43,7 @@ public class ChallengeCertificationQueryImpl implements ChallengeCertificationQu
 
 	@Override
 	public CursorTemplate<String, ChallengeCertificationDto> findCertificationByPersonal(
-		String cursor, Long memberId, Integer size
+		String cursor, Long memberId, Integer size, String type
 	) {
 		List<ChallengeCertificationDto> result = jpaQueryFactory.select(
 				Projections.constructor(ChallengeCertificationDto.class,
@@ -57,30 +56,7 @@ public class ChallengeCertificationQueryImpl implements ChallengeCertificationQu
 			.where(
 				fromCondition(cursor),
 				challengeCertification.member.memberId.eq(memberId),
-				challengeCertification.challenge.type.eq(ChallengeSnapshot.PERSONAL_TYPE)
-			)
-			.orderBy(challengeCertification.certifiedDate.desc(), challengeCertification.id.desc())
-			.limit(size + 1)
-			.fetch();
-
-		return CursorTemplate.from(result, size, dto -> dto.certifiedDate() + "," + dto.id());
-	}
-
-	@Override
-	public CursorTemplate<String, ChallengeCertificationDto> findCertificationByTeam(
-		String cursor, Long memberId, Integer size) {
-		List<ChallengeCertificationDto> result = jpaQueryFactory.select(
-				Projections.constructor(ChallengeCertificationDto.class,
-					challengeCertification.id,
-					challengeCertification.challenge.challengeName,
-					challengeCertification.certifiedDate,
-					challengeCertification.status
-				))
-			.from(challengeCertification)
-			.where(
-				fromCondition(cursor),
-				challengeCertification.member.memberId.eq(memberId),
-				challengeCertification.challenge.type.eq(ChallengeSnapshot.TEAM_TYPE)
+				challengeCertification.challenge.type.eq(type)
 			)
 			.orderBy(challengeCertification.certifiedDate.desc(), challengeCertification.id.desc())
 			.limit(size + 1)

@@ -11,8 +11,5 @@ public interface ChallengeCertificationQuery {
 	void checkAlreadyPersonalCert(Long aLong, LocalDate localDate, Long aLong1);
 
 	CursorTemplate<String, ChallengeCertificationDto> findCertificationByPersonal(
-		String cursor, Long memberId, Integer size);
-
-	CursorTemplate<String, ChallengeCertificationDto> findCertificationByTeam(
-		String cursor, Long memberId, Integer size);
+		String cursor, Long memberId, Integer size, String type);
 }
