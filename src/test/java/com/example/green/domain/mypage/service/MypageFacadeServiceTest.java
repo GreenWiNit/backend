@@ -14,9 +14,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.example.green.domain.mypage.client.PointTotalGetClient;
 import com.example.green.domain.mypage.dto.MypageMainResponseDto;
 import com.example.green.domain.mypage.exception.MypageException;
+import com.example.green.global.client.PointClient;
 
 @ExtendWith(MockitoExtension.class)
 class MypageFacadeServiceTest {
@@ -26,7 +26,7 @@ class MypageFacadeServiceTest {
 	// @Mock
 	// private ChallengeCountGetClient challengeCountGetClient;
 	@Mock
-	private PointTotalGetClient pointTotalGetClient;
+	private PointClient pointClient;
 	@InjectMocks
 	private MypageFacadeService service;
 
@@ -51,7 +51,7 @@ class MypageFacadeServiceTest {
 	void 마이페이지메인_경계값_테스트(String points, int expectedLevel) {
 		// given
 		BigDecimal totalPoints = new BigDecimal(points);
-		when(pointTotalGetClient.getTotalPoints(memberId)).thenReturn(totalPoints);
+		when(pointClient.getTotalPoints(memberId)).thenReturn(totalPoints);
 
 		// when
 		MypageMainResponseDto dto = service.getMypageMain(memberId);
@@ -72,7 +72,7 @@ class MypageFacadeServiceTest {
 	@Test
 	void 마이페이지메인_포인트_값이_null일_때_예외를_반환한다() {
 		// given
-		when(pointTotalGetClient.getTotalPoints(memberId)).thenReturn(null);
+		when(pointClient.getTotalPoints(memberId)).thenReturn(null);
 
 		// then
 		assertThatThrownBy(() -> service.getMypageMain(memberId))

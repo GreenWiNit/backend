@@ -6,6 +6,7 @@ public record PointEarnRequest(
 	Long memberId,
 	BigDecimal amount,
 	Long targetId,
-	String description
+	String description,
+	String type
 ) {
 }

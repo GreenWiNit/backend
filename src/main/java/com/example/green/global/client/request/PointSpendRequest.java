@@ -1,4 +1,4 @@
-package com.example.green.domain.pointshop.order.client.dto;
+package com.example.green.global.client.request;
 
 import java.math.BigDecimal;
 

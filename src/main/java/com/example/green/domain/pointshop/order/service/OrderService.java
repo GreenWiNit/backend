@@ -6,8 +6,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.green.domain.pointshop.delivery.service.DeliveryAddressService;
-import com.example.green.domain.pointshop.order.client.PointSpendClient;
-import com.example.green.domain.pointshop.order.client.dto.PointSpendRequest;
 import com.example.green.domain.pointshop.order.entity.Order;
 import com.example.green.domain.pointshop.order.entity.OrderItem;
 import com.example.green.domain.pointshop.order.entity.vo.DeliveryAddressSnapshot;
@@ -18,6 +16,8 @@ import com.example.green.domain.pointshop.order.exception.OrderExceptionMessage;
 import com.example.green.domain.pointshop.order.repository.OrderRepository;
 import com.example.green.domain.pointshop.order.service.command.SingleOrderCommand;
 import com.example.green.domain.pointshop.product.service.PointProductService;
+import com.example.green.global.client.PointClient;
+import com.example.green.global.client.request.PointSpendRequest;
 
 import lombok.RequiredArgsConstructor;
 
@@ -28,7 +28,7 @@ public class OrderService {
 
 	private final PointProductService pointProductService;
 	private final DeliveryAddressService deliveryAddressService;
-	private final PointSpendClient pointSpendClient;
+	private final PointClient pointClient;
 	private final OrderRepository orderRepository;
 
 	// todo: 통합 테스트
@@ -48,7 +48,7 @@ public class OrderService {
 	private void processSideEffect(SingleOrderCommand command, Long memberId, Order savedOrder) {
 		pointProductService.decreaseSingleItemStock(command.orderItemId(), command.quantity());
 		String itemName = savedOrder.getOrderItems().getFirst().getItemSnapshot().getItemName();
-		pointSpendClient.spendPoints(
+		pointClient.spendPoints(
 			new PointSpendRequest(memberId, savedOrder.getTotalPrice(), savedOrder.getId(), itemName + "교환")
 		);
 	}

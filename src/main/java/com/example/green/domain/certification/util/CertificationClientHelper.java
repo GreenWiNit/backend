@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import com.example.green.domain.certification.domain.ChallengeCertification;
 import com.example.green.domain.certification.domain.ChallengeSnapshot;
 import com.example.green.domain.certification.domain.MemberSnapshot;
+import com.example.green.domain.common.constants.PointTransactionType;
 import com.example.green.domain.common.service.FileManager;
 import com.example.green.global.client.ChallengeClient;
 import com.example.green.global.client.MemberClient;
@@ -58,7 +59,8 @@ public class CertificationClientHelper {
 				cert.getMember().getMemberId(),
 				BigDecimal.valueOf(cert.getChallenge().getChallengePoint()),
 				cert.getChallenge().getChallengeId(),
-				cert.getChallenge().getChallengeName()
+				cert.getChallenge().getChallengeName(),
+				PointTransactionType.CHALLENGE
 			))
 			.toList();
 		pointClient.earnPoints(request);
