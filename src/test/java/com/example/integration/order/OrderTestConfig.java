@@ -10,11 +10,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 
 import com.example.green.domain.pointshop.delivery.service.DeliveryAddressService;
-import com.example.green.domain.pointshop.order.client.PointSpendClient;
-import com.example.green.domain.pointshop.order.client.dto.PointSpendRequest;
 import com.example.green.domain.pointshop.order.entity.vo.DeliveryAddressSnapshot;
 import com.example.green.domain.pointshop.order.entity.vo.ItemSnapshot;
 import com.example.green.domain.pointshop.product.service.PointProductService;
+import com.example.green.global.client.PointClient;
+import com.example.green.global.client.request.PointSpendRequest;
 
 @TestConfiguration
 public class OrderTestConfig {
@@ -41,9 +41,9 @@ public class OrderTestConfig {
 
 	@Bean
 	@Primary
-	public PointSpendClient pointSpendClient() {
-		PointSpendClient pointSpendClient = mock(PointSpendClient.class);
-		doNothing().when(pointSpendClient).spendPoints(any(PointSpendRequest.class));
-		return pointSpendClient;
+	public PointClient pointClient() {
+		PointClient pointClient = mock(PointClient.class);
+		doNothing().when(pointClient).spendPoints(any(PointSpendRequest.class));
+		return pointClient;
 	}
 }

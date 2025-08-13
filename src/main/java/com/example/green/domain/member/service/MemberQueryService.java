@@ -7,11 +7,11 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.green.domain.member.client.PointClient;
 import com.example.green.domain.member.repository.MemberQueryRepository;
 import com.example.green.domain.member.repository.dto.BasicInfoSearchCondition;
 import com.example.green.domain.member.repository.dto.MemberPointsDto;
 import com.example.green.global.api.page.PageTemplate;
+import com.example.green.global.client.PointClient;
 
 import lombok.RequiredArgsConstructor;
 

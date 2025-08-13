@@ -6,10 +6,10 @@ import java.util.TreeMap;
 
 import org.springframework.stereotype.Service;
 
-import com.example.green.domain.mypage.client.PointTotalGetClient;
 import com.example.green.domain.mypage.dto.MypageMainResponseDto;
 import com.example.green.domain.mypage.exception.MypageException;
 import com.example.green.domain.mypage.exception.MypageExceptionMessage;
+import com.example.green.global.client.PointClient;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,11 +37,11 @@ public class MypageFacadeService {
 
 	// TODO [확인필요] @임현정 챌린지 서비스 단에서 implement 하여 회원별 챌린지 카운트 조회 구현
 	//private final ChallengeCountGetClient challengeCountGetClient;
-	private final PointTotalGetClient pointTotalGetClient;
+	private final PointClient pointClient;
 
 	public MypageMainResponseDto getMypageMain(Long memberId) {
 		// int userChallengeCount = challengeCountGetClient.getChallengeCount(memberId);
-		BigDecimal userTotalPoints = pointTotalGetClient.getTotalPoints(memberId);
+		BigDecimal userTotalPoints = pointClient.getTotalPoints(memberId);
 		int userLevel = getUserLevel(userTotalPoints);
 		return new MypageMainResponseDto(0, userTotalPoints, userLevel);
 	}

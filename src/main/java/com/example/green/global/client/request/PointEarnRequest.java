@@ -1,4 +1,4 @@
-package com.example.green.domain.challenge.client.request;
+package com.example.green.global.client.request;
 
 import java.math.BigDecimal;
 
@@ -6,6 +6,7 @@ public record PointEarnRequest(
 	Long memberId,
 	BigDecimal amount,
 	Long targetId,
-	String description
+	String description,
+	String type
 ) {
 }

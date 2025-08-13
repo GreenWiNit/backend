@@ -1,5 +1,7 @@
 package com.example.green.domain.certification.application;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,5 +49,20 @@ public class ChallengeCertificationService {
 
 		challengeCertificationRepository.save(certification);
 		certificationClientHelper.processCertSideEffect(certification.getImageUrl());
+	}
+
+	public void approve(List<Long> certificationIds) {
+		List<ChallengeCertification> approvedCerts = challengeCertificationRepository.findAllById(certificationIds)
+			.stream()
+			.filter(ChallengeCertification::canApprove)
+			.peek(ChallengeCertification::approve)
+			.toList();
+
+		certificationClientHelper.processApproveSideEffect(approvedCerts);
+	}
+
+	public void reject(List<Long> certificationIds) {
+		challengeCertificationRepository.findAllById(certificationIds)
+			.forEach(ChallengeCertification::reject);
 	}
 }

@@ -24,10 +24,11 @@ public class ChallengeSnapshot {
 	private String challengeName;
 	@Column(nullable = false)
 	private String challengeCode;
+	private Integer challengePoint;
 	private String groupCode;
 	private String type;
 
-	private ChallengeSnapshot(Long id, String name, String code, String groupCode, String type) {
+	private ChallengeSnapshot(Long id, String name, String code, String groupCode, Integer point, String type) {
 		EntityValidator.validateAutoIncrementId(id, "challengeId 필수 값 입니다.");
 		EntityValidator.validateEmptyString(name, "challengeName 필수 값 입니다.");
 		EntityValidator.validateEmptyString(code, "challengeCode 필수 값 입니다.");
@@ -35,15 +36,20 @@ public class ChallengeSnapshot {
 		this.challengeName = name;
 		this.challengeCode = code;
 		this.groupCode = groupCode;
+		this.challengePoint = point;
 		this.type = type;
 	}
 
-	public static ChallengeSnapshot ofPersonal(Long id, String name, String code) {
-		return new ChallengeSnapshot(id, name, code, null, PERSONAL_TYPE);
+	public static ChallengeSnapshot ofPersonal(Long id, String name, String code, Integer point) {
+		return new ChallengeSnapshot(id, name, code, null, point, PERSONAL_TYPE);
 	}
 
-	public static ChallengeSnapshot ofTeam(Long id, String name, String code, String groupCode) {
+	public static ChallengeSnapshot ofTeam(Long id, String name, String code, Integer point, String groupCode) {
 		EntityValidator.validateEmptyString(groupCode, "GroupCode 필수 값입니다.");
-		return new ChallengeSnapshot(id, name, code, groupCode, TEAM_TYPE);
+		return new ChallengeSnapshot(id, name, code, groupCode, point, TEAM_TYPE);
+	}
+
+	public static boolean isValidType(String type) {
+		return type.equals(TEAM_TYPE) || type.equals(PERSONAL_TYPE);
 	}
 }
