@@ -13,8 +13,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class MemberPointsDto {
 
-	@Schema(description = "사용자 식별자", example = "1")
+	@Schema(description = "사용자 식별자 Id", example = "1")
 	private Long memberId;
+	@Schema(description = "사용자 식별자 Key", example = "google 12412412")
+	private Long memberKey;
 	@Schema(description = "사용자 이메일", example = "greenWinit@email.com")
 	private String memberEmail;
 	@Schema(description = "사용자 닉네임", example = "그린위닛")

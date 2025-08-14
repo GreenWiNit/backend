@@ -4,6 +4,8 @@ import com.example.green.domain.member.dto.admin.MemberDeleteRequestDto;
 import com.example.green.domain.member.dto.admin.MemberListRequestDto;
 import com.example.green.domain.member.dto.admin.MemberListResponseDto;
 import com.example.green.domain.member.dto.admin.WithdrawnMemberListResponseDto;
+import com.example.green.domain.member.repository.dto.BasicInfoSearchCondition;
+import com.example.green.domain.member.repository.dto.MemberPointsDto;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.NoContent;
 import com.example.green.global.api.page.PageTemplate;
@@ -183,4 +185,15 @@ public interface MemberManagementControllerDocs {
 	})
 	@ApiErrorStandard
 	NoContent deleteMember(MemberDeleteRequestDto request);
+
+	@Operation(summary = "사용자 별 포인트 조회 (ad_E01_001)", description = "사용자 별 포인트 조회를 합니다.")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "사용자 포인트 페이지 조회 성공"),
+		@ApiResponse(
+			responseCode = "403",
+			description = "관리자 권한 필요",
+			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+		)
+	})
+	ApiTemplate<PageTemplate<MemberPointsDto>> searchMembersPoint(BasicInfoSearchCondition condition);
 } 

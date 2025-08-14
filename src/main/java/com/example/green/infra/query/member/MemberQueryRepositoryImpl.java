@@ -42,6 +42,7 @@ public class MemberQueryRepositoryImpl implements MemberQueryRepository {
 
 		List<MemberPointsDto> result = jpaQueryFactory.select(Projections.constructor(MemberPointsDto.class,
 				qMember.id,
+				qMember.memberKey,
 				qMember.email,
 				qMember.name
 			))
@@ -50,7 +51,7 @@ public class MemberQueryRepositoryImpl implements MemberQueryRepository {
 				fromEmail(condition.keyword()),
 				fromName(condition.keyword())
 			)
-			// 정렬 기준 따로 없음
+			.orderBy(qMember.id.asc())
 			.offset(pagination.calculateOffset())
 			.limit(pagination.getPageSize())
 			.fetch();
