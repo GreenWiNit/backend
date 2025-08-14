@@ -108,7 +108,7 @@ public abstract class BaseChallenge extends BaseEntity {
 		validateEmptyString(challengeCode, "챌린지 코드는 필수값입니다.");
 		validateEmptyString(challengeName, "챌린지명은 필수값입니다.");
 		validateEmptyString(challengeImage, "챌린지 이미지는 필수값입니다.");
-		validateEmptyString(challengeContent, "챌린지 내용은 필수값입니다.");
+		validateNullData(challengeContent, "챌린지 내용은 필수값입니다.");
 		validateNullData(beginDate, "시작일시는 필수값입니다.");
 		validateNullData(endDate, "종료일시는 필수값입니다.");
 		validateNullData(challengeType, "챌린지 타입은 필수값입니다.");
