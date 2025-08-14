@@ -16,7 +16,10 @@ import com.example.green.domain.member.dto.admin.MemberDeleteRequestDto;
 import com.example.green.domain.member.dto.admin.MemberListRequestDto;
 import com.example.green.domain.member.dto.admin.MemberListResponseDto;
 import com.example.green.domain.member.dto.admin.WithdrawnMemberListResponseDto;
+import com.example.green.domain.member.repository.dto.BasicInfoSearchCondition;
+import com.example.green.domain.member.repository.dto.MemberPointsDto;
 import com.example.green.domain.member.service.MemberAdminService;
+import com.example.green.domain.member.service.MemberQueryService;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.NoContent;
 import com.example.green.global.api.page.PageTemplate;
@@ -37,6 +40,7 @@ public class MemberAdminController implements MemberManagementControllerDocs {
 
 	private final MemberAdminService memberAdminService;
 	private final ExcelDownloader excelDownloader;
+	private final MemberQueryService memberQueryService;
 
 	@Override
 	@GetMapping
@@ -44,9 +48,9 @@ public class MemberAdminController implements MemberManagementControllerDocs {
 		@ParameterObject @ModelAttribute @Valid MemberListRequestDto request
 	) {
 		log.info("[ADMIN] 회원 목록 조회 요청: page={}, size={}", request.page(), request.size());
-		
+
 		PageTemplate<MemberListResponseDto> result = memberAdminService.getMemberList(request);
-		
+
 		return ApiTemplate.ok(MemberResponseMessage.MEMBER_LIST_RETRIEVED, result);
 	}
 
@@ -54,10 +58,10 @@ public class MemberAdminController implements MemberManagementControllerDocs {
 	@GetMapping("/excel")
 	public void downloadMemberListExcel(HttpServletResponse response) {
 		log.info("[ADMIN] 회원 목록 엑셀 다운로드 요청");
-		
+
 		List<MemberListResponseDto> members = memberAdminService.getAllMembersForExcel();
 		excelDownloader.downloadAsStream(members, response);
-		
+
 		log.info("[ADMIN] 회원 목록 엑셀 다운로드 완료: count={}", members.size());
 	}
 
@@ -67,20 +71,20 @@ public class MemberAdminController implements MemberManagementControllerDocs {
 		@ParameterObject @ModelAttribute @Valid MemberListRequestDto request
 	) {
 		log.info("[ADMIN] 탈퇴 회원 목록 조회 요청: page={}, size={}", request.page(), request.size());
-		
+
 		PageTemplate<WithdrawnMemberListResponseDto> result = memberAdminService.getWithdrawnMemberList(request);
-		
-		return ApiTemplate.ok(MemberResponseMessage.WITHDRAWN_MEMBER_LIST_RETRIEVED , result);
+
+		return ApiTemplate.ok(MemberResponseMessage.WITHDRAWN_MEMBER_LIST_RETRIEVED, result);
 	}
 
 	@Override
 	@GetMapping("/withdrawn/excel")
 	public void downloadWithdrawnMemberListExcel(HttpServletResponse response) {
 		log.info("[ADMIN] 탈퇴 회원 목록 엑셀 다운로드 요청");
-		
+
 		List<WithdrawnMemberListResponseDto> members = memberAdminService.getAllWithdrawnMembersForExcel();
 		excelDownloader.downloadAsStream(members, response);
-		
+
 		log.info("[ADMIN] 탈퇴 회원 목록 엑셀 다운로드 완료: count={}", members.size());
 	}
 
@@ -92,7 +96,15 @@ public class MemberAdminController implements MemberManagementControllerDocs {
 		memberAdminService.validateMemberExistsByMemberKey(request.memberKey());
 
 		memberAdminService.deleteMemberByMemberKey(request.memberKey());
-		
+
 		return NoContent.ok(MemberResponseMessage.MEMBER_DELETED);
+	}
+
+	@GetMapping("/points")
+	public ApiTemplate<PageTemplate<MemberPointsDto>> searchMembersPoint(
+		@ModelAttribute @ParameterObject BasicInfoSearchCondition condition
+	) {
+		PageTemplate<MemberPointsDto> result = memberQueryService.searchMembersPoint(condition);
+		return ApiTemplate.ok(() -> "사용자 포인트 페이지 조회 성공", result);
 	}
 }

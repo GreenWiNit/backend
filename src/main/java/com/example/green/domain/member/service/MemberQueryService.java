@@ -26,20 +26,10 @@ public class MemberQueryService {
 	public PageTemplate<MemberPointsDto> searchMembersPoint(BasicInfoSearchCondition condition) {
 		PageTemplate<MemberPointsDto> page = memberQueryRepository.searchMemberBasicInfo(condition);
 
-		List<Long> memberIds = convertMemberIds(page);
+		List<Long> memberIds = page.content().stream().map(MemberPointsDto::getMemberId).toList();
 		Map<Long, BigDecimal> earnedPointByMember = pointClient.getEarnedPointByMember(memberIds);
-
-		page.content().forEach(member ->
-			member.setMemberPoint(earnedPointByMember.get(member.getMemberId()))
-		);
+		page.content().forEach(member -> member.setMemberPoint(earnedPointByMember.get(member.getMemberId())));
+		
 		return page;
-	}
-
-	private static List<Long> convertMemberIds(PageTemplate<MemberPointsDto> page) {
-		List<Long> memberIds = page.content()
-			.stream()
-			.map(MemberPointsDto::getMemberId)
-			.toList();
-		return memberIds;
 	}
 }

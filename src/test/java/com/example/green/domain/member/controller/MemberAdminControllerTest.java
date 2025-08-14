@@ -3,7 +3,9 @@ package com.example.green.domain.member.controller;
 import static io.restassured.module.mockmvc.RestAssuredMockMvc.*;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,6 +20,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import com.example.green.domain.member.dto.admin.MemberListResponseDto;
 import com.example.green.domain.member.dto.admin.WithdrawnMemberListResponseDto;
 import com.example.green.domain.member.service.MemberAdminService;
+import com.example.green.domain.member.service.MemberQueryService;
 import com.example.green.global.api.page.PageTemplate;
 import com.example.green.global.excel.core.ExcelDownloader;
 import com.example.green.template.base.BaseControllerUnitTest;
@@ -27,6 +30,8 @@ class MemberAdminControllerTest extends BaseControllerUnitTest {
 
 	@MockitoBean
 	private MemberAdminService memberAdminService;
+	@MockitoBean
+	private MemberQueryService memberQueryService;
 
 	@MockitoBean
 	private ExcelDownloader excelDownloader;
@@ -66,7 +71,8 @@ class MemberAdminControllerTest extends BaseControllerUnitTest {
 	void downloadMemberListExcel_Success() {
 		// given
 		List<MemberListResponseDto> members = List.of(
-			new MemberListResponseDto(1L, "naver 123456789", "test@naver.com", "테스트회원", "010-1234-5678", LocalDateTime.now(), "일반회원", "naver")
+			new MemberListResponseDto(1L, "naver 123456789", "test@naver.com", "테스트회원", "010-1234-5678",
+				LocalDateTime.now(), "일반회원", "naver")
 		);
 		when(memberAdminService.getAllMembersForExcel()).thenReturn(members);
 
@@ -92,10 +98,10 @@ class MemberAdminControllerTest extends BaseControllerUnitTest {
 		given().log().all()
 			.contentType(MediaType.APPLICATION_JSON_VALUE)
 			.body("""
-                {
-                    "memberKey": "naver 123456789"
-                }
-                """)
+				{
+				    "memberKey": "naver 123456789"
+				}
+				""")
 			.when()
 			.post("/api/admin/members/delete")
 			.then().log().all()
@@ -139,10 +145,10 @@ class MemberAdminControllerTest extends BaseControllerUnitTest {
 		given().log().all()
 			.contentType(MediaType.APPLICATION_JSON_VALUE)
 			.body("""
-                {
-                    "memberKey": "invalid_username"
-                }
-                """)
+				{
+				    "memberKey": "invalid_username"
+				}
+				""")
 			.when()
 			.post("/api/admin/members/delete")
 			.then().log().all()
