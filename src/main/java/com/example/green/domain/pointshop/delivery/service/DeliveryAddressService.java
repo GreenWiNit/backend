@@ -67,6 +67,7 @@ public class DeliveryAddressService {
 		}
 	}
 
+	@Transactional
 	public void updateSingleAddress(DeliveryAddressUpdateCommand command) {
 		DeliveryAddress deliveryAddress = deliveryAddressRepository.findById(command.deliveryAddressId())
 			.orElseThrow(() -> new DeliveryAddressException(NOT_FOUND_DELIVERY_ADDRESS));
