@@ -4,6 +4,9 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -24,11 +27,11 @@ public record AdminChallengeUpdateDto(
 
 	@Schema(description = "시작 일시", requiredMode = Schema.RequiredMode.REQUIRED)
 	@NotNull(message = "시작 일시는 필수값입니다.")
-	LocalDateTime beginDateTime,
+	LocalDate beginDate,
 
 	@Schema(description = "종료 일시", requiredMode = Schema.RequiredMode.REQUIRED)
 	@NotNull(message = "종료 일시는 필수값입니다.")
-	LocalDateTime endDateTime,
+	LocalDate endDate,
 
 	@Schema(description = "챌린지 설명 및 참여방법", example = "매일 30분 이상 운동하기")
 	String challengeContent,
@@ -38,11 +41,18 @@ public record AdminChallengeUpdateDto(
 	String challengeImageUrl
 ) {
 
-	public LocalDate toBeginDate() {
-		return beginDateTime.toLocalDate();
-	}
+	@JsonCreator
+	public AdminChallengeUpdateDto(
+		@JsonProperty("challengeName") String challengeName,
+		@JsonProperty("challengePoint") BigDecimal challengePoint,
+		@JsonProperty("beginDateTime") LocalDateTime beginDateTime,
+		@JsonProperty("endDateTime") LocalDateTime endDateTime,
+		@JsonProperty("challengeContent") String challengeContent,
+		@JsonProperty("challengeImageUrl") String challengeImageUrl) {
 
-	public LocalDate toEndDate() {
-		return endDateTime.toLocalDate();
+		this(challengeName, challengePoint,
+			beginDateTime.toLocalDate(),
+			endDateTime.toLocalDate(),
+			challengeContent, challengeImageUrl);
 	}
 }

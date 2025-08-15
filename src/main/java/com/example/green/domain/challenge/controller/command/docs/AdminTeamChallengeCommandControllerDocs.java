@@ -2,6 +2,7 @@ package com.example.green.domain.challenge.controller.command.docs;
 
 import static io.swagger.v3.oas.annotations.enums.ParameterIn.*;
 
+import com.example.green.domain.challenge.controller.command.docs.annotation.ChallengeCreateDocs;
 import com.example.green.domain.challenge.controller.command.dto.AdminChallengeCreateDto;
 import com.example.green.domain.challenge.controller.command.dto.AdminChallengeUpdateDto;
 import com.example.green.global.api.ApiTemplate;
@@ -20,17 +21,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "[챌린지-관리자] 팀 챌린지 관리 API", description = "관리자 팀 챌린지 생성/수정/이미지/전시여부 등 관리 API")
 public interface AdminTeamChallengeCommandControllerDocs {
 
-	@Operation(
-		summary = "팀 챌린지 생성 (ad_B01_010), 전시여부 및 카테고리 필요없음",
-		description = "팀 챌린지를 생성합니다. (이미지 URL 포함)")
-	@ApiErrorStandard
-	@ApiResponse(responseCode = "200", description = "챌린지 생성 성공", useReturnTypeSchema = true)
-	@ApiResponse(responseCode = "403", description = "관리자 권한이 필요합니다.",
-		content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
-	ApiTemplate<Long> create(
-		@RequestBody(description = "챌린지 생성 요청", required = true, content = @Content(schema =
-		@Schema(implementation = AdminChallengeCreateDto.class))) AdminChallengeCreateDto request
-	);
+	@ChallengeCreateDocs
+	ApiTemplate<Long> create(AdminChallengeCreateDto request);
 
 	@Operation(summary = "팀 챌린지 수정 (ad_B01_008), 카테고리 필요없음", description = "팀 챌린지를 수정합니다.")
 	@ApiErrorStandard

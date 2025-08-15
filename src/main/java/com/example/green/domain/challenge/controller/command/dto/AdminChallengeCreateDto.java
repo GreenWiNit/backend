@@ -6,6 +6,9 @@ import java.time.LocalDateTime;
 
 import com.example.green.domain.challenge.entity.challenge.PersonalChallenge;
 import com.example.green.domain.challenge.entity.challenge.TeamChallenge;
+import com.example.green.domain.challenge.entity.challenge.vo.ChallengeDisplayStatus;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
@@ -13,7 +16,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-@Schema(description = "어드민 챌린지 생성 요청")
 public record AdminChallengeCreateDto(
 	@Schema(description = "챌린지명", example = "30일 운동 챌린지", requiredMode = Schema.RequiredMode.REQUIRED)
 	@NotBlank(message = "챌린지명은 필수값입니다.")
@@ -27,38 +29,49 @@ public record AdminChallengeCreateDto(
 
 	@Schema(description = "시작 일시", requiredMode = Schema.RequiredMode.REQUIRED)
 	@NotNull(message = "시작 일시는 필수값입니다.")
-	LocalDateTime beginDateTime,
+	LocalDate beginDate,
 
 	@Schema(description = "종료 일시", requiredMode = Schema.RequiredMode.REQUIRED)
 	@NotNull(message = "종료 일시는 필수값입니다.")
-	LocalDateTime endDateTime,
+	LocalDate endDate,
 
 	@Schema(description = "챌린지 설명 및 참여방법", example = "매일 30분 이상 운동하기")
 	String challengeContent,
 
 	@Schema(description = "챌린지 이미지 URL", example = "https://example.com/challenge.jpg")
-	String challengeImageUrl
+	String challengeImageUrl,
+
+	@Schema(description = "디스플레이 여부")
+	ChallengeDisplayStatus displayStatus
 ) {
+
+	@JsonCreator
+	public AdminChallengeCreateDto(
+		@JsonProperty("challengeName") String challengeName,
+		@JsonProperty("challengePoint") BigDecimal challengePoint,
+		@JsonProperty("beginDateTime") LocalDateTime beginDateTime,
+		@JsonProperty("endDateTime") LocalDateTime endDateTime,
+		@JsonProperty("challengeContent") String challengeContent,
+		@JsonProperty("challengeImageUrl") String challengeImageUrl) {
+
+		this(challengeName, challengePoint,
+			beginDateTime.toLocalDate(),
+			endDateTime.toLocalDate(),
+			challengeContent, challengeImageUrl,
+			ChallengeDisplayStatus.VISIBLE);
+	}
 
 	public TeamChallenge toTeamChallenge(String challengeCode) {
 		return TeamChallenge.create(
 			challengeCode, challengeName, challengeImageUrl, challengeContent,
-			challengePoint, toBeginDate(), toEndDate()
+			challengePoint, beginDate, endDate, displayStatus
 		);
 	}
 
 	public PersonalChallenge toPersonalChallenge(String challengeCode) {
 		return PersonalChallenge.create(
 			challengeCode, challengeName, challengeImageUrl, challengeContent,
-			challengePoint, toBeginDate(), toEndDate()
+			challengePoint, beginDate, endDate, displayStatus
 		);
-	}
-
-	public LocalDate toBeginDate() {
-		return beginDateTime.toLocalDate();
-	}
-
-	public LocalDate toEndDate() {
-		return endDateTime.toLocalDate();
 	}
 }

@@ -18,7 +18,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
  * 공통 오류 응답(400, 401, 404, 500)을 포함하는 Swagger API 문서용 커스텀 어노테이션입니다.
  * 성공 응답과 개별 에러 응답만 개별 메서드에 @ApiResponse 로 명시하고, 공통 에러는 해당 어노테이션으로 처리합니다.
  */
-@Target(ElementType.METHOD)
+@Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @ApiResponses({
