@@ -2,7 +2,6 @@ package com.example.green.domain.challenge.controller.command.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
@@ -24,11 +23,11 @@ public record AdminChallengeUpdateDto(
 
 	@Schema(description = "시작 일시", requiredMode = Schema.RequiredMode.REQUIRED)
 	@NotNull(message = "시작 일시는 필수값입니다.")
-	LocalDateTime beginDateTime,
+	LocalDate beginDate,
 
 	@Schema(description = "종료 일시", requiredMode = Schema.RequiredMode.REQUIRED)
 	@NotNull(message = "종료 일시는 필수값입니다.")
-	LocalDateTime endDateTime,
+	LocalDate endDate,
 
 	@Schema(description = "챌린지 설명 및 참여방법", example = "매일 30분 이상 운동하기")
 	String challengeContent,
@@ -37,12 +36,4 @@ public record AdminChallengeUpdateDto(
 	@NotBlank(message = "챌린지 이미지 URL은 필수값입니다.")
 	String challengeImageUrl
 ) {
-
-	public LocalDate toBeginDate() {
-		return beginDateTime.toLocalDate();
-	}
-
-	public LocalDate toEndDate() {
-		return endDateTime.toLocalDate();
-	}
 }

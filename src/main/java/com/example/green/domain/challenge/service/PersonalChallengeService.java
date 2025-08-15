@@ -58,7 +58,7 @@ public class PersonalChallengeService {
 	public void update(Long challengeId, AdminChallengeUpdateDto dto) {
 		PersonalChallenge personalChallenge = personalChallengeQuery.getPersonalChallengeById(challengeId);
 		personalChallenge.updateBasicInfo(
-			dto.challengeName(), dto.challengePoint(), dto.toBeginDate(), dto.toEndDate(), dto.challengeContent()
+			dto.challengeName(), dto.challengePoint(), dto.beginDate(), dto.endDate(), dto.challengeContent()
 		);
 
 		String beforeImageUrl = personalChallenge.getChallengeImage();
