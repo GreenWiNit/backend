@@ -74,10 +74,11 @@ public abstract class BaseChallenge extends BaseEntity {
 		BigDecimal challengePoint,
 		LocalDate beginDate,
 		LocalDate endDate,
-		ChallengeType challengeType
+		ChallengeType challengeType,
+		ChallengeDisplayStatus displayStatus
 	) {
 		validateCreateParameters(challengeCode, challengeName, challengeImage, challengeContent,
-			beginDate, endDate, challengeType);
+			beginDate, endDate, challengeType, displayStatus);
 		if (challengePoint.compareTo(BigDecimal.ZERO) < 0) {
 			throw new ChallengeException(ChallengeExceptionMessage.INVALID_MINIMUM_POINT);
 		}
@@ -93,7 +94,7 @@ public abstract class BaseChallenge extends BaseEntity {
 		this.endDate = endDate;
 		this.challengeType = challengeType;
 		this.challengeStatus = ChallengeStatus.PROCEEDING;
-		this.displayStatus = ChallengeDisplayStatus.VISIBLE;
+		this.displayStatus = displayStatus;
 	}
 
 	private static void validateCreateParameters(
@@ -103,8 +104,8 @@ public abstract class BaseChallenge extends BaseEntity {
 		String challengeContent,
 		LocalDate beginDate,
 		LocalDate endDate,
-		ChallengeType challengeType
-	) {
+		ChallengeType challengeType,
+		ChallengeDisplayStatus displayStatus) {
 		validateEmptyString(challengeCode, "챌린지 코드는 필수값입니다.");
 		validateEmptyString(challengeName, "챌린지명은 필수값입니다.");
 		validateEmptyString(challengeImage, "챌린지 이미지는 필수값입니다.");
@@ -112,6 +113,7 @@ public abstract class BaseChallenge extends BaseEntity {
 		validateNullData(beginDate, "시작일시는 필수값입니다.");
 		validateNullData(endDate, "종료일시는 필수값입니다.");
 		validateNullData(challengeType, "챌린지 타입은 필수값입니다.");
+		validateNullData(displayStatus, "전시 여부 설정은 필수 값입니다.");
 	}
 
 	public boolean isActive(LocalDate now) {
