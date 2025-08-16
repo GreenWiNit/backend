@@ -25,7 +25,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "INFO")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Where(clause = "deleted = false AND is_display = 'Y'")
+@Where(clause = "deleted = false ")//AND is_display = 'Y' 를 제외시킴
 public class InfoEntity extends BaseEntity {
 	@Id
 	@GeneratedValue(generator = "info-id-gen")

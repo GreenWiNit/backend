@@ -120,7 +120,8 @@ public class InfoServiceImpl implements InfoService {
 	@Override
 	@Transactional(readOnly = true)
 	public InfoSearchListResponseByUser getInfosForUser() {
-		List<InfoEntity> infoList = infoRepository.findAllByOrderByCreatedDateDesc();
+		// 전시중인(Y) 정보만 조회
+		List<InfoEntity> infoList = infoRepository.findAllDisplayedInfoForUserOrderByCreatedDateDesc();
 		return new InfoSearchListResponseByUser(
 			infoList.stream()
 				.map(InfoSearchResponseByUser::from)

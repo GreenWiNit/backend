@@ -17,5 +17,13 @@ public interface InfoRepository extends JpaRepository<InfoEntity, String> {
 
 	List<InfoEntity> findAllByOrderByCreatedDateDesc();
 
+	// 사용자단 전용: 전시중인 정보만 조회
+	@Query("""
+		SELECT i FROM InfoEntity i 
+		WHERE i.isDisplay = 'Y' 
+		ORDER BY i.createdDate DESC
+		""")
+	List<InfoEntity> findAllDisplayedInfoForUserOrderByCreatedDateDesc();
+
 }
 
