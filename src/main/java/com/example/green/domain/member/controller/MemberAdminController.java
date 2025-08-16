@@ -5,14 +5,13 @@ import java.util.List;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.green.domain.member.controller.docs.MemberManagementControllerDocs;
 import com.example.green.domain.member.controller.message.MemberResponseMessage;
-import com.example.green.domain.member.dto.admin.MemberDeleteRequestDto;
 import com.example.green.domain.member.dto.admin.MemberListRequestDto;
 import com.example.green.domain.member.dto.admin.MemberListResponseDto;
 import com.example.green.domain.member.dto.admin.WithdrawnMemberListResponseDto;
@@ -89,13 +88,13 @@ public class MemberAdminController implements MemberManagementControllerDocs {
 	}
 
 	@Override
-	@PostMapping("/delete")
-	public NoContent deleteMember(@RequestBody @Valid MemberDeleteRequestDto request) {
-		log.info("[ADMIN] 회원 강제 삭제 요청: memberKey={}", request.memberKey());
+	@DeleteMapping("/{memberKey}")
+	public NoContent deleteMember(@PathVariable String memberKey) {
+		log.info("[ADMIN] 회원 강제 삭제 요청: memberKey={}", memberKey);
 
-		memberAdminService.validateMemberExistsByMemberKey(request.memberKey());
+		memberAdminService.validateMemberExistsByMemberKey(memberKey);
 
-		memberAdminService.deleteMemberByMemberKey(request.memberKey());
+		memberAdminService.deleteMemberByMemberKey(memberKey);
 
 		return NoContent.ok(MemberResponseMessage.MEMBER_DELETED);
 	}

@@ -14,7 +14,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import com.example.green.domain.member.dto.admin.MemberListResponseDto;
@@ -96,14 +95,8 @@ class MemberAdminControllerTest extends BaseControllerUnitTest {
 
 		// when & then
 		given().log().all()
-			.contentType(MediaType.APPLICATION_JSON_VALUE)
-			.body("""
-				{
-				    "memberKey": "naver 123456789"
-				}
-				""")
 			.when()
-			.post("/api/admin/members/delete")
+			.delete("/api/admin/members/{memberKey}", memberKey)
 			.then().log().all()
 			.status(HttpStatus.OK)
 			.body("success", equalTo(true))
@@ -143,14 +136,8 @@ class MemberAdminControllerTest extends BaseControllerUnitTest {
 
 		// when & then
 		given().log().all()
-			.contentType(MediaType.APPLICATION_JSON_VALUE)
-			.body("""
-				{
-				    "memberKey": "invalid_username"
-				}
-				""")
 			.when()
-			.post("/api/admin/members/delete")
+			.delete("/api/admin/members/{memberKey}", memberKey)
 			.then().log().all()
 			.status(HttpStatus.INTERNAL_SERVER_ERROR);
 

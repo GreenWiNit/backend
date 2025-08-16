@@ -1,6 +1,5 @@
 package com.example.green.domain.member.controller.docs;
 
-import com.example.green.domain.member.dto.admin.MemberDeleteRequestDto;
 import com.example.green.domain.member.dto.admin.MemberListRequestDto;
 import com.example.green.domain.member.dto.admin.MemberListResponseDto;
 import com.example.green.domain.member.dto.admin.WithdrawnMemberListResponseDto;
@@ -184,7 +183,7 @@ public interface MemberManagementControllerDocs {
 		)
 	})
 	@ApiErrorStandard
-	NoContent deleteMember(MemberDeleteRequestDto request);
+	NoContent deleteMember(String memberKey);
 
 	@Operation(summary = "사용자 별 포인트 조회 (ad_E01_001)", description = "사용자 별 포인트 조회를 합니다.")
 	@ApiResponses(value = {
