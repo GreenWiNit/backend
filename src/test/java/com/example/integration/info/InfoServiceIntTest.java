@@ -88,7 +88,7 @@ class InfoServiceIntTest extends BaseIntegrationTest {
 
 				// then
 				assertThat(response.content()).isNotEmpty();
-				assertThat(response.page().totalPages()).isGreaterThan(0);
+				assertThat(response.totalPages()).isGreaterThan(0);
 				// Enum 타입이 String으로 변환되어 반환되는지 확인
 				assertThat(response.content().get(0).infoCategoryName()).isEqualTo(
 					infoEntity.getInfoCategory().getDescription());

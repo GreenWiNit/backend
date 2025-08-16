@@ -5,11 +5,12 @@ import java.util.List;
 import com.example.green.domain.info.dto.InfoCategoryDto;
 import com.example.green.domain.info.dto.InfoRequest;
 import com.example.green.domain.info.dto.admin.InfoDetailResponseByAdmin;
-import com.example.green.domain.info.dto.admin.InfoSearchListResponseByAdmin;
+import com.example.green.domain.info.dto.admin.InfoSearchResponseByAdmin;
 import com.example.green.domain.info.dto.user.InfoDetailResponseByUser;
 import com.example.green.domain.info.dto.user.InfoSearchListResponseByUser;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.NoContent;
+import com.example.green.global.api.page.PageTemplate;
 import com.example.green.global.docs.ApiErrorStandard;
 import com.example.green.global.error.dto.DetailedExceptionResponse;
 import com.example.green.global.error.dto.ExceptionResponse;
@@ -30,9 +31,9 @@ public interface InfoControllerDocs {
 	@Operation(summary = "관리자 전체 Info 페이지 단위로 조회", description = "관리자가 페이징 정보를 기준으로 정보공유 목록을 조회합니다.")
 	@ApiErrorStandard
 	@ApiResponse(responseCode = "200", description = "관리자 정보공유 목록 조회 성공", useReturnTypeSchema = true)
-	ApiTemplate<InfoSearchListResponseByAdmin> getInfosForAdmin(
-		@Parameter(name = "page", description = "조회할 페이지 번호 (0부터 시작)", example = "0", required = true) Integer page,
-		@Parameter(name = "size", description = "페이지당 게시글 수 (20개로)", example = "20", required = true) Integer size
+	ApiTemplate<PageTemplate<InfoSearchResponseByAdmin>> getInfosForAdmin(
+		@Parameter(name = "page", description = "조회할 페이지 번호 (1부터 시작)", example = "1", required = false) Integer page,
+		@Parameter(name = "size", description = "페이지당 게시글 수 (기본값: 10, 최대: 100)", example = "10", required = false) Integer size
 	);
 
 	@Operation(

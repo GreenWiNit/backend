@@ -3,18 +3,13 @@ package com.example.green.domain.info.service;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.green.domain.common.service.FileManager;
 import com.example.green.domain.info.domain.InfoEntity;
-import com.example.green.domain.info.dto.InfoPage;
 import com.example.green.domain.info.dto.InfoRequest;
 import com.example.green.domain.info.dto.admin.InfoDetailResponseByAdmin;
-import com.example.green.domain.info.dto.admin.InfoSearchListResponseByAdmin;
 import com.example.green.domain.info.dto.admin.InfoSearchResponseByAdmin;
 import com.example.green.domain.info.dto.user.InfoDetailResponseByUser;
 import com.example.green.domain.info.dto.user.InfoSearchListResponseByUser;
@@ -22,6 +17,8 @@ import com.example.green.domain.info.dto.user.InfoSearchResponseByUser;
 import com.example.green.domain.info.exception.InfoException;
 import com.example.green.domain.info.exception.InfoExceptionMessage;
 import com.example.green.domain.info.repository.InfoRepository;
+import com.example.green.global.api.page.PageTemplate;
+import com.example.green.global.api.page.Pagination;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -36,22 +33,28 @@ public class InfoServiceImpl implements InfoService {
 	private final FileManager fileManager;
 
 	// TODO [확인필요] 사이즈가 0일때는 프론트 처리
-	@Override
-	@Transactional(readOnly = true)
-	public InfoSearchListResponseByAdmin getInfosForAdmin(int page, int size) {
-		PageRequest pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
-		Page<InfoEntity> infoList = infoRepository.findAll(pageable);
 
-		List<InfoSearchResponseByAdmin> contentResult = infoList.getContent().stream()
+	@Override
+	public PageTemplate<InfoSearchResponseByAdmin> getInfosForAdmin(int page, int size) {
+		// 1. 전체 데이터 수 조회
+		long totalElements = infoRepository.count();
+
+		// 2. Pagination 객체 생성 (null 처리 및 기본값 설정 포함)
+		Pagination pagination = Pagination.of(totalElements, page, size);
+
+		// 3. 실제 데이터 조회 (offset, limit 사용)
+		List<InfoEntity> infoList = infoRepository.findAllWithPagination(
+			pagination.calculateOffset(),
+			pagination.getPageSize()
+		);
+
+		// 4. DTO 변환
+		List<InfoSearchResponseByAdmin> result = infoList.stream()
 			.map(InfoSearchResponseByAdmin::from)
 			.toList();
 
-		InfoPage pageResult = new InfoPage(
-			infoList.getTotalElements(),
-			infoList.getTotalPages()
-		);
-
-		return new InfoSearchListResponseByAdmin(contentResult, pageResult);
+		// 5. PageTemplate 생성
+		return PageTemplate.of(result, pagination);
 	}
 
 	@Override
