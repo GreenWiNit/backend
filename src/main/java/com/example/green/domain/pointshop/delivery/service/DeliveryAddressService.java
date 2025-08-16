@@ -40,7 +40,7 @@ public class DeliveryAddressService {
 	public DeliveryResult getDeliveryAddressByRecipient(Long recipientId) {
 		return deliveryAddressRepository.findByRecipientId(recipientId)
 			.map(deliveryAddress -> DeliveryResult.of(
-				deliveryAddress.getRecipientId(),
+				deliveryAddress.getId(),
 				deliveryAddress.getRecipient(),
 				deliveryAddress.getAddress())
 			)
@@ -69,7 +69,7 @@ public class DeliveryAddressService {
 
 	@Transactional
 	public void updateSingleAddress(DeliveryAddressUpdateCommand command) {
-		DeliveryAddress deliveryAddress = deliveryAddressRepository.findById(command.deliveryAddressId())
+		DeliveryAddress deliveryAddress = deliveryAddressRepository.findByRecipientId(command.recipientId())
 			.orElseThrow(() -> new DeliveryAddressException(NOT_FOUND_DELIVERY_ADDRESS));
 
 		deliveryAddress.updateRecipient(command.recipient());

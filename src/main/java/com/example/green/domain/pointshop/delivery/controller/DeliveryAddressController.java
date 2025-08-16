@@ -2,7 +2,6 @@ package com.example.green.domain.pointshop.delivery.controller;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -48,15 +47,14 @@ public class DeliveryAddressController implements DeliveryAddressControllerDocs 
 		return ApiTemplate.ok(DeliveryAddressResponseMessage.DELIVERY_ADDRESS_ADD_SUCCESS, result);
 	}
 
-	@PutMapping("/{deliveryAddressId}")
+	@PutMapping("/me")
 	@AuthenticatedApi
 	public NoContent updateDeliveryAddress(
 		@Valid @RequestBody DeliveryAddressUpdateDto dto,
-		@PathVariable Long deliveryAddressId,
 		@AuthenticationPrincipal PrincipalDetails principalDetails
 	) {
 		Long recipientId = principalDetails.getMemberId();
-		DeliveryAddressUpdateCommand command = DeliveryAddressUpdateCommand.of(recipientId, deliveryAddressId, dto);
+		DeliveryAddressUpdateCommand command = DeliveryAddressUpdateCommand.of(recipientId, dto);
 		deliveryAddressService.updateSingleAddress(command);
 		return NoContent.ok(DeliveryAddressResponseMessage.DELIVERY_ADDRESS_UPDATE_SUCCESS);
 	}

@@ -31,7 +31,7 @@ public class DeliveryAddressRequest {
 			.given().log().all()
 			.contentType(MediaType.APPLICATION_JSON)
 			.body(dto)
-			.when().put("/api/deliveries/addresses/1")
+			.when().put("/api/deliveries/addresses/me")
 			.then().log().all()
 			.status(HttpStatus.OK)
 			.extract().as(new TypeRef<>() {
