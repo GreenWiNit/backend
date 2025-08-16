@@ -8,9 +8,9 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
 @Schema(description = "어드민 챌린지 수정 요청")
@@ -22,7 +22,7 @@ public record AdminChallengeUpdateDto(
 
 	@Schema(description = "챌린지 포인트", example = "100", requiredMode = Schema.RequiredMode.REQUIRED)
 	@NotNull(message = "챌린지 포인트는 필수값입니다.")
-	@Min(value = 0, message = "챌린지 포인트는 0 이상이어야 합니다.")
+	@Positive(message = "챌린지 포인트는 양수이어야 합니다.")
 	BigDecimal challengePoint,
 
 	@Schema(description = "시작 일시", requiredMode = Schema.RequiredMode.REQUIRED)
@@ -34,6 +34,7 @@ public record AdminChallengeUpdateDto(
 	LocalDate endDate,
 
 	@Schema(description = "챌린지 설명 및 참여방법", example = "매일 30분 이상 운동하기")
+	@NotNull(message = "챌린지 내용은 Null 일 수 없습니다.")
 	String challengeContent,
 
 	@Schema(description = "챌린지 이미지 URL", example = "https://example.com/challenge-image.jpg")

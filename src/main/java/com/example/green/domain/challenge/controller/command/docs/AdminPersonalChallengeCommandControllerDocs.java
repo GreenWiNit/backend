@@ -56,4 +56,14 @@ public interface AdminPersonalChallengeCommandControllerDocs {
 		@Parameter(name = "challengeId", description = "챌린지 ID", in = PATH, required = true, example = "1")
 		Long challengeId
 	);
+
+	@Operation(summary = "개인 챌린지 미전시 V2 (SB에서 안보임)", description = "개인 챌린지를 미전시 상태로 변경합니다.")
+	@ApiErrorStandard
+	@ApiResponse(responseCode = "200", description = "전시 상태 변경 성공", useReturnTypeSchema = true)
+	@ApiResponse(responseCode = "403", description = "관리자 권한이 필요합니다.",
+		content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
+	NoContent hideV2(
+		@Parameter(name = "challengeId", description = "챌린지 ID", in = PATH, required = true, example = "1")
+		Long challengeId
+	);
 }
