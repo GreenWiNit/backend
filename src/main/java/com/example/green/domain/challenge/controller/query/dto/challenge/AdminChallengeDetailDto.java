@@ -30,7 +30,7 @@ public record AdminChallengeDetailDto(
 	LocalDate beginDate,
 
 	@Schema(description = "종료 일자")
-	LocalDate endDateTime,
+	LocalDate endDate,
 
 	@Schema(description = "전시 상태", example = "VISIBLE")
 	ChallengeDisplayStatus displayStatus,
