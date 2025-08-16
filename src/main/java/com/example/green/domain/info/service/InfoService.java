@@ -4,16 +4,16 @@ import java.util.List;
 
 import com.example.green.domain.info.dto.InfoRequest;
 import com.example.green.domain.info.dto.admin.InfoDetailResponseByAdmin;
-import com.example.green.domain.info.dto.admin.InfoSearchListResponseByAdmin;
 import com.example.green.domain.info.dto.admin.InfoSearchResponseByAdmin;
 import com.example.green.domain.info.dto.user.InfoDetailResponseByUser;
 import com.example.green.domain.info.dto.user.InfoSearchListResponseByUser;
+import com.example.green.global.api.page.PageTemplate;
 
 public interface InfoService {
 	/**
 	 * 관리자 전체 Info 페이지 단위로 조회
 	 */
-	InfoSearchListResponseByAdmin getInfosForAdmin(int page, int size);
+	PageTemplate<InfoSearchResponseByAdmin> getInfosForAdmin(int page, int size);
 
 	/**
 	 * 관리자 Info 상세 페이지 조회

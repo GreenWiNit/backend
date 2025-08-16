@@ -17,13 +17,13 @@ import com.example.green.domain.info.domain.vo.InfoCategory;
 import com.example.green.domain.info.dto.InfoCategoryDto;
 import com.example.green.domain.info.dto.InfoRequest;
 import com.example.green.domain.info.dto.admin.InfoDetailResponseByAdmin;
-import com.example.green.domain.info.dto.admin.InfoSearchListResponseByAdmin;
 import com.example.green.domain.info.dto.admin.InfoSearchResponseByAdmin;
 import com.example.green.domain.info.dto.user.InfoDetailResponseByUser;
 import com.example.green.domain.info.dto.user.InfoSearchListResponseByUser;
 import com.example.green.domain.info.service.InfoService;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.NoContent;
+import com.example.green.global.api.page.PageTemplate;
 import com.example.green.global.excel.core.ExcelDownloader;
 import com.example.green.global.security.annotation.AdminApi;
 import com.example.green.global.security.annotation.AuthenticatedApi;
@@ -41,10 +41,11 @@ public class InfoController implements InfoControllerDocs {
 
 	@AdminApi(reason = "관리자만 정보 공유 목록 조회 가능")
 	@GetMapping("/api/admin/info")
-	public ApiTemplate<InfoSearchListResponseByAdmin> getInfosForAdmin(
+	public ApiTemplate<PageTemplate<InfoSearchResponseByAdmin>> getInfosForAdmin(
 		@RequestParam(name = "page", required = false) Integer page,
-		@RequestParam(name = "size", required = false) Integer size) {
-		InfoSearchListResponseByAdmin response = infoService.getInfosForAdmin(page, size);
+		@RequestParam(name = "size", required = false, defaultValue = "10") Integer size) {
+
+		PageTemplate<InfoSearchResponseByAdmin> response = infoService.getInfosForAdmin(page, size);
 		return ApiTemplate.ok(InfoResponseMessage.INFO_LIST_FOUND, response);
 	}
 
