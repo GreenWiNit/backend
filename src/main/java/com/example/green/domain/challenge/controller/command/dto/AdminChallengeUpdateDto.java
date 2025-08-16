@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -43,6 +44,7 @@ public record AdminChallengeUpdateDto(
 ) {
 
 	@JsonCreator
+	@JsonIgnore
 	public AdminChallengeUpdateDto(
 		@JsonProperty("challengeName") String challengeName,
 		@JsonProperty("challengePoint") BigDecimal challengePoint,
