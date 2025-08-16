@@ -16,7 +16,7 @@ public class MemberPointsDto {
 	@Schema(description = "사용자 식별자 Id", example = "1")
 	private Long memberId;
 	@Schema(description = "사용자 식별자 Key", example = "google 12412412")
-	private Long memberKey;
+	private String memberKey;
 	@Schema(description = "사용자 이메일", example = "greenWinit@email.com")
 	private String memberEmail;
 	@Schema(description = "사용자 닉네임", example = "그린위닛")
@@ -24,9 +24,10 @@ public class MemberPointsDto {
 	@Schema(description = "사용자 포인트", example = "1")
 	private BigDecimal memberPoint;
 
-	public MemberPointsDto(Long id, String email, String name) {
+	public MemberPointsDto(Long id, String memberKey, String email, String nickname) {
 		this.memberId = id;
+		this.memberKey = memberKey;
 		this.memberEmail = email;
-		this.memberNickname = name;
+		this.memberNickname = nickname;
 	}
 }

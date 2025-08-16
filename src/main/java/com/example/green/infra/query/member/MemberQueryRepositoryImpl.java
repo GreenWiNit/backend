@@ -14,8 +14,8 @@ import com.example.green.domain.member.repository.dto.MemberPointsDto;
 import com.example.green.global.api.page.PageTemplate;
 import com.example.green.global.api.page.Pagination;
 import com.example.green.global.error.exception.BusinessException;
+import com.example.green.infra.query.QueryPredicates;
 import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
@@ -33,8 +33,8 @@ public class MemberQueryRepositoryImpl implements MemberQueryRepository {
 		Long totalCount = jpaQueryFactory.select(qMember.count())
 			.from(qMember)
 			.where(
-				fromEmail(condition.keyword()),
-				fromName(condition.keyword())
+				QueryPredicates.whenNotBlank(condition.keyword(), qMember.memberKey::containsIgnoreCase),
+				QueryPredicates.whenNotBlank(condition.keyword(), qMember.profile.nickname::containsIgnoreCase)
 			)
 			.fetchOne();
 
@@ -44,12 +44,12 @@ public class MemberQueryRepositoryImpl implements MemberQueryRepository {
 				qMember.id,
 				qMember.memberKey,
 				qMember.email,
-				qMember.name
+				qMember.profile.nickname
 			))
 			.from(qMember)
 			.where(
-				fromEmail(condition.keyword()),
-				fromName(condition.keyword())
+				QueryPredicates.whenNotBlank(condition.keyword(), qMember.memberKey::containsIgnoreCase),
+				QueryPredicates.whenNotBlank(condition.keyword(), qMember.profile.nickname::containsIgnoreCase)
 			)
 			.orderBy(qMember.id.asc())
 			.offset(pagination.calculateOffset())
@@ -66,19 +66,5 @@ public class MemberQueryRepositoryImpl implements MemberQueryRepository {
 	@Override
 	public List<Member> getMembers(List<Long> memberIds) {
 		return memberRepository.findAllById(memberIds);
-	}
-
-	private BooleanExpression fromEmail(String email) {
-		if (email == null) {
-			return null;
-		}
-		return qMember.email.containsIgnoreCase(email);
-	}
-
-	private BooleanExpression fromName(String nickname) {
-		if (nickname == null) {
-			return null;
-		}
-		return qMember.name.containsIgnoreCase(nickname);
 	}
 }
