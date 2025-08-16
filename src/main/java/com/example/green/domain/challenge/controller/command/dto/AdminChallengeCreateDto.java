@@ -8,6 +8,7 @@ import com.example.green.domain.challenge.entity.challenge.PersonalChallenge;
 import com.example.green.domain.challenge.entity.challenge.TeamChallenge;
 import com.example.green.domain.challenge.entity.challenge.vo.ChallengeDisplayStatus;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -36,15 +37,18 @@ public record AdminChallengeCreateDto(
 	LocalDate endDate,
 
 	@Schema(description = "챌린지 설명 및 참여방법", example = "매일 30분 이상 운동하기")
+	@NotNull
 	String challengeContent,
 
 	@Schema(description = "챌린지 이미지 URL", example = "https://example.com/challenge.jpg")
 	String challengeImageUrl,
 
 	@Schema(description = "디스플레이 여부")
+	@NotNull
 	ChallengeDisplayStatus displayStatus
 ) {
 
+	@JsonIgnore
 	@JsonCreator
 	public AdminChallengeCreateDto(
 		@JsonProperty("challengeName") String challengeName,

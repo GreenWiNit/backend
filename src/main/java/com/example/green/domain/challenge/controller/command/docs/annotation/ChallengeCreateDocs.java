@@ -19,7 +19,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @Operation(
-	summary = "챌린지 생성 (ad_B01_009, ad_B01_010), 카테고리 전시여부 필요없음",
+	summary = "챌린지 생성 (ad_B01_009, ad_B01_010)",
 	description = "챌린지를 생성합니다. (이미지 URL 포함)",
 	requestBody = @RequestBody(
 		description = """
