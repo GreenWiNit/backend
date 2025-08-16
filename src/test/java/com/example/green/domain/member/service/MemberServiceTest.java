@@ -2,6 +2,9 @@ package com.example.green.domain.member.service;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
+import static org.mockito.ArgumentMatchers.*;
+
+import java.util.Optional;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -10,14 +13,19 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.example.green.domain.common.service.FileManager;
+import com.example.green.domain.member.entity.Member;
 import com.example.green.domain.member.repository.MemberRepository;
 
 @ExtendWith(MockitoExtension.class)
-@DisplayName("MemberService 닉네임 중복 확인 테스트")
+@DisplayName("MemberService 테스트")
 class MemberServiceTest {
 
 	@Mock
 	private MemberRepository memberRepository;
+
+	@Mock
+	private FileManager fileManager;
 
 	@InjectMocks
 	private MemberService memberService;
@@ -82,6 +90,87 @@ class MemberServiceTest {
 		
 		verify(memberRepository).countByNickname(uppercaseNickname);
 		verify(memberRepository).countByNickname(lowercaseNickname);
+	}
+
+	@Test
+	@DisplayName("프로필 업데이트 - 닉네임만 변경")
+	void updateProfile_OnlyNickname_Success() {
+		// Given
+		Long memberId = 1L;
+		Member member = Member.create("test 123", "테스트", "test@test.com");
+		member.updateProfile("기존닉네임", "https://s3.example.com/old-image.jpg");
+		
+		given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
+
+		// When - null을 전달하면 기존 이미지가 유지됨
+		Member updatedMember = memberService.updateProfile(memberId, "새닉네임", null);
+
+		// Then
+		assertThat(updatedMember.getProfile().getNickname()).isEqualTo("새닉네임");
+		assertThat(updatedMember.getProfile().getProfileImageUrl()).isEqualTo("https://s3.example.com/old-image.jpg");
+		// null로 전달한 경우 서비스 로직이 기존 이미지를 삭제 처리함
+		verify(fileManager, never()).confirmUsingImage(any());
+		verify(fileManager).unUseImage("https://s3.example.com/old-image.jpg");
+	}
+
+	@Test
+	@DisplayName("프로필 업데이트 - 프로필 이미지만 변경")
+	void updateProfile_OnlyProfileImage_Success() {
+		// Given
+		Long memberId = 1L;
+		Member member = Member.create("test 123", "테스트", "test@test.com");
+		member.updateProfile("기존닉네임", "https://s3.example.com/old-image.jpg");
+		
+		given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
+
+		// When
+		Member updatedMember = memberService.updateProfile(memberId, null, "https://s3.example.com/new-image.jpg");
+
+		// Then
+		assertThat(updatedMember.getProfile().getNickname()).isEqualTo("기존닉네임");
+		assertThat(updatedMember.getProfile().getProfileImageUrl()).isEqualTo("https://s3.example.com/new-image.jpg");
+		verify(fileManager).confirmUsingImage("https://s3.example.com/new-image.jpg");
+		verify(fileManager).unUseImage("https://s3.example.com/old-image.jpg");
+	}
+
+	@Test
+	@DisplayName("프로필 업데이트 - 닉네임과 프로필 이미지 모두 변경")
+	void updateProfile_BothFields_Success() {
+		// Given
+		Long memberId = 1L;
+		Member member = Member.create("test 123", "테스트", "test@test.com");
+		member.updateProfile("기존닉네임", "https://s3.example.com/old-image.jpg");
+		
+		given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
+
+		// When
+		Member updatedMember = memberService.updateProfile(memberId, "새닉네임", "https://s3.example.com/new-image.jpg");
+
+		// Then
+		assertThat(updatedMember.getProfile().getNickname()).isEqualTo("새닉네임");
+		assertThat(updatedMember.getProfile().getProfileImageUrl()).isEqualTo("https://s3.example.com/new-image.jpg");
+		verify(fileManager).confirmUsingImage("https://s3.example.com/new-image.jpg");
+		verify(fileManager).unUseImage("https://s3.example.com/old-image.jpg");
+	}
+
+	@Test
+	@DisplayName("프로필 업데이트 - 프로필 이미지를 동일한 값으로 설정")
+	void updateProfile_SameProfileImage_NoFileOperation() {
+		// Given
+		Long memberId = 1L;
+		Member member = Member.create("test 123", "테스트", "test@test.com");
+		member.updateProfile("기존닉네임", "https://s3.example.com/old-image.jpg");
+		
+		given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
+
+		// When - 동일한 이미지 URL로 업데이트
+		Member updatedMember = memberService.updateProfile(memberId, "새닉네임", "https://s3.example.com/old-image.jpg");
+
+		// Then - 이미지가 동일하므로 파일 작업이 없음
+		assertThat(updatedMember.getProfile().getNickname()).isEqualTo("새닉네임");
+		assertThat(updatedMember.getProfile().getProfileImageUrl()).isEqualTo("https://s3.example.com/old-image.jpg");
+		verify(fileManager).confirmUsingImage("https://s3.example.com/old-image.jpg");
+		verify(fileManager, never()).unUseImage(any());
 	}
 
 } 
