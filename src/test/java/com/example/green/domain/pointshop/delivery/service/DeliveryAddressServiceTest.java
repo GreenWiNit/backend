@@ -15,12 +15,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.example.green.domain.pointshop.delivery.entity.DeliveryAddress;
 import com.example.green.domain.pointshop.delivery.entity.vo.Address;
 import com.example.green.domain.pointshop.delivery.entity.vo.Recipient;
-import com.example.green.domain.pointshop.order.entity.vo.DeliveryAddressSnapshot;
 import com.example.green.domain.pointshop.delivery.exception.DeliveryAddressException;
 import com.example.green.domain.pointshop.delivery.repository.DeliveryAddressRepository;
 import com.example.green.domain.pointshop.delivery.service.command.DeliveryAddressCreateCommand;
 import com.example.green.domain.pointshop.delivery.service.command.DeliveryAddressUpdateCommand;
 import com.example.green.domain.pointshop.delivery.service.result.DeliveryResult;
+import com.example.green.domain.pointshop.order.entity.vo.DeliveryAddressSnapshot;
 
 @ExtendWith(MockitoExtension.class)
 class DeliveryAddressServiceTest {
@@ -62,9 +62,12 @@ class DeliveryAddressServiceTest {
 	@Test
 	void 기존_배송지_정보가_있다면_배송지_조회에_성공한다() {
 		// given
+		DeliveryAddress mockDeliveryAddress = mock(DeliveryAddress.class);
 		Recipient recipient = Recipient.of("이름", "010-1234-5678");
 		Address address = Address.of("도로명", "상세주소", "12345");
-		DeliveryAddress mockDeliveryAddress = DeliveryAddress.create(1L, recipient, address);
+		when(mockDeliveryAddress.getId()).thenReturn(1L);
+		when(mockDeliveryAddress.getRecipient()).thenReturn(recipient);
+		when(mockDeliveryAddress.getAddress()).thenReturn(address);
 		when(deliveryAddressRepository.findByRecipientId(anyLong())).thenReturn(Optional.of(mockDeliveryAddress));
 		DeliveryResult deliveryResult = DeliveryResult.of(1L, recipient, address);
 
@@ -135,9 +138,8 @@ class DeliveryAddressServiceTest {
 	void 배송지_수정_커맨드가_발생하면_배송지_도메인의_수정_메서드를_호출한다() {
 		// given
 		DeliveryAddress mock = mock(DeliveryAddress.class);
-		when(deliveryAddressRepository.findById(anyLong())).thenReturn(Optional.of(mock));
+		when(deliveryAddressRepository.findByRecipientId(anyLong())).thenReturn(Optional.of(mock));
 		DeliveryAddressUpdateCommand command = new DeliveryAddressUpdateCommand(
-			1L,
 			1L,
 			Recipient.of("이름", "010-1234-5678"),
 			Address.of("도로명", "상세", "12345"));

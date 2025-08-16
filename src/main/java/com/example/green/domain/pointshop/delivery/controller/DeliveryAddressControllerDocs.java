@@ -40,5 +40,5 @@ public interface DeliveryAddressControllerDocs {
 		content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
 	)
 	NoContent updateDeliveryAddress(
-		DeliveryAddressUpdateDto dto, Long deliveryAddressId, PrincipalDetails principalDetails);
+		DeliveryAddressUpdateDto dto, PrincipalDetails principalDetails);
 }
