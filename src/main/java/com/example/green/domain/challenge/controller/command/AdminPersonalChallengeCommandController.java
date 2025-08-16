@@ -49,7 +49,7 @@ public class AdminPersonalChallengeCommandController implements AdminPersonalCha
 		return NoContent.ok(AdminChallengeResponseMessage.CHALLENGE_SHOW);
 	}
 
-	@PatchMapping("/{challengeId}/invisibility")
+	@PatchMapping("/{challengeId}/hide")
 	public NoContent hide(@PathVariable Long challengeId) {
 		challengeService.hide(challengeId);
 		return NoContent.ok(AdminChallengeResponseMessage.CHALLENGE_HIDE);

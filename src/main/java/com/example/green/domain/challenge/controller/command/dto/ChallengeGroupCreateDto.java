@@ -27,17 +27,21 @@ public record ChallengeGroupCreateDto(
 	String roadAddress,
 
 	@Schema(description = "상세 주소", example = "삼성동 빌딩 1층")
+	@NotBlank(message = "상세 주소는 필수값입니다.")
 	String detailAddress,
 
 	@Schema(description = "시군구", example = "강남구")
+	@NotBlank(message = "시군구 정보는 필수값입니다.")
 	String sigungu,
 
 	@Schema(description = "그룹 설명", example = "매주 화, 목 저녁 7시에 모여서 5km 러닝합니다.")
 	@Size(max = 500, message = "그룹 설명은 500자 이하여야 합니다.")
+	@NotBlank(message = "그룹 설명은 필수값입니다.")
 	String description,
 
 	@Schema(description = "오픈 채팅 URL", example = "https://open.kakao.com/o/abc123")
 	@Size(max = 500, message = "오픈 채팅 URL은 500자 이하여야 합니다.")
+	@NotBlank(message = "오픈 채팅 정보는 필수값입니다.")
 	String openChatUrl,
 
 	@Schema(description = "챌린지 활동 일자", requiredMode = Schema.RequiredMode.REQUIRED)
