@@ -7,6 +7,7 @@ import java.util.function.Function;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 
 import com.example.green.domain.auth.dto.GoogleResponseDto;
+import com.example.green.domain.auth.dto.KakaoResponseDto;
 import com.example.green.domain.auth.dto.NaverResponseDto;
 import com.example.green.domain.auth.dto.OAuth2ResponseDto;
 
@@ -14,10 +15,7 @@ public enum OAuth2Provider {
 
 	GOOGLE("google", GoogleResponseDto::new),
 	NAVER("naver", NaverResponseDto::new),
-	KAKAO("kakao", attributes -> {
-		// TODO: Kakao 구현 시 KakaoResponseDto::new로 변경
-		throw new OAuth2AuthenticationException("Kakao OAuth2는 아직 구현되지 않았습니다.");
-	});
+	KAKAO("kakao", KakaoResponseDto::new);
 
 	private final String registrationId;
 	private final Function<Map<String, Object>, OAuth2ResponseDto> mapper;
