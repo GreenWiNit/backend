@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.AfterEach;
@@ -74,8 +76,11 @@ class WithdrawMemberWithReasonIntegrationTest extends BaseIntegrationTest {
         // given
         String memberKey = testMember.getMemberKey();
         Long memberId = testMember.getId();
+        List<WithdrawReasonType> reasonTypes = Arrays.asList(
+            WithdrawReasonType.SERVICE_DISSATISFACTION
+        );
         WithdrawRequestDto request = new WithdrawRequestDto(
-            WithdrawReasonType.SERVICE_DISSATISFACTION,
+            reasonTypes,
             null  // OTHER 외에는 customReason 무시됨
         );
 
@@ -104,8 +109,11 @@ class WithdrawMemberWithReasonIntegrationTest extends BaseIntegrationTest {
     void withdrawMemberWithReason_WithOtherReason_ShouldSucceed() {
         // given
         String memberKey = testMember.getMemberKey();
+        List<WithdrawReasonType> reasonTypes = Arrays.asList(
+            WithdrawReasonType.OTHER
+        );
         WithdrawRequestDto request = new WithdrawRequestDto(
-            WithdrawReasonType.OTHER,
+            reasonTypes,
             "개인적인 사유로 인해 탈퇴합니다."
         );
 
@@ -128,8 +136,11 @@ class WithdrawMemberWithReasonIntegrationTest extends BaseIntegrationTest {
     void withdrawMemberWithReason_WithoutCustomReason_ShouldSucceed() {
         // given
         String memberKey = testMember.getMemberKey();
+        List<WithdrawReasonType> reasonTypes = Arrays.asList(
+            WithdrawReasonType.PRIVACY_CONCERN
+        );
         WithdrawRequestDto request = new WithdrawRequestDto(
-            WithdrawReasonType.PRIVACY_CONCERN,
+            reasonTypes,
             null
         );
 
@@ -153,8 +164,11 @@ class WithdrawMemberWithReasonIntegrationTest extends BaseIntegrationTest {
         // given
         String memberKey = testMember.getMemberKey();
         String profileImageUrl = testMember.getProfile().getProfileImageUrl();
+        List<WithdrawReasonType> reasonTypes = Arrays.asList(
+            WithdrawReasonType.PRIVACY_PROTECTION
+        );
         WithdrawRequestDto request = new WithdrawRequestDto(
-            WithdrawReasonType.PRIVACY_PROTECTION,
+            reasonTypes,
             null
         );
 

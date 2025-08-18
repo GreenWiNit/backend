@@ -14,6 +14,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.example.green.domain.auth.service.AuthService;
 import com.example.green.domain.member.dto.WithdrawRequestDto;
+import java.util.Arrays;
+import java.util.List;
+
 import com.example.green.domain.member.entity.Member;
 import com.example.green.domain.member.entity.WithdrawReason;
 import com.example.green.domain.member.entity.enums.WithdrawReasonType;
@@ -45,9 +48,13 @@ class WithdrawServiceTest {
     void withdrawMemberWithReason_Success() {
         // given
         String memberKey = "google 123456";
-        WithdrawRequestDto request = new WithdrawRequestDto(
+        List<WithdrawReasonType> reasonTypes = Arrays.asList(
             WithdrawReasonType.SERVICE_DISSATISFACTION,
-            "서비스가 불편해서 탈퇴합니다."
+            WithdrawReasonType.PRIVACY_CONCERN
+        );
+        WithdrawRequestDto request = new WithdrawRequestDto(
+            reasonTypes,
+            null
         );
         
         Member member = Member.create(memberKey, "테스트회원", "test@example.com");
@@ -58,7 +65,7 @@ class WithdrawServiceTest {
         withdrawService.withdrawMemberWithReason(memberKey, request);
 
         // then
-        verify(withdrawReasonRepository).save(any(WithdrawReason.class));
+        verify(withdrawReasonRepository, times(2)).save(any(WithdrawReason.class));
         verify(memberService).withdrawMember(member.getId());
         verify(authService).invalidateAllTokens(memberKey);
     }
@@ -68,8 +75,12 @@ class WithdrawServiceTest {
     void withdrawMemberWithReason_OtherReasonWithoutCustomReason_ThrowsException() {
         // given
         String memberKey = "google 123456";
+        List<WithdrawReasonType> reasonTypes = Arrays.asList(
+            WithdrawReasonType.SERVICE_DISSATISFACTION,
+            WithdrawReasonType.OTHER
+        );
         WithdrawRequestDto request = new WithdrawRequestDto(
-            WithdrawReasonType.OTHER,
+            reasonTypes,
             null
         );
         
@@ -92,8 +103,11 @@ class WithdrawServiceTest {
     void withdrawMemberWithReason_OtherReasonWithEmptyCustomReason_ThrowsException() {
         // given
         String memberKey = "google 123456";
+        List<WithdrawReasonType> reasonTypes = Arrays.asList(
+            WithdrawReasonType.OTHER
+        );
         WithdrawRequestDto request = new WithdrawRequestDto(
-            WithdrawReasonType.OTHER,
+            reasonTypes,
             "   "
         );
         
@@ -112,9 +126,12 @@ class WithdrawServiceTest {
     void withdrawMemberWithReason_MemberNotFound_ThrowsException() {
         // given
         String memberKey = "nonexistent";
+        List<WithdrawReasonType> reasonTypes = Arrays.asList(
+            WithdrawReasonType.SERVICE_DISSATISFACTION
+        );
         WithdrawRequestDto request = new WithdrawRequestDto(
-            WithdrawReasonType.SERVICE_DISSATISFACTION,
-            "불편해서 탈퇴"
+            reasonTypes,
+            null
         );
         
         given(memberRepository.findByMemberKey(memberKey)).willReturn(Optional.empty());
@@ -134,9 +151,12 @@ class WithdrawServiceTest {
     void withdrawMemberWithReason_AlreadyWithdrawnMember_ThrowsException() {
         // given
         String memberKey = "google 123456";
+        List<WithdrawReasonType> reasonTypes = Arrays.asList(
+            WithdrawReasonType.SERVICE_DISSATISFACTION
+        );
         WithdrawRequestDto request = new WithdrawRequestDto(
-            WithdrawReasonType.SERVICE_DISSATISFACTION,
-            "불편해서 탈퇴"
+            reasonTypes,
+            null
         );
         
         Member member = Member.create(memberKey, "테스트회원", "test@example.com");
@@ -155,12 +175,17 @@ class WithdrawServiceTest {
     }
 
     @Test
-    @DisplayName("사용자 정의 사유 없이 일반 사유로 탈퇴 성공")
-    void withdrawMemberWithReason_WithoutCustomReason_Success() {
+    @DisplayName("다중 사유 선택으로 탈퇴 성공")
+    void withdrawMemberWithReason_MultipleReasons_Success() {
         // given
         String memberKey = "google 123456";
-        WithdrawRequestDto request = new WithdrawRequestDto(
+        List<WithdrawReasonType> reasonTypes = Arrays.asList(
+            WithdrawReasonType.SERVICE_DISSATISFACTION,
             WithdrawReasonType.PRIVACY_CONCERN,
+            WithdrawReasonType.POLICY_DISAGREEMENT
+        );
+        WithdrawRequestDto request = new WithdrawRequestDto(
+            reasonTypes,
             null
         );
         
@@ -172,11 +197,63 @@ class WithdrawServiceTest {
         withdrawService.withdrawMemberWithReason(memberKey, request);
 
         // then
-        verify(withdrawReasonRepository).save(argThat(reason -> 
-            reason.getReasonType() == WithdrawReasonType.PRIVACY_CONCERN &&
-            reason.getCustomReason() == null &&
-            reason.getMemberKey().equals(memberKey)
-        ));
+        verify(withdrawReasonRepository, times(3)).save(any(WithdrawReason.class));
+        verify(memberService).withdrawMember(member.getId());
+        verify(authService).invalidateAllTokens(memberKey);
+    }
+    
+    @Test
+    @DisplayName("중복된 탈퇴 사유 선택 시 예외 발생")
+    void withdrawMemberWithReason_DuplicateReasons_ThrowsException() {
+        // given
+        String memberKey = "google 123456";
+        List<WithdrawReasonType> reasonTypes = Arrays.asList(
+            WithdrawReasonType.SERVICE_DISSATISFACTION,
+            WithdrawReasonType.PRIVACY_CONCERN,
+            WithdrawReasonType.SERVICE_DISSATISFACTION  // 중복
+        );
+        WithdrawRequestDto request = new WithdrawRequestDto(
+            reasonTypes,
+            null
+        );
+        
+        Member member = Member.create(memberKey, "테스트회원", "test@example.com");
+        
+        given(memberRepository.findByMemberKey(memberKey)).willReturn(Optional.of(member));
+
+        // when & then
+        assertThatThrownBy(() -> withdrawService.withdrawMemberWithReason(memberKey, request))
+            .isInstanceOf(BusinessException.class)
+            .hasMessage(MemberExceptionMessage.DUPLICATE_WITHDRAW_REASONS.getMessage());
+            
+        verify(withdrawReasonRepository, never()).save(any());
+        verify(memberService, never()).withdrawMember(any());
+        verify(authService, never()).invalidateAllTokens(any());
+    }
+    
+    @Test
+    @DisplayName("기타 사유와 함께 다른 사유 선택 시 상세 사유 입력으로 성공")
+    void withdrawMemberWithReason_OtherWithCustomReason_Success() {
+        // given
+        String memberKey = "google 123456";
+        List<WithdrawReasonType> reasonTypes = Arrays.asList(
+            WithdrawReasonType.SERVICE_DISSATISFACTION,
+            WithdrawReasonType.OTHER
+        );
+        WithdrawRequestDto request = new WithdrawRequestDto(
+            reasonTypes,
+            "기타 상세 사유입니다."
+        );
+        
+        Member member = Member.create(memberKey, "테스트회원", "test@example.com");
+        
+        given(memberRepository.findByMemberKey(memberKey)).willReturn(Optional.of(member));
+
+        // when
+        withdrawService.withdrawMemberWithReason(memberKey, request);
+
+        // then
+        verify(withdrawReasonRepository, times(2)).save(any(WithdrawReason.class));
         verify(memberService).withdrawMember(member.getId());
         verify(authService).invalidateAllTokens(memberKey);
     }

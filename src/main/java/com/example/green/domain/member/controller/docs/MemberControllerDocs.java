@@ -173,21 +173,31 @@ public interface MemberControllerDocs {
                 examples = {
                     @ExampleObject(
                         name = "일반 사유로 탈퇴",
-                        summary = "미리 정의된 사유 (customReason 무시됨)",
+                        summary = "미리 정의된 사유들 선택 (최소 1개, 최대 5개)",
                         value = """
                             {
-                                "reasonType": "SERVICE_DISSATISFACTION",
+                                "reasonTypes": ["SERVICE_DISSATISFACTION", "PRIVACY_CONCERN"],
                                 "customReason": null
                             }
                             """
                     ),
                     @ExampleObject(
-                        name = "기타 사유로 탈퇴",
-                        summary = "OTHER 선택 시 customReason 필수",
+                        name = "기타 사유 포함 탈퇴",
+                        summary = "OTHER 포함 시 customReason 필수",
                         value = """
                             {
-                                "reasonType": "OTHER",
+                                "reasonTypes": ["SERVICE_DISSATISFACTION", "OTHER"],
                                 "customReason": "원하는 기능이 없어서 탈퇴합니다."
+                            }
+                            """
+                    ),
+                    @ExampleObject(
+                        name = "다중 사유 선택",
+                        summary = "여러 사유 동시 선택 가능",
+                        value = """
+                            {
+                                "reasonTypes": ["SERVICE_DISSATISFACTION", "POLICY_DISAGREEMENT", "PRIVACY_CONCERN"],
+                                "customReason": null
                             }
                             """
                     )
