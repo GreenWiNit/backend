@@ -5,10 +5,10 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 
 import com.example.green.domain.pointshop.product.controller.dto.PointProductSearchResult;
-import com.example.green.global.excel.core.ExcelDataMapper;
-import com.example.green.global.excel.style.BackGroundColor;
-import com.example.green.global.excel.style.ExcelField;
-import com.example.green.global.excel.style.FieldFormat;
+import com.example.green.infra.excel.core.ExcelDataMapper;
+import com.example.green.infra.excel.style.BackGroundColor;
+import com.example.green.infra.excel.style.ExcelField;
+import com.example.green.infra.excel.style.FieldFormat;
 import com.example.green.global.utils.TimeUtils;
 
 import lombok.RequiredArgsConstructor;

@@ -14,8 +14,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-import com.example.green.global.excel.core.ExcelDataMapper;
-import com.example.green.global.excel.core.ExcelDownloader;
+import com.example.green.infra.excel.core.ExcelDataMapper;
+import com.example.green.infra.excel.core.ExcelDownloader;
 
 public abstract class ExcelDownloadTestBase<T> extends BaseIntegrationTest {
 

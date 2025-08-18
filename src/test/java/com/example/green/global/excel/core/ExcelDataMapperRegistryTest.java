@@ -7,9 +7,11 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import com.example.green.global.excel.exception.ExcelException;
-import com.example.green.global.excel.exception.ExcelExceptionMessage;
-import com.example.green.global.excel.style.ExcelField;
+import com.example.green.infra.excel.core.ExcelDataMapper;
+import com.example.green.infra.excel.core.ExcelDataMapperRegistry;
+import com.example.green.infra.excel.exception.ExcelException;
+import com.example.green.infra.excel.exception.ExcelExceptionMessage;
+import com.example.green.infra.excel.style.ExcelField;
 
 class ExcelDataMapperRegistryTest {
 

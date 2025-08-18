@@ -1,4 +1,4 @@
-package com.example.green.global.excel.exception;
+package com.example.green.infra.excel.exception;
 
 import static org.springframework.http.HttpStatus.*;
 

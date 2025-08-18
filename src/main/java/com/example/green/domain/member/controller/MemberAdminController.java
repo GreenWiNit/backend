@@ -22,7 +22,7 @@ import com.example.green.domain.member.service.MemberQueryService;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.NoContent;
 import com.example.green.global.api.page.PageTemplate;
-import com.example.green.global.excel.core.ExcelDownloader;
+import com.example.green.infra.excel.core.ExcelDownloader;
 import com.example.green.global.security.annotation.AdminApi;
 
 import jakarta.servlet.http.HttpServletResponse;

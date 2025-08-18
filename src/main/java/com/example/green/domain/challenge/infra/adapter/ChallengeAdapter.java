@@ -1,4 +1,4 @@
-package com.example.green.domain.challenge.infra;
+package com.example.green.domain.challenge.infra.adapter;
 
 import java.time.LocalDate;
 

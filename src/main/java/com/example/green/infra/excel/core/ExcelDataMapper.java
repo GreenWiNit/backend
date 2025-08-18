@@ -1,8 +1,8 @@
-package com.example.green.global.excel.core;
+package com.example.green.infra.excel.core;
 
 import java.util.List;
 
-import com.example.green.global.excel.style.ExcelField;
+import com.example.green.infra.excel.style.ExcelField;
 
 /**
  * 엑셀 데이터 매핑을 위한 공통 인터페이스

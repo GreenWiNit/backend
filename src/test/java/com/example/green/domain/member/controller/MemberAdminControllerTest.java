@@ -21,7 +21,7 @@ import com.example.green.domain.member.dto.admin.WithdrawnMemberListResponseDto;
 import com.example.green.domain.member.service.MemberAdminService;
 import com.example.green.domain.member.service.MemberQueryService;
 import com.example.green.global.api.page.PageTemplate;
-import com.example.green.global.excel.core.ExcelDownloader;
+import com.example.green.infra.excel.core.ExcelDownloader;
 import com.example.green.template.base.BaseControllerUnitTest;
 
 @WebMvcTest(MemberAdminController.class)

@@ -31,7 +31,7 @@ import com.example.green.domain.info.dto.admin.InfoSearchResponseByAdmin;
 import com.example.green.domain.info.dto.user.InfoDetailResponseByUser;
 import com.example.green.domain.info.service.InfoService;
 import com.example.green.global.api.ApiTemplate;
-import com.example.green.global.excel.core.ExcelDownloader;
+import com.example.green.infra.excel.core.ExcelDownloader;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
