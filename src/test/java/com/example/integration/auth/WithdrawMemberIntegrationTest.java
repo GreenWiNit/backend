@@ -4,6 +4,8 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.AfterEach;
@@ -77,8 +79,11 @@ class WithdrawMemberIntegrationTest extends BaseIntegrationTest {
 		// given
 		String memberKey = testMember.getMemberKey();
 		Long memberId = testMember.getId();
+		List<WithdrawReasonType> reasonTypes = Arrays.asList(
+			WithdrawReasonType.SERVICE_DISSATISFACTION
+		);
 		WithdrawRequestDto request = new WithdrawRequestDto(
-			WithdrawReasonType.SERVICE_DISSATISFACTION,
+			reasonTypes,
 			null
 		);
 
@@ -111,8 +116,11 @@ class WithdrawMemberIntegrationTest extends BaseIntegrationTest {
 	void withdrawMemberWithReason_WithNonExistentMember_ShouldThrowException() {
 		// given
 		String nonExistentMemberKey = "nonexistent 123456";
+		List<WithdrawReasonType> reasonTypes = Arrays.asList(
+			WithdrawReasonType.PRIVACY_CONCERN
+		);
 		WithdrawRequestDto request = new WithdrawRequestDto(
-			WithdrawReasonType.PRIVACY_CONCERN,
+			reasonTypes,
 			null
 		);
 
@@ -128,8 +136,11 @@ class WithdrawMemberIntegrationTest extends BaseIntegrationTest {
 		// given
 		String memberKey = testMember.getMemberKey();
 		String profileImageUrl = testMember.getProfile().getProfileImageUrl();
+		List<WithdrawReasonType> reasonTypes = Arrays.asList(
+			WithdrawReasonType.PRIVACY_PROTECTION
+		);
 		WithdrawRequestDto request = new WithdrawRequestDto(
-			            WithdrawReasonType.PRIVACY_PROTECTION,
+			reasonTypes,
 			null
 		);
 
@@ -155,8 +166,11 @@ class WithdrawMemberIntegrationTest extends BaseIntegrationTest {
 	void withdrawMemberWithReason_OtherReasonWithoutCustomReason_ShouldThrowException() {
 		// given
 		String memberKey = testMember.getMemberKey();
+		List<WithdrawReasonType> reasonTypes = Arrays.asList(
+			WithdrawReasonType.OTHER
+		);
 		WithdrawRequestDto request = new WithdrawRequestDto(
-			WithdrawReasonType.OTHER,
+			reasonTypes,
 			null // 기타 사유인데 상세 사유 없음
 		);
 

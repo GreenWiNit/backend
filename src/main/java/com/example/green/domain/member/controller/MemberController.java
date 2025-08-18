@@ -112,13 +112,13 @@ public class MemberController implements MemberControllerDocs {
 		
 		String memberKey = currentUser.getUsername();
 
-		log.info("[WITHDRAW] 회원 탈퇴 요청 - memberKey: {}, reasonType: {}", 
-				 memberKey, withdrawRequest.reasonType());
+		log.info("[WITHDRAW] 회원 탈퇴 요청 - memberKey: {}, reasonTypes: {}", 
+				 memberKey, withdrawRequest.reasonTypes());
 
 		withdrawService.withdrawMemberWithReason(memberKey, withdrawRequest);
 
-		log.info("[WITHDRAW] 회원 탈퇴 완료 - memberKey: {}, reasonType: {}", 
-				 memberKey, withdrawRequest.reasonType());
+		log.info("[WITHDRAW] 회원 탈퇴 완료 - memberKey: {}, reasonTypes: {}", 
+				 memberKey, withdrawRequest.reasonTypes());
 		return ResponseEntity.ok().build();
 	}
 }

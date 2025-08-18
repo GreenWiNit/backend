@@ -58,6 +58,10 @@ public class WithdrawReason extends BaseEntity {
             .customReason(customReason)
             .build();
     }
+    
+    public static WithdrawReason create(Member member, WithdrawReasonType reasonType) {
+        return create(member, reasonType, null);
+    }
 
 
     public boolean hasCustomReason() {

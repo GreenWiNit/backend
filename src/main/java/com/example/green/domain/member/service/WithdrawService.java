@@ -48,21 +48,22 @@ public class WithdrawService {
         backoff = @Backoff(delay = DELAY, multiplier = MULTIPLIER, random = true)
     )
     public void withdrawMemberWithReason(String memberKey, WithdrawRequestDto withdrawRequest) {
-        log.info("[WITHDRAW] 탈퇴 사유와 함께 회원 탈퇴 처리 시작 - memberKey: {}, reasonType: {}", 
-                 memberKey, withdrawRequest.reasonType());
+        log.info("[WITHDRAW] 탈퇴 사유와 함께 회원 탈퇴 처리 시작 - memberKey: {}, reasonTypes: {}", 
+                 memberKey, withdrawRequest.reasonTypes());
 
         Member member = findMemberByMemberKey(memberKey);
         validateMemberCanWithdraw(member);
+        validateWithdrawRequest(withdrawRequest);
 
         try {
-            saveWithdrawReason(member, withdrawRequest);
+            saveWithdrawReasons(member, withdrawRequest);
 
             memberService.withdrawMember(member.getId());
 
             authService.invalidateAllTokens(memberKey);
 
-            log.info("[WITHDRAW] 탈퇴 사유 저장 및 회원 탈퇴 완료 - memberKey: {}, reasonType: {}", 
-                     memberKey, withdrawRequest.reasonType());
+            log.info("[WITHDRAW] 탈퇴 사유 저장 및 회원 탈퇴 완료 - memberKey: {}, reasonTypes: {}", 
+                     memberKey, withdrawRequest.reasonTypes());
 
         } catch (BusinessException e) {
             log.warn("[WITHDRAW] 비즈니스 검증 실패 - memberKey: {}, message: {}", memberKey, e.getMessage());
@@ -74,26 +75,25 @@ public class WithdrawService {
     }
 
     /**
-     * 탈퇴 사유 저장
+     * 탈퇴 사유들 저장 (다중 선택)
      */
-    private void saveWithdrawReason(Member member, WithdrawRequestDto withdrawRequest) {
-        WithdrawReasonType reasonType = withdrawRequest.reasonType();
+    private void saveWithdrawReasons(Member member, WithdrawRequestDto withdrawRequest) {
+        String customReason = withdrawRequest.containsOtherReason() ? 
+            withdrawRequest.getCleanCustomReason() : null;
         
-        // OTHER 타입이 아닌 경우 customReason은 무조건 null 처리
-
-		String customReason = null;
-		if (reasonType.isCustomReason()) {
-			customReason = withdrawRequest.getCleanCustomReason();
-		}
-
-        // OTHER 타입인 경우 사용자 정의 사유 필수
-        validateCustomReasonIfNeeded(reasonType, customReason);
-
-        WithdrawReason withdrawReason = WithdrawReason.create(member, reasonType, customReason);
-        withdrawReasonRepository.save(withdrawReason);
-
-        log.info("[WITHDRAW] 탈퇴 사유 저장 완료 - memberKey: {}, reasonType: {}, hasCustomReason: {}", 
-                 member.getMemberKey(), reasonType, withdrawReason.hasCustomReason());
+        for (WithdrawReasonType reasonType : withdrawRequest.reasonTypes()) {
+            // OTHER 타입인 경우에만 customReason 저장
+            String reasonCustomText = reasonType.isCustomReason() ? customReason : null;
+            
+            WithdrawReason withdrawReason = WithdrawReason.create(member, reasonType, reasonCustomText);
+            withdrawReasonRepository.save(withdrawReason);
+            
+            log.info("[WITHDRAW] 탈퇴 사유 저장 - memberKey: {}, reasonType: {}, hasCustomReason: {}", 
+                     member.getMemberKey(), reasonType, withdrawReason.hasCustomReason());
+        }
+        
+        log.info("[WITHDRAW] 탈퇴 사유 저장 완료 - memberKey: {}, 총 사유 개수: {}", 
+                 member.getMemberKey(), withdrawRequest.reasonTypes().size());
     }
 
     /**
@@ -118,12 +118,19 @@ public class WithdrawService {
     }
 
     /**
-     * OTHER 타입인 경우 사용자 정의 사유 필수 검증
+     * 탈퇴 요청 검증
      */
-    private void validateCustomReasonIfNeeded(WithdrawReasonType reasonType, String customReason) {
-        if (reasonType.isCustomReason() && (customReason == null || customReason.trim().isEmpty())) {
+    private void validateWithdrawRequest(WithdrawRequestDto withdrawRequest) {
+        // OTHER가 포함된 경우 customReason 필수
+        if (withdrawRequest.containsOtherReason() && !withdrawRequest.hasCustomReason()) {
             log.warn("[WITHDRAW] 기타 사유 선택 시 상세 사유 입력 필수");
             throw new BusinessException(MemberExceptionMessage.WITHDRAW_CUSTOM_REASON_REQUIRED);
+        }
+        
+        // 중복 사유 검증
+        if (withdrawRequest.reasonTypes().size() != withdrawRequest.reasonTypes().stream().distinct().count()) {
+            log.warn("[WITHDRAW] 중복된 탈퇴 사유가 포함되어 있습니다.");
+            throw new BusinessException(MemberExceptionMessage.DUPLICATE_WITHDRAW_REASONS);
         }
     }
 } 
