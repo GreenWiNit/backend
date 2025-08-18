@@ -66,15 +66,15 @@ public record ChallengeGroupCreateDto(
 	public ChallengeGroup toEntity(String teamCode, Long challengeId, Long leaderId) {
 		GroupBasicInfo basicInfo = GroupBasicInfo.of(groupName, description, openChatUrl);
 		GroupAddress address = GroupAddress.of(roadAddress, detailAddress, sigungu);
-		GroupPeriod period = GroupPeriod.of(getBeginDateTime(), getEndDateTime());
+		GroupPeriod period = GroupPeriod.of(toBeginDateTime(), toEndDateTime());
 		return ChallengeGroup.create(teamCode, challengeId, leaderId, basicInfo, address, maxParticipants, period);
 	}
 
-	public LocalDateTime getBeginDateTime() {
+	public LocalDateTime toBeginDateTime() {
 		return LocalDateTime.of(challengeDate, startTime);
 	}
 
-	public LocalDateTime getEndDateTime() {
+	public LocalDateTime toEndDateTime() {
 		return LocalDateTime.of(challengeDate, endTime);
 	}
 }

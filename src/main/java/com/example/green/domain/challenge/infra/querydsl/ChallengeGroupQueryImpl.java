@@ -68,7 +68,6 @@ public class ChallengeGroupQueryImpl implements ChallengeGroupQuery {
 				challengeGroup.createdDate
 			))
 			.from(challengeGroup)
-			.join(challengeGroup.participants, challengeGroupParticipation)
 			.where(
 				challengeGroup.teamChallengeId.eq(challengeId),
 				challengeGroupParticipation.memberId.eq(memberId),
@@ -104,7 +103,6 @@ public class ChallengeGroupQueryImpl implements ChallengeGroupQuery {
 				challengeGroup.createdDate
 			))
 			.from(challengeGroup)
-			.join(challengeGroup.participants, challengeGroupParticipation)
 			.where(
 				challengeGroup.teamChallengeId.eq(challengeId),
 				challengeGroup.leaderId.ne(memberId),
