@@ -4,6 +4,7 @@ import static com.example.green.domain.certification.domain.QChallengeCertificat
 import static com.example.green.domain.challenge.entity.group.QChallengeGroup.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import com.example.green.domain.certification.domain.CertificationStatus;
 import com.example.green.domain.certification.infra.filter.ChallengeCertificationFilter;
@@ -46,11 +47,11 @@ public class ChallengeCertificationPredicates {
 				.and(challengeGroup.id.lt(idCursor)));
 	}
 
-	private static BooleanExpression statusCondition(CertificationStatus status) {
+	private static BooleanExpression statusCondition(List<CertificationStatus> status) {
 		if (status == null) {
 			return null;
 		}
-		return challengeCertification.status.eq(status);
+		return challengeCertification.status.in(status);
 	}
 
 	private static BooleanExpression memberKeyCondition(String memberKey) {
