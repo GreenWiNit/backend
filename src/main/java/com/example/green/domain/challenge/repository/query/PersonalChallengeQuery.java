@@ -11,7 +11,6 @@ import com.example.green.domain.challenge.controller.query.dto.challenge.Challen
 import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDetailDtoV2;
 import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDto;
 import com.example.green.domain.challenge.entity.challenge.PersonalChallenge;
-import com.example.green.domain.challenge.entity.challenge.vo.ChallengeStatus;
 import com.example.green.global.api.page.CursorTemplate;
 import com.example.green.global.api.page.PageTemplate;
 
@@ -22,7 +21,6 @@ public interface PersonalChallengeQuery {
 	CursorTemplate<Long, ChallengeDto> findPersonalChallengesByCursor(
 		Long cursor,
 		int size,
-		ChallengeStatus status,
 		LocalDateTime now
 	);
 

@@ -1,7 +1,6 @@
 package com.example.green.domain.challenge.controller.query;
 
 import static com.example.green.domain.challenge.controller.message.ChallengeResponseMessage.*;
-import static com.example.green.domain.challenge.entity.challenge.vo.ChallengeStatus.*;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,9 +35,8 @@ public class PersonalChallengeQueryController implements PersonalChallengeQueryC
 		@RequestParam(required = false) Long cursor,
 		@RequestParam(required = false, defaultValue = "20") Integer pageSize
 	) {
-		// todo: 누적 참여자 수 추가하기
 		CursorTemplate<Long, ChallengeDto> result =
-			personalChallengeQuery.findPersonalChallengesByCursor(cursor, pageSize, PROCEEDING, timeUtils.now());
+			personalChallengeQuery.findPersonalChallengesByCursor(cursor, pageSize, timeUtils.now());
 
 		return ApiTemplate.ok(CHALLENGE_LIST_FOUND, result);
 	}
@@ -59,7 +57,6 @@ public class PersonalChallengeQueryController implements PersonalChallengeQueryC
 		@AuthenticationPrincipal PrincipalDetails currentUser,
 		@RequestParam(required = false, defaultValue = "20") Integer pageSize
 	) {
-		// todo: 누적 참여자 수 반환
 		Long memberId = currentUser.getMemberId();
 		CursorTemplate<Long, ChallengeDto> result =
 			personalChallengeQuery.findMyParticipationByCursor(memberId, cursor, pageSize);

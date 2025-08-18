@@ -60,12 +60,8 @@ public class PersonalChallenge extends BaseChallenge {
 		participations.add(participation);
 	}
 
-	public void removeParticipation(Long memberId, LocalDateTime now) {
+	protected void doRemoveParticipation(Long memberId, LocalDateTime now) {
 		PersonalChallengeParticipation participation = findParticipationByMemberId(memberId);
-		if (!isActive(now.toLocalDate())) {
-			throw new ChallengeException(ChallengeExceptionMessage.INACTIVE_CHALLENGE);
-		}
-
 		participations.remove(participation);
 	}
 

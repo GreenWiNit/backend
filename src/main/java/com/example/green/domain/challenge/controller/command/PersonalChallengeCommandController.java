@@ -28,7 +28,6 @@ public class PersonalChallengeCommandController implements PersonalChallengeComm
 
 	@PostMapping("/{challengeId}/participate")
 	public NoContent join(@PathVariable Long challengeId, @AuthenticationPrincipal PrincipalDetails currentUser) {
-		// todo: 동시성 이슈 해결
 		Long memberId = currentUser.getMemberId();
 		challengeService.join(challengeId, memberId);
 		return NoContent.ok(CHALLENGE_JOINED);

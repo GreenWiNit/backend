@@ -17,7 +17,6 @@ import com.example.green.domain.challenge.controller.query.dto.challenge.Challen
 import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDetailDtoV2;
 import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDto;
 import com.example.green.domain.challenge.entity.challenge.PersonalChallenge;
-import com.example.green.domain.challenge.entity.challenge.vo.ChallengeStatus;
 import com.example.green.domain.challenge.exception.ChallengeException;
 import com.example.green.domain.challenge.exception.ChallengeExceptionMessage;
 import com.example.green.domain.challenge.infra.querydsl.executor.PersonalChallengeQueryExecutor;
@@ -50,10 +49,9 @@ public class PersonalChallengeQueryImpl implements PersonalChallengeQuery {
 	public CursorTemplate<Long, ChallengeDto> findPersonalChallengesByCursor(
 		Long cursor,
 		int size,
-		ChallengeStatus status,
 		LocalDateTime now
 	) {
-		BooleanExpression condition = PersonalChallengePredicates.activeChallengeCondition(cursor, status, now);
+		BooleanExpression condition = PersonalChallengePredicates.activeChallengeCondition(cursor, now);
 		List<ChallengeDto> challenges = executor.executeChallengesQueryForClient(condition, size);
 		return CursorTemplate.from(challenges, size, ChallengeDto::id);
 	}

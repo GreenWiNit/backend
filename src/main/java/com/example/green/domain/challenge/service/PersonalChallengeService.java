@@ -1,5 +1,8 @@
 package com.example.green.domain.challenge.service;
 
+import org.springframework.dao.OptimisticLockingFailureException;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,11 +38,19 @@ public class PersonalChallengeService {
 		return savedChallenge.getId();
 	}
 
+	@Retryable(
+		retryFor = OptimisticLockingFailureException.class,
+		backoff = @Backoff(delay = 100, multiplier = 2)
+	)
 	public void join(Long challengeId, Long memberId) {
 		PersonalChallenge personalChallenge = personalChallengeQuery.getPersonalChallengeById(challengeId);
 		personalChallenge.addParticipation(memberId, timeUtils.now());
 	}
 
+	@Retryable(
+		retryFor = OptimisticLockingFailureException.class,
+		backoff = @Backoff(delay = 100, multiplier = 2)
+	)
 	public void leave(Long challengeId, Long memberId) {
 		PersonalChallenge personalChallenge = personalChallengeQuery.getPersonalChallengeById(challengeId);
 		personalChallenge.removeParticipation(memberId, timeUtils.now());

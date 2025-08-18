@@ -5,7 +5,6 @@ import static com.example.green.domain.challenge.entity.challenge.QPersonalChall
 
 import java.time.LocalDateTime;
 
-import com.example.green.domain.challenge.entity.challenge.vo.ChallengeStatus;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
 
@@ -23,9 +22,8 @@ public class PersonalChallengePredicates {
 		return expression.and(personalChallenge.id.lt(cursor));
 	}
 
-	public static BooleanExpression activeChallengeCondition(Long cursor, ChallengeStatus status, LocalDateTime now) {
-		BooleanExpression expression = personalChallenge.challengeStatus.eq(status)
-			.and(personalChallenge.beginDate.loe(now.toLocalDate()))
+	public static BooleanExpression activeChallengeCondition(Long cursor, LocalDateTime now) {
+		BooleanExpression expression = personalChallenge.beginDate.loe(now.toLocalDate())
 			.and(personalChallenge.endDate.goe(now.toLocalDate()));
 		if (cursor == null) {
 			return expression;

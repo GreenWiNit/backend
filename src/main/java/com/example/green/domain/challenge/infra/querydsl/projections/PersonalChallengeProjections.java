@@ -26,7 +26,8 @@ public class PersonalChallengeProjections {
 			personalChallenge.beginDate,
 			personalChallenge.endDate,
 			personalChallenge.challengeImage,
-			personalChallenge.challengePoint
+			personalChallenge.challengePoint,
+			personalChallenge.participantCount
 		);
 	}
 

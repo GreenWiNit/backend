@@ -35,7 +35,6 @@ public class TeamChallengeQueryController implements TeamChallengeQueryControlle
 		@RequestParam(required = false) Long cursor,
 		@RequestParam(required = false, defaultValue = "20") Integer pageSize
 	) {
-		// todo: 누적 참여자 수 반환
 		CursorTemplate<Long, ChallengeDto> result =
 			teamChallengeQuery.findTeamChallengesByCursor(cursor, pageSize, timeUtils.now());
 
@@ -58,7 +57,6 @@ public class TeamChallengeQueryController implements TeamChallengeQueryControlle
 		@AuthenticationPrincipal PrincipalDetails currentUser,
 		@RequestParam(required = false, defaultValue = "20") Integer pageSize
 	) {
-		// todo: 누적 참여자 수 반환
 		Long memberId = currentUser.getMemberId();
 		CursorTemplate<Long, ChallengeDto> result =
 			teamChallengeQuery.findMyParticipationByCursor(memberId, cursor, pageSize);
