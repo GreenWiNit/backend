@@ -88,7 +88,7 @@ public class ChallengeGroupQueryImpl implements ChallengeGroupQuery {
 	public ChallengeGroupDetailDto getGroupDetail(Long groupId, Long memberId) {
 		boolean participating = challengeGroupRepository.existMembership(groupId, memberId);
 		ChallengeGroup challengeGroup = getChallengeGroup(groupId);
-		return ChallengeGroupDetailDto.from(challengeGroup, participating);
+		return ChallengeGroupDetailDto.from(challengeGroup, participating, memberId);
 	}
 
 	@Override
