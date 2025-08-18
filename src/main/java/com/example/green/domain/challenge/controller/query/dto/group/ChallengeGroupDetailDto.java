@@ -15,6 +15,8 @@ public record ChallengeGroupDetailDto(
 	String groupName,
 	@Schema(description = "현재 참가자 수", example = "5")
 	Integer currentParticipants,
+	@Schema(description = "최대 참가자 수", example = "10")
+	Integer maxParticipants,
 	@Schema(description = "그룹 설명", example = "매주 화, 목 저녁 7시에 모여서 5km 러닝합니다.")
 	String description,
 	@Schema(description = "챌린지 시작 일자")
@@ -23,7 +25,13 @@ public record ChallengeGroupDetailDto(
 	LocalTime startTime,
 	@Schema(description = "챌린지 종료 시간")
 	LocalTime endTime,
-	@Schema(description = "그룹 주소", example = "서울시 강남구 테헤란로 123")
+	@Schema(description = "그룹 도로명 주소", example = "서울시 강남구 테헤란로 123")
+	String roadAddress,
+	@Schema(description = "그룹 상세 주소", example = "어느곳")
+	String detailAddress,
+	@Schema(description = "그룹 시군구", example = "강남구")
+	String sigungu,
+	@Schema(description = "그룹 전체 주소", example = "서울시 강남구 테헤란로 123 어느곳")
 	String fullAddress,
 	@Schema(description = "오픈 채팅 URL", example = "https://open.kakao.com/o/abc123")
 	String openChatUrl,
@@ -36,10 +44,14 @@ public record ChallengeGroupDetailDto(
 			challengeGroup.getId(),
 			challengeGroup.getBasicInfo().getGroupName(),
 			challengeGroup.getCapacity().getCurrentParticipants(),
+			challengeGroup.getCapacity().getMaxParticipants(),
 			challengeGroup.getBasicInfo().getDescription(),
 			challengeGroup.getPeriod().getDate(),
 			challengeGroup.getPeriod().getStartTime(),
 			challengeGroup.getPeriod().getEndTime(),
+			challengeGroup.getGroupAddress().getRoadAddress(),
+			challengeGroup.getGroupAddress().getDetailAddress(),
+			challengeGroup.getGroupAddress().getSigungu(),
 			challengeGroup.getGroupAddress().getFullAddress(),
 			challengeGroup.getBasicInfo().getOpenChatUrl(),
 			participating
