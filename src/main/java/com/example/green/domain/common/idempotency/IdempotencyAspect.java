@@ -41,6 +41,7 @@ public class IdempotencyAspect {
 			try {
 				return executeIdempotentLogic(joinPoint, lockKey, idempotencyKey);
 			} catch (IllegalStateException e) {
+				log.error("retry exception reason: {}\nerror:", e.getMessage(), e);
 				threadUtils.waitWithBackoff(BASE_RETRY_DELAY_MS, attempt);
 			}
 		}
@@ -65,8 +66,10 @@ public class IdempotencyAspect {
 		try {
 			return joinPoint.proceed();
 		} catch (BusinessException e) {
+			log.error("Idempotency business exception error: ", e);
 			throw e;
 		} catch (Throwable e) {
+			log.error("Idempotency Unknown exception error: ", e);
 			throw new RuntimeException(e);
 		}
 	}
