@@ -23,6 +23,9 @@ public record ChallengeDto(
 	String challengeImage,
 
 	@Schema(description = "챌린지 포인트", example = "100")
-	BigDecimal challengePoint
+	BigDecimal challengePoint,
+
+	@Schema(description = "누적 참여자 수", example = "10")
+	int currentParticipant
 ) {
 }
