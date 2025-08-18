@@ -49,8 +49,7 @@ public class PersonalChallengeQueryExecutor {
 	public ChallengeDetailDto executeChallengeDetailQuery(BooleanExpression participationExists, Long challengeId) {
 		return queryFactory.select(PersonalChallengeProjections.toChallengeByMember(participationExists))
 			.from(personalChallenge)
-			.where(personalChallenge.id.eq(challengeId),
-				personalChallenge.displayStatus.eq(ChallengeDisplayStatus.VISIBLE))
+			.where(personalChallenge.id.eq(challengeId))
 			.fetchOne();
 	}
 
@@ -59,7 +58,8 @@ public class PersonalChallengeQueryExecutor {
 		return Optional.ofNullable(
 			queryFactory.select(PersonalChallengeProjections.toChallengeByMemberV2(participationExists))
 				.from(personalChallenge)
-				.where(personalChallenge.id.eq(challengeId))
+				.where(personalChallenge.id.eq(challengeId),
+					personalChallenge.displayStatus.eq(ChallengeDisplayStatus.VISIBLE))
 				.fetchOne());
 	}
 

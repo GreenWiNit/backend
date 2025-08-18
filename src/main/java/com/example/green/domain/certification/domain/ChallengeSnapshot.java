@@ -24,7 +24,7 @@ public class ChallengeSnapshot {
 	private String challengeName;
 	@Column(nullable = false)
 	private String challengeCode;
-	@Column(nullable = false)
+	@Column(length = 512, nullable = false)
 	private String challengeImage;
 	private Integer challengePoint;
 	private String groupCode;
@@ -36,6 +36,7 @@ public class ChallengeSnapshot {
 		EntityValidator.validateAutoIncrementId(id, "challengeId 필수 값 입니다.");
 		EntityValidator.validateEmptyString(name, "challengeName 필수 값 입니다.");
 		EntityValidator.validateEmptyString(code, "challengeCode 필수 값 입니다.");
+		EntityValidator.validateEmptyString(imageUrl, "challengeImage 필수 값 입니다.");
 		this.challengeId = id;
 		this.challengeName = name;
 		this.challengeCode = code;
