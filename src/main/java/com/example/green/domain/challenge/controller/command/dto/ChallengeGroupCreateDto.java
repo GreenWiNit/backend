@@ -46,7 +46,7 @@ public record ChallengeGroupCreateDto(
 
 	@Schema(description = "챌린지 활동 일자", requiredMode = Schema.RequiredMode.REQUIRED)
 	@NotNull(message = "챌린지 활동 일자는 필수값입니다.")
-	LocalDate challengeData,
+	LocalDate challengeDate,
 
 	@Schema(description = "그룹 시작 일시", example = "00:00")
 	@NotNull(message = "그룹 시작 일시는 필수값입니다.")
@@ -69,10 +69,10 @@ public record ChallengeGroupCreateDto(
 	}
 
 	public LocalDateTime getBeginDateTime() {
-		return LocalDateTime.of(challengeData, startTime);
+		return LocalDateTime.of(challengeDate, startTime);
 	}
 
 	public LocalDateTime getEndDateTime() {
-		return LocalDateTime.of(challengeData, endTime);
+		return LocalDateTime.of(challengeDate, endTime);
 	}
 }
