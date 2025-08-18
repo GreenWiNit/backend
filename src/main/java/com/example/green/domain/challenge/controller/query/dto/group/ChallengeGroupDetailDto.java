@@ -36,10 +36,12 @@ public record ChallengeGroupDetailDto(
 	@Schema(description = "오픈 채팅 URL", example = "https://open.kakao.com/o/abc123")
 	String openChatUrl,
 	@Schema(description = "참여 여부")
-	boolean participating
+	boolean participating,
+	@Schema(description = "리더 여부")
+	boolean leaderMe
 ) {
 
-	public static ChallengeGroupDetailDto from(ChallengeGroup challengeGroup, boolean participating) {
+	public static ChallengeGroupDetailDto from(ChallengeGroup challengeGroup, boolean participating, Long memberId) {
 		return new ChallengeGroupDetailDto(
 			challengeGroup.getId(),
 			challengeGroup.getBasicInfo().getGroupName(),
@@ -54,7 +56,8 @@ public record ChallengeGroupDetailDto(
 			challengeGroup.getGroupAddress().getSigungu(),
 			challengeGroup.getGroupAddress().getFullAddress(),
 			challengeGroup.getBasicInfo().getOpenChatUrl(),
-			participating
+			participating,
+			challengeGroup.isLeader(memberId)
 		);
 	}
 }
