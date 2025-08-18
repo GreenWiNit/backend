@@ -7,6 +7,7 @@ import java.util.List;
 import com.example.green.domain.challenge.controller.query.dto.challenge.AdminChallengeDetailDto;
 import com.example.green.domain.challenge.controller.query.dto.challenge.AdminTeamChallengesDto;
 import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDetailDto;
+import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDetailDtoV2;
 import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDto;
 import com.example.green.domain.challenge.entity.challenge.TeamChallenge;
 import com.example.green.global.api.page.CursorTemplate;
@@ -29,4 +30,6 @@ public interface TeamChallengeQuery {
 	List<AdminTeamChallengesDto> findTeamChallengeForExcel();
 
 	void validateGroupPeriod(Long challengeId, LocalDate challengeDate);
+
+	ChallengeDetailDtoV2 findTeamChallengeV2(Long challengeId, Long memberId);
 }

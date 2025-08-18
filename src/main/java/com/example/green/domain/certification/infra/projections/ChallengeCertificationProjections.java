@@ -17,6 +17,7 @@ public class ChallengeCertificationProjections {
 		return Projections.constructor(ChallengeCertificationDto.class,
 			challengeCertification.id,
 			challengeCertification.challenge.challengeName,
+			challengeCertification.challenge.challengeImage,
 			challengeCertification.certifiedDate,
 			challengeCertification.status
 		);

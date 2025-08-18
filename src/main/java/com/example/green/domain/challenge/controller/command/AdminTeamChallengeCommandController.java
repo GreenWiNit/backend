@@ -35,12 +35,12 @@ public class AdminTeamChallengeCommandController implements AdminTeamChallengeCo
 	}
 
 	@PutMapping("/{challengeId}")
-	public ApiTemplate<Void> update(
+	public NoContent update(
 		@PathVariable Long challengeId,
 		@Valid @RequestBody AdminChallengeUpdateDto request
 	) {
 		challengeService.update(challengeId, request);
-		return ApiTemplate.ok(AdminChallengeResponseMessage.CHALLENGE_UPDATED, null);
+		return NoContent.ok(AdminChallengeResponseMessage.CHALLENGE_UPDATED);
 	}
 
 	@PatchMapping("/{challengeId}/show")
