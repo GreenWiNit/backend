@@ -5,7 +5,6 @@ import static org.mockito.Mockito.*;
 
 import java.math.BigDecimal;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -16,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.example.green.domain.mypage.dto.MypageMainResponseDto;
 import com.example.green.domain.mypage.exception.MypageException;
+import com.example.green.infra.client.CertificationClient;
 import com.example.green.infra.client.PointClient;
 
 @ExtendWith(MockitoExtension.class)
@@ -23,17 +23,12 @@ class MypageFacadeServiceTest {
 
 	private final Long memberId = 123L;
 
-	// @Mock
-	// private ChallengeCountGetClient challengeCountGetClient;
+	@Mock
+	private CertificationClient certificationClient;
 	@Mock
 	private PointClient pointClient;
 	@InjectMocks
 	private MypageFacadeService service;
-
-	@BeforeEach
-	void setUp() {
-		// when(challengeCountGetClient.getChallengeCount(memberId)).thenReturn(5);
-	}
 
 	@ParameterizedTest(name = "포인트={0} → 예상레벨={1}")
 	@CsvSource({
@@ -51,14 +46,15 @@ class MypageFacadeServiceTest {
 	void 마이페이지메인_경계값_테스트(String points, int expectedLevel) {
 		// given
 		BigDecimal totalPoints = new BigDecimal(points);
+		when(certificationClient.getTotalCertifiedCountByMember(anyLong())).thenReturn(5);
 		when(pointClient.getTotalPoints(memberId)).thenReturn(totalPoints);
 
 		// when
 		MypageMainResponseDto dto = service.getMypageMain(memberId);
 
 		// then
-		// (1) 챌린지 카운트는 여전히 0
-		assertThat(dto.userChallengeCount()).isZero();
+		// (1) 챌린지 카운트는 여전히 5
+		assertThat(dto.userChallengeCount()).isEqualTo(5);
 
 		// (2) 받은 포인트가 그대로 노출
 		assertThat(dto.userTotalPoints()).isEqualByComparingTo(totalPoints);
@@ -79,5 +75,4 @@ class MypageFacadeServiceTest {
 			.isInstanceOf(MypageException.class)
 			.hasMessageContaining("사용자의 총 포인트는 NULL 일 수 없습니다.");
 	}
-
 }
