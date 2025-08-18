@@ -1,5 +1,6 @@
-package com.example.green.global.excel.style;
+package com.example.green.infra.excel.style;
 
+import static com.example.green.infra.excel.exception.ExcelExceptionMessage.*;
 import static org.assertj.core.api.Assertions.*;
 
 import org.junit.jupiter.params.ParameterizedTest;
@@ -7,7 +8,6 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import com.example.green.infra.excel.exception.ExcelException;
-import com.example.green.infra.excel.style.BackGroundColor;
 
 class BackGroundColorTest {
 

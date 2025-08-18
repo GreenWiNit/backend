@@ -1,4 +1,4 @@
-package com.example.green.global.excel.style;
+package com.example.green.infra.excel.style;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -7,7 +7,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 
 import com.example.green.infra.excel.exception.ExcelException;
-import com.example.green.infra.excel.style.FieldFormat;
 
 class FieldFormatTest {
 
