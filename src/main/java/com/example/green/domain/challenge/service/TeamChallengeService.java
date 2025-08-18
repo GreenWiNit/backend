@@ -13,8 +13,8 @@ import com.example.green.domain.challenge.repository.TeamChallengeRepository;
 import com.example.green.domain.challenge.repository.query.TeamChallengeQuery;
 import com.example.green.domain.common.sequence.SequenceService;
 import com.example.green.domain.common.sequence.SequenceType;
-import com.example.green.domain.common.service.FileManager;
 import com.example.green.global.utils.TimeUtils;
+import com.example.green.infra.client.FileClient;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,7 +25,7 @@ public class TeamChallengeService {
 
 	private final TeamChallengeRepository teamChallengeRepository;
 	private final TeamChallengeQuery teamChallengeQuery;
-	private final FileManager fileManager;
+	private final FileClient fileClient;
 	private final SequenceService sequenceService;
 	private final TimeUtils timeUtils;
 
@@ -33,7 +33,7 @@ public class TeamChallengeService {
 		String challengeCode = sequenceService.generateCode(SequenceType.TEAM_CHALLENGE, timeUtils.now());
 		TeamChallenge challenge = dto.toTeamChallenge(challengeCode);
 		TeamChallenge savedChallenge = teamChallengeRepository.save(challenge);
-		fileManager.confirmUsingImage(savedChallenge.getChallengeImage());
+		fileClient.confirmUsingImage(savedChallenge.getChallengeImage());
 
 		return savedChallenge.getId();
 	}
@@ -75,6 +75,6 @@ public class TeamChallengeService {
 
 		String beforeImageUrl = teamChallenge.getChallengeImage();
 		teamChallenge.updateImage(dto.challengeImageUrl());
-		fileManager.swapImage(beforeImageUrl, teamChallenge.getChallengeImage());
+		fileClient.swapImage(beforeImageUrl, teamChallenge.getChallengeImage());
 	}
 }

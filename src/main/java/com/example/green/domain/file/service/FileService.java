@@ -4,7 +4,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.example.green.domain.common.service.FileManager;
 import com.example.green.domain.file.domain.FileEntity;
 import com.example.green.domain.file.domain.vo.FileMetaData;
 import com.example.green.domain.file.domain.vo.Purpose;
@@ -20,7 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Transactional
 @Slf4j
-public class FileService implements FileManager {
+public class FileService {
 
 	private final StorageHelper storageHelper;
 	private final FileJpaRepository fileJpaRepository;
@@ -37,19 +36,16 @@ public class FileService implements FileManager {
 		return storageHelper.uploadImage(imageKey, imageFile);
 	}
 
-	@Override
 	public void confirmUsingImage(String imageUrl) {
 		FileEntity fileEntity = getFileEntityFromImageUrl(imageUrl);
 		fileEntity.markAsPermanent();
 	}
 
-	@Override
 	public void unUseImage(String imageUrl) {
 		FileEntity fileEntity = getFileEntityFromImageUrl(imageUrl);
 		fileEntity.markDeleted();
 	}
 
-	@Override
 	public void swapImage(String beforeImageUrl, String afterImageUrl) {
 		if (beforeImageUrl.equals(afterImageUrl)) {
 			return;

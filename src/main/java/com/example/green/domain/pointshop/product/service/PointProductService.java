@@ -3,7 +3,6 @@ package com.example.green.domain.pointshop.product.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.green.domain.common.service.FileManager;
 import com.example.green.domain.pointshop.order.entity.vo.ItemSnapshot;
 import com.example.green.domain.pointshop.product.entity.PointProduct;
 import com.example.green.domain.pointshop.product.entity.vo.Code;
@@ -12,6 +11,7 @@ import com.example.green.domain.pointshop.product.exception.PointProductExceptio
 import com.example.green.domain.pointshop.product.repository.PointProductRepository;
 import com.example.green.domain.pointshop.product.service.command.PointProductCreateCommand;
 import com.example.green.domain.pointshop.product.service.command.PointProductUpdateCommand;
+import com.example.green.infra.client.FileClient;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,7 +22,7 @@ public class PointProductService {
 
 	private final PointProductQueryService pointProductQueryService;
 	private final PointProductRepository pointProductRepository;
-	private final FileManager fileManager;
+	private final FileClient fileClient;
 
 	public Long create(PointProductCreateCommand command) {
 		validateProductCode(command.code());
@@ -58,9 +58,9 @@ public class PointProductService {
 
 	private void processSideEffect(PointProductUpdateCommand command, PointProduct pointProduct) {
 		if (pointProduct.isNewImage(command.media())) {
-			fileManager.unUseImage(pointProduct.getThumbnailUrl());
+			fileClient.unUseImage(pointProduct.getThumbnailUrl());
 			pointProduct.updateMedia(command.media());
-			fileManager.confirmUsingImage(pointProduct.getThumbnailUrl());
+			fileClient.confirmUsingImage(pointProduct.getThumbnailUrl());
 		}
 	}
 

@@ -15,11 +15,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
-
-import com.example.green.domain.common.service.FileManager;
 import com.example.green.domain.member.entity.Member;
 import com.example.green.domain.member.entity.enums.MemberStatus;
 import com.example.green.domain.member.repository.MemberRepository;
+import com.example.green.infra.client.FileClient;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -30,7 +29,7 @@ class MemberServiceWithdrawnRestoreTest {
 	private MemberRepository memberRepository;
 
 	@Mock
-	private FileManager fileManager;
+	private FileClient fileClient;
 
 	@InjectMocks
 	private MemberService memberService;
@@ -47,12 +46,12 @@ class MemberServiceWithdrawnRestoreTest {
 			.willReturn(Optional.of(withdrawnMember));
 
 		// When & Then
-		assertThatThrownBy(() -> 
+		assertThatThrownBy(() ->
 			memberService.signupFromOAuth2(
 				"google", "123456789", "홍길동", "test@example.com", "새닉네임", "new.jpg"
 			)
 		).isInstanceOf(IllegalStateException.class)
-		 .hasMessageContaining("탈퇴한 사용자는 재가입할 수 없습니다");
+			.hasMessageContaining("탈퇴한 사용자는 재가입할 수 없습니다");
 	}
 
 	@Test
@@ -100,18 +99,18 @@ class MemberServiceWithdrawnRestoreTest {
 	void shouldDistinguishBetweenWithdrawnAndActiveUsers() {
 		// Given
 		String memberKey = "google 123456789";
-		
+
 		// 탈퇴한 사용자
 		Member withdrawnMember = Member.create(memberKey, "홍길동", "test@example.com");
 		withdrawnMember.withdraw();
-		
+
 		// 활성 사용자  
 		Member activeMember = Member.create("google 987654321", "김철수", "active@example.com");
 
 		// When & Then
 		assertThat(withdrawnMember.isWithdrawn()).isTrue();
 		assertThat(withdrawnMember.getStatus()).isEqualTo(MemberStatus.DELETED);
-		
+
 		assertThat(activeMember.isWithdrawn()).isFalse();
 		assertThat(activeMember.getStatus()).isEqualTo(MemberStatus.NORMAL);
 	}

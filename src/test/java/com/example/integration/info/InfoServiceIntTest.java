@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
-import com.example.green.domain.common.service.FileManager;
 import com.example.green.domain.info.domain.InfoEntity;
 import com.example.green.domain.info.domain.vo.InfoCategory;
 import com.example.green.domain.info.dto.InfoRequest;
@@ -22,6 +21,7 @@ import com.example.green.domain.info.exception.InfoException;
 import com.example.green.domain.info.exception.InfoExceptionMessage;
 import com.example.green.domain.info.repository.InfoRepository;
 import com.example.green.domain.info.service.InfoService;
+import com.example.green.infra.client.FileClient;
 import com.example.integration.common.BaseIntegrationTest;
 
 /**
@@ -36,7 +36,7 @@ class InfoServiceIntTest extends BaseIntegrationTest {
 	@Autowired
 	private InfoService infoService;
 	@MockitoSpyBean
-	private FileManager fileManager;
+	private FileClient fileClient;
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
@@ -162,8 +162,8 @@ class InfoServiceIntTest extends BaseIntegrationTest {
 				// TODO [리펙토링필요] -> 시큐리티 어노테이션 완성되면 실제 인입되는 ID로 변경 테스트
 				// given
 				InfoRequest updateRequest = createUpdateInfoRequest();
-				Mockito.doNothing().when(fileManager).unUseImage(Mockito.anyString());
-				Mockito.doNothing().when(fileManager).confirmUsingImage(Mockito.anyString());
+				Mockito.doNothing().when(fileClient).unUseImage(Mockito.anyString());
+				Mockito.doNothing().when(fileClient).confirmUsingImage(Mockito.anyString());
 
 				// when
 				var response = infoService.updateInfo(infoEntity.getId(), updateRequest);
@@ -193,15 +193,15 @@ class InfoServiceIntTest extends BaseIntegrationTest {
 				assertThat(response.imageurl()).isEqualTo(infoEntity.getImageUrl());
 
 				// then - 메서드 호출 여부 검증
-				verify(fileManager, never()).unUseImage(anyString());
-				verify(fileManager, never()).confirmUsingImage(anyString());
+				verify(fileClient, never()).unUseImage(anyString());
+				verify(fileClient, never()).confirmUsingImage(anyString());
 			}
 
 			@Test
 			void 정보를_삭제한다() {
 				// given
 				String deleteInfoId = infoEntity.getId();
-				Mockito.doNothing().when(fileManager).unUseImage(Mockito.anyString());
+				Mockito.doNothing().when(fileClient).unUseImage(Mockito.anyString());
 
 				// when
 				infoService.deleteInfo(deleteInfoId);
@@ -226,7 +226,7 @@ class InfoServiceIntTest extends BaseIntegrationTest {
 				// TODO [확인필요] SpyBean 사용하여 건너띄는 방식으로 FileService 의존성 분리 -> 더 좋은 방법이 있을지
 				// given
 				InfoRequest saveRequest = createSaveInfoRequest();
-				Mockito.doNothing().when(fileManager).confirmUsingImage(Mockito.anyString());
+				Mockito.doNothing().when(fileClient).confirmUsingImage(Mockito.anyString());
 
 				// when
 				var response = infoService.saveInfo(saveRequest);

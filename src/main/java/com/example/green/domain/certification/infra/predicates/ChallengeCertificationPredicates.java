@@ -7,7 +7,7 @@ import java.time.LocalDate;
 
 import com.example.green.domain.certification.domain.CertificationStatus;
 import com.example.green.domain.certification.infra.filter.ChallengeCertificationFilter;
-import com.example.green.infra.database.utils.BooleanExpressionConnector;
+import com.example.green.infra.database.querydsl.BooleanExpressionConnector;
 import com.querydsl.core.types.dsl.BooleanExpression;
 
 import lombok.AccessLevel;

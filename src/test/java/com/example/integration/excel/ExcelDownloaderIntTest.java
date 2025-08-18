@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-import com.example.green.global.excel.exception.ExcelExceptionMessage;
+import com.example.green.infra.excel.exception.ExcelExceptionMessage;
 import com.example.integration.common.ExcelDownloadTestBase;
 
 public class ExcelDownloaderIntTest extends ExcelDownloadTestBase<TestDto> {

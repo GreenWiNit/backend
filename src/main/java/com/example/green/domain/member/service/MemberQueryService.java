@@ -11,7 +11,7 @@ import com.example.green.domain.member.repository.MemberQueryRepository;
 import com.example.green.domain.member.repository.dto.BasicInfoSearchCondition;
 import com.example.green.domain.member.repository.dto.MemberPointsDto;
 import com.example.green.global.api.page.PageTemplate;
-import com.example.green.global.client.PointClient;
+import com.example.green.infra.client.PointClient;
 
 import lombok.RequiredArgsConstructor;
 
@@ -29,7 +29,7 @@ public class MemberQueryService {
 		List<Long> memberIds = page.content().stream().map(MemberPointsDto::getMemberId).toList();
 		Map<Long, BigDecimal> earnedPointByMember = pointClient.getEarnedPointByMember(memberIds);
 		page.content().forEach(member -> member.setMemberPoint(earnedPointByMember.get(member.getMemberId())));
-		
+
 		return page;
 	}
 }

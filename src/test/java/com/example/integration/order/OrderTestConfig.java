@@ -13,8 +13,8 @@ import com.example.green.domain.pointshop.delivery.service.DeliveryAddressServic
 import com.example.green.domain.pointshop.order.entity.vo.DeliveryAddressSnapshot;
 import com.example.green.domain.pointshop.order.entity.vo.ItemSnapshot;
 import com.example.green.domain.pointshop.product.service.PointProductService;
-import com.example.green.global.client.PointClient;
-import com.example.green.global.client.request.PointSpendRequest;
+import com.example.green.infra.client.PointClient;
+import com.example.green.infra.client.request.PointSpendRequest;
 
 @TestConfiguration
 public class OrderTestConfig {

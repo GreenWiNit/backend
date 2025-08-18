@@ -24,7 +24,7 @@ import com.example.green.domain.info.service.InfoService;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.NoContent;
 import com.example.green.global.api.page.PageTemplate;
-import com.example.green.global.excel.core.ExcelDownloader;
+import com.example.green.infra.excel.core.ExcelDownloader;
 import com.example.green.global.security.annotation.AdminApi;
 import com.example.green.global.security.annotation.AuthenticatedApi;
 import com.example.green.global.security.annotation.PublicApi;

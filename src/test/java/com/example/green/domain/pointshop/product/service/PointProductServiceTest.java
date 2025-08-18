@@ -12,7 +12,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.example.green.domain.common.service.FileManager;
 import com.example.green.domain.pointshop.order.entity.vo.ItemSnapshot;
 import com.example.green.domain.pointshop.product.entity.PointProduct;
 import com.example.green.domain.pointshop.product.entity.vo.BasicInfo;
@@ -24,6 +23,7 @@ import com.example.green.domain.pointshop.product.exception.PointProductExceptio
 import com.example.green.domain.pointshop.product.repository.PointProductRepository;
 import com.example.green.domain.pointshop.product.service.command.PointProductCreateCommand;
 import com.example.green.domain.pointshop.product.service.command.PointProductUpdateCommand;
+import com.example.green.infra.client.FileClient;
 
 @ExtendWith(MockitoExtension.class)
 class PointProductServiceTest {
@@ -33,7 +33,7 @@ class PointProductServiceTest {
 	@Mock
 	private PointProductRepository pointProductRepository;
 	@Mock
-	private FileManager fileManager;
+	private FileClient fileClient;
 
 	@InjectMocks
 	private PointProductService pointProductService;
@@ -99,9 +99,9 @@ class PointProductServiceTest {
 		pointProductService.update(command, 1L);
 
 		// then
-		verify(fileManager).unUseImage(oldImageUrl);
+		verify(fileClient).unUseImage(oldImageUrl);
 		verify(mockPointProduct).updateMedia(command.media());
-		verify(fileManager).confirmUsingImage(command.media().getThumbnailUrl());
+		verify(fileClient).confirmUsingImage(command.media().getThumbnailUrl());
 	}
 
 	@Test

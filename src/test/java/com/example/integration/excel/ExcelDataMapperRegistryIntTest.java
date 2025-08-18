@@ -5,8 +5,8 @@ import static org.assertj.core.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.example.green.global.excel.core.ExcelDataMapper;
-import com.example.green.global.excel.core.ExcelDataMapperRegistry;
+import com.example.green.infra.excel.core.ExcelDataMapper;
+import com.example.green.infra.excel.core.ExcelDataMapperRegistry;
 import com.example.integration.common.BaseIntegrationTest;
 
 class ExcelDataMapperRegistryIntTest extends BaseIntegrationTest {

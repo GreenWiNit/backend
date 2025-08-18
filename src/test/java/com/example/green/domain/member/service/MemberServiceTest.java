@@ -2,7 +2,6 @@ package com.example.green.domain.member.service;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
-import static org.mockito.ArgumentMatchers.*;
 
 import java.util.Optional;
 
@@ -13,9 +12,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.example.green.domain.common.service.FileManager;
 import com.example.green.domain.member.entity.Member;
 import com.example.green.domain.member.repository.MemberRepository;
+import com.example.green.infra.client.FileClient;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("MemberService 테스트")
@@ -25,7 +24,7 @@ class MemberServiceTest {
 	private MemberRepository memberRepository;
 
 	@Mock
-	private FileManager fileManager;
+	private FileClient fileClient;
 
 	@InjectMocks
 	private MemberService memberService;
@@ -87,7 +86,7 @@ class MemberServiceTest {
 		// When & Then
 		assertThat(memberService.isNicknameAvailable(uppercaseNickname)).isTrue();
 		assertThat(memberService.isNicknameAvailable(lowercaseNickname)).isFalse();
-		
+
 		verify(memberRepository).countByNickname(uppercaseNickname);
 		verify(memberRepository).countByNickname(lowercaseNickname);
 	}
@@ -99,7 +98,7 @@ class MemberServiceTest {
 		Long memberId = 1L;
 		Member member = Member.create("test 123", "테스트", "test@test.com");
 		member.updateProfile("기존닉네임", "https://s3.example.com/old-image.jpg");
-		
+
 		given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
 
 		// When - null을 전달하면 기존 이미지가 유지됨
@@ -109,8 +108,8 @@ class MemberServiceTest {
 		assertThat(updatedMember.getProfile().getNickname()).isEqualTo("새닉네임");
 		assertThat(updatedMember.getProfile().getProfileImageUrl()).isEqualTo("https://s3.example.com/old-image.jpg");
 		// null로 전달한 경우 서비스 로직이 기존 이미지를 삭제 처리함
-		verify(fileManager, never()).confirmUsingImage(any());
-		verify(fileManager).unUseImage("https://s3.example.com/old-image.jpg");
+		verify(fileClient, never()).confirmUsingImage(any());
+		verify(fileClient).unUseImage("https://s3.example.com/old-image.jpg");
 	}
 
 	@Test
@@ -120,7 +119,7 @@ class MemberServiceTest {
 		Long memberId = 1L;
 		Member member = Member.create("test 123", "테스트", "test@test.com");
 		member.updateProfile("기존닉네임", "https://s3.example.com/old-image.jpg");
-		
+
 		given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
 
 		// When
@@ -129,8 +128,8 @@ class MemberServiceTest {
 		// Then
 		assertThat(updatedMember.getProfile().getNickname()).isEqualTo("기존닉네임");
 		assertThat(updatedMember.getProfile().getProfileImageUrl()).isEqualTo("https://s3.example.com/new-image.jpg");
-		verify(fileManager).confirmUsingImage("https://s3.example.com/new-image.jpg");
-		verify(fileManager).unUseImage("https://s3.example.com/old-image.jpg");
+		verify(fileClient).confirmUsingImage("https://s3.example.com/new-image.jpg");
+		verify(fileClient).unUseImage("https://s3.example.com/old-image.jpg");
 	}
 
 	@Test
@@ -140,7 +139,7 @@ class MemberServiceTest {
 		Long memberId = 1L;
 		Member member = Member.create("test 123", "테스트", "test@test.com");
 		member.updateProfile("기존닉네임", "https://s3.example.com/old-image.jpg");
-		
+
 		given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
 
 		// When
@@ -149,8 +148,8 @@ class MemberServiceTest {
 		// Then
 		assertThat(updatedMember.getProfile().getNickname()).isEqualTo("새닉네임");
 		assertThat(updatedMember.getProfile().getProfileImageUrl()).isEqualTo("https://s3.example.com/new-image.jpg");
-		verify(fileManager).confirmUsingImage("https://s3.example.com/new-image.jpg");
-		verify(fileManager).unUseImage("https://s3.example.com/old-image.jpg");
+		verify(fileClient).confirmUsingImage("https://s3.example.com/new-image.jpg");
+		verify(fileClient).unUseImage("https://s3.example.com/old-image.jpg");
 	}
 
 	@Test
@@ -160,7 +159,7 @@ class MemberServiceTest {
 		Long memberId = 1L;
 		Member member = Member.create("test 123", "테스트", "test@test.com");
 		member.updateProfile("기존닉네임", "https://s3.example.com/old-image.jpg");
-		
+
 		given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
 
 		// When - 동일한 이미지 URL로 업데이트
@@ -169,8 +168,8 @@ class MemberServiceTest {
 		// Then - 이미지가 동일하므로 파일 작업이 없음
 		assertThat(updatedMember.getProfile().getNickname()).isEqualTo("새닉네임");
 		assertThat(updatedMember.getProfile().getProfileImageUrl()).isEqualTo("https://s3.example.com/old-image.jpg");
-		verify(fileManager).confirmUsingImage("https://s3.example.com/old-image.jpg");
-		verify(fileManager, never()).unUseImage(any());
+		verify(fileClient).confirmUsingImage("https://s3.example.com/old-image.jpg");
+		verify(fileClient, never()).unUseImage(any());
 	}
 
 } 

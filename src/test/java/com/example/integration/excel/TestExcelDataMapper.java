@@ -4,10 +4,10 @@ import java.util.List;
 
 import org.springframework.boot.test.context.TestComponent;
 
-import com.example.green.global.excel.core.ExcelDataMapper;
-import com.example.green.global.excel.style.BackGroundColor;
-import com.example.green.global.excel.style.ExcelField;
-import com.example.green.global.excel.style.FieldFormat;
+import com.example.green.infra.excel.core.ExcelDataMapper;
+import com.example.green.infra.excel.style.BackGroundColor;
+import com.example.green.infra.excel.style.ExcelField;
+import com.example.green.infra.excel.style.FieldFormat;
 
 @TestComponent
 public class TestExcelDataMapper implements ExcelDataMapper<TestDto> {
