@@ -1,4 +1,4 @@
-package com.example.green.infra.adapter;
+package com.example.green.domain.member.infra;
 
 import java.util.List;
 import java.util.Map;
@@ -8,8 +8,8 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
 import com.example.green.domain.member.repository.MemberQueryRepository;
-import com.example.green.global.client.MemberClient;
-import com.example.green.global.client.dto.MemberDto;
+import com.example.green.infra.client.MemberClient;
+import com.example.green.infra.client.dto.MemberDto;
 
 import lombok.RequiredArgsConstructor;
 

@@ -6,7 +6,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.green.domain.common.service.FileManager;
 import com.example.green.domain.info.domain.InfoEntity;
 import com.example.green.domain.info.dto.InfoRequest;
 import com.example.green.domain.info.dto.admin.InfoDetailResponseByAdmin;
@@ -19,6 +18,7 @@ import com.example.green.domain.info.exception.InfoExceptionMessage;
 import com.example.green.domain.info.repository.InfoRepository;
 import com.example.green.global.api.page.PageTemplate;
 import com.example.green.global.api.page.Pagination;
+import com.example.green.infra.client.FileClient;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -30,7 +30,7 @@ import lombok.extern.log4j.Log4j2;
 public class InfoServiceImpl implements InfoService {
 
 	private final InfoRepository infoRepository;
-	private final FileManager fileManager;
+	private final FileClient fileClient;
 
 	// TODO [확인필요] 사이즈가 0일때는 프론트 처리
 
@@ -67,7 +67,7 @@ public class InfoServiceImpl implements InfoService {
 	@Override
 	public InfoDetailResponseByAdmin saveInfo(InfoRequest saveRequest) {
 		InfoEntity infoEntity = infoRepository.save(saveRequest.toEntity());
-		fileManager.confirmUsingImage(saveRequest.imageUrl());
+		fileClient.confirmUsingImage(saveRequest.imageUrl());
 		log.info("[InfoServiceImpl] 정보공유 등록합니다. 정보공유 번호: {}", infoEntity.getId());
 		return InfoDetailResponseByAdmin.from(infoEntity);
 	}
@@ -89,14 +89,14 @@ public class InfoServiceImpl implements InfoService {
 	private void checkWhetherImageChanged(String formerImageUrl, String newImageUrl) {
 		// 방어 로직: DB 제약상 formerImageUrl이 null일 가능성은 낮음
 		if (StringUtils.isEmpty(formerImageUrl)) {
-			fileManager.confirmUsingImage(newImageUrl);
+			fileClient.confirmUsingImage(newImageUrl);
 			return;
 		}
 
 		// 이미지가 변경된 경우
 		if (!formerImageUrl.equals(newImageUrl)) {
-			fileManager.unUseImage(formerImageUrl);
-			fileManager.confirmUsingImage(newImageUrl);
+			fileClient.unUseImage(formerImageUrl);
+			fileClient.confirmUsingImage(newImageUrl);
 		}
 	}
 
@@ -105,7 +105,7 @@ public class InfoServiceImpl implements InfoService {
 		InfoEntity infoEntity = getInfoEntity(infoId);
 		log.info("[InfoServiceImpl] 정보공유 삭제합니다. 정보공유 번호: {}", infoEntity.getId());
 		infoEntity.markDeleted();
-		fileManager.unUseImage(infoEntity.getImageUrl());
+		fileClient.unUseImage(infoEntity.getImageUrl());
 	}
 
 	@Override

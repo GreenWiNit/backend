@@ -1,6 +1,6 @@
-package com.example.green.domain.common.service;
+package com.example.green.infra.client;
 
-public interface FileManager {
+public interface FileClient {
 
 	void confirmUsingImage(String imageUrl);
 

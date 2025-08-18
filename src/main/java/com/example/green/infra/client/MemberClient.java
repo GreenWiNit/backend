@@ -1,9 +1,9 @@
-package com.example.green.global.client;
+package com.example.green.infra.client;
 
 import java.util.List;
 import java.util.Map;
 
-import com.example.green.global.client.dto.MemberDto;
+import com.example.green.infra.client.dto.MemberDto;
 
 public interface MemberClient {
 

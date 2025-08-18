@@ -1,4 +1,4 @@
-package com.example.green.domain.auth.adapter;
+package com.example.green.domain.auth.infra;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -18,7 +18,7 @@ class PhoneVerificationAdapterTest {
 	@Mock
 	private PhoneVerificationService phoneVerificationService;
 	@InjectMocks
-	private PhoneVerificationAdapter phoneVerificationAdapter;
+	private AuthAdapter phoneVerificationAdapter;
 
 	@Test
 	void 인증된_전화번호_정보가_주어지면_Vo로_변환해서_서비스_요청에서_true를_반환한다() {

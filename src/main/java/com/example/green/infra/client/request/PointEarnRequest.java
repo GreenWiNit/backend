@@ -1,4 +1,4 @@
-package com.example.green.global.client.request;
+package com.example.green.infra.client.request;
 
 import java.math.BigDecimal;
 

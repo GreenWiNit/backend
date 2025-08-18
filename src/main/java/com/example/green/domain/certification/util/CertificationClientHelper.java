@@ -10,14 +10,14 @@ import com.example.green.domain.certification.domain.ChallengeCertification;
 import com.example.green.domain.certification.domain.ChallengeSnapshot;
 import com.example.green.domain.certification.domain.MemberSnapshot;
 import com.example.green.domain.common.constants.PointTransactionType;
-import com.example.green.domain.common.service.FileManager;
-import com.example.green.global.client.ChallengeClient;
-import com.example.green.global.client.MemberClient;
-import com.example.green.global.client.PointClient;
-import com.example.green.global.client.dto.ChallengeDto;
-import com.example.green.global.client.dto.ChallengeGroupDto;
-import com.example.green.global.client.dto.MemberDto;
-import com.example.green.global.client.request.PointEarnRequest;
+import com.example.green.infra.client.ChallengeClient;
+import com.example.green.infra.client.FileClient;
+import com.example.green.infra.client.MemberClient;
+import com.example.green.infra.client.PointClient;
+import com.example.green.infra.client.dto.ChallengeDto;
+import com.example.green.infra.client.dto.ChallengeGroupDto;
+import com.example.green.infra.client.dto.MemberDto;
+import com.example.green.infra.client.request.PointEarnRequest;
 
 import lombok.RequiredArgsConstructor;
 
@@ -27,7 +27,7 @@ public class CertificationClientHelper {
 
 	private final ChallengeClient challengeClient;
 	private final MemberClient memberClient;
-	private final FileManager fileManager;
+	private final FileClient fileClient;
 	private final PointClient pointClient;
 
 	public ChallengeSnapshot getPersonalSnapshot(Long challengeId, Long memberId, LocalDate challengeDate) {
@@ -50,7 +50,7 @@ public class CertificationClientHelper {
 	}
 
 	public void processCertSideEffect(String imageUrl) {
-		fileManager.confirmUsingImage(imageUrl);
+		fileClient.confirmUsingImage(imageUrl);
 	}
 
 	public void processApproveSideEffect(List<ChallengeCertification> certs) {

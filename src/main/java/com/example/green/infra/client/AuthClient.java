@@ -1,6 +1,6 @@
-package com.example.green.domain.pointshop.delivery.client;
+package com.example.green.infra.client;
 
-public interface PhoneVerificationClient {
+public interface AuthClient {
 
 	/*
 		MVP 에서 우선, 전화 인증이 필요 없어진 상태

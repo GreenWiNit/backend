@@ -1,11 +1,11 @@
-package com.example.green.global.client;
+package com.example.green.infra.client;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
-import com.example.green.global.client.request.PointEarnRequest;
-import com.example.green.global.client.request.PointSpendRequest;
+import com.example.green.infra.client.request.PointEarnRequest;
+import com.example.green.infra.client.request.PointSpendRequest;
 
 public interface PointClient {
 

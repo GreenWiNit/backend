@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import com.example.green.domain.mypage.dto.MypageMainResponseDto;
 import com.example.green.domain.mypage.exception.MypageException;
 import com.example.green.domain.mypage.exception.MypageExceptionMessage;
-import com.example.green.global.client.PointClient;
+import com.example.green.infra.client.PointClient;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

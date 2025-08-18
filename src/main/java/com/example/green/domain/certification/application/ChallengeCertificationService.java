@@ -13,7 +13,7 @@ import com.example.green.domain.certification.domain.ChallengeCertificationRepos
 import com.example.green.domain.certification.domain.ChallengeSnapshot;
 import com.example.green.domain.certification.domain.MemberSnapshot;
 import com.example.green.domain.certification.util.CertificationClientHelper;
-import com.example.green.global.client.dto.ChallengeGroupDto;
+import com.example.green.infra.client.dto.ChallengeGroupDto;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

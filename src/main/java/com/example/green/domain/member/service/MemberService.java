@@ -10,16 +10,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import com.example.green.domain.common.service.FileManager;
 import com.example.green.domain.member.entity.Member;
 import com.example.green.domain.member.exception.MemberExceptionMessage;
 import com.example.green.domain.member.repository.MemberRepository;
 import com.example.green.global.error.exception.BusinessException;
+import com.example.green.infra.client.FileClient;
 
 import jakarta.persistence.OptimisticLockException;
-
-
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -30,13 +27,13 @@ import lombok.extern.slf4j.Slf4j;
 public class MemberService {
 
 	private final MemberRepository memberRepository;
-	private final FileManager fileManager;
+	private final FileClient fileClient;
 
 	// 재시도 설정 상수들
 	private static final int SIGNUP_MAX_ATTEMPTS = 3;
 	private static final int SIGNUP_DELAY = 50;
 	private static final double SIGNUP_MULTIPLIER = 2.0;
-	
+
 	private static final int GENERAL_MAX_ATTEMPTS = 3;
 	private static final int GENERAL_DELAY = 100;
 	private static final double GENERAL_MULTIPLIER = 2.0;
@@ -97,10 +94,10 @@ public class MemberService {
 	 */
 	private String createMember(String memberKey, String name, String email, String nickname, String profileImageUrl) {
 		Optional<Member> existingMember = memberRepository.findByMemberKey(memberKey);
-		
+
 		if (existingMember.isPresent()) {
 			Member member = existingMember.get();
-			
+
 			if (member.isWithdrawn()) {
 				log.warn("탈퇴한 사용자의 회원가입 시도 감지: {}", memberKey);
 				throw new IllegalStateException("탈퇴한 사용자는 재가입할 수 없습니다: " + memberKey);
@@ -116,7 +113,8 @@ public class MemberService {
 	/**
 	 * 완전히 새로운 사용자 생성
 	 */
-	private String createNewMember(String memberKey, String name, String email, String nickname, String profileImageUrl) {
+	private String createNewMember(String memberKey, String name, String email, String nickname,
+		String profileImageUrl) {
 		try {
 			Member member = Member.create(memberKey, name, email);
 
@@ -142,7 +140,6 @@ public class MemberService {
 	private boolean hasAdditionalProfileInfo(String nickname, String profileImageUrl) {
 		return StringUtils.hasText(nickname) || StringUtils.hasText(profileImageUrl);
 	}
-
 
 	@Transactional(readOnly = true)
 	public boolean isNicknameAvailable(String nickname) {
@@ -205,7 +202,6 @@ public class MemberService {
 		return memberRepository.existsByMemberKey(memberKey);
 	}
 
-
 	@Transactional(readOnly = true)
 	public Member getCurrentMemberInfo(Long memberId) {
 		return findMemberById(memberId, "현재 사용자 정보 조회");
@@ -240,7 +236,6 @@ public class MemberService {
 			});
 	}
 
-
 	private void processProfileImageUpdate(String oldProfileImageUrl, String newProfileImageUrl) {
 
 		confirmNewProfileImage(newProfileImageUrl);
@@ -250,18 +245,16 @@ public class MemberService {
 		}
 	}
 
-
 	private void confirmNewProfileImage(String profileImageUrl) {
 		if (StringUtils.hasText(profileImageUrl)) {
-			fileManager.confirmUsingImage(profileImageUrl);
+			fileClient.confirmUsingImage(profileImageUrl);
 			log.info("새 프로필 이미지 사용 확정: {}", profileImageUrl);
 		}
 	}
 
-
 	private void unUseProfileImage(String profileImageUrl) {
 		if (StringUtils.hasText(profileImageUrl)) {
-			fileManager.unUseImage(profileImageUrl);
+			fileClient.unUseImage(profileImageUrl);
 			log.info("프로필 이미지 사용 중지: {}", profileImageUrl);
 		}
 	}
@@ -303,7 +296,7 @@ public class MemberService {
 	/**
 	 * 관리자에 의한 회원 강제 삭제 처리
 	 * 관리자가 회원을 강퇴하거나 삭제 시 사용.
-	 * 
+	 *
 	 * @param memberId 삭제할 회원 ID
 	 * @throws BusinessException 회원을 찾을 수 없거나 이미 탈퇴한 경우
 	 */

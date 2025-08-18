@@ -1,4 +1,4 @@
-package com.example.green.global.client.dto;
+package com.example.green.infra.client.dto;
 
 import com.example.green.domain.member.entity.Member;
 

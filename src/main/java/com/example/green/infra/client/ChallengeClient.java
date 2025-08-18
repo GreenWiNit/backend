@@ -1,9 +1,9 @@
-package com.example.green.global.client;
+package com.example.green.infra.client;
 
 import java.time.LocalDate;
 
-import com.example.green.global.client.dto.ChallengeDto;
-import com.example.green.global.client.dto.ChallengeGroupDto;
+import com.example.green.infra.client.dto.ChallengeDto;
+import com.example.green.infra.client.dto.ChallengeGroupDto;
 
 public interface ChallengeClient {
 

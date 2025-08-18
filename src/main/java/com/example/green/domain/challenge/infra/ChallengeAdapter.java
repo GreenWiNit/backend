@@ -10,9 +10,9 @@ import com.example.green.domain.challenge.entity.group.ChallengeGroup;
 import com.example.green.domain.challenge.repository.query.ChallengeGroupQuery;
 import com.example.green.domain.challenge.repository.query.PersonalChallengeQuery;
 import com.example.green.domain.challenge.repository.query.TeamChallengeQuery;
-import com.example.green.global.client.ChallengeClient;
-import com.example.green.global.client.dto.ChallengeDto;
-import com.example.green.global.client.dto.ChallengeGroupDto;
+import com.example.green.infra.client.ChallengeClient;
+import com.example.green.infra.client.dto.ChallengeDto;
+import com.example.green.infra.client.dto.ChallengeGroupDto;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

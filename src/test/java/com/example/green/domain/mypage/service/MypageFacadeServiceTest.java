@@ -16,7 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.example.green.domain.mypage.dto.MypageMainResponseDto;
 import com.example.green.domain.mypage.exception.MypageException;
-import com.example.green.global.client.PointClient;
+import com.example.green.infra.client.PointClient;
 
 @ExtendWith(MockitoExtension.class)
 class MypageFacadeServiceTest {

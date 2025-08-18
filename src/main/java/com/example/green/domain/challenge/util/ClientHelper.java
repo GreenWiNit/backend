@@ -6,8 +6,8 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
-import com.example.green.global.client.MemberClient;
-import com.example.green.global.client.dto.MemberDto;
+import com.example.green.infra.client.MemberClient;
+import com.example.green.infra.client.dto.MemberDto;
 
 import lombok.RequiredArgsConstructor;
 
