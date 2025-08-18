@@ -4,6 +4,7 @@ import static com.example.green.domain.challenge.entity.challenge.QTeamChallenge
 
 import com.example.green.domain.challenge.controller.query.dto.challenge.AdminTeamChallengesDto;
 import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDetailDto;
+import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDetailDtoV2;
 import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDto;
 import com.querydsl.core.types.ConstructorExpression;
 import com.querydsl.core.types.Projections;
@@ -35,6 +36,20 @@ public class TeamChallengeProjections {
 			teamChallenge.beginDate,
 			teamChallenge.endDate,
 			teamChallenge.challengeImage,
+			teamChallenge.challengePoint,
+			exists
+		);
+	}
+
+	public static ConstructorExpression<ChallengeDetailDtoV2> toChallengeByMemberV2(BooleanExpression exists) {
+		return Projections.constructor(
+			ChallengeDetailDtoV2.class,
+			teamChallenge.id,
+			teamChallenge.challengeName,
+			teamChallenge.beginDate,
+			teamChallenge.endDate,
+			teamChallenge.challengeImage,
+			teamChallenge.challengeContent,
 			teamChallenge.challengePoint,
 			exists
 		);

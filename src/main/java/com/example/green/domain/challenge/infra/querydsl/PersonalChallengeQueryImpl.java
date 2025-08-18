@@ -14,6 +14,7 @@ import com.example.green.domain.challenge.controller.query.dto.challenge.AdminCh
 import com.example.green.domain.challenge.controller.query.dto.challenge.AdminPersonalChallengesDto;
 import com.example.green.domain.challenge.controller.query.dto.challenge.AdminPersonalParticipationDto;
 import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDetailDto;
+import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDetailDtoV2;
 import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDto;
 import com.example.green.domain.challenge.entity.challenge.PersonalChallenge;
 import com.example.green.domain.challenge.entity.challenge.vo.ChallengeStatus;
@@ -112,5 +113,12 @@ public class PersonalChallengeQueryImpl implements PersonalChallengeQuery {
 			throw new ChallengeException(INACTIVE_CHALLENGE);
 		}
 		return challenge;
+	}
+
+	@Override
+	public ChallengeDetailDtoV2 findPersonalChallengeV2(Long challengeId, Long memberId) {
+		BooleanExpression participationExists = memberParticipationExists(challengeId, memberId);
+		return executor.executeChallengeDetailQueryV2(participationExists, challengeId)
+			.orElseThrow(() -> new ChallengeException(CHALLENGE_NOT_FOUND));
 	}
 }

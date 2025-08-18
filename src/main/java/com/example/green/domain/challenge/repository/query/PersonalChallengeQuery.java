@@ -8,6 +8,7 @@ import com.example.green.domain.challenge.controller.query.dto.challenge.AdminCh
 import com.example.green.domain.challenge.controller.query.dto.challenge.AdminPersonalChallengesDto;
 import com.example.green.domain.challenge.controller.query.dto.challenge.AdminPersonalParticipationDto;
 import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDetailDto;
+import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDetailDtoV2;
 import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDto;
 import com.example.green.domain.challenge.entity.challenge.PersonalChallenge;
 import com.example.green.domain.challenge.entity.challenge.vo.ChallengeStatus;
@@ -41,4 +42,6 @@ public interface PersonalChallengeQuery {
 	List<AdminPersonalParticipationDto> findParticipantByChallengeForExcel(Long challengeId);
 
 	PersonalChallenge getPersonalChallengeByMemberAndDate(Long challengeId, Long memberId, LocalDate challengeDate);
+
+	ChallengeDetailDtoV2 findPersonalChallengeV2(Long challengeId, Long memberId);
 }

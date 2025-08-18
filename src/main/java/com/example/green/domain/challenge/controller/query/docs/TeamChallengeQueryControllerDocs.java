@@ -41,7 +41,8 @@ public interface TeamChallengeQueryControllerDocs {
 			- 비로그인 상태: 참여하기 버튼 표시
 			- 로그인 상태 & 미참여: 참여하기 버튼 표시
 			- 로그인 상태 & 참여 중: 참여하기 버튼 미표시
-			"""
+			""",
+		deprecated = true
 	)
 	@ApiErrorStandard
 	@ApiResponse(responseCode = "200", description = "챌린지 상세 조회 성공", useReturnTypeSchema = true)

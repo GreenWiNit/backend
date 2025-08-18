@@ -4,13 +4,16 @@ import static com.example.green.domain.challenge.entity.challenge.QPersonalChall
 import static com.example.green.domain.challenge.entity.challenge.QPersonalChallengeParticipation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Component;
 
 import com.example.green.domain.challenge.controller.query.dto.challenge.AdminPersonalChallengesDto;
 import com.example.green.domain.challenge.controller.query.dto.challenge.AdminPersonalParticipationDto;
 import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDetailDto;
+import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDetailDtoV2;
 import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDto;
+import com.example.green.domain.challenge.entity.challenge.vo.ChallengeDisplayStatus;
 import com.example.green.domain.challenge.infra.querydsl.projections.PersonalChallengeProjections;
 import com.example.green.global.api.page.Pagination;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -46,8 +49,18 @@ public class PersonalChallengeQueryExecutor {
 	public ChallengeDetailDto executeChallengeDetailQuery(BooleanExpression participationExists, Long challengeId) {
 		return queryFactory.select(PersonalChallengeProjections.toChallengeByMember(participationExists))
 			.from(personalChallenge)
-			.where(personalChallenge.id.eq(challengeId))
+			.where(personalChallenge.id.eq(challengeId),
+				personalChallenge.displayStatus.eq(ChallengeDisplayStatus.VISIBLE))
 			.fetchOne();
+	}
+
+	public Optional<ChallengeDetailDtoV2> executeChallengeDetailQueryV2(BooleanExpression participationExists,
+		Long challengeId) {
+		return Optional.ofNullable(
+			queryFactory.select(PersonalChallengeProjections.toChallengeByMemberV2(participationExists))
+				.from(personalChallenge)
+				.where(personalChallenge.id.eq(challengeId))
+				.fetchOne());
 	}
 
 	public List<AdminPersonalChallengesDto> executeChallengesQueryForAdmin(Pagination pagination) {

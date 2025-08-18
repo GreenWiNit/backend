@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.green.domain.challenge.controller.query.dto.challenge.AdminChallengeDetailDto;
 import com.example.green.domain.challenge.controller.query.dto.challenge.AdminTeamChallengesDto;
 import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDetailDto;
+import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDetailDtoV2;
 import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDto;
 import com.example.green.domain.challenge.entity.challenge.TeamChallenge;
 import com.example.green.domain.challenge.entity.challenge.vo.ChallengeDisplayStatus;
@@ -80,12 +81,7 @@ public class TeamChallengeQueryImpl implements TeamChallengeQuery {
 	}
 
 	public ChallengeDetailDto findTeamChallenge(Long challengeId, Long memberId) {
-		BooleanExpression exists = JPAExpressions.selectOne()
-			.from(teamChallengeParticipation)
-			.where(
-				teamChallengeParticipation.teamChallenge.id.eq(challengeId),
-				teamChallengeParticipation.memberId.eq(memberId)
-			).exists();
+		BooleanExpression exists = fromCondition(challengeId, memberId);
 
 		return Optional.ofNullable(queryFactory
 				.select(TeamChallengeProjections.toChallengeByMember(exists))
@@ -133,6 +129,27 @@ public class TeamChallengeQueryImpl implements TeamChallengeQuery {
 		if (!teamChallengeRepository.isGroupPeriodValidForChallenge(challengeId, challengeDate)) {
 			throw new ChallengeException(MISMATCH_GROUP_PERIOD_RANGE);
 		}
+	}
+
+	@Override
+	public ChallengeDetailDtoV2 findTeamChallengeV2(Long challengeId, Long memberId) {
+		BooleanExpression exists = fromCondition(challengeId, memberId);
+		return Optional.ofNullable(queryFactory
+				.select(TeamChallengeProjections.toChallengeByMemberV2(exists))
+				.from(teamChallenge)
+				.where(teamChallenge.id.eq(challengeId), teamChallenge.displayStatus.eq(ChallengeDisplayStatus.VISIBLE))
+				.fetchOne())
+			.orElseThrow(() -> new ChallengeException(CHALLENGE_NOT_FOUND));
+	}
+
+	private static BooleanExpression fromCondition(Long challengeId, Long memberId) {
+		BooleanExpression exists = JPAExpressions.selectOne()
+			.from(teamChallengeParticipation)
+			.where(
+				teamChallengeParticipation.teamChallenge.id.eq(challengeId),
+				teamChallengeParticipation.memberId.eq(memberId)
+			).exists();
+		return exists;
 	}
 
 	private BooleanExpression cursorCondition(Long cursor) {
