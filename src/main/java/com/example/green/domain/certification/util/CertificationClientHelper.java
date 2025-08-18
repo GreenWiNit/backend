@@ -32,12 +32,12 @@ public class CertificationClientHelper {
 
 	public ChallengeSnapshot getPersonalSnapshot(Long challengeId, Long memberId, LocalDate challengeDate) {
 		ChallengeDto dto = challengeClient.getPersonalChallengeByMemberAndDate(challengeId, memberId, challengeDate);
-		return ChallengeSnapshot.ofPersonal(dto.id(), dto.name(), dto.code(), dto.point());
+		return ChallengeSnapshot.ofPersonal(dto.id(), dto.name(), dto.code(), dto.point(), dto.imageUrl());
 	}
 
 	public ChallengeSnapshot getTeamSnapshot(Long challengeId, String groupCode) {
 		ChallengeDto dto = challengeClient.getTeamChallenge(challengeId);
-		return ChallengeSnapshot.ofTeam(dto.id(), dto.name(), dto.code(), dto.point(), groupCode);
+		return ChallengeSnapshot.ofTeam(dto.id(), dto.name(), dto.code(), dto.point(), groupCode, dto.imageUrl());
 	}
 
 	public ChallengeGroupDto getChallengeGroupDto(Long groupId, Long memberId) {

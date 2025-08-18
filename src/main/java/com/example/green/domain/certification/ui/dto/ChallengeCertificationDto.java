@@ -12,6 +12,8 @@ public record ChallengeCertificationDto(
 	Long id,
 	@Schema(description = "챌린지 이름", example = "오늘의 챌린지")
 	String challengeName,
+	@Schema(description = "챌린지 이름", example = "오늘의 챌린지")
+	String challengeImage,
 	@Schema(description = "챌린지 인증 날짜")
 	LocalDate certifiedDate,
 	@Schema(description = "챌린지 인증 상태")

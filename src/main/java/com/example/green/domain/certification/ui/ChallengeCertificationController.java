@@ -13,9 +13,6 @@ import com.example.green.domain.certification.application.ChallengeCertification
 import com.example.green.domain.certification.application.command.PersonalChallengeCertificateCommand;
 import com.example.green.domain.certification.application.command.TeamChallengeCertificateCommand;
 import com.example.green.domain.certification.domain.ChallengeCertificationQuery;
-import com.example.green.domain.certification.domain.ChallengeSnapshot;
-import com.example.green.domain.certification.exception.CertificationException;
-import com.example.green.domain.certification.exception.CertificationExceptionMessage;
 import com.example.green.domain.certification.ui.docs.ChallengeCertificationControllerDocs;
 import com.example.green.domain.certification.ui.dto.ChallengeCertificationDetailDto;
 import com.example.green.domain.certification.ui.dto.ChallengeCertificationDto;
@@ -70,9 +67,6 @@ public class ChallengeCertificationController implements ChallengeCertificationC
 		@RequestParam(required = false, defaultValue = "20") Integer size,
 		@AuthenticationPrincipal PrincipalDetails principalDetails
 	) {
-		if (!type.equals(ChallengeSnapshot.PERSONAL_TYPE) && !type.equals(ChallengeSnapshot.TEAM_TYPE)) {
-			throw new CertificationException(CertificationExceptionMessage.INVALID_CHALLENGE_TYPE);
-		}
 		Long memberId = principalDetails.getMemberId();
 		CursorTemplate<String, ChallengeCertificationDto> result =
 			challengeCertificationQuery.findCertByPersonal(cursor, memberId, size, type);
