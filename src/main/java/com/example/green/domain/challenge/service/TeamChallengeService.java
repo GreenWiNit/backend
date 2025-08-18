@@ -1,5 +1,8 @@
 package com.example.green.domain.challenge.service;
 
+import org.springframework.dao.OptimisticLockingFailureException;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,15 +38,23 @@ public class TeamChallengeService {
 		return savedChallenge.getId();
 	}
 
+	@Retryable(
+		retryFor = OptimisticLockingFailureException.class,
+		backoff = @Backoff(delay = 100, multiplier = 2)
+	)
 	public void join(Long challengeId, Long memberId) {
 		TeamChallenge teamChallenge = teamChallengeQuery.getTeamChallengeById(challengeId);
 		teamChallenge.addParticipation(memberId, timeUtils.now());
 	}
 
+	@Retryable(
+		retryFor = OptimisticLockingFailureException.class,
+		backoff = @Backoff(delay = 100, multiplier = 2)
+	)
 	public void leave(Long challengeId, Long memberId) {
 		TeamChallenge teamChallenge = teamChallengeQuery.getTeamChallengeById(challengeId);
 		teamChallenge.removeParticipation(memberId, timeUtils.now());
-		// todo: 그룹 탈퇴 처리 필요
+		// todo: 그룹 탈퇴 처리 필요, 하지만 지금 나가기 기능도 없어서 구현 X
 	}
 
 	public void show(Long challengeId) {

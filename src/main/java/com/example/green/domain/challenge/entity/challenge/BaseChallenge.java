@@ -20,6 +20,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.Version;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -66,6 +67,12 @@ public abstract class BaseChallenge extends BaseEntity {
 	@Column(length = 20, nullable = false)
 	private ChallengeDisplayStatus displayStatus;
 
+	@Column(nullable = false)
+	private Integer participantCount;
+
+	@Version
+	private Long version;
+
 	protected BaseChallenge(
 		String challengeCode,
 		String challengeName,
@@ -95,6 +102,7 @@ public abstract class BaseChallenge extends BaseEntity {
 		this.challengeType = challengeType;
 		this.challengeStatus = ChallengeStatus.PROCEEDING;
 		this.displayStatus = displayStatus;
+		this.participantCount = 0;
 	}
 
 	private static void validateCreateParameters(
@@ -115,6 +123,12 @@ public abstract class BaseChallenge extends BaseEntity {
 		validateNullData(challengeType, "챌린지 타입은 필수값입니다.");
 		validateNullData(displayStatus, "전시 여부 설정은 필수 값입니다.");
 	}
+
+	protected abstract boolean isAlreadyParticipated(Long memberId);
+
+	protected abstract void doAddParticipation(Long memberId, LocalDateTime now);
+
+	protected abstract void doRemoveParticipation(Long memberId, LocalDateTime now);
 
 	public boolean isActive(LocalDate now) {
 		return challengeStatus == ChallengeStatus.PROCEEDING
@@ -161,6 +175,15 @@ public abstract class BaseChallenge extends BaseEntity {
 	public final void addParticipation(Long memberId, LocalDateTime now) {
 		validateParticipation(memberId, now);
 		doAddParticipation(memberId, now);
+		this.participantCount++;
+	}
+
+	public final void removeParticipation(Long memberId, LocalDateTime now) {
+		if (!isActive(now.toLocalDate())) {
+			throw new ChallengeException(ChallengeExceptionMessage.INACTIVE_CHALLENGE);
+		}
+		doRemoveParticipation(memberId, now);
+		decrementParticipantCount();
 	}
 
 	protected final void validateParticipation(Long memberId, LocalDateTime now) {
@@ -172,7 +195,10 @@ public abstract class BaseChallenge extends BaseEntity {
 		}
 	}
 
-	protected abstract boolean isAlreadyParticipated(Long memberId);
-
-	protected abstract void doAddParticipation(Long memberId, LocalDateTime now);
+	protected void decrementParticipantCount() {
+		if (this.participantCount == 0) {
+			throw new ChallengeException(ChallengeExceptionMessage.MAX_PARTICIPANTS_LESS_THAN_CURRENT);
+		}
+		this.participantCount--;
+	}
 }
