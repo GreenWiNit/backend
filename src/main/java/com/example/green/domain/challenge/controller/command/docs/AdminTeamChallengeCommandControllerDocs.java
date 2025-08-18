@@ -29,7 +29,7 @@ public interface AdminTeamChallengeCommandControllerDocs {
 	@ApiResponse(responseCode = "200", description = "챌린지 수정 성공", useReturnTypeSchema = true)
 	@ApiResponse(responseCode = "403", description = "관리자 권한이 필요합니다.",
 		content = @Content(schema = @Schema(implementation = ExceptionResponse.class)))
-	ApiTemplate<Void> update(
+	NoContent update(
 		@Parameter(name = "challengeId", description = "챌린지 ID", in = PATH, required = true, example = "1")
 		Long challengeId,
 		@RequestBody(
