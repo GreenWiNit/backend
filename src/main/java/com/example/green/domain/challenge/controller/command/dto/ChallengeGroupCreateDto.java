@@ -8,6 +8,7 @@ import com.example.green.domain.challenge.entity.group.ChallengeGroup;
 import com.example.green.domain.challenge.entity.group.GroupAddress;
 import com.example.green.domain.challenge.entity.group.GroupBasicInfo;
 import com.example.green.domain.challenge.entity.group.GroupPeriod;
+import com.fasterxml.jackson.annotation.JsonAlias;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
@@ -46,6 +47,7 @@ public record ChallengeGroupCreateDto(
 
 	@Schema(description = "챌린지 활동 일자", requiredMode = Schema.RequiredMode.REQUIRED)
 	@NotNull(message = "챌린지 활동 일자는 필수값입니다.")
+	@JsonAlias("challengeData")
 	LocalDate challengeDate,
 
 	@Schema(description = "그룹 시작 일시", example = "00:00")
