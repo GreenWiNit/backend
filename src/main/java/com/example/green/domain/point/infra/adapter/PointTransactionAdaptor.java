@@ -1,4 +1,4 @@
-package com.example.green.domain.point.infra;
+package com.example.green.domain.point.infra.adapter;
 
 import java.math.BigDecimal;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.example.green.infra.query.pointproduct;
+package com.example.green.domain.pointshop.product.infra;
 
 import java.util.List;
 

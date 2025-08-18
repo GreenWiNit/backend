@@ -1,4 +1,4 @@
-package com.example.green.infra.query.pointproduct;
+package com.example.green.domain.pointshop.product.infra;
 
 import com.example.green.domain.pointshop.product.controller.dto.PointProductSearchResult;
 import com.example.green.domain.pointshop.product.controller.dto.PointProductView;

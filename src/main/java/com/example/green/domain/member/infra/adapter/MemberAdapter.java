@@ -1,4 +1,4 @@
-package com.example.green.domain.member.infra;
+package com.example.green.domain.member.infra.adapter;
 
 import java.util.List;
 import java.util.Map;

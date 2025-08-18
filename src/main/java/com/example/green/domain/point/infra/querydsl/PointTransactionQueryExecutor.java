@@ -1,4 +1,4 @@
-package com.example.green.infra.query.point;
+package com.example.green.domain.point.infra.querydsl;
 
 import java.math.BigDecimal;
 import java.util.List;

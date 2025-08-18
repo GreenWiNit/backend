@@ -1,4 +1,4 @@
-package com.example.green.infra.query.member;
+package com.example.green.domain.member.infra.querydsl;
 
 import java.util.List;
 
@@ -14,7 +14,7 @@ import com.example.green.domain.member.repository.dto.MemberPointsDto;
 import com.example.green.global.api.page.PageTemplate;
 import com.example.green.global.api.page.Pagination;
 import com.example.green.global.error.exception.BusinessException;
-import com.example.green.infra.query.QueryPredicates;
+import com.example.green.infra.database.querydsl.QueryPredicates;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 

@@ -1,4 +1,4 @@
-package com.example.green.infra.query.order;
+package com.example.green.domain.pointshop.order.infra.querydsl;
 
 import java.util.Arrays;
 import java.util.List;

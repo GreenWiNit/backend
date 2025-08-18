@@ -1,4 +1,4 @@
-package com.example.green.infra.query;
+package com.example.green.infra.database.querydsl;
 
 import java.util.function.Function;
 

@@ -1,4 +1,4 @@
-package com.example.green.infra.database.utils;
+package com.example.green.infra.database.querydsl;
 
 import java.util.Arrays;
 import java.util.Objects;
