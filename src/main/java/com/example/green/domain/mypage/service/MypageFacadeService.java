@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.example.green.domain.mypage.dto.MypageMainResponseDto;
 import com.example.green.domain.mypage.exception.MypageException;
 import com.example.green.domain.mypage.exception.MypageExceptionMessage;
+import com.example.green.infra.client.CertificationClient;
 import com.example.green.infra.client.PointClient;
 
 import lombok.RequiredArgsConstructor;
@@ -36,14 +37,14 @@ public class MypageFacadeService {
 	}
 
 	// TODO [확인필요] @임현정 챌린지 서비스 단에서 implement 하여 회원별 챌린지 카운트 조회 구현
-	//private final ChallengeCountGetClient challengeCountGetClient;
+	private final CertificationClient certificationClient;
 	private final PointClient pointClient;
 
 	public MypageMainResponseDto getMypageMain(Long memberId) {
-		// int userChallengeCount = challengeCountGetClient.getChallengeCount(memberId);
+		int certifiedCount = certificationClient.getTotalCertifiedCountByMember(memberId);
 		BigDecimal userTotalPoints = pointClient.getTotalPoints(memberId);
 		int userLevel = getUserLevel(userTotalPoints);
-		return new MypageMainResponseDto(0, userTotalPoints, userLevel);
+		return new MypageMainResponseDto(certifiedCount, userTotalPoints, userLevel);
 	}
 
 	private int getUserLevel(BigDecimal userTotalPoints) {

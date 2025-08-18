@@ -26,4 +26,6 @@ public interface ChallengeCertificationRepository extends JpaRepository<Challeng
 		AND cc.member.memberId = :memberId
 		""")
 	boolean existsByPersonalChallenge(Long challengeId, LocalDate challengeDate, Long memberId);
+
+	int countChallengeCertificationByMemberMemberId(Long memberId);
 }

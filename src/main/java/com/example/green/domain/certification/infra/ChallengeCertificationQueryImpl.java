@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.green.domain.certification.domain.ChallengeCertification;
 import com.example.green.domain.certification.domain.ChallengeCertificationQuery;
@@ -27,6 +28,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.RequiredArgsConstructor;
 
 @Repository
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ChallengeCertificationQueryImpl implements ChallengeCertificationQuery {
 
@@ -73,7 +75,6 @@ public class ChallengeCertificationQueryImpl implements ChallengeCertificationQu
 		return ChallengeCertificationDetailDto.from(certification);
 	}
 
-	@Override
 	public PageTemplate<AdminCertificateSearchDto> search(ChallengeCertificationFilter filter) {
 		validateChallengeType(filter.type());
 
@@ -84,5 +85,9 @@ public class ChallengeCertificationQueryImpl implements ChallengeCertificationQu
 		List<AdminCertificateSearchDto> content = executor.executeSearchQuery(expression, pagination);
 
 		return PageTemplate.of(content, pagination);
+	}
+
+	public int getTotalCertifiedCountByMember(Long memberId) {
+		return challengeCertificationRepository.countChallengeCertificationByMemberMemberId(memberId);
 	}
 }
