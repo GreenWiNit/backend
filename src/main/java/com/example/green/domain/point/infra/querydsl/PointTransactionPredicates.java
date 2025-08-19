@@ -1,7 +1,5 @@
 package com.example.green.domain.point.infra.querydsl;
 
-import java.util.List;
-
 import com.example.green.domain.point.entity.QPointTransaction;
 import com.example.green.domain.point.entity.vo.TransactionType;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -23,11 +21,5 @@ public class PointTransactionPredicates {
 			expression = expression.and(qPointTransaction.type.eq(status));
 		}
 		return expression;
-	}
-
-	public static BooleanExpression fromCondition(List<Long> memberIds) {
-		return qPointTransaction.type.eq(TransactionType.EARN).and(
-			qPointTransaction.memberId.in(memberIds)
-		);
 	}
 }
