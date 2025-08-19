@@ -48,7 +48,8 @@ public class OAuth2FailureHandler extends SimpleUrlAuthenticationFailureHandler 
 		}
 
 		// 탈퇴한 사용자 재가입 시도 감지
-		if (exception.getCause() instanceof WithdrawnMemberAccessException) {
+		if (exception.getMessage() != null && 
+			(exception.getMessage().contains("withdrawn_member") || exception.getMessage().contains("탈퇴한 회원"))) {
 			log.warn("탈퇴한 사용자 재가입 시도 감지: {}", exception.getMessage());
 			String redirectUrl = redirectBase + "/login?error=withdrawn_user&message=" + 
 								URLEncoder.encode("탈퇴한 회원은 동일한 SNS 계정으로 재가입할 수 없습니다.", "UTF-8");
