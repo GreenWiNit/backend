@@ -28,7 +28,7 @@ spring:
         default_batch_fetch_size: ${BATCH_FETCH_SIZE:100}
         format_sql: ${FORMAT_SQL:false}
         jdbc:
-          time_zone: UTC
+          time_zone: Asia/Seoul
     open-in-view: false
     defer-datasource-initialization: ${DEFER_INIT:false}
   sql:
