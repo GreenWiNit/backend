@@ -28,7 +28,7 @@ spring:
         default_batch_fetch_size: ${BATCH_FETCH_SIZE:100}
         format_sql: ${FORMAT_SQL:false}
         jdbc:
-          time_zone: Asia/Seoul
+          time_zone: UTC
     open-in-view: false
     defer-datasource-initialization: ${DEFER_INIT:false}
   sql:
@@ -89,7 +89,6 @@ spring:
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user-name-attribute: id
 
-
 logging:
   level:
     org.springframework: ${LOG_LEVEL_SPRING:INFO}
@@ -98,6 +97,9 @@ logging:
     org.springframework.security.oauth2: DEBUG
     org.springframework.security.web.authentication: DEBUG
     com.example.green.domain.auth: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS}{Asia/Seoul} [%thread] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS}{Asia/Seoul} [%thread] %-5level %logger{36} - %msg%n"
 
 decorator:
   datasource:

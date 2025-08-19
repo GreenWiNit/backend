@@ -21,6 +21,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Entity
 @Table(
@@ -30,6 +31,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
+@Slf4j
 public class ChallengeCertification extends TimeBaseEntity {
 
 	@Id
@@ -57,7 +59,9 @@ public class ChallengeCertification extends TimeBaseEntity {
 		MemberSnapshot member, ChallengeSnapshot challenge, String imageUrl, String review, LocalDate certifiedDate
 	) {
 		validateCreateInputs(member, challenge, imageUrl, review, certifiedDate);
-		if (certifiedDate.isAfter(LocalDate.now())) {
+		LocalDate now = LocalDate.now();
+		if (certifiedDate.isAfter(now)) {
+			log.error("certifiedDate = {}, now = {}", certifiedDate, now);
 			throw new CertificationException(CertificationExceptionMessage.FUTURE_DATE_NOT_ALLOWED);
 		}
 
