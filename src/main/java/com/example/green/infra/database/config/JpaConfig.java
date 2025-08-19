@@ -13,8 +13,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import com.example.green.infra.database.strategy.UpperSnakeNamingStrategy;
 
 @EnableJpaAuditing(
-	auditorAwareRef = "auditorAwareConfig",
-	dateTimeProviderRef = "koreaDateTimeProvider"
+	auditorAwareRef = "auditorAwareConfig"
 )
 @Configuration
 public class JpaConfig {
