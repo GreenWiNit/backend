@@ -17,13 +17,14 @@ import com.example.green.global.api.ApiTemplate;
 import com.example.integration.common.BaseIntegrationTest;
 import com.example.integration.common.concurrency.ConcurrencyTestResult;
 import com.example.integration.common.concurrency.ConcurrencyTestTemplate;
+import com.example.integration.config.SlowTransactionConfig;
 import com.example.integration.config.TestTokenServiceConfig;
 
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.http.ContentType;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
 
-@Import({OrderTestConfig.class, TestTokenServiceConfig.class})
+@Import({OrderTestConfig.class, TestTokenServiceConfig.class, SlowTransactionConfig.class})
 class OrderIdempotencyTest extends BaseIntegrationTest {
 
 	@Autowired

@@ -24,7 +24,7 @@ public class DistributedLockManager {
 			return supplier.get();
 		} catch (Exception e) {
 			log.debug("임계 구역 진입 실패: {} (대기중)", lockKey);
-			throw new IllegalStateException();
+			throw new IllegalStateException(e);
 		} finally {
 			exitCriticalZone(lockKey);
 		}

@@ -5,7 +5,6 @@ import static org.mockito.Mockito.*;
 
 import java.math.BigDecimal;
 
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 
@@ -16,7 +15,6 @@ import com.example.green.domain.pointshop.product.service.PointProductService;
 import com.example.green.infra.client.PointClient;
 import com.example.green.infra.client.request.PointSpendRequest;
 
-@TestConfiguration
 public class OrderTestConfig {
 
 	@Bean
