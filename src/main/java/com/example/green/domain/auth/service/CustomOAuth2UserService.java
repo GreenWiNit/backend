@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.oauth2.core.OAuth2Error;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,7 +63,12 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
 		if (member.isWithdrawn()) {
 			log.warn("탈퇴한 회원의 재가입 시도 차단: {}", memberKey);
-			throw new WithdrawnMemberAccessException(memberKey);
+			OAuth2Error oAuth2Error = new OAuth2Error(
+				"withdrawn_member",
+				"탈퇴한 회원은 동일한 SNS 계정으로 재가입할 수 없습니다.",
+				null
+			);
+			throw new OAuth2AuthenticationException(oAuth2Error);
 		}
 
 		return updateExistingUser(memberKey, oAuth2Response);
