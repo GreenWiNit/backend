@@ -20,6 +20,7 @@ import com.example.green.global.api.page.CursorTemplate;
 import com.example.green.global.api.page.PageTemplate;
 import com.example.green.global.api.page.Pagination;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.JPAExpressions;
 
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
@@ -81,8 +82,17 @@ public class PointTransactionQueryImpl implements PointTransactionQueryRepositor
 
 	@Override
 	public Map<Long, BigDecimal> findEarnedPointByMember(List<Long> memberIds) {
-		BooleanExpression expression = PointTransactionPredicates.fromCondition(memberIds);
-		Map<Long, BigDecimal> earnedPoints = queryExecutor.createEarnedPointQuery(expression);
+		BooleanExpression baseExpression = qPointTransaction.memberId.in(memberIds);
+		BooleanExpression finalExpression = baseExpression.and(
+			qPointTransaction.id.in(
+				JPAExpressions.select(qPointTransaction.id.max())
+					.from(qPointTransaction)
+					.where(baseExpression)
+					.groupBy(qPointTransaction.memberId)
+			)
+		);
+		
+		Map<Long, BigDecimal> earnedPoints = queryExecutor.createEarnedPointQuery(finalExpression);
 
 		return memberIds.stream()
 			.collect(Collectors.toMap(

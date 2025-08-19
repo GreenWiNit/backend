@@ -35,12 +35,11 @@ public class PointTransactionQueryExecutor {
 
 	public Map<Long, BigDecimal> createEarnedPointQuery(BooleanExpression expression) {
 		return jpaQueryFactory
-			.select(qPointTransaction.memberId, qPointTransaction.pointAmount.amount.sum())
+			.select(qPointTransaction.memberId, qPointTransaction.balanceAfter.amount)
 			.from(qPointTransaction)
 			.where(expression)
-			.groupBy(qPointTransaction.memberId)
 			.transform(GroupBy.groupBy(qPointTransaction.memberId)
-				.as(qPointTransaction.pointAmount.amount.sum()));
+				.as(qPointTransaction.balanceAfter.amount));
 	}
 
 	public Long createTotalCountQuery(BooleanExpression expression) {

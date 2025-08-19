@@ -14,8 +14,10 @@ import com.example.green.domain.member.repository.dto.MemberPointsDto;
 import com.example.green.global.api.page.PageTemplate;
 import com.example.green.global.api.page.Pagination;
 import com.example.green.global.error.exception.BusinessException;
+import com.example.green.infra.database.querydsl.BooleanExpressionConnector;
 import com.example.green.infra.database.querydsl.QueryPredicates;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
@@ -30,12 +32,14 @@ public class MemberQueryRepositoryImpl implements MemberQueryRepository {
 
 	@Override
 	public PageTemplate<MemberPointsDto> searchMemberBasicInfo(BasicInfoSearchCondition condition) {
+		BooleanExpression expression = BooleanExpressionConnector.combineWithOr(
+			QueryPredicates.whenNotBlank(condition.keyword(), qMember.memberKey::containsIgnoreCase),
+			QueryPredicates.whenNotBlank(condition.keyword(), qMember.profile.nickname::containsIgnoreCase)
+		);
+
 		Long totalCount = jpaQueryFactory.select(qMember.count())
 			.from(qMember)
-			.where(
-				QueryPredicates.whenNotBlank(condition.keyword(), qMember.memberKey::containsIgnoreCase),
-				QueryPredicates.whenNotBlank(condition.keyword(), qMember.profile.nickname::containsIgnoreCase)
-			)
+			.where(expression)
 			.fetchOne();
 
 		Pagination pagination = Pagination.fromCondition(condition, totalCount);
@@ -47,10 +51,7 @@ public class MemberQueryRepositoryImpl implements MemberQueryRepository {
 				qMember.profile.nickname
 			))
 			.from(qMember)
-			.where(
-				QueryPredicates.whenNotBlank(condition.keyword(), qMember.memberKey::containsIgnoreCase),
-				QueryPredicates.whenNotBlank(condition.keyword(), qMember.profile.nickname::containsIgnoreCase)
-			)
+			.where(expression)
 			.orderBy(qMember.id.asc())
 			.offset(pagination.calculateOffset())
 			.limit(pagination.getPageSize())
