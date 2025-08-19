@@ -168,7 +168,8 @@ public class SecurityConfig {
 					"Origin",
 					"Access-Control-Request-Method",
 					"Access-Control-Request-Headers",
-					"X-XSRF-TOKEN"
+					"X-XSRF-TOKEN",
+					"Idempotency-Key"
 				));
 				configuration.setAllowCredentials(true);
 				configuration.setMaxAge(3600L);
