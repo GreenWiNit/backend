@@ -57,6 +57,16 @@ public class ChallengeGroupQueryImpl implements ChallengeGroupQuery {
 	public CursorTemplate<String, MyChallengeGroupDto> findMyGroup(
 		Long challengeId, String cursor, Integer size, Long memberId
 	) {
+		List<Long> participatingGroupIds = queryFactory
+			.select(challengeGroupParticipation.challengeGroup.id)
+			.from(challengeGroupParticipation)
+			.where(challengeGroupParticipation.memberId.eq(memberId))
+			.fetch();
+
+		if (participatingGroupIds.isEmpty()) {
+			return CursorTemplate.ofEmpty();
+		}
+
 		List<MyChallengeGroupDto> groups = queryFactory
 			.select(Projections.constructor(MyChallengeGroupDto.class,
 				challengeGroup.id,
@@ -70,7 +80,7 @@ public class ChallengeGroupQueryImpl implements ChallengeGroupQuery {
 			.from(challengeGroup)
 			.where(
 				challengeGroup.teamChallengeId.eq(challengeId),
-				challengeGroupParticipation.memberId.eq(memberId),
+				challengeGroup.id.in(participatingGroupIds),
 				fromCondition(cursor)
 			)
 			.orderBy(
