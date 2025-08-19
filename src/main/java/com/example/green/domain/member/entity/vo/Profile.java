@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 
 import org.springframework.util.StringUtils;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import com.example.green.domain.member.exception.MemberExceptionMessage;
@@ -43,14 +44,17 @@ public class Profile {
 		String updatedNickname = Optional.ofNullable(newNickname)
 			.filter(StringUtils::hasText)
 			.orElse(this.nickname);
-
-		String updatedImageUrl = Optional.ofNullable(newProfileImageUrl)
-			.map(String::trim)
-			.filter(StringUtils::hasText)
-			.orElse(this.profileImageUrl);
+		String updatedImageUrl;
+		if (newProfileImageUrl == null) {
+			updatedImageUrl = null;
+		} else if (StringUtils.hasText(newProfileImageUrl)) {
+			updatedImageUrl = newProfileImageUrl.trim();
+		} else {
+			updatedImageUrl = this.profileImageUrl;
+		}
 
 		if (updatedNickname.equals(this.nickname)
-			&& updatedImageUrl.equals(this.profileImageUrl)) {
+			&& Objects.equals(updatedImageUrl, this.profileImageUrl)) {
 			return this;
 		}
 

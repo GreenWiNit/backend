@@ -23,11 +23,11 @@ public class ProfileUpdateRequestDto {
 	@Schema(description = "닉네임 (닉네임 또는 프로필 이미지 중 하나 이상 필수)", example = "새로운닉네임")
 	private String nickname;
 
-	@Schema(description = "프로필 이미지 URL (닉네임 또는 프로필 이미지 중 하나 이상 필수)", example = "https://s3.amazonaws.com/bucket/files/profile/uuid.jpg")
+	@Schema(description = "프로필 이미지 URL", example = "https://s3.amazonaws.com/bucket/files/profile/uuid.jpg", nullable = true)
 	private String profileImageUrl;
 
 	@AssertTrue(message = "닉네임 또는 프로필 이미지 중 하나 이상은 필수입니다.")
 	private boolean isAtLeastOneFieldPresent() {
-		return StringUtils.hasText(nickname) || StringUtils.hasText(profileImageUrl);
+		return StringUtils.hasText(nickname) || profileImageUrl != null;
 	}
 } 
