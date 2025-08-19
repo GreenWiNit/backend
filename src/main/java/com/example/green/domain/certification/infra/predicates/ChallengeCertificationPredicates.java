@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 public class ChallengeCertificationPredicates {
 
 	public static BooleanExpression certificationByPersonalCondition(Long memberId, String cursor, String type) {
-		return BooleanExpressionConnector.combineConditions(
+		return BooleanExpressionConnector.combineWithAnd(
 			certificationByPersonalCursorCondition(cursor),
 			challengeCertification.member.memberId.eq(memberId),
 			challengeCertification.challenge.type.eq(type)
@@ -26,7 +26,7 @@ public class ChallengeCertificationPredicates {
 	}
 
 	public static BooleanExpression searchCondition(ChallengeCertificationFilter filter) {
-		return BooleanExpressionConnector.combineConditions(
+		return BooleanExpressionConnector.combineWithAnd(
 			challengeCertification.challenge.type.eq(filter.type()),
 			statusCondition(filter.status()),
 			memberKeyCondition(filter.memberKey()),
