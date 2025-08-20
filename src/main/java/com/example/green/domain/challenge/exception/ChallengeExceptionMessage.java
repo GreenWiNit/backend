@@ -39,7 +39,9 @@ public enum ChallengeExceptionMessage implements ExceptionMessage {
 	ADMIN_CHALLENGE_UPDATE_FAILED("관리자 - 챌린지 수정에 실패했습니다.", 500),
 	INVALID_MINIMUM_POINT("포인트는 0원 이상입니다.", 400),
 	INVALID_GROUP_PERIOD("팀 활동 시작일시는 종료일시보다 이전이어야 합니다.", 400),
-	MISMATCH_GROUP_PERIOD_RANGE("그룹 활동이 팀 챌린지 기간 내에 포함되지 않습니다.", 400);
+	MISMATCH_GROUP_PERIOD_RANGE("그룹 활동이 팀 챌린지 기간 내에 포함되지 않습니다.", 400),
+	ALREADY_PARTICIPATED_ON_THIS_DATE("동일한 활동일자에 이미 참여한 챌린지가 있습니다.", 400),
+	CANNOT_DELETE_AFTER_ACTIVITY_START("활동 시작 이후에는 그룹을 삭제할 수 없습니다.", 400);
 
 	private final String message;
 	private final int status;

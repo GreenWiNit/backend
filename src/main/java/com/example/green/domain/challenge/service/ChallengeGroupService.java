@@ -33,8 +33,7 @@ public class ChallengeGroupService {
 	private final ChallengeGroupRepository challengeGroupRepository;
 
 	public Long create(Long challengeId, Long leaderId, ChallengeGroupCreateDto dto) {
-		log.info("dto time to LocalDateTime: {}: {} ~ {} -> {}, {}",
-			dto.challengeDate(), dto.startTime(), dto.endTime(), dto.toBeginDateTime(), dto.toEndDateTime());
+		challengeGroupQuery.validateActivityDateParticipation(leaderId, dto.challengeDate());
 		teamChallengeQuery.validateGroupPeriod(challengeId, dto.challengeDate());
 		String teamCode = sequenceService.generateCode(SequenceType.TEAM_CHALLENGE_GROUP, timeUtils.now());
 		ChallengeGroup challengeGroup = dto.toEntity(teamCode, challengeId, leaderId);
@@ -54,13 +53,21 @@ public class ChallengeGroupService {
 	}
 
 	public void delete(Long groupId, Long memberId) {
-		challengeGroupQuery.validateLeader(groupId, memberId);
-		challengeGroupRepository.deleteById(groupId);
+		ChallengeGroup challengeGroup = challengeGroupQuery.getChallengeGroup(groupId);
+		if (!challengeGroup.isLeader(memberId)) {
+			throw new ChallengeException(ChallengeExceptionMessage.NOT_GROUP_LEADER);
+		}
+		// 참여 가능한 상태일 경우에만 챌린지를 삭제할 수 있음. -> 참여 된 상태부터는 챌린지를 삭제할 수 없음
+		if (!challengeGroup.getPeriod().canParticipate(timeUtils.now())) {
+			throw new ChallengeException(ChallengeExceptionMessage.CANNOT_DELETE_AFTER_ACTIVITY_START);
+		}
+		challengeGroupRepository.delete(challengeGroup);
 	}
 
 	@Retryable(retryFor = OptimisticLockingFailureException.class)
 	public void join(Long groupId, Long memberId) {
 		ChallengeGroup challengeGroup = challengeGroupQuery.getChallengeGroup(groupId);
+		challengeGroupQuery.validateActivityDateParticipation(memberId, challengeGroup.getPeriod().getDate());
 		challengeGroup.joinMember(memberId, timeUtils.now());
 	}
 

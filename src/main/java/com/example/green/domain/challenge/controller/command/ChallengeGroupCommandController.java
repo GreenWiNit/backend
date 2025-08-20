@@ -16,6 +16,8 @@ import com.example.green.domain.challenge.controller.message.TeamChallengeGroupR
 import com.example.green.domain.challenge.service.ChallengeGroupService;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.NoContent;
+import com.example.green.global.error.exception.BusinessException;
+import com.example.green.global.error.exception.GlobalExceptionMessage;
 import com.example.green.global.security.PrincipalDetails;
 import com.example.green.global.security.annotation.AuthenticatedApi;
 
@@ -36,8 +38,6 @@ public class ChallengeGroupCommandController implements ChallengeGroupCommandCon
 		@Valid @RequestBody ChallengeGroupCreateDto request,
 		@AuthenticationPrincipal PrincipalDetails principalDetails
 	) {
-		// todo: 오늘 날짜로 가입하거나 등록한 팀이 있으면 더 생성 불가
-		// todo: 챌린지 참여했는지 확인하는 로직
 		Long leaderId = principalDetails.getMemberId();
 		Long groupId = challengeGroupService.create(challengeId, leaderId, request);
 
@@ -45,14 +45,13 @@ public class ChallengeGroupCommandController implements ChallengeGroupCommandCon
 	}
 
 	@PutMapping("/groups/{groupId}")
+	@Deprecated
 	public NoContent updateTeamChallengeGroup(
 		@PathVariable Long groupId,
 		@Valid @RequestBody ChallengeGroupUpdateDto request,
 		@AuthenticationPrincipal PrincipalDetails principalDetails
 	) {
-		Long leaderId = principalDetails.getMemberId();
-		challengeGroupService.update(groupId, leaderId, request);
-		return NoContent.ok(TeamChallengeGroupResponseMessage.GROUP_UPDATED);
+		throw new BusinessException(GlobalExceptionMessage.NO_RESOURCE_MESSAGE);
 	}
 
 	@DeleteMapping("/groups/{groupId}")
@@ -70,8 +69,6 @@ public class ChallengeGroupCommandController implements ChallengeGroupCommandCon
 		@PathVariable Long groupId,
 		@AuthenticationPrincipal PrincipalDetails principalDetails
 	) {
-		// todo: 오늘 날짜로 가입하거나 등록한 팀이 있으면 가입 불가
-		// todo: 해당 챌린지에 참여했는지 확인
 		Long memberId = principalDetails.getMemberId();
 		challengeGroupService.join(groupId, memberId);
 		return NoContent.ok(TeamChallengeGroupResponseMessage.GROUP_JOINED);
