@@ -112,6 +112,7 @@ public class DbInitializer {
 			PointSource pointSource;
 			PointAmount amount;
 			PointTransaction transaction;
+			LocalDateTime transactionAt = baseTime.minusDays(i);
 
 			if (isChallenge) {
 				String detail = target + " 적립";
@@ -121,7 +122,7 @@ public class DbInitializer {
 
 				PointAmount previousBalance = currentBalance;
 				currentBalance = currentBalance.add(amount);
-				transaction = PointTransaction.earn(1L, pointSource, amount, previousBalance);
+				transaction = PointTransaction.earn(1L, pointSource, amount, previousBalance, transactionAt);
 			} else {
 				String detail = target + " 교환";
 				pointSource = PointSource.ofTarget(random.nextLong(1, 100), detail, TargetType.EXCHANGE);
@@ -132,7 +133,7 @@ public class DbInitializer {
 				if (currentBalance.canSpend(amount)) {
 					PointAmount previousBalance = currentBalance;
 					currentBalance = currentBalance.subtract(amount);
-					transaction = PointTransaction.spend(1L, pointSource, amount, previousBalance);
+					transaction = PointTransaction.spend(1L, pointSource, amount, previousBalance, transactionAt);
 				} else {
 					String earnDetail = "보너스 적립";
 					PointSource earnSource = PointSource.ofEvent(earnDetail);
@@ -140,7 +141,7 @@ public class DbInitializer {
 
 					PointAmount previousBalance = currentBalance;
 					currentBalance = currentBalance.add(earnAmount);
-					transaction = PointTransaction.earn(1L, earnSource, earnAmount, previousBalance);
+					transaction = PointTransaction.earn(1L, earnSource, earnAmount, previousBalance, transactionAt);
 				}
 			}
 			pointTransactions.add(transaction);

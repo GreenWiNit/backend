@@ -3,6 +3,8 @@ package com.example.green.domain.point.entity;
 import static com.example.green.domain.point.exception.PointExceptionMessage.*;
 import static com.example.green.global.utils.EntityValidator.*;
 
+import java.time.LocalDateTime;
+
 import com.example.green.domain.common.TimeBaseEntity;
 import com.example.green.domain.point.entity.vo.PointAmount;
 import com.example.green.domain.point.entity.vo.PointSource;
@@ -62,13 +64,16 @@ public class PointTransaction extends TimeBaseEntity {
 	@Enumerated(EnumType.STRING)
 	private TransactionType type;
 
+	private LocalDateTime transactionAt;
+
 	public static PointTransaction earn(
 		Long memberId,
 		PointSource source,
 		PointAmount earnAmount,
-		PointAmount currentBalance
+		PointAmount currentBalance,
+		LocalDateTime transactionAt
 	) {
-		return buildDefault(memberId, source, earnAmount)
+		return buildDefault(memberId, source, earnAmount, transactionAt)
 			.balanceAfter(currentBalance.add(earnAmount))
 			.type(TransactionType.EARN)
 			.build();
@@ -78,21 +83,26 @@ public class PointTransaction extends TimeBaseEntity {
 		Long memberId,
 		PointSource source,
 		PointAmount spendAmount,
-		PointAmount currentBalance
+		PointAmount currentBalance,
+		LocalDateTime transactionAt
 	) {
-		return buildDefault(memberId, source, spendAmount)
+		return buildDefault(memberId, source, spendAmount, transactionAt)
 			.balanceAfter(currentBalance.subtract(spendAmount))
 			.type(TransactionType.SPEND)
 			.build();
 	}
 
-	private static PointTransactionBuilder buildDefault(Long memberId, PointSource source, PointAmount pointAmount) {
+	private static PointTransactionBuilder buildDefault(
+		Long memberId, PointSource source, PointAmount pointAmount, LocalDateTime transactionAt
+	) {
 		validateAutoIncrementId(memberId, REQUIRE_MEMBER_ID);
 		validateNullData(source, REQUIRE_POINT_SOURCE);
 		validateNullData(pointAmount, REQUIRE_POINT_AMOUNT);
+		validateNullData(transactionAt, REQUIRE_TRANSACTION_AT);
 		return PointTransaction.builder()
 			.memberId(memberId)
 			.pointSource(source)
-			.pointAmount(pointAmount);
+			.pointAmount(pointAmount)
+			.transactionAt(transactionAt);
 	}
 }

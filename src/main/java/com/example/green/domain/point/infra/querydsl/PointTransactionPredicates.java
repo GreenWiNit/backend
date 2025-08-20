@@ -1,8 +1,11 @@
 package com.example.green.domain.point.infra.querydsl;
 
+import java.util.List;
+
 import com.example.green.domain.point.entity.QPointTransaction;
 import com.example.green.domain.point.entity.vo.TransactionType;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.JPAExpressions;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -12,7 +15,7 @@ public class PointTransactionPredicates {
 
 	private static final QPointTransaction qPointTransaction = QPointTransaction.pointTransaction;
 
-	public static BooleanExpression fromCondition(Long memberId, Long cursor, TransactionType status) {
+	public static BooleanExpression toPointTransactionQuery(Long memberId, Long cursor, TransactionType status) {
 		BooleanExpression expression = qPointTransaction.memberId.eq(memberId);
 		if (cursor != null) {
 			expression = expression.and(qPointTransaction.id.lt(cursor));
@@ -21,5 +24,17 @@ public class PointTransactionPredicates {
 			expression = expression.and(qPointTransaction.type.eq(status));
 		}
 		return expression;
+	}
+
+	public static BooleanExpression toEarnedPointByMemberQuery(List<Long> memberIds) {
+		BooleanExpression baseExpression = qPointTransaction.memberId.in(memberIds);
+		return baseExpression.and(
+			qPointTransaction.id.in(
+				JPAExpressions.select(qPointTransaction.id.max())
+					.from(qPointTransaction)
+					.where(baseExpression)
+					.groupBy(qPointTransaction.memberId)
+			)
+		);
 	}
 }

@@ -22,6 +22,7 @@ public enum PointExceptionMessage implements ExceptionMessage {
 	public static final String REQUIRE_POINT_SOURCE_DESCRIPTION = "포인트 출처 설명은 필수 값 입니다.";
 	public static final String REQUIRE_POINT_SOURCE_TYPE = "포인트 출처 종류는 필수 값 입니다. ";
 	public static final String REQUIRE_POINT_AMOUNT = "포인트 금액은 필수 값 입니다.";
+	public static final String REQUIRE_TRANSACTION_AT = "포인트 트랜잭션 시간은 필수 값 입니다.";
 
 	private final HttpStatus httpStatus;
 	private final String message;

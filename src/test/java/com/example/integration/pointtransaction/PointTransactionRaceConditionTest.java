@@ -2,6 +2,7 @@ package com.example.integration.pointtransaction;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -15,9 +16,9 @@ import com.example.green.domain.point.entity.vo.PointAmount;
 import com.example.green.domain.point.entity.vo.PointSource;
 import com.example.green.domain.point.entity.vo.TargetType;
 import com.example.green.domain.point.entity.vo.TransactionType;
+import com.example.green.domain.point.exception.PointException;
 import com.example.green.domain.point.repository.PointTransactionRepository;
 import com.example.green.domain.point.service.PointTransactionService;
-import com.example.green.domain.point.exception.PointException;
 import com.example.integration.common.BaseIntegrationTest;
 import com.example.integration.common.concurrency.ConcurrencyTestResult;
 import com.example.integration.common.concurrency.ConcurrencyTestTemplate;
@@ -45,7 +46,7 @@ public class PointTransactionRaceConditionTest extends BaseIntegrationTest {
 	void 잔액이_1000p_일_때_600p_차감이_두번_요청되면_한_건만_처리된다() throws InterruptedException {
 		// given
 		Long memberId = 1L;
-		service.earnPoints(memberId, PointAmount.of(1000), PointSource.ofEvent("초기적립"));
+		service.earnPoints(memberId, PointAmount.of(1000), PointSource.ofEvent("초기적립"), LocalDateTime.now());
 
 		// when
 		ConcurrencyTestResult result = ConcurrencyTestTemplate.build()
@@ -54,7 +55,8 @@ public class PointTransactionRaceConditionTest extends BaseIntegrationTest {
 			.execute(() -> service.spendPoints(
 				memberId,
 				PointAmount.of(600),
-				PointSource.ofTarget(1L, "상품구매", TargetType.EXCHANGE)
+				PointSource.ofTarget(1L, "상품구매", TargetType.EXCHANGE),
+				LocalDateTime.now()
 			));
 
 		// then
@@ -76,8 +78,11 @@ public class PointTransactionRaceConditionTest extends BaseIntegrationTest {
 			.testName("관리자 동시 포인트 지급")
 			.execute(() -> {
 				try {
-					service.earnPoints(memberId, PointAmount.of(1000),
-						PointSource.ofEvent("관리자지급_" + Thread.currentThread().getName()));
+					service.earnPoints(
+						memberId,
+						PointAmount.of(1000),
+						PointSource.ofEvent("관리자지급_" + Thread.currentThread().getName()),
+						LocalDateTime.now());
 					return true;
 				} catch (Exception e) {
 					log.error("포인트 지급 실패: {}", e.getMessage());
@@ -116,10 +121,10 @@ public class PointTransactionRaceConditionTest extends BaseIntegrationTest {
 					try {
 						if (taskType == 1) {
 							service.earnPoints(memberId, PointAmount.of(1000),
-								PointSource.ofEvent("관리자지급"));
+								PointSource.ofEvent("관리자지급"), LocalDateTime.now());
 						} else {
 							service.spendPoints(memberId, PointAmount.of(800),
-								PointSource.ofTarget(1L, "상품구매", TargetType.EXCHANGE));
+								PointSource.ofTarget(1L, "상품구매", TargetType.EXCHANGE), LocalDateTime.now());
 						}
 						return true;
 					} catch (PointException e) {

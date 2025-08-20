@@ -20,4 +20,11 @@ public record MyPointTransactionDto(
 	@Schema(description = "포인트 트랜잭션 처리 시간")
 	LocalDateTime transactionAt
 ) {
+
+	public LocalDateTime getTransactionAt() {
+		if (transactionAt == null) {
+			return LocalDateTime.of(2025, 1, 1, 0, 0);
+		}
+		return transactionAt;
+	}
 }

@@ -24,7 +24,7 @@ public class PointTransactionProjections {
 			qPointTransaction.pointSource.description,
 			qPointTransaction.pointAmount.amount,
 			qPointTransaction.type,
-			qPointTransaction.createdDate
+			qPointTransaction.transactionAt
 		);
 	}
 
@@ -37,7 +37,7 @@ public class PointTransactionProjections {
 			createEarnedAmountCase(qPointTransaction),
 			createSpendAmountCase(qPointTransaction),
 			qPointTransaction.balanceAfter.amount,
-			qPointTransaction.createdDate
+			qPointTransaction.transactionAt
 		);
 	}
 
