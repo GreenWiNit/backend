@@ -3,6 +3,7 @@ package com.example.green.domain.challenge.infra.querydsl.predicates;
 import static com.example.green.domain.challenge.entity.group.QChallengeGroup.*;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 
 import com.example.green.infra.database.querydsl.BooleanExpressionConnector;
@@ -29,16 +30,28 @@ public class ChallengeGroupPredicates {
 			fromCondition(cursor));
 	}
 
-	public static BooleanExpression fromCondition(String cursor) {
+	private static BooleanExpression fromCondition(String cursor) {
 		if (cursor == null || cursor.isBlank()) {
 			return null;
 		}
 
-		String[] parts = cursor.split(",");
-		LocalDateTime dateCursor = LocalDateTime.parse(parts[0]);
-		Long idCursor = Long.parseLong(parts[1]);
-		return challengeGroup.createdDate.lt(dateCursor)
-			.or(challengeGroup.createdDate.eq(dateCursor)
-				.and(challengeGroup.id.lt(idCursor)));
+		String[] parts = cursor.split(",", 2); // limit to 2 parts
+		if (parts.length != 2 || parts[0].isBlank() || parts[1].isBlank()) {
+			return null;
+		}
+
+		return parseCursorExpression(parts);
+	}
+
+	private static BooleanExpression parseCursorExpression(String[] parts) {
+		try {
+			LocalDateTime dateCursor = LocalDateTime.parse(parts[0]);
+			long idCursor = Long.parseLong(parts[1]);
+			return challengeGroup.createdDate.lt(dateCursor)
+				.or(challengeGroup.createdDate.eq(dateCursor)
+					.and(challengeGroup.id.lt(idCursor)));
+		} catch (DateTimeParseException | NumberFormatException e) {
+			return null;
+		}
 	}
 }
