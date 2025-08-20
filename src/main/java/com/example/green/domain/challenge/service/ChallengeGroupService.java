@@ -33,8 +33,6 @@ public class ChallengeGroupService {
 	private final ChallengeGroupRepository challengeGroupRepository;
 
 	public Long create(Long challengeId, Long leaderId, ChallengeGroupCreateDto dto) {
-		log.info("dto time to LocalDateTime: {}: {} ~ {} -> {}, {}",
-			dto.challengeDate(), dto.startTime(), dto.endTime(), dto.toBeginDateTime(), dto.toEndDateTime());
 		teamChallengeQuery.validateGroupPeriod(challengeId, dto.challengeDate());
 		String teamCode = sequenceService.generateCode(SequenceType.TEAM_CHALLENGE_GROUP, timeUtils.now());
 		ChallengeGroup challengeGroup = dto.toEntity(teamCode, challengeId, leaderId);
