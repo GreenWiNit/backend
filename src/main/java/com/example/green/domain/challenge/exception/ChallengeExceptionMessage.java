@@ -14,7 +14,7 @@ public enum ChallengeExceptionMessage implements ExceptionMessage {
 	CHALLENGE_NOT_FOUND("챌린지를 찾을 수 없습니다.", 404),
 	INACTIVE_CHALLENGE("현재 활성화된 챌린지가 아닙니다.", 400),
 	INACTIVE_GROUP("현재 활성화된 그룹이 아닙니다.", 400),
-	ALREADY_PARTICIPATING("이미 참여 중인 챌린지입니다.", 400),
+	ALREADY_PARTICIPATING("이미 참여 중인 챌린지입니다. [홈]-[참여 챌린지]에서 확인해주세요.", 400),
 	NOT_PARTICIPATING("참여하지 않은 챌린지입니다.", 400),
 	INVALID_MAX_GROUP_COUNT("최대 그룹 수는 0보다 커야 합니다.", 400),
 	INVALID_MAX_PARTICIPANTS_COUNT("최대 참여자 수는 0보다 커야 합니다.", 400),
