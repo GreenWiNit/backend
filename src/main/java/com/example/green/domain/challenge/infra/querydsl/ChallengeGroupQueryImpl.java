@@ -3,6 +3,7 @@ package com.example.green.domain.challenge.infra.querydsl;
 import static com.example.green.domain.challenge.infra.querydsl.predicates.ChallengeGroupPredicates.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
@@ -112,7 +113,10 @@ public class ChallengeGroupQueryImpl implements ChallengeGroupQuery {
 	}
 
 	public void validateActivityDateParticipation(Long memberId, LocalDate activityDate) {
-		if (challengeGroupRepository.existsParticipationOnActivityDate(memberId, activityDate)) {
+		LocalDateTime startOfDay = activityDate.atStartOfDay();
+		LocalDateTime endOfDay = startOfDay.plusDays(1);
+
+		if (challengeGroupRepository.existsParticipationOnActivityDate(memberId, startOfDay, endOfDay)) {
 			throw new ChallengeException(ChallengeExceptionMessage.ALREADY_PARTICIPATED_ON_THIS_DATE);
 		}
 	}
