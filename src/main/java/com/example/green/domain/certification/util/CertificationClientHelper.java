@@ -61,12 +61,12 @@ public class CertificationClientHelper {
 				cert.getMember().getMemberId(),
 				BigDecimal.valueOf(cert.getChallenge().getChallengePoint()),
 				cert.getChallenge().getChallengeId(),
-				cert.getChallenge().getChallengeName(),
+				cert.getChallenge().getChallengeName() + " 완료",
 				PointTransactionType.CHALLENGE,
 				LocalDateTime.of(cert.getCertifiedDate(), LocalTime.MIN)
 			))
 			.toList();
-		
+
 		pointClient.earnPoints(request);
 	}
 }

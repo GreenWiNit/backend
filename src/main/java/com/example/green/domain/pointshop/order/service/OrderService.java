@@ -52,7 +52,7 @@ public class OrderService {
 		String itemName = savedOrder.getOrderItems().getFirst().getItemSnapshot().getItemName();
 		pointClient.spendPoints(
 			new PointSpendRequest(
-				memberId, savedOrder.getTotalPrice(), savedOrder.getId(), itemName + "교환", timeUtils.now()
+				memberId, savedOrder.getTotalPrice(), savedOrder.getId(), itemName + " 교환", timeUtils.now()
 			)
 		);
 	}
