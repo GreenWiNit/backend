@@ -37,17 +37,26 @@ public class FileService {
 	}
 
 	public void confirmUsingImage(String imageUrl) {
+		if (imageUrl == null || imageUrl.trim().isEmpty()) {
+			return;
+		}
 		FileEntity fileEntity = getFileEntityFromImageUrl(imageUrl);
 		fileEntity.markAsPermanent();
 	}
 
 	public void unUseImage(String imageUrl) {
+		if (imageUrl == null || imageUrl.trim().isEmpty()) {
+			return;
+		}
 		FileEntity fileEntity = getFileEntityFromImageUrl(imageUrl);
 		fileEntity.markDeleted();
 	}
 
 	public void swapImage(String beforeImageUrl, String afterImageUrl) {
-		if (beforeImageUrl.equals(afterImageUrl)) {
+		if (beforeImageUrl == null && afterImageUrl == null) {
+			return;
+		}
+		if (beforeImageUrl != null && beforeImageUrl.equals(afterImageUrl)) {
 			return;
 		}
 		unUseImage(beforeImageUrl);
