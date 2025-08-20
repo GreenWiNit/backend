@@ -22,6 +22,7 @@ import com.example.green.domain.pointshop.order.entity.vo.MemberSnapshot;
 import com.example.green.domain.pointshop.order.repository.OrderRepository;
 import com.example.green.domain.pointshop.order.service.command.SingleOrderCommand;
 import com.example.green.domain.pointshop.product.service.PointProductService;
+import com.example.green.global.utils.TimeUtils;
 import com.example.green.infra.client.PointClient;
 import com.example.green.infra.client.request.PointSpendRequest;
 
@@ -36,6 +37,8 @@ class OrderServiceTest {
 	private DeliveryAddressService deliveryAddressService;
 	@Mock
 	private OrderRepository orderRepository;
+	@Mock
+	private TimeUtils timeUtils;
 	@InjectMocks
 	private OrderService orderService;
 

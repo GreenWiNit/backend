@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
@@ -15,9 +16,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.example.green.domain.point.entity.PointTransaction;
 import com.example.green.domain.point.entity.vo.PointAmount;
 import com.example.green.domain.point.entity.vo.PointSource;
-import com.example.green.domain.point.repository.PointTransactionRepository;
 import com.example.green.domain.point.exception.PointException;
 import com.example.green.domain.point.exception.PointExceptionMessage;
+import com.example.green.domain.point.repository.PointTransactionRepository;
 
 @ExtendWith(MockitoExtension.class)
 class PointTransactionServiceTest {
@@ -36,7 +37,8 @@ class PointTransactionServiceTest {
 		when(mock.canSpend(any(PointAmount.class))).thenReturn(true);
 
 		// when
-		pointTransactionService.spendPoints(1L, PointAmount.of(BigDecimal.valueOf(1000)), mock(PointSource.class));
+		pointTransactionService.spendPoints(
+			1L, PointAmount.of(BigDecimal.valueOf(1000)), mock(PointSource.class), mock(LocalDateTime.class));
 
 		// then
 		verify(pointTransactionRepository).save(any(PointTransaction.class));
@@ -50,7 +52,9 @@ class PointTransactionServiceTest {
 		when(mock.canSpend(any(PointAmount.class))).thenReturn(false);
 
 		assertThatThrownBy(() ->
-			pointTransactionService.spendPoints(1L, PointAmount.of(BigDecimal.ZERO), mock(PointSource.class)))
+			pointTransactionService.spendPoints(
+				1L, PointAmount.of(BigDecimal.ZERO), mock(PointSource.class), mock(LocalDateTime.class)
+			))
 			.isInstanceOf(PointException.class)
 			.hasFieldOrPropertyWithValue("exceptionMessage", PointExceptionMessage.NOT_ENOUGH_POINT);
 	}
@@ -62,7 +66,9 @@ class PointTransactionServiceTest {
 		when(pointTransactionRepository.findLatestBalance(anyLong())).thenReturn(Optional.of(mock));
 
 		// when
-		pointTransactionService.earnPoints(1L, PointAmount.of(BigDecimal.valueOf(1000)), mock(PointSource.class));
+		pointTransactionService.earnPoints(
+			1L, PointAmount.of(BigDecimal.valueOf(1000)), mock(PointSource.class), mock(LocalDateTime.class)
+		);
 
 		// then
 		verify(pointTransactionRepository).save(any(PointTransaction.class));
@@ -74,7 +80,9 @@ class PointTransactionServiceTest {
 		when(pointTransactionRepository.findLatestBalance(anyLong())).thenReturn(Optional.empty());
 
 		// when
-		pointTransactionService.earnPoints(1L, PointAmount.of(BigDecimal.valueOf(1000)), mock(PointSource.class));
+		pointTransactionService.earnPoints(
+			1L, PointAmount.of(BigDecimal.valueOf(1000)), mock(PointSource.class), mock(LocalDateTime.class)
+		);
 
 		// then
 		verify(pointTransactionRepository).save(any(PointTransaction.class));

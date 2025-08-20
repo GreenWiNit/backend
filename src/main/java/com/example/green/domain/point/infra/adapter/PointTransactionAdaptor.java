@@ -28,7 +28,7 @@ public class PointTransactionAdaptor implements PointClient {
 	public void spendPoints(PointSpendRequest dto) {
 		PointSource pointSource = PointSource.ofTarget(dto.targetId(), dto.description(), TargetType.EXCHANGE);
 		PointAmount amount = PointAmount.of(dto.amount());
-		pointTransactionService.spendPoints(dto.memberId(), amount, pointSource);
+		pointTransactionService.spendPoints(dto.memberId(), amount, pointSource, dto.transactionAt());
 	}
 
 	@Override
@@ -37,7 +37,7 @@ public class PointTransactionAdaptor implements PointClient {
 			TargetType type = TargetType.from(dto.type());
 			PointSource pointSource = PointSource.ofTarget(dto.targetId(), dto.description(), type);
 			PointAmount amount = PointAmount.of(dto.amount());
-			pointTransactionService.earnPoints(dto.memberId(), amount, pointSource);
+			pointTransactionService.earnPoints(dto.memberId(), amount, pointSource, dto.transactionAt());
 		}
 	}
 

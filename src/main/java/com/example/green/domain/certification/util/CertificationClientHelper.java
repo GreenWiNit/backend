@@ -2,6 +2,8 @@ package com.example.green.domain.certification.util;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 import org.springframework.stereotype.Component;
@@ -60,9 +62,11 @@ public class CertificationClientHelper {
 				BigDecimal.valueOf(cert.getChallenge().getChallengePoint()),
 				cert.getChallenge().getChallengeId(),
 				cert.getChallenge().getChallengeName(),
-				PointTransactionType.CHALLENGE
+				PointTransactionType.CHALLENGE,
+				LocalDateTime.of(cert.getCertifiedDate(), LocalTime.MIN)
 			))
 			.toList();
+		
 		pointClient.earnPoints(request);
 	}
 }

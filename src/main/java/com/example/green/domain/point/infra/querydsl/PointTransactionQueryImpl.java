@@ -20,9 +20,7 @@ import com.example.green.global.api.page.CursorTemplate;
 import com.example.green.global.api.page.PageTemplate;
 import com.example.green.global.api.page.Pagination;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.jpa.JPAExpressions;
 
-import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 
 // todo: 통합 테스트 추가
@@ -34,25 +32,10 @@ public class PointTransactionQueryImpl implements PointTransactionQueryRepositor
 	private static final int DEFAULT_CURSOR_VIEW_SIZE = 20;
 	private static final QPointTransaction qPointTransaction = QPointTransaction.pointTransaction;
 	private final PointTransactionQueryExecutor queryExecutor;
-	private final EntityManager entityManager;
 
 	@Override
 	public MemberPointSummary findMemberPointSummary(Long memberId) {
-		return entityManager.createQuery("""
-				SELECT new com.example.green.domain.point.repository.dto.MemberPointSummary(
-					COALESCE(
-						(SELECT pt2.balanceAfter.amount
-						 FROM PointTransaction pt2
-						 WHERE pt2.memberId = :memberId
-						 ORDER BY pt2.id DESC
-						 LIMIT 1), 0
-					),
-					COALESCE(SUM(CASE WHEN pt.type = 'EARN' THEN pt.pointAmount.amount ELSE 0 END), 0),
-					COALESCE(SUM(CASE WHEN pt.type = 'SPEND' THEN pt.pointAmount.amount ELSE 0 END), 0)
-				)
-				FROM PointTransaction pt
-				WHERE pt.memberId = :memberId
-				""", MemberPointSummary.class)
+		return queryExecutor.toFindMemberPointSummaryQuery()
 			.setParameter("memberId", memberId)
 			.getSingleResult();
 	}
@@ -63,35 +46,16 @@ public class PointTransactionQueryImpl implements PointTransactionQueryRepositor
 		Long cursor,
 		TransactionType status
 	) {
-		BooleanExpression expression = PointTransactionPredicates.fromCondition(memberId, cursor, status);
+		BooleanExpression expression = PointTransactionPredicates.toPointTransactionQuery(memberId, cursor, status);
 		List<MyPointTransactionDto> content =
 			queryExecutor.createMyPointTransactionQuery(expression, DEFAULT_CURSOR_VIEW_SIZE);
 
-		boolean hasNext = content.size() > DEFAULT_CURSOR_VIEW_SIZE;
-		if (!hasNext) {
-			return CursorTemplate.of(content);
-		}
-
-		content.removeLast();
-		if (content.isEmpty()) {
-			return CursorTemplate.ofEmpty();
-		}
-
-		return CursorTemplate.ofWithNextCursor(content.getLast().pointTransactionId(), content);
+		return CursorTemplate.from(content, DEFAULT_CURSOR_VIEW_SIZE, MyPointTransactionDto::pointTransactionId);
 	}
 
 	@Override
 	public Map<Long, BigDecimal> findEarnedPointByMember(List<Long> memberIds) {
-		BooleanExpression baseExpression = qPointTransaction.memberId.in(memberIds);
-		BooleanExpression finalExpression = baseExpression.and(
-			qPointTransaction.id.in(
-				JPAExpressions.select(qPointTransaction.id.max())
-					.from(qPointTransaction)
-					.where(baseExpression)
-					.groupBy(qPointTransaction.memberId)
-			)
-		);
-		
+		BooleanExpression finalExpression = PointTransactionPredicates.toEarnedPointByMemberQuery(memberIds);
 		Map<Long, BigDecimal> earnedPoints = queryExecutor.createEarnedPointQuery(finalExpression);
 
 		return memberIds.stream()
@@ -107,7 +71,6 @@ public class PointTransactionQueryImpl implements PointTransactionQueryRepositor
 		PointTransactionSearchCondition condition
 	) {
 		BooleanExpression expression = qPointTransaction.memberId.eq(memberId);
-
 		Long totalCount = queryExecutor.createTotalCountQuery(expression);
 		Pagination pagination = Pagination.fromCondition(condition, totalCount);
 		List<PointTransactionDto> fetch = queryExecutor.createPointTransactionsQuery(expression, pagination);

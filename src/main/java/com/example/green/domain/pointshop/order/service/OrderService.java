@@ -16,6 +16,7 @@ import com.example.green.domain.pointshop.order.exception.OrderExceptionMessage;
 import com.example.green.domain.pointshop.order.repository.OrderRepository;
 import com.example.green.domain.pointshop.order.service.command.SingleOrderCommand;
 import com.example.green.domain.pointshop.product.service.PointProductService;
+import com.example.green.global.utils.TimeUtils;
 import com.example.green.infra.client.PointClient;
 import com.example.green.infra.client.request.PointSpendRequest;
 
@@ -30,6 +31,7 @@ public class OrderService {
 	private final DeliveryAddressService deliveryAddressService;
 	private final PointClient pointClient;
 	private final OrderRepository orderRepository;
+	private final TimeUtils timeUtils;
 
 	// todo: 통합 테스트
 	@Transactional
@@ -49,7 +51,9 @@ public class OrderService {
 		pointProductService.decreaseSingleItemStock(command.orderItemId(), command.quantity());
 		String itemName = savedOrder.getOrderItems().getFirst().getItemSnapshot().getItemName();
 		pointClient.spendPoints(
-			new PointSpendRequest(memberId, savedOrder.getTotalPrice(), savedOrder.getId(), itemName + "교환")
+			new PointSpendRequest(
+				memberId, savedOrder.getTotalPrice(), savedOrder.getId(), itemName + "교환", timeUtils.now()
+			)
 		);
 	}
 
