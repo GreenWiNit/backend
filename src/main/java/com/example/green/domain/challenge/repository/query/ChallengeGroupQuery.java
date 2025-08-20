@@ -1,5 +1,6 @@
 package com.example.green.domain.challenge.repository.query;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import com.example.green.domain.challenge.controller.query.dto.challenge.AdminChallengeGroupDetailDto;
@@ -35,4 +36,6 @@ public interface ChallengeGroupQuery {
 	List<AdminTeamParticipantDto> findParticipantByChallengeForExcel(Long challengeId);
 
 	ChallengeGroup getChallengeGroup(Long groupId, Long memberId);
+
+	void validateActivityDateParticipation(Long memberId, LocalDate activityDate);
 }
