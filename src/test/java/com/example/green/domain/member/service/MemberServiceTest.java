@@ -12,7 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.example.green.domain.member.config.ProfileConfig;
+import com.example.green.domain.file.config.SystemFileConfig;
 import com.example.green.domain.member.entity.Member;
 import com.example.green.domain.member.repository.MemberRepository;
 import com.example.green.infra.client.FileClient;
@@ -30,7 +30,7 @@ class MemberServiceTest {
 	private FileClient fileClient;
 
 	@Mock
-	private ProfileConfig profileConfig;
+	private SystemFileConfig systemFileConfig;
 
 	@InjectMocks
 	private MemberService memberService;
@@ -188,7 +188,7 @@ class MemberServiceTest {
 		member.updateProfile("기존닉네임", "https://s3.example.com/old-image.jpg");
 
 		given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
-		given(profileConfig.getDefaultProfileImageUrl()).willReturn(DEFAULT_PROFILE_IMAGE_URL);
+		given(systemFileConfig.getDefaultProfileImageUrl()).willReturn(DEFAULT_PROFILE_IMAGE_URL);
 
 		// When - null을 전달하면 기본 이미지로 변경
 		Member updatedMember = memberService.updateProfile(memberId, "새닉네임", null);
@@ -213,7 +213,7 @@ class MemberServiceTest {
 		String memberKey = provider + " " + providerId;
 		
 		given(memberRepository.findByMemberKey(memberKey)).willReturn(Optional.empty());
-		given(profileConfig.getDefaultProfileImageUrl()).willReturn(DEFAULT_PROFILE_IMAGE_URL);
+		given(systemFileConfig.getDefaultProfileImageUrl()).willReturn(DEFAULT_PROFILE_IMAGE_URL);
 		given(memberRepository.save(any(Member.class))).willAnswer(invocation -> invocation.getArgument(0));
 
 		// When
@@ -221,7 +221,7 @@ class MemberServiceTest {
 
 		// Then
 		assertThat(result).isEqualTo(memberKey);
-		verify(profileConfig).getDefaultProfileImageUrl();
+		verify(systemFileConfig).getDefaultProfileImageUrl();
 		verify(memberRepository).save(argThat(member -> 
 			member.getProfile().getProfileImageUrl().equals(DEFAULT_PROFILE_IMAGE_URL)
 		));
@@ -247,7 +247,7 @@ class MemberServiceTest {
 
 		// Then
 		assertThat(result).isEqualTo(memberKey);
-		verify(profileConfig, never()).getDefaultProfileImageUrl();
+		verify(systemFileConfig, never()).getDefaultProfileImageUrl();
 		verify(memberRepository).save(argThat(member -> 
 			member.getProfile().getProfileImageUrl().equals(profileImageUrl)
 		));

@@ -12,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.green.domain.file.config.SystemFileConfig;
 import com.example.green.domain.file.domain.FileEntity;
 import com.example.green.domain.file.domain.vo.Purpose;
 import com.example.green.domain.file.exception.FileException;
@@ -28,6 +29,8 @@ class FileServiceTest {
 	private FileJpaRepository fileJpaRepository;
 	@Mock
 	private ImageValidator imageValidator;
+	@Mock
+	private SystemFileConfig systemFileConfig;
 	@InjectMocks
 	private FileService fileService;
 
@@ -67,9 +70,11 @@ class FileServiceTest {
 		// given
 		String imageUrl = "imageUrl";
 		String imageKey = "imageKey";
+		when(systemFileConfig.isSystemFile(imageUrl)).thenReturn(false);
 		when(storageHelper.extractImageKey(imageUrl)).thenReturn(imageKey);
 
 		FileEntity fileEntity = mock(FileEntity.class);
+		when(fileEntity.isSystemFile()).thenReturn(false);
 		when(fileJpaRepository.findByFileKey(eq(imageKey))).thenReturn(Optional.of(fileEntity));
 
 		// when
@@ -81,19 +86,20 @@ class FileServiceTest {
 	}
 
 	@Test
-	void 존재하지_않는_이미지_키_일_경우_예외를_던진다() {
+	void 존재하지_않는_이미지_키_일_경우_아무것도_하지_않는다() {
 		// given
 		String imageUrl = "imageUrl";
 		String imageKey = "imageKey";
+		when(systemFileConfig.isSystemFile(imageUrl)).thenReturn(false);
 		when(storageHelper.extractImageKey(imageUrl)).thenReturn(imageKey);
 		when(fileJpaRepository.findByFileKey(eq(imageKey))).thenReturn(Optional.empty());
 
-		// when & then
-		assertThatThrownBy(() -> fileService.confirmUsingImage(imageUrl))
-			.isInstanceOf(FileException.class)
-			.hasFieldOrPropertyWithValue("exceptionMessage", FileExceptionMessage.NOT_FOUND_FILE);
+		// when
+		fileService.confirmUsingImage(imageUrl);
 
+		// then - null 반환으로 예외가 발생하지 않음
 		verify(imageValidator).validateUrl(imageUrl);
+		verify(storageHelper).extractImageKey(imageUrl);
 	}
 
 	@Test
@@ -101,9 +107,11 @@ class FileServiceTest {
 		// given
 		String imageUrl = "imageUrl";
 		String imageKey = "imageKey";
+		when(systemFileConfig.isSystemFile(imageUrl)).thenReturn(false);
 		when(storageHelper.extractImageKey(imageUrl)).thenReturn(imageKey);
 
 		FileEntity fileEntity = mock(FileEntity.class);
+		when(fileEntity.isSystemFile()).thenReturn(false);
 		when(fileJpaRepository.findByFileKey(eq(imageKey))).thenReturn(Optional.of(fileEntity));
 
 		// when
@@ -112,5 +120,33 @@ class FileServiceTest {
 		// then
 		verify(imageValidator).validateUrl(imageUrl);
 		verify(fileEntity).markDeleted();
+	}
+	
+	@Test
+	void 시스템_파일은_삭제하지_않는다() {
+		// given
+		String systemImageUrl = "https://static.greenwinit.store/images/profile/default.png";
+		when(systemFileConfig.isSystemFile(systemImageUrl)).thenReturn(true);
+
+		// when
+		fileService.unUseImage(systemImageUrl);
+
+		// then - 시스템 파일이므로 아무 작업도 하지 않음
+		verify(imageValidator, never()).validateUrl(any());
+		verify(fileJpaRepository, never()).findByFileKey(any());
+	}
+	
+	@Test
+	void 시스템_파일은_상태변경하지_않는다() {
+		// given
+		String systemImageUrl = "https://static.greenwinit.store/images/profile/default.png";
+		when(systemFileConfig.isSystemFile(systemImageUrl)).thenReturn(true);
+
+		// when
+		fileService.confirmUsingImage(systemImageUrl);
+
+		// then - 시스템 파일이므로 아무 작업도 하지 않음
+		verify(imageValidator, never()).validateUrl(any());
+		verify(fileJpaRepository, never()).findByFileKey(any());
 	}
 }

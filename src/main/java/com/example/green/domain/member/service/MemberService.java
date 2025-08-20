@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import com.example.green.domain.member.config.ProfileConfig;
+import com.example.green.domain.file.config.SystemFileConfig;
 import com.example.green.domain.member.entity.Member;
 import com.example.green.domain.member.exception.MemberExceptionMessage;
 import com.example.green.domain.member.repository.MemberRepository;
@@ -30,7 +30,7 @@ public class MemberService {
 
 	private final MemberRepository memberRepository;
 	private final FileClient fileClient;
-	private final ProfileConfig profileConfig;
+	private final SystemFileConfig systemFileConfig;
 
 	// 재시도 설정 상수들
 	private static final int SIGNUP_MAX_ATTEMPTS = 3;
@@ -122,7 +122,7 @@ public class MemberService {
 			Member member = Member.create(memberKey, name, email);
 
 			if (!StringUtils.hasText(profileImageUrl)) {
-				profileImageUrl = profileConfig.getDefaultProfileImageUrl();
+				profileImageUrl = systemFileConfig.getDefaultProfileImageUrl();
 			}
 
 			// 추가 프로필 정보가 있는 경우 업데이트
@@ -226,12 +226,16 @@ public class MemberService {
 		String oldProfileImageUrl = member.getProfile().getProfileImageUrl();
 
 		if (profileImageUrl == null) {
-			profileImageUrl = profileConfig.getDefaultProfileImageUrl();
+			profileImageUrl = systemFileConfig.getDefaultProfileImageUrl();
+			log.info("프로필 이미지가 null이므로 기본 이미지로 설정: {}", profileImageUrl);
 		}
 
 		member.updateProfile(nickname, profileImageUrl);
 
 		String actualNewProfileImageUrl = member.getProfile().getProfileImageUrl();
+		
+		log.info("프로필 이미지 업데이트 - old: {}, new: {}, isDefaultImage: {}", 
+			oldProfileImageUrl, actualNewProfileImageUrl, isDefaultImage(actualNewProfileImageUrl));
 
 		processProfileImageUpdate(oldProfileImageUrl, actualNewProfileImageUrl);
 
@@ -271,6 +275,10 @@ public class MemberService {
 			fileClient.unUseImage(profileImageUrl);
 			log.info("프로필 이미지 사용 중지: {}", profileImageUrl);
 		}
+	}
+	
+	private boolean isDefaultImage(String profileImageUrl) {
+		return profileImageUrl != null && profileImageUrl.equals(systemFileConfig.getDefaultProfileImageUrl());
 	}
 
 	private boolean isProfileImageChanged(String oldProfileImageUrl, String newProfileImageUrl) {
