@@ -45,13 +45,6 @@ public class ChallengeGroupQueryImpl implements ChallengeGroupQuery {
 			.orElseThrow(() -> new ChallengeException(ChallengeExceptionMessage.CHALLENGE_GROUP_NOT_FOUND));
 	}
 
-	@Override
-	public void validateLeader(Long groupId, Long leaderId) {
-		if (!challengeGroupRepository.existsByIdAndLeaderId(groupId, leaderId)) {
-			throw new ChallengeException(ChallengeExceptionMessage.NOT_GROUP_LEADER);
-		}
-	}
-
 	public CursorTemplate<String, MyChallengeGroupDto> findMyGroup(
 		Long challengeId, String cursor, Integer size, Long memberId
 	) {

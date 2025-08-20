@@ -53,8 +53,15 @@ public class ChallengeGroupService {
 	}
 
 	public void delete(Long groupId, Long memberId) {
-		challengeGroupQuery.validateLeader(groupId, memberId);
-		challengeGroupRepository.deleteById(groupId);
+		ChallengeGroup challengeGroup = challengeGroupQuery.getChallengeGroup(groupId);
+		if (!challengeGroup.isLeader(memberId)) {
+			throw new ChallengeException(ChallengeExceptionMessage.NOT_GROUP_LEADER);
+		}
+		// 참여 가능한 상태일 경우에만 챌린지를 삭제할 수 있음. -> 참여 된 상태부터는 챌린지를 삭제할 수 없음
+		if (!challengeGroup.getPeriod().canParticipate(timeUtils.now())) {
+			throw new ChallengeException(ChallengeExceptionMessage.CANNOT_DELETE_AFTER_ACTIVITY_START);
+		}
+		challengeGroupRepository.delete(challengeGroup);
 	}
 
 	@Retryable(retryFor = OptimisticLockingFailureException.class)

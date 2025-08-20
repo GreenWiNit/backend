@@ -17,8 +17,6 @@ public interface ChallengeGroupQuery {
 
 	ChallengeGroup getChallengeGroup(Long groupId);
 
-	void validateLeader(Long groupId, Long memberId);
-
 	CursorTemplate<String, MyChallengeGroupDto> findMyGroup(Long challengeId, String cursor, Integer size,
 		Long memberId);
 

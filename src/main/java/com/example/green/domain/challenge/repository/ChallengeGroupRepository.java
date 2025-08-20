@@ -9,8 +9,6 @@ import com.example.green.domain.challenge.entity.group.ChallengeGroup;
 
 public interface ChallengeGroupRepository extends JpaRepository<ChallengeGroup, Long> {
 
-	boolean existsByIdAndLeaderId(Long id, Long leaderId);
-
 	@Query("""
 		SELECT CASE WHEN count(p.id) > 0 THEN TRUE ELSE FALSE END
 		FROM ChallengeGroupParticipation p
