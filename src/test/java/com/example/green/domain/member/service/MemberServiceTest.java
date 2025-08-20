@@ -196,9 +196,61 @@ class MemberServiceTest {
 		// Then
 		assertThat(updatedMember.getProfile().getNickname()).isEqualTo("새닉네임");
 		assertThat(updatedMember.getProfile().getProfileImageUrl()).isEqualTo(DEFAULT_PROFILE_IMAGE_URL);
-		// 기본 이미지로 변경 시 새 이미지 확정 및 기존 이미지 삭제
+
 		verify(fileClient).confirmUsingImage(DEFAULT_PROFILE_IMAGE_URL);
 		verify(fileClient).unUseImage("https://s3.example.com/old-image.jpg");
+	}
+
+	@Test
+	@DisplayName("회원가입 시 프로필 이미지 미등록 시 기본 이미지 설정")
+	void signUp_WithoutProfileImage_SetsDefaultImage() {
+		// Given
+		String provider = "google";
+		String providerId = "123456";
+		String name = "테스트유저";
+		String email = "test@example.com";
+		String nickname = "테스트닉네임";
+		String memberKey = provider + " " + providerId;
+		
+		given(memberRepository.findByMemberKey(memberKey)).willReturn(Optional.empty());
+		given(profileConfig.getDefaultProfileImageUrl()).willReturn(DEFAULT_PROFILE_IMAGE_URL);
+		given(memberRepository.save(any(Member.class))).willAnswer(invocation -> invocation.getArgument(0));
+
+		// When
+		String result = memberService.signupFromOAuth2(provider, providerId, name, email, nickname, null);
+
+		// Then
+		assertThat(result).isEqualTo(memberKey);
+		verify(profileConfig).getDefaultProfileImageUrl();
+		verify(memberRepository).save(argThat(member -> 
+			member.getProfile().getProfileImageUrl().equals(DEFAULT_PROFILE_IMAGE_URL)
+		));
+	}
+
+	@Test
+	@DisplayName("회원가입 시 프로필 이미지 제공 시 해당 이미지 사용")
+	void signUp_WithProfileImage_UsesProvidedImage() {
+		// Given
+		String provider = "kakao";
+		String providerId = "789012";
+		String name = "테스트유저2";
+		String email = "test2@example.com";
+		String nickname = "테스트닉네임2";
+		String profileImageUrl = "https://example.com/custom-image.jpg";
+		String memberKey = provider + " " + providerId;
+		
+		given(memberRepository.findByMemberKey(memberKey)).willReturn(Optional.empty());
+		given(memberRepository.save(any(Member.class))).willAnswer(invocation -> invocation.getArgument(0));
+
+		// When
+		String result = memberService.signupFromOAuth2(provider, providerId, name, email, nickname, profileImageUrl);
+
+		// Then
+		assertThat(result).isEqualTo(memberKey);
+		verify(profileConfig, never()).getDefaultProfileImageUrl();
+		verify(memberRepository).save(argThat(member -> 
+			member.getProfile().getProfileImageUrl().equals(profileImageUrl)
+		));
 	}
 
 } 
