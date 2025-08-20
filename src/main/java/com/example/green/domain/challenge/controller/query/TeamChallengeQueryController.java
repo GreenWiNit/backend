@@ -17,6 +17,7 @@ import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.page.CursorTemplate;
 import com.example.green.global.security.PrincipalDetails;
 import com.example.green.global.security.annotation.AuthenticatedApi;
+import com.example.green.global.security.annotation.PublicApi;
 import com.example.green.global.utils.TimeUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -24,13 +25,13 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping("/api/challenges/team")
 @RestController
-@AuthenticatedApi
 public class TeamChallengeQueryController implements TeamChallengeQueryControllerDocs {
 
 	private final TeamChallengeQuery teamChallengeQuery;
 	private final TimeUtils timeUtils;
 
 	@GetMapping
+	@PublicApi
 	public ApiTemplate<CursorTemplate<Long, ChallengeDto>> getTeamChallenges(
 		@RequestParam(required = false) Long cursor,
 		@RequestParam(required = false, defaultValue = "20") Integer pageSize
@@ -42,6 +43,7 @@ public class TeamChallengeQueryController implements TeamChallengeQueryControlle
 	}
 
 	@GetMapping("/{challengeId}")
+	@Deprecated
 	public ApiTemplate<ChallengeDetailDto> getTeamChallenge(
 		@PathVariable Long challengeId,
 		@AuthenticationPrincipal PrincipalDetails principalDetails
@@ -52,6 +54,7 @@ public class TeamChallengeQueryController implements TeamChallengeQueryControlle
 	}
 
 	@GetMapping("/me")
+	@AuthenticatedApi
 	public ApiTemplate<CursorTemplate<Long, ChallengeDto>> getMyTeamChallenges(
 		@RequestParam(required = false) Long cursor,
 		@AuthenticationPrincipal PrincipalDetails currentUser,
