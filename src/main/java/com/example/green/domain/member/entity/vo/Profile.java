@@ -41,18 +41,19 @@ public class Profile {
 
 
 	public Profile update(String newNickname, String newProfileImageUrl) {
+
 		String updatedNickname = Optional.ofNullable(newNickname)
 			.filter(StringUtils::hasText)
 			.orElse(this.nickname);
+
 		String updatedImageUrl;
 		if (newProfileImageUrl == null) {
 			updatedImageUrl = null;
-		} else if (StringUtils.hasText(newProfileImageUrl)) {
-			updatedImageUrl = newProfileImageUrl.trim();
-		} else {
+		} else if (newProfileImageUrl.trim().isEmpty()) {
 			updatedImageUrl = this.profileImageUrl;
+		} else {
+			updatedImageUrl = newProfileImageUrl.trim();
 		}
-
 		if (updatedNickname.equals(this.nickname)
 			&& Objects.equals(updatedImageUrl, this.profileImageUrl)) {
 			return this;

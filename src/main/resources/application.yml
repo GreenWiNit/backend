@@ -120,6 +120,8 @@ app:
   storage:
     bucket: ${STORAGE_BUCKET}
     base-url: ${STORAGE_BASE_URL}
+  profile:
+    default-image-url: ${DEFAULT_PROFILE_IMAGE_URL:https://static.greenwinit.store/images/profile/2b/20250820/5aa9293e_1755672635950.png}
   frontend:
     base-url: ${FRONTEND_URL:http://localhost:3000}
   backend:
