@@ -48,17 +48,25 @@ public class FileEntity extends BaseEntity {
 
 	@Enumerated(EnumType.STRING)
 	private FileStatus fileStatus;
+	
+	@Column(name = "is_system_file", nullable = false)
+	private boolean systemFile = false;
 
-	protected FileEntity(FileMetaData metaData, String fileKey, Purpose purpose) {
+	protected FileEntity(FileMetaData metaData, String fileKey, Purpose purpose, boolean isSystemFile) {
 		validateBasicConstruction(metaData, fileKey, purpose);
 		this.metaData = metaData;
 		this.fileKey = fileKey;
 		this.purpose = purpose;
-		this.fileStatus = FileStatus.TEMPORARY;
+		this.fileStatus = isSystemFile ? FileStatus.PERMANENT : FileStatus.TEMPORARY;
+		this.systemFile = isSystemFile;
 	}
 
 	public static FileEntity create(FileMetaData metaData, String fileKey, Purpose purpose) {
-		return new FileEntity(metaData, fileKey, purpose);
+		return new FileEntity(metaData, fileKey, purpose, false);
+	}
+	
+	public static FileEntity createSystemFile(FileMetaData metaData, String fileKey, Purpose purpose) {
+		return new FileEntity(metaData, fileKey, purpose, true);
 	}
 
 	private static void validateBasicConstruction(FileMetaData metaData, String fileKey, Purpose purpose) {
@@ -74,9 +82,20 @@ public class FileEntity extends BaseEntity {
 	}
 
 	public void markAsPermanent() {
+		if (systemFile) {
+			return; // 시스템 파일은 항상 PERMANENT
+		}
 		if (isDeleted()) {
 			throw new FileException(FileExceptionMessage.CANNOT_RESTORE_DELETED_FILE);
 		}
 		this.fileStatus = FileStatus.PERMANENT;
+	}
+	
+	@Override
+	public void markDeleted() {
+		if (systemFile) {
+			return; // 시스템 파일은 삭제할 수 없음
+		}
+		super.markDeleted();
 	}
 }

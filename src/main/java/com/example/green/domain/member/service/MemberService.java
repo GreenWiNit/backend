@@ -227,11 +227,15 @@ public class MemberService {
 
 		if (profileImageUrl == null) {
 			profileImageUrl = profileConfig.getDefaultProfileImageUrl();
+			log.info("프로필 이미지가 null이므로 기본 이미지로 설정: {}", profileImageUrl);
 		}
 
 		member.updateProfile(nickname, profileImageUrl);
 
 		String actualNewProfileImageUrl = member.getProfile().getProfileImageUrl();
+		
+		log.info("프로필 이미지 업데이트 - old: {}, new: {}, isDefaultImage: {}", 
+			oldProfileImageUrl, actualNewProfileImageUrl, isDefaultImage(actualNewProfileImageUrl));
 
 		processProfileImageUpdate(oldProfileImageUrl, actualNewProfileImageUrl);
 
@@ -271,6 +275,10 @@ public class MemberService {
 			fileClient.unUseImage(profileImageUrl);
 			log.info("프로필 이미지 사용 중지: {}", profileImageUrl);
 		}
+	}
+	
+	private boolean isDefaultImage(String profileImageUrl) {
+		return profileImageUrl != null && profileImageUrl.equals(profileConfig.getDefaultProfileImageUrl());
 	}
 
 	private boolean isProfileImageChanged(String oldProfileImageUrl, String newProfileImageUrl) {

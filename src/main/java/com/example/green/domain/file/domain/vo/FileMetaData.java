@@ -24,7 +24,7 @@ public class FileMetaData {
 
 	@Column(nullable = false)
 	private Long contentLength;
-
+	
 	protected FileMetaData(String originalFilename, String contentType, long contentLength) {
 		validateBasicMetaData(originalFilename, contentType, contentLength);
 		this.originalFilename = originalFilename.trim();
@@ -38,6 +38,21 @@ public class FileMetaData {
 			multipartFile.getContentType(),
 			multipartFile.getSize()
 		);
+	}
+	
+	public static FileMetaData createForSystemFile(String filename, String contentType, Long size) {
+		// 시스템 파일은 size가 0이어도 허용
+		if (filename == null || filename.isBlank()) {
+			throw new FileException(FileExceptionMessage.INVALID_FILE_METADATA);
+		}
+		if (contentType == null || contentType.isBlank()) {
+			throw new FileException(FileExceptionMessage.INVALID_FILE_METADATA);
+		}
+		FileMetaData metaData = new FileMetaData();
+		metaData.originalFilename = filename.trim();
+		metaData.contentType = contentType.trim();
+		metaData.contentLength = size != null ? size : 1L; // 0이면 1로 설정
+		return metaData;
 	}
 
 	private static void validateBasicMetaData(String originalFilename, String contentType, long contentLength) {
