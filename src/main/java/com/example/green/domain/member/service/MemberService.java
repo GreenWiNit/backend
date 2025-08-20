@@ -1,5 +1,6 @@
 package com.example.green.domain.member.service;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import org.springframework.dao.DataIntegrityViolationException;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import com.example.green.domain.member.config.ProfileConfig;
 import com.example.green.domain.member.entity.Member;
 import com.example.green.domain.member.exception.MemberExceptionMessage;
 import com.example.green.domain.member.repository.MemberRepository;
@@ -28,6 +30,7 @@ public class MemberService {
 
 	private final MemberRepository memberRepository;
 	private final FileClient fileClient;
+	private final ProfileConfig profileConfig;
 
 	// 재시도 설정 상수들
 	private static final int SIGNUP_MAX_ATTEMPTS = 3;
@@ -117,6 +120,10 @@ public class MemberService {
 		String profileImageUrl) {
 		try {
 			Member member = Member.create(memberKey, name, email);
+
+			if (!StringUtils.hasText(profileImageUrl)) {
+				profileImageUrl = profileConfig.getDefaultProfileImageUrl();
+			}
 
 			// 추가 프로필 정보가 있는 경우 업데이트
 			if (hasAdditionalProfileInfo(nickname, profileImageUrl)) {
@@ -218,12 +225,18 @@ public class MemberService {
 
 		String oldProfileImageUrl = member.getProfile().getProfileImageUrl();
 
+		if (profileImageUrl == null) {
+			profileImageUrl = profileConfig.getDefaultProfileImageUrl();
+		}
+
 		member.updateProfile(nickname, profileImageUrl);
 
-		processProfileImageUpdate(oldProfileImageUrl, profileImageUrl);
+		String actualNewProfileImageUrl = member.getProfile().getProfileImageUrl();
+
+		processProfileImageUpdate(oldProfileImageUrl, actualNewProfileImageUrl);
 
 		log.info("프로필 업데이트 완료: memberId={}, nickname={}, profileImageUrl={}",
-			memberId, nickname, profileImageUrl);
+			memberId, member.getProfile().getNickname(), actualNewProfileImageUrl);
 
 		return member;
 	}
@@ -237,11 +250,12 @@ public class MemberService {
 	}
 
 	private void processProfileImageUpdate(String oldProfileImageUrl, String newProfileImageUrl) {
-
-		confirmNewProfileImage(newProfileImageUrl);
-
 		if (isProfileImageChanged(oldProfileImageUrl, newProfileImageUrl)) {
+
+			confirmNewProfileImage(newProfileImageUrl);
 			unUseProfileImage(oldProfileImageUrl);
+		} else if (!Objects.equals(oldProfileImageUrl, newProfileImageUrl) && StringUtils.hasText(newProfileImageUrl)) {
+			confirmNewProfileImage(newProfileImageUrl);
 		}
 	}
 

@@ -102,14 +102,14 @@ class ProfileTest {
     }
 
     @Test
-    @DisplayName("프로필 업데이트 - 닉네임만 변경")
+    @DisplayName("프로필 업데이트 - 닉네임만 변경 (프로필 이미지는 빈 문자열로 유지)")
     void update_OnlyNickname() {
         // given
         Profile original = new Profile("oldNick", "https://example.com/image.jpg");
         String newNickname = "newNick";
 
         // when
-        Profile updated = original.update(newNickname, null);
+        Profile updated = original.update(newNickname, "");
 
         // then
         assertThat(updated.getNickname()).isEqualTo(newNickname);
@@ -173,5 +173,36 @@ class ProfileTest {
         assertThat(updated).isSameAs(original); // 변경사항 없음
         assertThat(updated.getNickname()).isEqualTo("nickname");
         assertThat(updated.getProfileImageUrl()).isEqualTo("https://example.com/image.jpg");
+    }
+
+    @Test
+    @DisplayName("프로필 업데이트 - 프로필 이미지를 null로 설정하여 기본 이미지로 변경")
+    void update_ProfileImageToNull() {
+        // given
+        Profile original = new Profile("nickname", "https://example.com/image.jpg");
+
+        // when
+        Profile updated = original.update(null, null);
+
+        // then
+        assertThat(updated.getNickname()).isEqualTo("nickname");
+        assertThat(updated.getProfileImageUrl()).isNull();
+        assertThat(updated.hasProfileImage()).isFalse();
+    }
+
+    @Test
+    @DisplayName("프로필 업데이트 - 닉네임 변경하면서 프로필 이미지를 null로 설정")
+    void update_NicknameAndProfileImageToNull() {
+        // given
+        Profile original = new Profile("oldNick", "https://example.com/image.jpg");
+        String newNickname = "newNick";
+
+        // when
+        Profile updated = original.update(newNickname, null);
+
+        // then
+        assertThat(updated.getNickname()).isEqualTo(newNickname);
+        assertThat(updated.getProfileImageUrl()).isNull();
+        assertThat(updated.hasProfileImage()).isFalse();
     }
 }

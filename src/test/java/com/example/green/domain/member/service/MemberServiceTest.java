@@ -12,6 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.example.green.domain.member.config.ProfileConfig;
 import com.example.green.domain.member.entity.Member;
 import com.example.green.domain.member.repository.MemberRepository;
 import com.example.green.infra.client.FileClient;
@@ -20,11 +21,16 @@ import com.example.green.infra.client.FileClient;
 @DisplayName("MemberService 테스트")
 class MemberServiceTest {
 
+	private static final String DEFAULT_PROFILE_IMAGE_URL = "https://static.greenwinit.store/images/profile/default.png";
+
 	@Mock
 	private MemberRepository memberRepository;
 
 	@Mock
 	private FileClient fileClient;
+
+	@Mock
+	private ProfileConfig profileConfig;
 
 	@InjectMocks
 	private MemberService memberService;
@@ -101,15 +107,15 @@ class MemberServiceTest {
 
 		given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
 
-		// When - null을 전달하면 기존 이미지가 유지됨
-		Member updatedMember = memberService.updateProfile(memberId, "새닉네임", null);
+		// When - 빈 문자열을 전달하면 기존 이미지가 유지됨
+		Member updatedMember = memberService.updateProfile(memberId, "새닉네임", "");
 
 		// Then
 		assertThat(updatedMember.getProfile().getNickname()).isEqualTo("새닉네임");
 		assertThat(updatedMember.getProfile().getProfileImageUrl()).isEqualTo("https://s3.example.com/old-image.jpg");
-		// null로 전달한 경우 서비스 로직이 기존 이미지를 삭제 처리함
+		// 빈 문자열로 전달한 경우 이미지 변경 없음
 		verify(fileClient, never()).confirmUsingImage(any());
-		verify(fileClient).unUseImage("https://s3.example.com/old-image.jpg");
+		verify(fileClient, never()).unUseImage(any());
 	}
 
 	@Test
@@ -168,8 +174,83 @@ class MemberServiceTest {
 		// Then - 이미지가 동일하므로 파일 작업이 없음
 		assertThat(updatedMember.getProfile().getNickname()).isEqualTo("새닉네임");
 		assertThat(updatedMember.getProfile().getProfileImageUrl()).isEqualTo("https://s3.example.com/old-image.jpg");
-		verify(fileClient).confirmUsingImage("https://s3.example.com/old-image.jpg");
+		// 동일한 이미지의 경우 아무 파일 작업도 하지 않음
+		verify(fileClient, never()).confirmUsingImage(any());
 		verify(fileClient, never()).unUseImage(any());
+	}
+
+	@Test
+	@DisplayName("프로필 업데이트 - 프로필 이미지를 null로 변경 (기본 이미지로)")
+	void updateProfile_ProfileImageToNull_Success() {
+		// Given
+		Long memberId = 1L;
+		Member member = Member.create("test 123", "테스트", "test@test.com");
+		member.updateProfile("기존닉네임", "https://s3.example.com/old-image.jpg");
+
+		given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
+		given(profileConfig.getDefaultProfileImageUrl()).willReturn(DEFAULT_PROFILE_IMAGE_URL);
+
+		// When - null을 전달하면 기본 이미지로 변경
+		Member updatedMember = memberService.updateProfile(memberId, "새닉네임", null);
+
+		// Then
+		assertThat(updatedMember.getProfile().getNickname()).isEqualTo("새닉네임");
+		assertThat(updatedMember.getProfile().getProfileImageUrl()).isEqualTo(DEFAULT_PROFILE_IMAGE_URL);
+
+		verify(fileClient).confirmUsingImage(DEFAULT_PROFILE_IMAGE_URL);
+		verify(fileClient).unUseImage("https://s3.example.com/old-image.jpg");
+	}
+
+	@Test
+	@DisplayName("회원가입 시 프로필 이미지 미등록 시 기본 이미지 설정")
+	void signUp_WithoutProfileImage_SetsDefaultImage() {
+		// Given
+		String provider = "google";
+		String providerId = "123456";
+		String name = "테스트유저";
+		String email = "test@example.com";
+		String nickname = "테스트닉네임";
+		String memberKey = provider + " " + providerId;
+		
+		given(memberRepository.findByMemberKey(memberKey)).willReturn(Optional.empty());
+		given(profileConfig.getDefaultProfileImageUrl()).willReturn(DEFAULT_PROFILE_IMAGE_URL);
+		given(memberRepository.save(any(Member.class))).willAnswer(invocation -> invocation.getArgument(0));
+
+		// When
+		String result = memberService.signupFromOAuth2(provider, providerId, name, email, nickname, null);
+
+		// Then
+		assertThat(result).isEqualTo(memberKey);
+		verify(profileConfig).getDefaultProfileImageUrl();
+		verify(memberRepository).save(argThat(member -> 
+			member.getProfile().getProfileImageUrl().equals(DEFAULT_PROFILE_IMAGE_URL)
+		));
+	}
+
+	@Test
+	@DisplayName("회원가입 시 프로필 이미지 제공 시 해당 이미지 사용")
+	void signUp_WithProfileImage_UsesProvidedImage() {
+		// Given
+		String provider = "kakao";
+		String providerId = "789012";
+		String name = "테스트유저2";
+		String email = "test2@example.com";
+		String nickname = "테스트닉네임2";
+		String profileImageUrl = "https://example.com/custom-image.jpg";
+		String memberKey = provider + " " + providerId;
+		
+		given(memberRepository.findByMemberKey(memberKey)).willReturn(Optional.empty());
+		given(memberRepository.save(any(Member.class))).willAnswer(invocation -> invocation.getArgument(0));
+
+		// When
+		String result = memberService.signupFromOAuth2(provider, providerId, name, email, nickname, profileImageUrl);
+
+		// Then
+		assertThat(result).isEqualTo(memberKey);
+		verify(profileConfig, never()).getDefaultProfileImageUrl();
+		verify(memberRepository).save(argThat(member -> 
+			member.getProfile().getProfileImageUrl().equals(profileImageUrl)
+		));
 	}
 
 } 

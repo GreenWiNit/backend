@@ -81,6 +81,8 @@ app:
   storage:
     bucket: test-bucket
     base-url: http://localhost:4566
+  profile:
+    default-image-url: https://static.greenwinit.store/images/profile/2b/20250820/5aa9293e_1755672635950.png
   frontend:
     base-url: http://localhost:3000
   backend:
