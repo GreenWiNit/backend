@@ -1,6 +1,7 @@
 package com.example.green.domain.challenge.service;
 
 import org.springframework.dao.OptimisticLockingFailureException;
+import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,9 +44,7 @@ public class ChallengeGroupService {
 
 	public void update(Long groupId, Long leaderId, ChallengeGroupUpdateDto request) {
 		ChallengeGroup group = challengeGroupQuery.getChallengeGroup(groupId);
-		if (!group.isLeader(leaderId)) {
-			throw new ChallengeException(ChallengeExceptionMessage.NOT_GROUP_LEADER);
-		}
+		validateGroupLeader(leaderId, group);
 		group.updateBasicInfo(request.toBasicInfo());
 		group.updateAddress(request.toAddress());
 		group.updatePeriod(request.toPeriod());
@@ -54,9 +53,7 @@ public class ChallengeGroupService {
 
 	public void delete(Long groupId, Long memberId) {
 		ChallengeGroup challengeGroup = challengeGroupQuery.getChallengeGroup(groupId);
-		if (!challengeGroup.isLeader(memberId)) {
-			throw new ChallengeException(ChallengeExceptionMessage.NOT_GROUP_LEADER);
-		}
+		validateGroupLeader(memberId, challengeGroup);
 		// 참여 가능한 상태일 경우에만 챌린지를 삭제할 수 있음. -> 참여 된 상태부터는 챌린지를 삭제할 수 없음
 		if (!challengeGroup.getPeriod().canParticipate(timeUtils.now())) {
 			throw new ChallengeException(ChallengeExceptionMessage.CANNOT_DELETE_AFTER_ACTIVITY_START);
@@ -64,17 +61,23 @@ public class ChallengeGroupService {
 		challengeGroupRepository.delete(challengeGroup);
 	}
 
-	@Retryable(retryFor = OptimisticLockingFailureException.class)
+	@Retryable(retryFor = OptimisticLockingFailureException.class, backoff = @Backoff(delay = 100, multiplier = 2))
 	public void join(Long groupId, Long memberId) {
 		ChallengeGroup challengeGroup = challengeGroupQuery.getChallengeGroup(groupId);
 		challengeGroupQuery.validateActivityDateParticipation(memberId, challengeGroup.getPeriod().getDate());
 		challengeGroup.joinMember(memberId, timeUtils.now());
 	}
 
-	@Retryable(retryFor = OptimisticLockingFailureException.class)
+	@Retryable(retryFor = OptimisticLockingFailureException.class, backoff = @Backoff(delay = 100, multiplier = 2))
 	public void leave(Long groupId, Long memberId) {
 		// todo: 나중에 사용할 수도 명확히 모름
 		ChallengeGroup challengeGroup = challengeGroupQuery.getChallengeGroup(groupId);
 		challengeGroup.leaveMember(memberId);
+	}
+
+	private static void validateGroupLeader(Long leaderId, ChallengeGroup group) {
+		if (!group.isLeader(leaderId)) {
+			throw new ChallengeException(ChallengeExceptionMessage.NOT_GROUP_LEADER);
+		}
 	}
 }
