@@ -18,6 +18,20 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class PersonalChallengeProjections {
 
+	public static ConstructorExpression<ChallengeDto> toMyChallenges() {
+		return Projections.constructor(
+			ChallengeDto.class,
+			personalChallenge.id,
+			personalChallenge.challengeName,
+			personalChallenge.beginDate,
+			personalChallenge.endDate,
+			personalChallenge.challengeImage,
+			personalChallenge.challengePoint,
+			personalChallenge.participantCount,
+			personalChallengeParticipation.id
+		);
+	}
+
 	public static ConstructorExpression<ChallengeDto> toChallenges() {
 		return Projections.constructor(
 			ChallengeDto.class,

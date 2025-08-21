@@ -6,31 +6,40 @@ import java.time.LocalDate;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 @Schema(description = "챌린지 목록 응답")
-public record ChallengeDto(
+@Getter
+@AllArgsConstructor
+public class ChallengeDto {
+
 	@Schema(description = "챌린지 ID", example = "1")
-	Long id,
+	private final Long id;
 
 	@Schema(description = "챌린지 이름", example = "30일 운동 챌린지")
-	String challengeName,
+	private final String challengeName;
 
 	@Schema(description = "시작 일시")
-	LocalDate beginDate,
+	private final LocalDate beginDate;
 
 	@Schema(description = "종료 일시")
-	LocalDate endDate,
+	private final LocalDate endDate;
 
 	@Schema(description = "챌린지 이미지 URL", example = "https://example.com/image.jpg")
-	String challengeImage,
+	private final String challengeImage;
 
 	@Schema(description = "챌린지 포인트", example = "100")
-	BigDecimal challengePoint,
+	private final BigDecimal challengePoint;
 
 	@Schema(description = "누적 참여자 수", example = "10")
-	int currentParticipant,
+	private final Integer currentParticipant;
 
 	@JsonIgnore
-	Long cursor
-) {
+	private final Long cursor;
+
+	public ChallengeDto(Long id, String challengeName, LocalDate beginDate, LocalDate endDate,
+		String challengeImage, BigDecimal challengePoint, Integer currentParticipant) {
+		this(id, challengeName, beginDate, endDate, challengeImage, challengePoint, currentParticipant, id);
+	}
 }

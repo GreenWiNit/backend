@@ -8,6 +8,7 @@ import com.example.green.domain.challenge.controller.query.dto.challenge.Challen
 import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDetailDtoV2;
 import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDto;
 import com.querydsl.core.types.ConstructorExpression;
+import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 
@@ -17,7 +18,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TeamChallengeProjections {
 
-	public static ConstructorExpression<ChallengeDto> toChallenges() {
+	public static ConstructorExpression<ChallengeDto> toMyChallenges() {
 		return Projections.constructor(
 			ChallengeDto.class,
 			teamChallenge.id,
@@ -28,6 +29,19 @@ public class TeamChallengeProjections {
 			teamChallenge.challengePoint,
 			teamChallenge.participantCount,
 			teamChallengeParticipation.id
+		);
+	}
+
+	public static Expression<ChallengeDto> toChallenges() {
+		return Projections.constructor(
+			ChallengeDto.class,
+			teamChallenge.id,
+			teamChallenge.challengeName,
+			teamChallenge.beginDate,
+			teamChallenge.endDate,
+			teamChallenge.challengeImage,
+			teamChallenge.challengePoint,
+			teamChallenge.participantCount
 		);
 	}
 

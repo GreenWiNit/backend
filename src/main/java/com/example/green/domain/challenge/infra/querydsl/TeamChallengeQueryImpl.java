@@ -48,7 +48,7 @@ public class TeamChallengeQueryImpl implements TeamChallengeQuery {
 		LocalDateTime now
 	) {
 		List<ChallengeDto> participation = queryFactory
-			.select(TeamChallengeProjections.toChallenges())
+			.select(TeamChallengeProjections.toMyChallenges())
 			.from(teamChallenge)
 			.join(teamChallenge.participations, teamChallengeParticipation)
 			.where(BooleanExpressionConnector.combineWithAnd(
@@ -59,7 +59,7 @@ public class TeamChallengeQueryImpl implements TeamChallengeQuery {
 			.limit(size + 1)
 			.fetch();
 
-		return CursorTemplate.from(participation, size, ChallengeDto::id);
+		return CursorTemplate.from(participation, size, ChallengeDto::getCursor);
 	}
 
 	public CursorTemplate<Long, ChallengeDto> findTeamChallengesByCursor(
@@ -74,7 +74,7 @@ public class TeamChallengeQueryImpl implements TeamChallengeQuery {
 			.orderBy(teamChallenge.id.desc())
 			.limit(size + 1)
 			.fetch();
-		return CursorTemplate.from(participation, size, ChallengeDto::cursor);
+		return CursorTemplate.from(participation, size, ChallengeDto::getId);
 	}
 
 	public ChallengeDetailDto findTeamChallenge(Long challengeId, Long memberId) {
