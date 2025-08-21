@@ -74,7 +74,7 @@ public class TeamChallengeQueryImpl implements TeamChallengeQuery {
 			.orderBy(teamChallenge.id.desc())
 			.limit(size + 1)
 			.fetch();
-		return CursorTemplate.from(participation, size, ChallengeDto::id);
+		return CursorTemplate.from(participation, size, ChallengeDto::cursor);
 	}
 
 	public ChallengeDetailDto findTeamChallenge(Long challengeId, Long memberId) {
