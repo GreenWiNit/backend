@@ -15,7 +15,8 @@ import com.example.green.global.api.page.PageTemplate;
 
 public interface TeamChallengeQuery {
 
-	CursorTemplate<Long, ChallengeDto> findMyParticipationByCursor(Long memberId, Long cursor, int size);
+	CursorTemplate<Long, ChallengeDto> findMyParticipationByCursor(
+		Long memberId, Long cursor, int size, LocalDateTime now);
 
 	CursorTemplate<Long, ChallengeDto> findTeamChallengesByCursor(Long cursor, int size, LocalDateTime now);
 
