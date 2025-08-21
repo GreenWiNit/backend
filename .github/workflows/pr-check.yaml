@@ -33,7 +33,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Run Unit Tests
-        run: ./gradlew test --tests "com.example.green.*"
+        run: ./gradlew clean test --tests "com.example.green.*"
 
       # 테스트 커버리지 리포트 생성
       - name: Generate Jacoco Report

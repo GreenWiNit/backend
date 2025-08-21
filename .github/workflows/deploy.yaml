@@ -23,18 +23,6 @@ jobs:
           java-version: "21"
           distribution: "temurin"
 
-      # 전체 테스트 실행 (단위 테스트 + 통합 테스트)
-      - name: Run All Tests
-        run: ./gradlew test
-
-      # 테스트 커버리지 리포트 생성
-      - name: Generate Jacoco Report
-        run: ./gradlew jacocoTestReport -x jacocoTestCoverageVerification
-
-      # 코드 스타일 검사
-      - name: Run Checkstyle
-        run: ./gradlew checkstyleMain checkstyleTest
-
       # 환경변수 한 파일로 관리
       - name: Create .env file from GitHub Secret
         run: |

@@ -6,7 +6,7 @@ name: Integration Test
 # 주의: PR이 merge될 때는 실행되지 않음 (deploy.yaml에서 실행)
 on:
   pull_request:
-    types: [labeled, synchronize]
+    types: [ labeled, synchronize ]
     branches: [ "main" ]
 
 jobs:
@@ -32,11 +32,7 @@ jobs:
 
       # 전체 테스트 실행 (통합 테스트 포함)
       - name: Run All Tests
-        run: ./gradlew test
-
-      # 테스트 커버리지 리포트 생성
-      - name: Generate Jacoco Report
-        run: ./gradlew jacocoTestReport -x jacocoTestCoverageVerification
+        run: ./gradlew clean test jacocoTestReport -x jacocoTestCoverageVerification
 
       # PR에 통합 테스트 커버리지 결과를 코멘트로 추가
       - name: Add Integration Test Coverage Comment
