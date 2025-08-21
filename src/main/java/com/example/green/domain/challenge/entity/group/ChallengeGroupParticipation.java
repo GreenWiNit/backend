@@ -42,7 +42,7 @@ public class ChallengeGroupParticipation extends BaseEntity {
 	@Column(nullable = false, length = 20)
 	private GroupRole role;
 
-	private boolean certified;
+	private Boolean certified;
 
 	private ChallengeGroupParticipation(
 		ChallengeGroup challengeGroup,

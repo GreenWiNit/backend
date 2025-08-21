@@ -6,7 +6,9 @@ import static com.example.green.domain.challenge.entity.group.QChallengeGroupPar
 import static com.example.green.domain.challenge.infra.querydsl.projections.ChallengeGroupProjections.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
@@ -15,6 +17,7 @@ import com.example.green.domain.challenge.controller.query.dto.group.AdminChalle
 import com.example.green.domain.challenge.controller.query.dto.group.ChallengeGroupDto;
 import com.example.green.domain.challenge.controller.query.dto.group.MyChallengeGroupDto;
 import com.example.green.global.api.page.Pagination;
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -32,6 +35,20 @@ public class ChallengeGroupQueryExecutor {
 			.from(challengeGroupParticipation)
 			.where(challengeGroupParticipation.memberId.eq(memberId))
 			.fetch();
+	}
+
+	public Map<Long, Boolean> executeMyGroupCertifiedMap(Long memberId) {
+		List<Tuple> results = queryFactory
+			.select(challengeGroupParticipation.challengeGroup.id, challengeGroupParticipation.certified)
+			.from(challengeGroupParticipation)
+			.where(challengeGroupParticipation.memberId.eq(memberId))
+			.fetch();
+
+		return results.stream()
+			.collect(Collectors.toMap(
+				tuple -> tuple.get(challengeGroupParticipation.challengeGroup.id),
+				tuple -> tuple.get(challengeGroupParticipation.certified)
+			));
 	}
 
 	public List<MyChallengeGroupDto> executeMyGroupQuery(Integer size, Long memberId, BooleanExpression condition) {
