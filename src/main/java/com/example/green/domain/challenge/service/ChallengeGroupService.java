@@ -34,7 +34,7 @@ public class ChallengeGroupService {
 	private final ChallengeGroupRepository challengeGroupRepository;
 
 	public Long create(Long challengeId, Long leaderId, ChallengeGroupCreateDto dto) {
-		challengeGroupQuery.validateActivityDateParticipation(leaderId, dto.challengeDate());
+		challengeGroupQuery.validateActivityDateParticipation(leaderId, challengeId, dto.challengeDate());
 		teamChallengeQuery.validateGroupPeriod(challengeId, dto.challengeDate());
 		String teamCode = sequenceService.generateCode(SequenceType.TEAM_CHALLENGE_GROUP, timeUtils.now());
 		ChallengeGroup challengeGroup = dto.toEntity(teamCode, challengeId, leaderId);
@@ -64,7 +64,9 @@ public class ChallengeGroupService {
 	@Retryable(retryFor = OptimisticLockingFailureException.class, backoff = @Backoff(delay = 100, multiplier = 2))
 	public void join(Long groupId, Long memberId) {
 		ChallengeGroup challengeGroup = challengeGroupQuery.getChallengeGroup(groupId);
-		challengeGroupQuery.validateActivityDateParticipation(memberId, challengeGroup.getPeriod().getDate());
+		challengeGroupQuery.validateActivityDateParticipation(
+			memberId, challengeGroup.getTeamChallengeId(), challengeGroup.getPeriod().getDate());
+
 		challengeGroup.joinMember(memberId, timeUtils.now());
 	}
 

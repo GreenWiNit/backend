@@ -105,11 +105,11 @@ public class ChallengeGroupQueryImpl implements ChallengeGroupQuery {
 		return getChallengeGroup(groupId);
 	}
 
-	public void validateActivityDateParticipation(Long memberId, LocalDate activityDate) {
+	public void validateActivityDateParticipation(Long memberId, Long challengeId, LocalDate activityDate) {
 		LocalDateTime startOfDay = activityDate.atStartOfDay();
 		LocalDateTime endOfDay = startOfDay.plusDays(1);
 
-		if (challengeGroupRepository.existsParticipationOnActivityDate(memberId, startOfDay, endOfDay)) {
+		if (challengeGroupRepository.existsParticipationOnActivityDate(memberId, challengeId, startOfDay, endOfDay)) {
 			throw new ChallengeException(ChallengeExceptionMessage.ALREADY_PARTICIPATED_ON_THIS_DATE);
 		}
 	}
