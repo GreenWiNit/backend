@@ -1,17 +1,10 @@
 package com.example.green.domain.pointshop.product.infra;
 
-import java.util.Arrays;
-import java.util.Objects;
-
-import org.springframework.util.StringUtils;
-
-import com.example.green.domain.pointshop.product.controller.dto.PointProductExcelCondition;
-import com.example.green.domain.pointshop.product.controller.dto.PointProductSearchCondition;
 import com.example.green.domain.pointshop.product.entity.QPointProduct;
 import com.example.green.domain.pointshop.product.entity.vo.DisplayStatus;
 import com.example.green.domain.pointshop.product.entity.vo.SellingStatus;
-import com.example.green.domain.pointshop.product.exception.PointProductException;
-import com.example.green.domain.pointshop.product.exception.PointProductExceptionMessage;
+import com.example.green.infra.database.querydsl.BooleanExpressionConnector;
+import com.example.green.infra.database.querydsl.QueryPredicates;
 import com.querydsl.core.types.dsl.BooleanExpression;
 
 import lombok.AccessLevel;
@@ -22,57 +15,20 @@ public class PointProductPredicates {
 
 	private static final QPointProduct qPointProduct = QPointProduct.pointProduct;
 
-	public static BooleanExpression fromCondition(PointProductSearchCondition condition) {
-		return combineConditions(
-			filterByStatus(condition.status()),
-			filterByKeyword(condition.keyword())
-		);
-	}
-
-	public static BooleanExpression fromCondition(PointProductExcelCondition condition) {
-		return combineConditions(
-			filterByStatus(condition.status()),
-			filterByKeyword(condition.keyword())
+	public static BooleanExpression fromCondition(SellingStatus status, String keyword) {
+		return BooleanExpressionConnector.combineWithAnd(
+			QueryPredicates.whenNotNull(status, qPointProduct.sellingStatus::eq),
+			BooleanExpressionConnector.combineWithOr(
+				QueryPredicates.whenNotBlank(keyword, qPointProduct.code.code::containsIgnoreCase),
+				QueryPredicates.whenNotBlank(keyword, qPointProduct.basicInfo.name::containsIgnoreCase)
+			)
 		);
 	}
 
 	public static BooleanExpression fromCursorCondition(Long cursor) {
-		if (cursor == null) {
-			return null;
-		}
-		return qPointProduct.id.lt(cursor)
-			.and(qPointProduct.displayStatus.eq(DisplayStatus.DISPLAY));
-	}
-
-	public static BooleanExpression filterByStatus(SellingStatus status) {
-		if (status == null) {
-			return null;
-		}
-		return qPointProduct.sellingStatus.eq(status);
-	}
-
-	public static BooleanExpression filterByKeyword(String keyword) {
-		if (!StringUtils.hasText(keyword)) {
-			return null;
-		}
-
-		String trimmedKeyword = keyword.trim();
-		validateKeywordLength(trimmedKeyword);
-
-		return qPointProduct.code.code.containsIgnoreCase(trimmedKeyword)
-			.or(qPointProduct.basicInfo.name.containsIgnoreCase(trimmedKeyword));
-	}
-
-	private static BooleanExpression combineConditions(BooleanExpression... expressions) {
-		return Arrays.stream(expressions)
-			.filter(Objects::nonNull)
-			.reduce(BooleanExpression::and)
-			.orElse(null);
-	}
-
-	private static void validateKeywordLength(String trimmedKeyword) {
-		if (trimmedKeyword.length() < 2) {
-			throw new PointProductException(PointProductExceptionMessage.INVALID_SEARCH_KEYWORD);
-		}
+		return BooleanExpressionConnector.combineWithAnd(
+			QueryPredicates.whenNotNull(cursor, qPointProduct.id::lt),
+			qPointProduct.displayStatus.eq(DisplayStatus.DISPLAY)
+		);
 	}
 }
