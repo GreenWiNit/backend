@@ -26,6 +26,7 @@ import com.example.green.domain.challenge.repository.query.TeamChallengeQuery;
 import com.example.green.global.api.page.CursorTemplate;
 import com.example.green.global.api.page.PageTemplate;
 import com.example.green.global.api.page.Pagination;
+import com.example.green.infra.database.querydsl.BooleanExpressionConnector;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -43,16 +44,17 @@ public class TeamChallengeQueryImpl implements TeamChallengeQuery {
 	public CursorTemplate<Long, ChallengeDto> findMyParticipationByCursor(
 		Long memberId,
 		Long cursor,
-		int size
+		int size,
+		LocalDateTime now
 	) {
 		List<ChallengeDto> participation = queryFactory
 			.select(TeamChallengeProjections.toChallenges())
 			.from(teamChallenge)
 			.join(teamChallenge.participations, teamChallengeParticipation)
-			.where(
-				teamChallengeParticipation.memberId.eq(memberId),
-				cursorCondition(cursor)
-			)
+			.where(BooleanExpressionConnector.combineWithAnd(
+				activeChallengeCondition(cursor, now),
+				teamChallengeParticipation.memberId.eq(memberId)
+			))
 			.orderBy(teamChallengeParticipation.id.desc())
 			.limit(size + 1)
 			.fetch();
@@ -68,16 +70,11 @@ public class TeamChallengeQueryImpl implements TeamChallengeQuery {
 		List<ChallengeDto> participation = queryFactory
 			.select(TeamChallengeProjections.toChallenges())
 			.from(teamChallenge)
-			.where(
-				cursorCondition(cursor),
-				teamChallenge.displayStatus.eq(ChallengeDisplayStatus.VISIBLE),
-				teamChallenge.beginDate.loe(now.toLocalDate()),
-				teamChallenge.endDate.goe(now.toLocalDate())
-			)
+			.where(activeChallengeCondition(cursor, now))
 			.orderBy(teamChallenge.id.desc())
 			.limit(size + 1)
 			.fetch();
-		return CursorTemplate.from(participation, size, ChallengeDto::id);
+		return CursorTemplate.from(participation, size, ChallengeDto::cursor);
 	}
 
 	public ChallengeDetailDto findTeamChallenge(Long challengeId, Long memberId) {
@@ -150,6 +147,15 @@ public class TeamChallengeQueryImpl implements TeamChallengeQuery {
 				teamChallengeParticipation.memberId.eq(memberId)
 			).exists();
 		return exists;
+	}
+
+	private BooleanExpression activeChallengeCondition(Long cursor, LocalDateTime now) {
+		return BooleanExpressionConnector.combineWithAnd(
+			teamChallenge.displayStatus.eq(ChallengeDisplayStatus.VISIBLE),
+			teamChallenge.beginDate.loe(now.toLocalDate()),
+			teamChallenge.endDate.goe(now.toLocalDate()),
+			cursorCondition(cursor)
+		);
 	}
 
 	private BooleanExpression cursorCondition(Long cursor) {

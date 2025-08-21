@@ -1,9 +1,6 @@
 package com.example.green.domain.challenge.infra.adapter;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
@@ -53,12 +50,7 @@ public class ChallengeAdapter implements ChallengeClient {
 	}
 
 	@Override
-	public void confirmTeamCertifications(List<CertificationConfirmRequest> requests) {
-		Map<String, List<Long>> groupedByCode = requests.stream()
-			.collect(Collectors.groupingBy(
-				CertificationConfirmRequest::groupCode,
-				Collectors.mapping(CertificationConfirmRequest::memberId, Collectors.toList())
-			));
-		challengeGroupService.confirmTeamCertifications(groupedByCode);
+	public void confirmTeamCertification(CertificationConfirmRequest request) {
+		challengeGroupService.confirmTeamCertification(request.groupId(), request.memberId());
 	}
 }

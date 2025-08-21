@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import com.example.green.domain.challenge.entity.group.ChallengeGroup;
+import com.example.green.domain.challenge.entity.group.ChallengeGroupParticipation;
 
 public interface ChallengeGroupRepository extends JpaRepository<ChallengeGroup, Long> {
 
@@ -30,5 +31,11 @@ public interface ChallengeGroupRepository extends JpaRepository<ChallengeGroup, 
 	boolean existsParticipationOnActivityDate(
 		Long memberId, Long teamChallengeId, LocalDateTime startOfDay, LocalDateTime endOfDay);
 
-	Optional<ChallengeGroup> findByTeamCode(String teamCode);
+	@Query("""
+			SELECT p
+			FROM ChallengeGroupParticipation p
+			WHERE p.challengeGroup.id = :groupId
+			AND p.memberId = :memberId
+		""")
+	Optional<ChallengeGroupParticipation> findParticipant(Long groupId, Long memberId);
 }

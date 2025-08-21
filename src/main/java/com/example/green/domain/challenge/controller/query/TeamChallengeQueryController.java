@@ -62,7 +62,7 @@ public class TeamChallengeQueryController implements TeamChallengeQueryControlle
 	) {
 		Long memberId = currentUser.getMemberId();
 		CursorTemplate<Long, ChallengeDto> result =
-			teamChallengeQuery.findMyParticipationByCursor(memberId, cursor, pageSize);
+			teamChallengeQuery.findMyParticipationByCursor(memberId, cursor, pageSize, timeUtils.now());
 
 		return ApiTemplate.ok(MY_TEAM_CHALLENGE_LIST_FOUND, result);
 	}

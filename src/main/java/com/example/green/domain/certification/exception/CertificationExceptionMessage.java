@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 @Getter
 public enum CertificationExceptionMessage implements ExceptionMessage {
 
-	EXISTS_CHALLENGE_CERT_OF_DAY(HttpStatus.BAD_REQUEST, "오늘은 이미 해당 챌린지를 인증했어요! 디른 챌린지에 도전해보세요."),
+	EXISTS_CHALLENGE_CERT_OF_DAY(HttpStatus.BAD_REQUEST, "오늘은 이미 해당 챌린지를 인증했어요! 다른 챌린지에 도전해보세요."),
 	FUTURE_DATE_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "인증 날짜는 미래 날짜를 선택할 수 없습니다."),
 	NOT_FOUND_CHALLENGE_CERTIFICATION(HttpStatus.BAD_REQUEST, "챌린지 인증 정보를 찾을 수 없습니다."),
 	INVALID_CHALLENGE_TYPE(HttpStatus.BAD_REQUEST, "챌린지 유형을 명확히 해주세요. (T or P)"),

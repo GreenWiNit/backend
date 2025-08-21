@@ -5,8 +5,10 @@ import static com.example.green.global.utils.EntityValidator.*;
 import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
+import com.example.green.domain.challenge.entity.group.dto.ParticipationInfo;
 import com.example.green.domain.challenge.exception.ChallengeException;
 import com.example.green.domain.challenge.exception.ChallengeExceptionMessage;
 import com.example.green.domain.common.BaseEntity;
@@ -102,10 +104,9 @@ public class ChallengeGroup extends BaseEntity {
 			throw new ChallengeException(ChallengeExceptionMessage.LEADER_USE_BE_DELETE);
 		}
 
-		ChallengeGroupParticipation participation = findParticipationByMemberId(memberId);
-		participants.remove(participation);
-		capacity.decrease();
-		this.status = determineStatus();
+		findParticipation(memberId).ifPresentOrElse(this::removeParticipant, () -> {
+			throw new ChallengeException(ChallengeExceptionMessage.INVALID_GROUP_MEMBERSHIP);
+		});
 	}
 
 	public void updateBasicInfo(GroupBasicInfo groupBasicInfo) {
@@ -136,11 +137,20 @@ public class ChallengeGroup extends BaseEntity {
 			.toList();
 	}
 
-	private ChallengeGroupParticipation findParticipationByMemberId(Long memberId) {
+	public ParticipationInfo getParticipationInfo(Long memberId) {
+		Optional<ChallengeGroupParticipation> participation = findParticipation(memberId);
+
+		return new ParticipationInfo(
+			participation.isPresent(),
+			participation.map(ChallengeGroupParticipation::getCertified).orElse(false),
+			isLeader(memberId)
+		);
+	}
+
+	private Optional<ChallengeGroupParticipation> findParticipation(Long memberId) {
 		return participants.stream()
 			.filter(p -> p.matches(memberId))
-			.findFirst()
-			.orElseThrow(() -> new ChallengeException(ChallengeExceptionMessage.INVALID_GROUP_MEMBERSHIP));
+			.findFirst();
 	}
 
 	private void addParticipant(ChallengeGroupParticipation participation) {
@@ -158,10 +168,9 @@ public class ChallengeGroup extends BaseEntity {
 		return GroupStatus.RECRUITING;
 	}
 
-	public void confirmCertifications(List<Long> memberIds) {
-		for (Long memberId : memberIds) {
-			ChallengeGroupParticipation participation = findParticipationByMemberId(memberId);
-			participation.confirmCertification();
-		}
+	private void removeParticipant(ChallengeGroupParticipation participation) {
+		participants.remove(participation);
+		capacity.decrease();
+		this.status = determineStatus();
 	}
 }

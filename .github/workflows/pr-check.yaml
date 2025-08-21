@@ -33,11 +33,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Run Unit Tests
-        run: ./gradlew test --tests "com.example.green.*"
-
-      # 테스트 커버리지 리포트 생성
-      - name: Generate Jacoco Report
-        run: ./gradlew jacocoTestReport -x jacocoTestCoverageVerification
+        run: ./gradlew clean test --tests "com.example.green.*" jacocoTestReport -x jacocoTestCoverageVerification
 
       # PR에 테스트 커버리지 결과를 코멘트로 추가
       - name: Add Unit Test Coverage Comment

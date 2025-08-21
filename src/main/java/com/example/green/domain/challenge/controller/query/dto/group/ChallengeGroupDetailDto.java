@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 import com.example.green.domain.challenge.entity.group.ChallengeGroup;
+import com.example.green.domain.challenge.entity.group.dto.ParticipationInfo;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -38,10 +39,12 @@ public record ChallengeGroupDetailDto(
 	@Schema(description = "참여 여부")
 	boolean participating,
 	@Schema(description = "리더 여부")
-	boolean leaderMe
+	boolean leaderMe,
+	@Schema(description = "인증 완료 여부")
+	boolean certified
 ) {
 
-	public static ChallengeGroupDetailDto from(ChallengeGroup challengeGroup, boolean participating, Long memberId) {
+	public static ChallengeGroupDetailDto from(ChallengeGroup challengeGroup, ParticipationInfo info, Long memberId) {
 		return new ChallengeGroupDetailDto(
 			challengeGroup.getId(),
 			challengeGroup.getBasicInfo().getGroupName(),
@@ -56,8 +59,9 @@ public record ChallengeGroupDetailDto(
 			challengeGroup.getGroupAddress().getSigungu(),
 			challengeGroup.getGroupAddress().getFullAddress(),
 			challengeGroup.getBasicInfo().getOpenChatUrl(),
-			participating,
-			challengeGroup.isLeader(memberId)
+			info.participating(),
+			info.isLeader(),
+			info.certified()
 		);
 	}
 }

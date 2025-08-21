@@ -3,6 +3,8 @@ package com.example.green.domain.challenge.controller.query.dto.challenge;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "챌린지 목록 응답")
@@ -26,6 +28,9 @@ public record ChallengeDto(
 	BigDecimal challengePoint,
 
 	@Schema(description = "누적 참여자 수", example = "10")
-	int currentParticipant
+	int currentParticipant,
+
+	@JsonIgnore
+	Long cursor
 ) {
 }

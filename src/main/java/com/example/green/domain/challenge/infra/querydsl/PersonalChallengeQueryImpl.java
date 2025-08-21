@@ -40,8 +40,10 @@ public class PersonalChallengeQueryImpl implements PersonalChallengeQuery {
 	private final PersonalChallengeRepository personalChallengeRepository;
 	private final PersonalChallengeQueryExecutor executor;
 
-	public CursorTemplate<Long, ChallengeDto> findMyParticipationByCursor(Long memberId, Long cursor, int size) {
-		BooleanExpression condition = myParticipationCondition(memberId, cursor);
+	public CursorTemplate<Long, ChallengeDto> findMyParticipationByCursor(
+		Long memberId, Long cursor, int size, LocalDateTime now
+	) {
+		BooleanExpression condition = myParticipationCondition(memberId, cursor, now);
 		List<ChallengeDto> participationChallenges = executor.executeParticipationQueryForClient(condition, size);
 		return CursorTemplate.from(participationChallenges, size, ChallengeDto::id);
 	}

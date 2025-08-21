@@ -56,19 +56,16 @@ public class CertificationClientHelper {
 		fileClient.confirmUsingImage(imageUrl);
 	}
 
+	public void processCertSideEffect(String imageUrl, Long groupId, Long memberId) {
+		fileClient.confirmUsingImage(imageUrl);
+		challengeClient.confirmTeamCertification(new CertificationConfirmRequest(groupId, memberId));
+	}
+
 	public void processApproveSideEffect(List<ChallengeCertification> certs) {
 		List<PointEarnRequest> pointRequests = certs.stream()
 			.map(CertificationClientHelper::convertPointEarnRequest)
 			.toList();
 		pointClient.earnPoints(pointRequests);
-
-		List<CertificationConfirmRequest> teamConfirmRequests = certs.stream()
-			.filter(cert -> ChallengeSnapshot.TEAM_TYPE.equals(cert.getChallenge().getType()))
-			.map(this::convertTeamConfirmRequest)
-			.toList();
-		if (!teamConfirmRequests.isEmpty()) {
-			challengeClient.confirmTeamCertifications(teamConfirmRequests);
-		}
 	}
 
 	private static PointEarnRequest convertPointEarnRequest(ChallengeCertification cert) {
@@ -79,13 +76,6 @@ public class CertificationClientHelper {
 			cert.getChallenge().getChallengeName() + " 완료",
 			PointTransactionType.CHALLENGE,
 			LocalDateTime.of(cert.getCertifiedDate(), LocalTime.MIN)
-		);
-	}
-
-	private CertificationConfirmRequest convertTeamConfirmRequest(ChallengeCertification cert) {
-		return new CertificationConfirmRequest(
-			cert.getMember().getMemberId(),
-			cert.getChallenge().getGroupCode()
 		);
 	}
 }

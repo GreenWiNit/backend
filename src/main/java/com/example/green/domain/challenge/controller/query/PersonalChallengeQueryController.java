@@ -62,7 +62,7 @@ public class PersonalChallengeQueryController implements PersonalChallengeQueryC
 	) {
 		Long memberId = currentUser.getMemberId();
 		CursorTemplate<Long, ChallengeDto> result =
-			personalChallengeQuery.findMyParticipationByCursor(memberId, cursor, pageSize);
+			personalChallengeQuery.findMyParticipationByCursor(memberId, cursor, pageSize, timeUtils.now());
 
 		return ApiTemplate.ok(MY_PERSONAL_CHALLENGE_LIST_FOUND, result);
 	}
