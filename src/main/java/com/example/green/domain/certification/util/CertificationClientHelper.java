@@ -19,6 +19,7 @@ import com.example.green.infra.client.PointClient;
 import com.example.green.infra.client.dto.ChallengeDto;
 import com.example.green.infra.client.dto.ChallengeGroupDto;
 import com.example.green.infra.client.dto.MemberDto;
+import com.example.green.infra.client.request.CertificationConfirmRequest;
 import com.example.green.infra.client.request.PointEarnRequest;
 
 import lombok.RequiredArgsConstructor;
@@ -56,17 +57,35 @@ public class CertificationClientHelper {
 	}
 
 	public void processApproveSideEffect(List<ChallengeCertification> certs) {
-		List<PointEarnRequest> request = certs.stream()
-			.map(cert -> new PointEarnRequest(
-				cert.getMember().getMemberId(),
-				BigDecimal.valueOf(cert.getChallenge().getChallengePoint()),
-				cert.getChallenge().getChallengeId(),
-				cert.getChallenge().getChallengeName() + " 완료",
-				PointTransactionType.CHALLENGE,
-				LocalDateTime.of(cert.getCertifiedDate(), LocalTime.MIN)
-			))
+		List<PointEarnRequest> pointRequests = certs.stream()
+			.map(CertificationClientHelper::convertPointEarnRequest)
 			.toList();
+		pointClient.earnPoints(pointRequests);
 
-		pointClient.earnPoints(request);
+		List<CertificationConfirmRequest> teamConfirmRequests = certs.stream()
+			.filter(cert -> ChallengeSnapshot.TEAM_TYPE.equals(cert.getChallenge().getType()))
+			.map(this::convertTeamConfirmRequest)
+			.toList();
+		if (!teamConfirmRequests.isEmpty()) {
+			challengeClient.confirmTeamCertifications(teamConfirmRequests);
+		}
+	}
+
+	private static PointEarnRequest convertPointEarnRequest(ChallengeCertification cert) {
+		return new PointEarnRequest(
+			cert.getMember().getMemberId(),
+			BigDecimal.valueOf(cert.getChallenge().getChallengePoint()),
+			cert.getChallenge().getChallengeId(),
+			cert.getChallenge().getChallengeName() + " 완료",
+			PointTransactionType.CHALLENGE,
+			LocalDateTime.of(cert.getCertifiedDate(), LocalTime.MIN)
+		);
+	}
+
+	private CertificationConfirmRequest convertTeamConfirmRequest(ChallengeCertification cert) {
+		return new CertificationConfirmRequest(
+			cert.getMember().getMemberId(),
+			cert.getChallenge().getGroupCode()
+		);
 	}
 }

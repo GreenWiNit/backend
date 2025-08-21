@@ -33,7 +33,9 @@ public interface ChallengeGroupQuery {
 
 	List<AdminTeamParticipantDto> findParticipantByChallengeForExcel(Long challengeId);
 
-	ChallengeGroup getChallengeGroup(Long groupId, Long memberId);
+	void validateMembership(Long groupId, Long memberId);
 
-	void validateActivityDateParticipation(Long memberId, LocalDate activityDate);
+	void validateActivityDateParticipation(Long memberId, Long challengeId, LocalDate activityDate);
+
+	ChallengeGroup getChallengeGroupByTeamCode(String teamCode);
 }

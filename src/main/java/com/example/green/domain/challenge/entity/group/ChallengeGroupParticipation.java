@@ -42,6 +42,8 @@ public class ChallengeGroupParticipation extends BaseEntity {
 	@Column(nullable = false, length = 20)
 	private GroupRole role;
 
+	private Boolean certified;
+
 	private ChallengeGroupParticipation(
 		ChallengeGroup challengeGroup,
 		Long memberId,
@@ -53,6 +55,7 @@ public class ChallengeGroupParticipation extends BaseEntity {
 		this.challengeGroup = challengeGroup;
 		this.memberId = memberId;
 		this.role = role;
+		this.certified = false;
 	}
 
 	public static ChallengeGroupParticipation fromLeader(ChallengeGroup challengeGroup, Long leaderId) {
@@ -69,5 +72,9 @@ public class ChallengeGroupParticipation extends BaseEntity {
 
 	public boolean isLeader() {
 		return this.role == GroupRole.LEADER;
+	}
+
+	public void confirmCertification() {
+		this.certified = true;
 	}
 }

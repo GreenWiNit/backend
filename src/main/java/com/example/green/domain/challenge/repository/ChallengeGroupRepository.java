@@ -1,6 +1,7 @@
 package com.example.green.domain.challenge.repository;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -24,6 +25,10 @@ public interface ChallengeGroupRepository extends JpaRepository<ChallengeGroup, 
 		WHERE p.memberId = :memberId
 		AND g.period.beginDateTime >= :startOfDay
 		AND g.period.beginDateTime < :endOfDay
+		AND g.teamChallengeId = :teamChallengeId
 		""")
-	boolean existsParticipationOnActivityDate(Long memberId, LocalDateTime startOfDay, LocalDateTime endOfDay);
+	boolean existsParticipationOnActivityDate(
+		Long memberId, Long teamChallengeId, LocalDateTime startOfDay, LocalDateTime endOfDay);
+
+	Optional<ChallengeGroup> findByTeamCode(String teamCode);
 }

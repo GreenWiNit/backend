@@ -70,6 +70,6 @@ public class TeamChallenge extends BaseChallenge {
 		return participations.stream()
 			.filter(p -> p.isParticipated(memberId))
 			.findFirst()
-			.orElseThrow(() -> new ChallengeException(ChallengeExceptionMessage.NOT_PARTICIPATING));
+			.orElseThrow(() -> new ChallengeException(ChallengeExceptionMessage.NOT_PARTICIPATING_CHALLENGE));
 	}
 }

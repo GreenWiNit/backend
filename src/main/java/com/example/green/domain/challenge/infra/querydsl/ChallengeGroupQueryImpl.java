@@ -4,7 +4,9 @@ import static com.example.green.domain.challenge.infra.querydsl.predicates.Chall
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -48,14 +50,17 @@ public class ChallengeGroupQueryImpl implements ChallengeGroupQuery {
 	public CursorTemplate<String, MyChallengeGroupDto> findMyGroup(
 		Long challengeId, String cursor, Integer size, Long memberId
 	) {
-		List<Long> participatingGroupIds = executor.executeMyGroupIdsQuery(memberId);
-		if (participatingGroupIds.isEmpty()) {
+		Map<Long, Boolean> certifiedMap = executor.executeMyGroupCertifiedMap(memberId);
+		if (certifiedMap.isEmpty()) {
 			return CursorTemplate.ofEmpty();
 		}
 
+		List<Long> participatingGroupIds = new ArrayList<>(certifiedMap.keySet());
 		BooleanExpression condition = getMyGroupCondition(challengeId, participatingGroupIds, cursor);
 		List<MyChallengeGroupDto> groups = executor.executeMyGroupQuery(size, memberId, condition);
-		return CursorTemplate.from(groups, size, dto -> dto.createdDate() + "," + dto.id());
+		groups.forEach(group -> group.setCertified(certifiedMap.get(group.getId())));
+
+		return CursorTemplate.from(groups, size, MyChallengeGroupDto::getCursor);
 	}
 
 	public ChallengeGroupDetailDto getGroupDetail(Long groupId, Long memberId) {
@@ -98,19 +103,24 @@ public class ChallengeGroupQueryImpl implements ChallengeGroupQuery {
 		return executor.executeGroupParticipantForExcelQuery(challengeId);
 	}
 
-	public ChallengeGroup getChallengeGroup(Long groupId, Long memberId) {
+	public void validateMembership(Long groupId, Long memberId) {
 		if (!challengeGroupRepository.existMembership(groupId, memberId)) {
 			throw new ChallengeException(ChallengeExceptionMessage.INVALID_GROUP_MEMBERSHIP);
 		}
-		return getChallengeGroup(groupId);
 	}
 
-	public void validateActivityDateParticipation(Long memberId, LocalDate activityDate) {
+	public void validateActivityDateParticipation(Long memberId, Long challengeId, LocalDate activityDate) {
 		LocalDateTime startOfDay = activityDate.atStartOfDay();
 		LocalDateTime endOfDay = startOfDay.plusDays(1);
 
-		if (challengeGroupRepository.existsParticipationOnActivityDate(memberId, startOfDay, endOfDay)) {
+		if (challengeGroupRepository.existsParticipationOnActivityDate(memberId, challengeId, startOfDay, endOfDay)) {
 			throw new ChallengeException(ChallengeExceptionMessage.ALREADY_PARTICIPATED_ON_THIS_DATE);
 		}
+	}
+
+	@Override
+	public ChallengeGroup getChallengeGroupByTeamCode(String teamCode) {
+		return challengeGroupRepository.findByTeamCode(teamCode)
+			.orElseThrow(() -> new ChallengeException(ChallengeExceptionMessage.CHALLENGE_GROUP_NOT_FOUND));
 	}
 }

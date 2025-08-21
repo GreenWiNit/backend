@@ -1,5 +1,8 @@
 package com.example.green.domain.challenge.service;
 
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -34,7 +37,7 @@ public class ChallengeGroupService {
 	private final ChallengeGroupRepository challengeGroupRepository;
 
 	public Long create(Long challengeId, Long leaderId, ChallengeGroupCreateDto dto) {
-		challengeGroupQuery.validateActivityDateParticipation(leaderId, dto.challengeDate());
+		challengeGroupQuery.validateActivityDateParticipation(leaderId, challengeId, dto.challengeDate());
 		teamChallengeQuery.validateGroupPeriod(challengeId, dto.challengeDate());
 		String teamCode = sequenceService.generateCode(SequenceType.TEAM_CHALLENGE_GROUP, timeUtils.now());
 		ChallengeGroup challengeGroup = dto.toEntity(teamCode, challengeId, leaderId);
@@ -64,7 +67,9 @@ public class ChallengeGroupService {
 	@Retryable(retryFor = OptimisticLockingFailureException.class, backoff = @Backoff(delay = 100, multiplier = 2))
 	public void join(Long groupId, Long memberId) {
 		ChallengeGroup challengeGroup = challengeGroupQuery.getChallengeGroup(groupId);
-		challengeGroupQuery.validateActivityDateParticipation(memberId, challengeGroup.getPeriod().getDate());
+		challengeGroupQuery.validateActivityDateParticipation(
+			memberId, challengeGroup.getTeamChallengeId(), challengeGroup.getPeriod().getDate());
+
 		challengeGroup.joinMember(memberId, timeUtils.now());
 	}
 
@@ -73,6 +78,16 @@ public class ChallengeGroupService {
 		// todo: 나중에 사용할 수도 명확히 모름
 		ChallengeGroup challengeGroup = challengeGroupQuery.getChallengeGroup(groupId);
 		challengeGroup.leaveMember(memberId);
+	}
+
+	public void confirmTeamCertifications(Map<String, List<Long>> groupedByCode) {
+		for (Map.Entry<String, List<Long>> entry : groupedByCode.entrySet()) {
+			String groupCode = entry.getKey();
+			List<Long> memberIds = entry.getValue();
+
+			ChallengeGroup group = challengeGroupQuery.getChallengeGroupByTeamCode(groupCode);
+			group.confirmCertifications(memberIds);
+		}
 	}
 
 	private static void validateGroupLeader(Long leaderId, ChallengeGroup group) {
