@@ -113,4 +113,10 @@ public class ChallengeGroupQueryImpl implements ChallengeGroupQuery {
 			throw new ChallengeException(ChallengeExceptionMessage.ALREADY_PARTICIPATED_ON_THIS_DATE);
 		}
 	}
+
+	@Override
+	public ChallengeGroup getChallengeGroupByTeamCode(String teamCode) {
+		return challengeGroupRepository.findByTeamCode(teamCode)
+			.orElseThrow(() -> new ChallengeException(ChallengeExceptionMessage.CHALLENGE_GROUP_NOT_FOUND));
+	}
 }

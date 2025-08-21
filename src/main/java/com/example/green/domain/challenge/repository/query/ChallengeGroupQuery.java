@@ -36,4 +36,6 @@ public interface ChallengeGroupQuery {
 	ChallengeGroup getChallengeGroup(Long groupId, Long memberId);
 
 	void validateActivityDateParticipation(Long memberId, Long challengeId, LocalDate activityDate);
+
+	ChallengeGroup getChallengeGroupByTeamCode(String teamCode);
 }

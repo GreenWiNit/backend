@@ -1,5 +1,8 @@
 package com.example.green.domain.challenge.service;
 
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -75,6 +78,16 @@ public class ChallengeGroupService {
 		// todo: 나중에 사용할 수도 명확히 모름
 		ChallengeGroup challengeGroup = challengeGroupQuery.getChallengeGroup(groupId);
 		challengeGroup.leaveMember(memberId);
+	}
+
+	public void confirmTeamCertifications(Map<String, List<Long>> groupedByCode) {
+		for (Map.Entry<String, List<Long>> entry : groupedByCode.entrySet()) {
+			String groupCode = entry.getKey();
+			List<Long> memberIds = entry.getValue();
+
+			ChallengeGroup group = challengeGroupQuery.getChallengeGroupByTeamCode(groupCode);
+			group.confirmCertifications(memberIds);
+		}
 	}
 
 	private static void validateGroupLeader(Long leaderId, ChallengeGroup group) {
