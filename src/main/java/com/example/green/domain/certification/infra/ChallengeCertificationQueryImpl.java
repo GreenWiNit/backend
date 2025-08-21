@@ -37,13 +37,13 @@ public class ChallengeCertificationQueryImpl implements ChallengeCertificationQu
 
 	public void checkAlreadyTeamCert(Long challengeId, LocalDate challengeDate, Long memberId) {
 		if (challengeCertificationRepository.existsByTeamChallenge(challengeId, challengeDate, memberId)) {
-			throw new CertificationException(EXISTS_TEAM_CHALLENGE_CERT_OF_DAY);
+			throw new CertificationException(EXISTS_CHALLENGE_CERT_OF_DAY);
 		}
 	}
 
 	public void checkAlreadyPersonalCert(Long challengeId, LocalDate challengeDate, Long memberId) {
 		if (challengeCertificationRepository.existsByPersonalChallenge(challengeId, challengeDate, memberId)) {
-			throw new CertificationException(EXISTS_TEAM_CHALLENGE_CERT_OF_DAY);
+			throw new CertificationException(EXISTS_CHALLENGE_CERT_OF_DAY);
 		}
 	}
 
