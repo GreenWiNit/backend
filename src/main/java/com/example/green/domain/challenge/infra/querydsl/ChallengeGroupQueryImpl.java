@@ -103,11 +103,10 @@ public class ChallengeGroupQueryImpl implements ChallengeGroupQuery {
 		return executor.executeGroupParticipantForExcelQuery(challengeId);
 	}
 
-	public ChallengeGroup getChallengeGroup(Long groupId, Long memberId) {
+	public void validateMembership(Long groupId, Long memberId) {
 		if (!challengeGroupRepository.existMembership(groupId, memberId)) {
 			throw new ChallengeException(ChallengeExceptionMessage.INVALID_GROUP_MEMBERSHIP);
 		}
-		return getChallengeGroup(groupId);
 	}
 
 	public void validateActivityDateParticipation(Long memberId, Long challengeId, LocalDate activityDate) {

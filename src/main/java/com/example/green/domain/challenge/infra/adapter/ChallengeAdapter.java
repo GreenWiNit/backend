@@ -47,7 +47,8 @@ public class ChallengeAdapter implements ChallengeClient {
 
 	@Override
 	public ChallengeGroupDto getChallengeGroup(Long groupId, Long memberId) {
-		ChallengeGroup challengeGroup = challengeGroupQuery.getChallengeGroup(groupId, memberId);
+		challengeGroupQuery.validateMembership(groupId, memberId);
+		ChallengeGroup challengeGroup = challengeGroupQuery.getChallengeGroup(groupId);
 		return ChallengeGroupDto.from(challengeGroup);
 	}
 
