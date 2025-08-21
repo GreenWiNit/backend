@@ -25,9 +25,6 @@ public class GroupCapacity {
 		if (maxParticipants == null || maxParticipants <= 0) {
 			throw new ChallengeException(ChallengeExceptionMessage.INVALID_MAX_PARTICIPANTS_COUNT);
 		}
-		if (currentParticipants > maxParticipants) {
-			throw new ChallengeException(ChallengeExceptionMessage.MAX_PARTICIPANTS_LESS_THAN_CURRENT);
-		}
 		this.maxParticipants = maxParticipants;
 		this.currentParticipants = currentParticipants;
 	}
@@ -37,6 +34,9 @@ public class GroupCapacity {
 	}
 
 	public static GroupCapacity update(Integer currentParticipants, Integer maxParticipants) {
+		if (currentParticipants > maxParticipants) {
+			throw new ChallengeException(ChallengeExceptionMessage.MAX_PARTICIPANTS_LESS_THAN_CURRENT);
+		}
 		return new GroupCapacity(currentParticipants, maxParticipants);
 	}
 

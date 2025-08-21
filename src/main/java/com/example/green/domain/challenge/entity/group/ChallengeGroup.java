@@ -91,7 +91,7 @@ public class ChallengeGroup extends BaseEntity {
 			throw new ChallengeException(ChallengeExceptionMessage.GROUP_IS_FULL);
 		}
 		if (!period.canParticipate(now)) {
-			throw new ChallengeException(ChallengeExceptionMessage.INACTIVE_GROUP);
+			throw new ChallengeException(ChallengeExceptionMessage.INVALID_ACTIVE_PERIOD);
 		}
 		ChallengeGroupParticipation participation = ChallengeGroupParticipation.fromMember(this, memberId);
 		addParticipant(participation);
@@ -140,7 +140,7 @@ public class ChallengeGroup extends BaseEntity {
 		return participants.stream()
 			.filter(p -> p.matches(memberId))
 			.findFirst()
-			.orElseThrow(() -> new ChallengeException(ChallengeExceptionMessage.NOT_PARTICIPATING));
+			.orElseThrow(() -> new ChallengeException(ChallengeExceptionMessage.INVALID_GROUP_MEMBERSHIP));
 	}
 
 	private void addParticipant(ChallengeGroupParticipation participation) {

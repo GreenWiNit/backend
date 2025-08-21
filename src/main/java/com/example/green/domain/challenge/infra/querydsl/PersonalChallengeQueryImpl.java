@@ -104,7 +104,7 @@ public class PersonalChallengeQueryImpl implements PersonalChallengeQuery {
 		Long challengeId, Long memberId, LocalDate challengeDate
 	) {
 		if (!personalChallengeRepository.existsMembership(challengeId, memberId)) {
-			throw new ChallengeException(ChallengeExceptionMessage.NOT_PARTICIPATING);
+			throw new ChallengeException(ChallengeExceptionMessage.NOT_PARTICIPATING_CHALLENGE);
 		}
 		PersonalChallenge challenge = getPersonalChallengeById(challengeId);
 		if (!challenge.isActive(challengeDate)) {
