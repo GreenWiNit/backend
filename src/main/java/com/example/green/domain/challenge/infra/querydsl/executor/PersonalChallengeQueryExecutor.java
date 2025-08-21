@@ -28,7 +28,7 @@ public class PersonalChallengeQueryExecutor {
 	private final JPAQueryFactory queryFactory;
 
 	public List<ChallengeDto> executeParticipationQueryForClient(BooleanExpression condition, int size) {
-		return queryFactory.select(PersonalChallengeProjections.toChallenges())
+		return queryFactory.select(PersonalChallengeProjections.toMyChallenges())
 			.from(personalChallenge)
 			.join(personalChallenge.participations, personalChallengeParticipation)
 			.where(condition)

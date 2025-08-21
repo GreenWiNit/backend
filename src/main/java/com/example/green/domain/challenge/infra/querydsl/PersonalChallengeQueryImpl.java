@@ -45,7 +45,7 @@ public class PersonalChallengeQueryImpl implements PersonalChallengeQuery {
 	) {
 		BooleanExpression condition = myParticipationCondition(memberId, cursor, now);
 		List<ChallengeDto> participationChallenges = executor.executeParticipationQueryForClient(condition, size);
-		return CursorTemplate.from(participationChallenges, size, ChallengeDto::id);
+		return CursorTemplate.from(participationChallenges, size, ChallengeDto::getCursor);
 	}
 
 	public CursorTemplate<Long, ChallengeDto> findPersonalChallengesByCursor(
@@ -55,7 +55,7 @@ public class PersonalChallengeQueryImpl implements PersonalChallengeQuery {
 	) {
 		BooleanExpression condition = PersonalChallengePredicates.activeChallengeCondition(cursor, now);
 		List<ChallengeDto> challenges = executor.executeChallengesQueryForClient(condition, size);
-		return CursorTemplate.from(challenges, size, ChallengeDto::id);
+		return CursorTemplate.from(challenges, size, ChallengeDto::getId);
 	}
 
 	public PersonalChallenge getPersonalChallengeById(Long challengeId) {
