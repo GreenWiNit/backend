@@ -27,7 +27,7 @@ public class PointProductQueryRepositoryImpl implements PointProductQueryReposit
 
 	@Override
 	public PageTemplate<PointProductSearchResult> searchPointProducts(PointProductSearchCondition condition) {
-		BooleanExpression expression = PointProductPredicates.fromCondition(condition);
+		BooleanExpression expression = PointProductPredicates.fromCondition(condition.status(), condition.keyword());
 
 		Long totalCount = pointProductQueryExecutor.countProducts(expression);
 		Pagination pagination = Pagination.fromCondition(condition, totalCount);
@@ -39,7 +39,7 @@ public class PointProductQueryRepositoryImpl implements PointProductQueryReposit
 
 	@Override
 	public List<PointProductSearchResult> searchPointProductsForExcel(PointProductExcelCondition condition) {
-		BooleanExpression expression = PointProductPredicates.fromCondition(condition);
+		BooleanExpression expression = PointProductPredicates.fromCondition(condition.status(), condition.keyword());
 		return pointProductQueryExecutor.findProductsForExcel(expression);
 	}
 
