@@ -59,12 +59,6 @@ public class ChallengeCertification extends TimeBaseEntity {
 		MemberSnapshot member, ChallengeSnapshot challenge, String imageUrl, String review, LocalDate certifiedDate
 	) {
 		validateCreateInputs(member, challenge, imageUrl, review, certifiedDate);
-		LocalDate now = LocalDate.now();
-		if (certifiedDate.isAfter(now)) {
-			log.error("certifiedDate = {}, now = {}", certifiedDate, now);
-			throw new CertificationException(CertificationExceptionMessage.FUTURE_DATE_NOT_ALLOWED);
-		}
-
 		return ChallengeCertification.builder()
 			.member(member)
 			.challenge(challenge)

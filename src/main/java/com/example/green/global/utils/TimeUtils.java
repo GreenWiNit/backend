@@ -3,6 +3,7 @@ package com.example.green.global.utils;
 import java.text.SimpleDateFormat;
 import java.time.Clock;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -39,5 +40,9 @@ public class TimeUtils {
 
 	public LocalDateTime now() {
 		return LocalDateTime.now(clock);
+	}
+
+	public LocalDate nowLocalDate() {
+		return LocalDate.now(clock);
 	}
 }
