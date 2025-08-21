@@ -16,13 +16,11 @@ import com.example.green.global.api.page.PageTemplate;
 
 public interface PersonalChallengeQuery {
 
-	CursorTemplate<Long, ChallengeDto> findMyParticipationByCursor(Long memberId, Long cursor, int size);
+	CursorTemplate<Long, ChallengeDto> findMyParticipationByCursor(
+		Long memberId, Long cursor, int size, LocalDateTime now);
 
 	CursorTemplate<Long, ChallengeDto> findPersonalChallengesByCursor(
-		Long cursor,
-		int size,
-		LocalDateTime now
-	);
+		Long cursor, int size, LocalDateTime now);
 
 	PersonalChallenge getPersonalChallengeById(Long challengeId);
 

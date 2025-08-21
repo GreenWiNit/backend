@@ -6,6 +6,7 @@ import static com.example.green.domain.challenge.entity.challenge.QPersonalChall
 import java.time.LocalDateTime;
 
 import com.example.green.domain.challenge.entity.challenge.vo.ChallengeDisplayStatus;
+import com.example.green.infra.database.querydsl.BooleanExpressionConnector;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
 
@@ -15,23 +16,20 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class PersonalChallengePredicates {
 
-	public static BooleanExpression myParticipationCondition(Long memberId, Long cursor) {
-		BooleanExpression expression = personalChallengeParticipation.memberId.eq(memberId);
-		if (cursor == null) {
-			return expression;
-		}
-		return expression.and(personalChallenge.id.lt(cursor));
+	public static BooleanExpression myParticipationCondition(Long memberId, Long cursor, LocalDateTime now) {
+		return BooleanExpressionConnector.combineWithAnd(
+			activeChallengeCondition(cursor, now),
+			personalChallengeParticipation.memberId.eq(memberId)
+		);
 	}
 
 	public static BooleanExpression activeChallengeCondition(Long cursor, LocalDateTime now) {
-		BooleanExpression expression = personalChallenge.beginDate.loe(now.toLocalDate())
-			.and(personalChallenge.endDate.goe(now.toLocalDate()))
-			.and(personalChallenge.displayStatus.eq(ChallengeDisplayStatus.VISIBLE));
-		
-		if (cursor == null) {
-			return expression;
-		}
-		return expression.and(personalChallenge.id.lt(cursor));
+		return BooleanExpressionConnector.combineWithAnd(
+			personalChallenge.beginDate.loe(now.toLocalDate()),
+			personalChallenge.endDate.goe(now.toLocalDate()),
+			personalChallenge.displayStatus.eq(ChallengeDisplayStatus.VISIBLE),
+			getCursorCondition(cursor)
+		);
 	}
 
 	public static BooleanExpression memberParticipationExists(Long challengeId, Long memberId) {
@@ -41,5 +39,12 @@ public class PersonalChallengePredicates {
 				personalChallengeParticipation.personalChallenge.id.eq(challengeId),
 				personalChallengeParticipation.memberId.eq(memberId)
 			).exists();
+	}
+
+	private static BooleanExpression getCursorCondition(Long cursor) {
+		if (cursor == null || cursor <= 0) {
+			return null;
+		}
+		return personalChallenge.id.lt(cursor);
 	}
 }
