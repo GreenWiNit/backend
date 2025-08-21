@@ -58,7 +58,7 @@ public class ChallengeCertificationService {
 		ChallengeCertification certification = cmd.toEntity(member, challenge, group.challengeDate());
 
 		challengeCertificationRepository.save(certification);
-		certificationClientHelper.processCertSideEffect(certification.getImageUrl());
+		certificationClientHelper.processCertSideEffect(certification.getImageUrl(), cmd.groupId(), cmd.memberId());
 	}
 
 	public void approve(List<Long> certificationIds) {

@@ -157,11 +157,4 @@ public class ChallengeGroup extends BaseEntity {
 		}
 		return GroupStatus.RECRUITING;
 	}
-
-	public void confirmCertifications(List<Long> memberIds) {
-		for (Long memberId : memberIds) {
-			ChallengeGroupParticipation participation = findParticipationByMemberId(memberId);
-			participation.confirmCertification();
-		}
-	}
 }

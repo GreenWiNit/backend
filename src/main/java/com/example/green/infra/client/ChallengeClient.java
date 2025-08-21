@@ -1,7 +1,6 @@
 package com.example.green.infra.client;
 
 import java.time.LocalDate;
-import java.util.List;
 
 import com.example.green.infra.client.dto.ChallengeDto;
 import com.example.green.infra.client.dto.ChallengeGroupDto;
@@ -15,5 +14,5 @@ public interface ChallengeClient {
 
 	ChallengeGroupDto getChallengeGroup(Long groupId, Long memberId);
 
-	void confirmTeamCertifications(List<CertificationConfirmRequest> teamConfirmRequests);
+	void confirmTeamCertification(CertificationConfirmRequest request);
 }

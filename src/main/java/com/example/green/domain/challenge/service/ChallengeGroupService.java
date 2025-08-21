@@ -1,8 +1,5 @@
 package com.example.green.domain.challenge.service;
 
-import java.util.List;
-import java.util.Map;
-
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -12,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.green.domain.challenge.controller.command.dto.ChallengeGroupCreateDto;
 import com.example.green.domain.challenge.controller.command.dto.ChallengeGroupUpdateDto;
 import com.example.green.domain.challenge.entity.group.ChallengeGroup;
+import com.example.green.domain.challenge.entity.group.ChallengeGroupParticipation;
 import com.example.green.domain.challenge.exception.ChallengeException;
 import com.example.green.domain.challenge.exception.ChallengeExceptionMessage;
 import com.example.green.domain.challenge.repository.ChallengeGroupRepository;
@@ -80,14 +78,9 @@ public class ChallengeGroupService {
 		challengeGroup.leaveMember(memberId);
 	}
 
-	public void confirmTeamCertifications(Map<String, List<Long>> groupedByCode) {
-		for (Map.Entry<String, List<Long>> entry : groupedByCode.entrySet()) {
-			String groupCode = entry.getKey();
-			List<Long> memberIds = entry.getValue();
-
-			ChallengeGroup group = challengeGroupQuery.getChallengeGroupByTeamCode(groupCode);
-			group.confirmCertifications(memberIds);
-		}
+	public void confirmTeamCertification(Long groupId, Long memberId) {
+		ChallengeGroupParticipation participation = challengeGroupQuery.getChallengeParticipation(groupId, memberId);
+		participation.confirmCertification();
 	}
 
 	private static void validateGroupLeader(Long leaderId, ChallengeGroup group) {

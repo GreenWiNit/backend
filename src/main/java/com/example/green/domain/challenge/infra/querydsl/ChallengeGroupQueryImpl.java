@@ -18,6 +18,7 @@ import com.example.green.domain.challenge.controller.query.dto.group.ChallengeGr
 import com.example.green.domain.challenge.controller.query.dto.group.ChallengeGroupDto;
 import com.example.green.domain.challenge.controller.query.dto.group.MyChallengeGroupDto;
 import com.example.green.domain.challenge.entity.group.ChallengeGroup;
+import com.example.green.domain.challenge.entity.group.ChallengeGroupParticipation;
 import com.example.green.domain.challenge.exception.ChallengeException;
 import com.example.green.domain.challenge.exception.ChallengeExceptionMessage;
 import com.example.green.domain.challenge.infra.querydsl.executor.ChallengeGroupQueryExecutor;
@@ -119,8 +120,8 @@ public class ChallengeGroupQueryImpl implements ChallengeGroupQuery {
 	}
 
 	@Override
-	public ChallengeGroup getChallengeGroupByTeamCode(String teamCode) {
-		return challengeGroupRepository.findByTeamCode(teamCode)
-			.orElseThrow(() -> new ChallengeException(ChallengeExceptionMessage.CHALLENGE_GROUP_NOT_FOUND));
+	public ChallengeGroupParticipation getChallengeParticipation(Long groupId, Long memberId) {
+		return challengeGroupRepository.findParticipant(groupId, memberId)
+			.orElseThrow(() -> new ChallengeException(ChallengeExceptionMessage.INVALID_GROUP_MEMBERSHIP));
 	}
 }

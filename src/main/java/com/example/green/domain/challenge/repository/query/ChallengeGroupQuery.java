@@ -10,6 +10,7 @@ import com.example.green.domain.challenge.controller.query.dto.group.ChallengeGr
 import com.example.green.domain.challenge.controller.query.dto.group.ChallengeGroupDto;
 import com.example.green.domain.challenge.controller.query.dto.group.MyChallengeGroupDto;
 import com.example.green.domain.challenge.entity.group.ChallengeGroup;
+import com.example.green.domain.challenge.entity.group.ChallengeGroupParticipation;
 import com.example.green.global.api.page.CursorTemplate;
 import com.example.green.global.api.page.PageTemplate;
 
@@ -37,5 +38,5 @@ public interface ChallengeGroupQuery {
 
 	void validateActivityDateParticipation(Long memberId, Long challengeId, LocalDate activityDate);
 
-	ChallengeGroup getChallengeGroupByTeamCode(String teamCode);
+	ChallengeGroupParticipation getChallengeParticipation(Long groupId, Long memberId);
 }
