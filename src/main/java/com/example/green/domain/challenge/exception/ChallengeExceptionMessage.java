@@ -31,7 +31,8 @@ public enum ChallengeExceptionMessage implements ExceptionMessage {
 	INVALID_GROUP_MEMBERSHIP("팀에 접근 권한이 없습니다.", BAD_REQUEST),
 	NOT_GROUP_LEADER("해당 팀의 리더가 아닙니다.", FORBIDDEN),
 	ALREADY_PARTICIPATING_IN_GROUP("이미 해당 팀에 참여 중입니다.", BAD_REQUEST),
-	INVALID_GROUP_PERIOD("팀 활동 시작일은 종료일보다 늦을 수 없습니다.", BAD_REQUEST),
+	INVALID_GROUP_PERIOD_RANGE("팀 활동 시작일은 종료일보다 늦을 수 없습니다.", BAD_REQUEST),
+	INVALID_GROUP_ACTIVE_TIME("팀 활동 시작 시간을 현재보다 과거로 설정할 수 없습니다.", BAD_REQUEST),
 	MISMATCH_GROUP_PERIOD_RANGE("팀 생성시 활동 기간은 챌린지 기간을 벗어날 수 없습니다.", BAD_REQUEST),
 	ALREADY_PARTICIPATED_ON_THIS_DATE("해당 챌린지 활동 일자로 이미 참여한 팀이 존재합니다.", BAD_REQUEST),
 	CANNOT_DELETE_AFTER_ACTIVITY_START("챌린지 활동 시작 이후에는 팀 정보를 삭제할 수 없습니다.", BAD_REQUEST);

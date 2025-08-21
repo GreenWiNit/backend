@@ -27,8 +27,11 @@ public class GroupPeriod {
 	private LocalDateTime endDateTime;
 
 	private GroupPeriod(LocalDateTime beginDateTime, LocalDateTime endDateTime) {
+		if (beginDateTime.isBefore(LocalDateTime.now())) {
+			throw new ChallengeException(ChallengeExceptionMessage.INVALID_GROUP_ACTIVE_TIME);
+		}
 		if (beginDateTime.isAfter(endDateTime)) {
-			throw new ChallengeException(ChallengeExceptionMessage.INVALID_GROUP_PERIOD);
+			throw new ChallengeException(ChallengeExceptionMessage.INVALID_GROUP_PERIOD_RANGE);
 		}
 		this.beginDateTime = beginDateTime;
 		this.endDateTime = endDateTime;
