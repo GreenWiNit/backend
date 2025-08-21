@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 public enum ChallengeExceptionMessage implements ExceptionMessage {
 
 	// 챌린지
-	CHALLENGE_NOT_FOUND("챌린지를 찾을 수 없습니다.", BAD_REQUEST),
+	CHALLENGE_NOT_FOUND("챌린지를 찾을 수 없습니다.", NOT_FOUND),
 	INACTIVE_CHALLENGE("현재 활성화된 챌린지가 아닙니다.", BAD_REQUEST),
 	ALREADY_PARTICIPATING("이미 참여 중인 챌린지입니다. [홈]-[참여 챌린지]에서 확인해주세요.", BAD_REQUEST),
 	NOT_PARTICIPATING_CHALLENGE("참여하지 않은 챌린지입니다.", BAD_REQUEST),
