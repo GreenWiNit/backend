@@ -19,6 +19,7 @@ import com.example.green.domain.challenge.controller.query.dto.group.ChallengeGr
 import com.example.green.domain.challenge.controller.query.dto.group.MyChallengeGroupDto;
 import com.example.green.domain.challenge.entity.group.ChallengeGroup;
 import com.example.green.domain.challenge.entity.group.ChallengeGroupParticipation;
+import com.example.green.domain.challenge.entity.group.dto.ParticipationInfo;
 import com.example.green.domain.challenge.exception.ChallengeException;
 import com.example.green.domain.challenge.exception.ChallengeExceptionMessage;
 import com.example.green.domain.challenge.infra.querydsl.executor.ChallengeGroupQueryExecutor;
@@ -65,9 +66,9 @@ public class ChallengeGroupQueryImpl implements ChallengeGroupQuery {
 	}
 
 	public ChallengeGroupDetailDto getGroupDetail(Long groupId, Long memberId) {
-		boolean participating = challengeGroupRepository.existMembership(groupId, memberId);
 		ChallengeGroup challengeGroup = getChallengeGroup(groupId);
-		return ChallengeGroupDetailDto.from(challengeGroup, participating, memberId);
+		ParticipationInfo participationInfo = challengeGroup.getParticipationInfo(memberId);
+		return ChallengeGroupDetailDto.from(challengeGroup, participationInfo, memberId);
 	}
 
 	public CursorTemplate<String, ChallengeGroupDto> findAllGroupByCursor(
