@@ -164,17 +164,23 @@ public class WebUtils {
 		if (frontendUrl == null) {
 			return true;
 		}
-		try {
-			java.net.URI uri = java.net.URI.create(frontendUrl);
-			String host = uri.getHost();
-			if (host == null) {
-				return true;
-			}
-			return host.startsWith(LOCALHOST) || host.equals(IPV4_LOOPBACK);
-		} catch (Exception e) {
-			// URI 파싱 실패 시 기존 방식으로 fallback
-			return frontendUrl.contains(LOCALHOST) || frontendUrl.contains(IPV4_LOOPBACK);
-		}
+        try {
+            java.net.URI uri = java.net.URI.create(frontendUrl);
+            String host = uri.getHost();
+            if (host == null) {
+                return true;
+            }
+            String h = host.toLowerCase();
+            // Only exact loopback names/addresses are considered local.
+            return LOCALHOST.equals(h)
+                || IPV4_LOOPBACK.equals(h)
+                || "::1".equals(h)
+                || IPV6_LOOPBACK.equals(h);
+        } catch (Exception e) {
+            // URI parsing failed; conservative fallback (exact matches only)
+            String s = frontendUrl.toLowerCase();
+            return s.equals(LOCALHOST) || s.equals(IPV4_LOOPBACK) || s.equals("::1") || s.equals(IPV6_LOOPBACK);
+        }
 	}
 
 	public static String toRegistrableDomain(String host) {
