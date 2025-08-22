@@ -62,9 +62,8 @@ public class WebUtils {
 			.maxAge(maxAge)
 			.secure(secure);
 		
-		if (domain == null || domain == "localhost") {
+		if (domain == null) {
 			builder.sameSite("None");
-			builder.httpOnly(false);
 		}
 		if (domain != null && !domain.isBlank()) {
 			builder.domain(domain);

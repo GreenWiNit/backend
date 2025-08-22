@@ -128,8 +128,6 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 			} catch (Exception e) {
 				log.warn("도메인 추출 실패: {}", redirectBase, e);
 			}
-		} else {
-			domainHost = "localhost";
 		}
 
 		ResponseCookie refreshCookie = WebUtils.createRefreshTokenResponseCookie(
@@ -144,6 +142,9 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 		String encodedUserInfo = URLEncoder.encode(user.getName(), StandardCharsets.UTF_8);
 
 		String redirectUrl = redirectBase + "/?accessToken=" + encodedAccessToken + "&userName=" + encodedUserInfo;
+		if (isLocalhost) {
+			redirectUrl = redirectBase + "&refreshToken=" + refreshTokenString;
+		}
 
 		log.info("기존 사용자 로그인 성공, AccessToken/TokenManager 발급 완료: {} -> {}", memberKey, redirectUrl);
 		response.sendRedirect(redirectUrl);
