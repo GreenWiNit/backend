@@ -26,7 +26,7 @@ import com.example.green.global.security.PrincipalDetails;
 import com.example.green.global.security.annotation.AuthenticatedApi;
 import com.example.green.global.security.annotation.PublicApi;
 
-import jakarta.servlet.http.Cookie;
+import org.springframework.http.ResponseCookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -64,12 +64,12 @@ public class AuthController implements AuthControllerDocs {
 			WebUtils.extractDeviceInfo(httpRequest),
 			WebUtils.extractClientIp(httpRequest)
 		);
-		Cookie cookie = WebUtils.createRefreshTokenCookie(
+		ResponseCookie cookie = WebUtils.createRefreshTokenCookie(
 			refreshTokenString,
 			WebUtils.isSecureRequest(httpRequest),
 			REFRESH_TOKEN_MAX_AGE
 		);
-		response.addCookie(cookie);
+		response.addHeader("Set-Cookie", cookie.toString());
 
 		String accessTokenString = tokenService.createAccessToken(memberKey, ROLE_USER);
 		AccessToken accessToken = AccessToken.from(accessTokenString, tokenService);
@@ -101,12 +101,12 @@ public class AuthController implements AuthControllerDocs {
 			WebUtils.extractDeviceInfo(httpRequest),
 			WebUtils.extractClientIp(httpRequest)
 		);
-		Cookie cookie = WebUtils.createRefreshTokenCookie(
+		ResponseCookie cookie = WebUtils.createRefreshTokenCookie(
 			refreshTokenString,
 			WebUtils.isSecureRequest(httpRequest),
 			REFRESH_TOKEN_MAX_AGE
 		);
-		response.addCookie(cookie);
+		response.addHeader("Set-Cookie", cookie.toString());
 
 		String accessTokenString = tokenService.createAccessToken(memberKey, ROLE_USER);
 		AccessToken accessToken = AccessToken.from(accessTokenString, tokenService);

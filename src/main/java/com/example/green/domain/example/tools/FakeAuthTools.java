@@ -18,7 +18,7 @@ import com.example.green.domain.member.entity.Member;
 import com.example.green.domain.member.repository.MemberRepository;
 
 import io.swagger.v3.oas.annotations.Hidden;
-import jakarta.servlet.http.Cookie;
+import org.springframework.http.ResponseCookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -47,12 +47,12 @@ public class FakeAuthTools {
 			WebUtils.extractDeviceInfo(httpRequest),
 			WebUtils.extractClientIp(httpRequest)
 		);
-		Cookie cookie = WebUtils.createRefreshTokenCookie(
+		ResponseCookie cookie = WebUtils.createRefreshTokenCookie(
 			refreshTokenString,
 			WebUtils.isSecureRequest(httpRequest),
 			REFRESH_TOKEN_MAX_AGE
 		);
-		response.addCookie(cookie);
+		response.addHeader("Set-Cookie", cookie.toString());
 
 		return ResponseEntity.ok(new TokenResponseDto(
 			accessToken.getValue(),
