@@ -102,7 +102,7 @@ class MemberServiceTest {
 	void updateProfile_OnlyNickname_Success() {
 		// Given
 		Long memberId = 1L;
-		Member member = Member.create("test 123", "테스트", "test@test.com");
+		Member member = Member.create("test 123", "테스트", "test@test.com", "테스트닉네임");
 		member.updateProfile("기존닉네임", "https://s3.example.com/old-image.jpg");
 
 		given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
@@ -123,7 +123,7 @@ class MemberServiceTest {
 	void updateProfile_OnlyProfileImage_Success() {
 		// Given
 		Long memberId = 1L;
-		Member member = Member.create("test 123", "테스트", "test@test.com");
+		Member member = Member.create("test 123", "테스트", "test@test.com", "테스트닉네임");
 		member.updateProfile("기존닉네임", "https://s3.example.com/old-image.jpg");
 
 		given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
@@ -143,7 +143,7 @@ class MemberServiceTest {
 	void updateProfile_BothFields_Success() {
 		// Given
 		Long memberId = 1L;
-		Member member = Member.create("test 123", "테스트", "test@test.com");
+		Member member = Member.create("test 123", "테스트", "test@test.com", "테스트닉네임");
 		member.updateProfile("기존닉네임", "https://s3.example.com/old-image.jpg");
 
 		given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
@@ -163,7 +163,7 @@ class MemberServiceTest {
 	void updateProfile_SameProfileImage_NoFileOperation() {
 		// Given
 		Long memberId = 1L;
-		Member member = Member.create("test 123", "테스트", "test@test.com");
+		Member member = Member.create("test 123", "테스트", "test@test.com", "테스트닉네임");
 		member.updateProfile("기존닉네임", "https://s3.example.com/old-image.jpg");
 
 		given(memberRepository.findById(memberId)).willReturn(Optional.of(member));
@@ -184,7 +184,7 @@ class MemberServiceTest {
 	void updateProfile_ProfileImageToNull_Success() {
 		// Given
 		Long memberId = 1L;
-		Member member = Member.create("test 123", "테스트", "test@test.com");
+		Member member = Member.create("test 123", "테스트", "test@test.com", "테스트닉네임");
 		member.updateProfile("기존닉네임", "https://s3.example.com/old-image.jpg");
 
 		given(memberRepository.findById(memberId)).willReturn(Optional.of(member));

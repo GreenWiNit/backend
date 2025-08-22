@@ -45,7 +45,7 @@ class MemberServiceWithdrawnRestoreTest {
 	void shouldThrowExceptionWhenWithdrawnUserTriesToSignup() {
 		// Given
 		String memberKey = "google 123456789";
-		Member withdrawnMember = Member.create(memberKey, "기존이름", "old@example.com");
+		Member withdrawnMember = Member.create(memberKey, "기존이름", "old@example.com", "테스트닉네임");
 		withdrawnMember.withdraw();
 
 		given(memberRepository.findByMemberKey(memberKey))
@@ -110,11 +110,11 @@ class MemberServiceWithdrawnRestoreTest {
 		String memberKey = "google 123456789";
 
 		// 탈퇴한 사용자
-		Member withdrawnMember = Member.create(memberKey, "홍길동", "test@example.com");
+		Member withdrawnMember = Member.create(memberKey, "홍길동", "test@example.com", "테스트닉네임");
 		withdrawnMember.withdraw();
 
 		// 활성 사용자  
-		Member activeMember = Member.create("google 987654321", "김철수", "active@example.com");
+		Member activeMember = Member.create("google 987654321", "김철수", "active@example.com", "테스트닉네임");
 
 		// When & Then
 		assertThat(withdrawnMember.isWithdrawn()).isTrue();

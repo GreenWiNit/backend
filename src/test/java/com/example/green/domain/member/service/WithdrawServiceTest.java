@@ -57,7 +57,7 @@ class WithdrawServiceTest {
             null
         );
         
-        Member member = Member.create(memberKey, "테스트회원", "test@example.com");
+        Member member = Member.create(memberKey, "테스트회원", "test@example.com", "테스트닉네임");
         
         given(memberRepository.findByMemberKey(memberKey)).willReturn(Optional.of(member));
 
@@ -84,7 +84,7 @@ class WithdrawServiceTest {
             null
         );
         
-        Member member = Member.create(memberKey, "테스트회원", "test@example.com");
+        Member member = Member.create(memberKey, "테스트회원", "test@example.com", "테스트닉네임");
         
         given(memberRepository.findByMemberKey(memberKey)).willReturn(Optional.of(member));
 
@@ -111,7 +111,7 @@ class WithdrawServiceTest {
             "   "
         );
         
-        Member member = Member.create(memberKey, "테스트회원", "test@example.com");
+        Member member = Member.create(memberKey, "테스트회원", "test@example.com", "테스트닉네임");
         
         given(memberRepository.findByMemberKey(memberKey)).willReturn(Optional.of(member));
 
@@ -159,7 +159,7 @@ class WithdrawServiceTest {
             null
         );
         
-        Member member = Member.create(memberKey, "테스트회원", "test@example.com");
+        Member member = Member.create(memberKey, "테스트회원", "test@example.com", "테스트닉네임");
         member.withdraw(); // 이미 탈퇴한 상태로 설정
         
         given(memberRepository.findByMemberKey(memberKey)).willReturn(Optional.of(member));
@@ -189,7 +189,7 @@ class WithdrawServiceTest {
             null
         );
         
-        Member member = Member.create(memberKey, "테스트회원", "test@example.com");
+        Member member = Member.create(memberKey, "테스트회원", "test@example.com", "테스트닉네임");
         
         given(memberRepository.findByMemberKey(memberKey)).willReturn(Optional.of(member));
 
@@ -217,7 +217,7 @@ class WithdrawServiceTest {
             null
         );
         
-        Member member = Member.create(memberKey, "테스트회원", "test@example.com");
+        Member member = Member.create(memberKey, "테스트회원", "test@example.com", "테스트닉네임");
         
         given(memberRepository.findByMemberKey(memberKey)).willReturn(Optional.of(member));
 
@@ -245,7 +245,7 @@ class WithdrawServiceTest {
             "기타 상세 사유입니다."
         );
         
-        Member member = Member.create(memberKey, "테스트회원", "test@example.com");
+        Member member = Member.create(memberKey, "테스트회원", "test@example.com", "테스트닉네임");
         
         given(memberRepository.findByMemberKey(memberKey)).willReturn(Optional.of(member));
 

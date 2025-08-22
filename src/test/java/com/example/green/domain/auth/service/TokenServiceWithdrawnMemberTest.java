@@ -30,7 +30,7 @@ class TokenServiceWithdrawnMemberTest {
 	void shouldBlockWithdrawnUserFromOAuth2Login() {
 		// Given
 		String memberKey = "google 123456789";
-		Member withdrawnMember = Member.create(memberKey, "홍길동", "test@example.com");
+		Member withdrawnMember = Member.create(memberKey, "홍길동", "test@example.com", "테스트닉네임");
 		withdrawnMember.withdraw();
 
 		given(memberService.findByMemberKey(memberKey))
@@ -55,7 +55,7 @@ class TokenServiceWithdrawnMemberTest {
 	void shouldAllowActiveUserToLogin() {
 		// Given
 		String memberKey = "google 123456789";
-		Member activeMember = Member.create(memberKey, "홍길동", "test@example.com");
+		Member activeMember = Member.create(memberKey, "홍길동", "test@example.com", "테스트닉네임");
 
 		given(memberService.findByMemberKey(memberKey))
 			.willReturn(Optional.of(activeMember));

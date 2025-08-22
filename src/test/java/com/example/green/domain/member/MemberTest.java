@@ -24,7 +24,7 @@ class MemberTest {
 	@DisplayName("회원가입시 초기 상태는 NORMAL이다")
 	void shouldHaveNormalStatusWhenCreated() {
 		// given
-		Member member = Member.create("google 123456789", "테스트사용자", "test@example.com");
+		Member member = Member.create("google 123456789", "테스트사용자", "test@example.com", "테스트닉네임");
 
 		// when
 		MemberStatus status = member.getStatus();
@@ -37,7 +37,7 @@ class MemberTest {
 	@DisplayName("회원가입시 초기 역할은 USER이다")
 	void shouldHaveUserRoleWhenCreated() {
 		// given
-		Member member = Member.create("google 123456789", "테스트사용자", "test@example.com");
+		Member member = Member.create("google 123456789", "테스트사용자", "test@example.com", "테스트닉네임");
 
 		// when
 		MemberRole role = member.getRole();

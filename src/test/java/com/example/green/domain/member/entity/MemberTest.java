@@ -19,7 +19,7 @@ class MemberTest {
 		String email = "hong@example.com";
 
 		// when
-		Member member = Member.create(username, name, email);
+		Member member = Member.create(username, name, email, "테스트닉네임");
 
 		// then
 		assertThat(member.getMemberKey()).isEqualTo(username);
@@ -34,7 +34,7 @@ class MemberTest {
 	@DisplayName("회원 탈퇴 시 상태가 DELETED로 변경되고 soft delete 플래그가 설정된다")
 	void withdraw_ShouldMarkMemberAsDeleted() {
 		// given
-		Member member = Member.create("google 123", "테스트", "test@example.com");
+		Member member = Member.create("google 123", "테스트", "test@example.com", "테스트닉네임");
 
 		// when
 		member.withdraw();
@@ -49,7 +49,7 @@ class MemberTest {
 	@DisplayName("정상 회원은 활성 상태로 판별된다")
 	void normalMember_ShouldBeActive() {
 		// given
-		Member member = Member.create("google 123", "테스트", "test@example.com");
+		Member member = Member.create("google 123", "테스트", "test@example.com", "테스트닉네임");
 
 		// when & then
 		assertThat(member.isWithdrawn()).isFalse();
@@ -61,7 +61,7 @@ class MemberTest {
 	@DisplayName("탈퇴한 회원은 탈퇴 상태로 판별된다")
 	void withdrawnMember_ShouldBeWithdrawn() {
 		// given
-		Member member = Member.create("google 123", "테스트", "test@example.com");
+		Member member = Member.create("google 123", "테스트", "test@example.com", "테스트닉네임");
 
 		// when
 		member.withdraw();
@@ -76,7 +76,7 @@ class MemberTest {
 	@DisplayName("soft delete만 된 회원도 탈퇴 상태로 판별된다")
 	void softDeletedMember_ShouldBeWithdrawn() {
 		// given
-		Member member = Member.create("google 123", "테스트", "test@example.com");
+		Member member = Member.create("google 123", "테스트", "test@example.com", "테스트닉네임");
 
 		// when
 		member.markDeleted(); // BaseEntity의 soft delete만 적용
@@ -91,7 +91,7 @@ class MemberTest {
 	@DisplayName("프로필 업데이트가 정상적으로 동작한다")
 	void updateProfile_ShouldUpdateProfileInfo() {
 		// given
-		Member member = Member.create("google 123", "테스트", "test@example.com");
+		Member member = Member.create("google 123", "테스트", "test@example.com", "테스트닉네임");
 		String newNickname = "새로운닉네임";
 		String newProfileImageUrl = "https://example.com/new-profile.jpg";
 
@@ -107,7 +107,7 @@ class MemberTest {
 	@DisplayName("OAuth2 정보 업데이트가 정상적으로 동작한다")
 	void updateOAuth2Info_ShouldUpdateNameAndEmail() {
 		// given
-		Member member = Member.create("google 123", "원래이름", "old@example.com");
+		Member member = Member.create("google 123", "원래이름", "old@example.com", "테스트닉네임");
 		String newName = "새로운이름";
 		String newEmail = "new@example.com";
 
