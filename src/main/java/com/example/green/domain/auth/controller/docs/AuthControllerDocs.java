@@ -70,6 +70,30 @@ public interface AuthControllerDocs {
                             }
                             """),
                     @ExampleObject(
+                        name = "닉네임 공백 포함",
+                        value = """
+                            {
+                                "success": false,
+                                "message": "닉네임에 공백을 포함할 수 없습니다."
+                            }
+                            """),
+                    @ExampleObject(
+                        name = "닉네임 특수문자 포함",
+                        value = """
+                            {
+                                "success": false,
+                                "message": "닉네임은 한글, 영문, 숫자만 사용 가능합니다."
+                            }
+                            """),
+                    @ExampleObject(
+                        name = "닉네임 길이 제한",
+                        value = """
+                            {
+                                "success": false,
+                                "message": "닉네임은 2자 이상 20자 이하여야 합니다."
+                            }
+                            """),
+                    @ExampleObject(
                         name = "탈퇴한 사용자 재가입 차단",
                         value = """
                             {
@@ -217,6 +241,30 @@ public interface AuthControllerDocs {
                                         "message": "닉네임은 필수입니다."
                                     }
                                 ]
+                            }
+                            """),
+                    @ExampleObject(
+                        name = "닉네임 공백 포함",
+                        value = """
+                            {
+                                "success": false,
+                                "message": "닉네임에 공백을 포함할 수 없습니다."
+                            }
+                            """),
+                    @ExampleObject(
+                        name = "닉네임 특수문자 포함",
+                        value = """
+                            {
+                                "success": false,
+                                "message": "닉네임은 한글, 영문, 숫자만 사용 가능합니다."
+                            }
+                            """),
+                    @ExampleObject(
+                        name = "닉네임 길이 제한",
+                        value = """
+                            {
+                                "success": false,
+                                "message": "닉네임은 2자 이상 20자 이하여야 합니다."
                             }
                             """),
                     @ExampleObject(

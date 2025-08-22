@@ -73,16 +73,8 @@ public class Member extends BaseEntity {
 		this.memberKey = memberKey;
 		this.name = name;
 		this.email = email;
-		// 전달받은 nickname 사용, 없으면 임시 닉네임 생성 (최대 20자)
-		String actualNickname;
-		if (StringUtils.hasText(nickname)) {
-			actualNickname = nickname;
-		} else {
-			// 랜덤 6자리 숫자로 임시 닉네임 생성 (예: user123456)
-			actualNickname = "user" + String.format("%06d", (int)(Math.random() * 1000000));
-		}
 		this.profile = Profile.builder()
-			.nickname(actualNickname)
+			.nickname(nickname)
 			.profileImageUrl(null)
 			.build();
 		this.status = MemberStatus.NORMAL;
