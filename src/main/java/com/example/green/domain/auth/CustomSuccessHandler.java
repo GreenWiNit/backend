@@ -115,9 +115,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
 		// redirectBase에서 도메인 추출
 		String domainHost = null;
-		if (isLocalhost) {
-			domainHost = "localhost";
-		} else {
+		if (!isLocalhost) {
 			try {
 				java.net.URI uri = java.net.URI.create(redirectBase);
 				String host = uri.getHost();
