@@ -128,8 +128,6 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 			} catch (Exception e) {
 				log.warn("도메인 추출 실패: {}", redirectBase, e);
 			}
-		} else {
-			domainHost = "localhost";
 		}
 
 		ResponseCookie refreshCookie = WebUtils.createRefreshTokenResponseCookie(
