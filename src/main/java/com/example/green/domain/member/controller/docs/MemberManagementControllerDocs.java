@@ -20,7 +20,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 
-@Tag(name = "Admin Member Management API", description = "관리자용 회원 관리 API")
+@Tag(name = "[멤버-어드민] 관리자 멤버(회원)관리 API", description = "관리자용 회원 관리 API")
 public interface MemberManagementControllerDocs {
 
 	@Operation(summary = "관리자용 활성 회원 목록 조회", description = "관리자가 활성 회원 목록을 페이징으로 조회합니다. 탈퇴한 회원은 제외됩니다.")

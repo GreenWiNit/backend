@@ -22,7 +22,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
-@Tag(name = "Member API", description = "회원 프로필 관리 API")
+@Tag(name = "[멤버-클라이어트] 멤버(회원) 관련 API", description = "회원 프로필 관리 API")
 public interface MemberControllerDocs {
 
     @Operation(
@@ -51,7 +51,7 @@ public interface MemberControllerDocs {
                     {
                         "success": true,
                         "message": "회원 정보 조회에 성공했습니다.",
-                        "data": {
+                        "result": {
                             "nickname": "환경지킴이",
                             "email": "user@example.com",
                             "profileImageUrl": "https://example.com/profile.jpg"
@@ -95,14 +95,51 @@ public interface MemberControllerDocs {
             """
     )
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "프로필 수정 성공",
-            content = @Content(schema = @Schema(implementation = ProfileUpdateResponseDto.class))),
-        @ApiResponse(responseCode = "400", description = "잘못된 요청 데이터",
-            content = @Content(examples = @ExampleObject(value = "{\"message\":\"닉네임은 2자 이상 20자 이하로 입력해주세요.\"}"))),
-        @ApiResponse(responseCode = "404", description = "사용자를 찾을 수 없음",
-            content = @Content(examples = @ExampleObject(value = "{\"message\":\"해당 회원을 찾을 수 없습니다.\"}"))),
-        @ApiResponse(responseCode = "500", description = "프로필 업데이트 실패",
-            content = @Content(examples = @ExampleObject(value = "{\"message\":\"프로필 업데이트에 실패했습니다.\"}")))
+        @ApiResponse(
+            responseCode = "200", 
+            description = "프로필 수정 성공",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ApiTemplate.class),
+                examples = @ExampleObject(value = """
+                    {
+                        "success": true,
+                        "message": "프로필이 성공적으로 수정되었습니다.",
+                        "result": {
+                            "memberId": 1,
+                            "nickname": "새닉네임",
+                            "profileImageUrl": "https://example.com/profile.jpg"
+                        }
+                    }
+                    """))),
+        @ApiResponse(
+            responseCode = "400", 
+            description = "잘못된 요청 데이터",
+            content = @Content(
+                mediaType = "application/json",
+                examples = @ExampleObject(value = """
+                    {
+                        "success": false,
+                        "message": "유효하지 않은 요청입니다.",
+                        "errors": [
+                            {
+                                "fieldName": "nickname",
+                                "message": "닉네임은 2자 이상 20자 이하로 입력해주세요."
+                            }
+                        ]
+                    }
+                    """))),
+        @ApiResponse(
+            responseCode = "404", 
+            description = "사용자를 찾을 수 없음",
+            content = @Content(
+                mediaType = "application/json",
+                examples = @ExampleObject(value = """
+                    {
+                        "success": false,
+                        "message": "해당 회원을 찾을 수 없습니다."
+                    }
+                    """)))
     })
     ApiTemplate<ProfileUpdateResponseDto> updateProfile(
         @Parameter(description = "프로필 업데이트 요청 데이터", required = true)

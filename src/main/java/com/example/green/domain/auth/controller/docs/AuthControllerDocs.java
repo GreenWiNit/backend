@@ -19,7 +19,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-@Tag(name = "인증 API", description = "OAuth2 로그인, 회원가입, 토큰 관리 등 인증 관련 API")
+@Tag(name = " [인증-클라이언트] 멤버(회원)인증 API", description = "OAuth2 로그인, 회원가입, 토큰 관리 등 인증 관련 API")
 public interface AuthControllerDocs {
 
     @Operation(

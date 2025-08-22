@@ -28,7 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping("/api/admin")
 @RequiredArgsConstructor
-@Tag(name = "Admin Auth API", description = "어드민 인증 관련 API")
+@Tag(name = "[인증-어드민] 관리자 인증 관련 API", description = "어드민 인증 관련 API")
 public class AdminAuthController {
 
 	private final AdminService adminService;
