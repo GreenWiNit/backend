@@ -143,7 +143,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
 		String redirectUrl = redirectBase + "/?accessToken=" + encodedAccessToken + "&userName=" + encodedUserInfo;
 		if (isLocalhost) {
-			redirectUrl = redirectBase + "&refreshToken=" + refreshTokenString;
+			redirectUrl = redirectUrl + "&refreshToken=" + refreshTokenString;
 		}
 
 		log.info("기존 사용자 로그인 성공, AccessToken/TokenManager 발급 완료: {} -> {}", memberKey, redirectUrl);
