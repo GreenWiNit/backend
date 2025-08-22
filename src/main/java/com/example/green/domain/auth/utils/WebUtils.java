@@ -164,6 +164,16 @@ public class WebUtils {
 		if (frontendUrl == null) {
 			return true;
 		}
-		return frontendUrl.contains(LOCALHOST) || frontendUrl.contains(IPV4_LOOPBACK);
+		try {
+			java.net.URI uri = java.net.URI.create(frontendUrl);
+			String host = uri.getHost();
+			if (host == null) {
+				return true;
+			}
+			return host.startsWith(LOCALHOST) || host.equals(IPV4_LOOPBACK);
+		} catch (Exception e) {
+			// URI 파싱 실패 시 기존 방식으로 fallback
+			return frontendUrl.contains(LOCALHOST) || frontendUrl.contains(IPV4_LOOPBACK);
+		}
 	}
 }

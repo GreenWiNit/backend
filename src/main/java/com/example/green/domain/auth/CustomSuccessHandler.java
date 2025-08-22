@@ -110,7 +110,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 		String accessTokenString = tokenService.createAccessToken(memberKey, role);
 		AccessToken accessToken = AccessToken.from(accessTokenString, tokenService);
 
-		boolean isLocalhost = redirectBase.startsWith("http://localhost");
+		boolean isLocalhost = WebUtils.isLocalDevelopment(redirectBase);
 		boolean secureFlag = !isLocalhost;
 
 		// redirectBase에서 도메인 추출
