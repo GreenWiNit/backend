@@ -129,7 +129,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 				log.warn("도메인 추출 실패: {}", redirectBase, e);
 			}
 		} else {
-			domainHost = "localhost:5173";
+			domainHost = "localhost";
 		}
 
 		ResponseCookie refreshCookie = WebUtils.createRefreshTokenResponseCookie(

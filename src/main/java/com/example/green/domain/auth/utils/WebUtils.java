@@ -65,9 +65,6 @@ public class WebUtils {
 		if (domain == null || domain == "localhost") {
 			builder.sameSite("None");
 		}
-		if (domain == "localhost") {
-			builder.secure(false);
-		}
 		if (domain != null && !domain.isBlank()) {
 			builder.domain(domain);
 		}
