@@ -15,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 
+import com.example.green.domain.file.config.SystemFileConfig;
 import com.example.green.domain.member.entity.Member;
 import com.example.green.domain.member.entity.enums.MemberStatus;
 import com.example.green.domain.member.repository.MemberRepository;
@@ -25,11 +26,16 @@ import com.example.green.infra.client.FileClient;
 @DisplayName("탈퇴한 사용자 재가입 차단 정책 테스트")
 class MemberServiceWithdrawnRestoreTest {
 
+	private static final String DEFAULT_PROFILE_IMAGE_URL = "https://static.greenwinit.store/images/profile/default.png";
+
 	@Mock
 	private MemberRepository memberRepository;
 
 	@Mock
 	private FileClient fileClient;
+	
+	@Mock
+	private SystemFileConfig systemFileConfig;
 
 	@InjectMocks
 	private MemberService memberService;
@@ -66,6 +72,8 @@ class MemberServiceWithdrawnRestoreTest {
 
 		given(memberRepository.findByMemberKey(memberKey))
 			.willReturn(Optional.empty());
+		given(systemFileConfig.getDefaultProfileImageUrl())
+			.willReturn(DEFAULT_PROFILE_IMAGE_URL);
 
 		// When
 		String result = memberService.signupFromOAuth2(
@@ -75,6 +83,7 @@ class MemberServiceWithdrawnRestoreTest {
 		// Then
 		assertThat(result).isEqualTo(memberKey);
 		verify(memberRepository).save(any(Member.class));
+		verify(fileClient).confirmUsingImage(profileImageUrl);
 	}
 
 	@Test

@@ -221,7 +221,7 @@ class MemberServiceTest {
 
 		// Then
 		assertThat(result).isEqualTo(memberKey);
-		verify(systemFileConfig).getDefaultProfileImageUrl();
+		verify(systemFileConfig, times(2)).getDefaultProfileImageUrl(); // createNewMember와 isDefaultImage에서 각각 호출
 		verify(memberRepository).save(argThat(member -> 
 			member.getProfile().getProfileImageUrl().equals(DEFAULT_PROFILE_IMAGE_URL)
 		));
