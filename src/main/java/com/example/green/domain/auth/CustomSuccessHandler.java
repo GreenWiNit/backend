@@ -21,7 +21,7 @@ import com.example.green.domain.auth.utils.WebUtils;
 import com.example.green.domain.auth.OAuth2RedirectValidator;
 
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
+import org.springframework.http.ResponseCookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -130,13 +130,13 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 			}
 		}
 
-		Cookie refreshCookie = WebUtils.createRefreshTokenCookie(
+		ResponseCookie refreshCookie = WebUtils.createRefreshTokenResponseCookie(
 			refreshTokenString,
 			secureFlag,
 			7 * 24 * 60 * 60,
 			domainHost
 		);
-		response.addCookie(refreshCookie);
+		response.addHeader("Set-Cookie", refreshCookie.toString());
 
 		String encodedAccessToken = URLEncoder.encode(accessToken.getValue(), StandardCharsets.UTF_8);
 		String encodedUserInfo = URLEncoder.encode(user.getName(), StandardCharsets.UTF_8);

@@ -8,6 +8,7 @@ import java.util.Map;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.ResponseCookie;
 
 /**
  * 웹 관련 유틸리티 클래스
@@ -47,23 +48,28 @@ public class WebUtils {
 	/**
 	 * RefreshToken용 HTTP-Only 쿠키 생성
 	 */
-	public static Cookie createRefreshTokenCookie(String value, boolean secure, int maxAge) {
-		return createRefreshTokenCookie(value, secure, maxAge, null);
+	public static ResponseCookie createRefreshTokenCookie(String value, boolean secure, int maxAge) {
+		return createRefreshTokenResponseCookie(value, secure, maxAge, null);
 	}
 
 	/**
 	 * RefreshToken용 HTTP-Only 쿠키 생성 (도메인 지정)
 	 */
-	public static Cookie createRefreshTokenCookie(String value, boolean secure, int maxAge, String domain) {
-		Cookie cookie = new Cookie(REFRESH_TOKEN_COOKIE_NAME, value);
-		cookie.setPath("/");
-		cookie.setHttpOnly(true);
-		cookie.setMaxAge(maxAge);
-		cookie.setSecure(secure);
+	public static ResponseCookie createRefreshTokenResponseCookie(String value, boolean secure, int maxAge, String domain) {
+		ResponseCookie.ResponseCookieBuilder builder = ResponseCookie.from(REFRESH_TOKEN_COOKIE_NAME, value)
+			.path("/")
+			.httpOnly(true)
+			.maxAge(maxAge)
+			.secure(secure);
+		
 		if (domain != null && !domain.isBlank()) {
-			cookie.setDomain(domain);
+			builder.domain(domain);
+		} else {
+			// Cross-site 요청을 위해 SameSite=None 설정
+			builder.sameSite("None");
 		}
-		return cookie;
+		
+		return builder.build();
 	}
 
 	/**
