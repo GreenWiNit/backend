@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.green.domain.auth.controller.docs.AuthV2ControllerDocs;
 import com.example.green.domain.auth.controller.message.AuthResponseMessage;
 import com.example.green.domain.auth.dto.SignupRequestDto;
 import com.example.green.domain.auth.dto.TempTokenInfoDto;
@@ -29,13 +30,14 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping("/api/v2/auth")
 @RequiredArgsConstructor
-public class AuthV2Controller {
+public class AuthV2Controller implements AuthV2ControllerDocs {
 
 	private static final int REFRESH_TOKEN_MAX_AGE = 7 * 24 * 60 * 60; // 7일
 
 	private final AuthService authService;
 	private final TokenService tokenService;
 
+	@Override
 	@PublicApi
 	@PostMapping("/signup")
 	public ApiTemplate<TokenResponseDto> signup(

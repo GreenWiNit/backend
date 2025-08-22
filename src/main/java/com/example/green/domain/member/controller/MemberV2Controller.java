@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 
+import com.example.green.domain.member.controller.docs.MemberV2ControllerDocs;
 import com.example.green.domain.member.controller.message.MemberResponseMessage;
 import com.example.green.domain.member.dto.NicknameCheckRequestDto;
 import com.example.green.domain.member.dto.NicknameCheckResponseDto;
@@ -21,10 +22,11 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping("/api/v2/members")
 @RequiredArgsConstructor
-public class MemberV2Controller {
+public class MemberV2Controller implements MemberV2ControllerDocs {
 
 	private final MemberService memberService;
 
+	@Override
 	@PublicApi
 	@PostMapping("/nickname-check")
 	public ApiTemplate<NicknameCheckResponseDto> checkNickname(@Valid @RequestBody NicknameCheckRequestDto request) {
