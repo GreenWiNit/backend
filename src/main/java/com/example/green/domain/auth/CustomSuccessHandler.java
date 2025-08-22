@@ -117,10 +117,13 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 		String domainHost = null;
 		if (!isLocalhost) {
 			try {
-				String serverHost = request.getServerName(); // e.g., api.greenwinit.store
-				domainHost = WebUtils.toRegistrableDomain(serverHost); // e.g., greenwinit.store
-				if (domainHost == null) {
-					log.warn("도메인 산출 실패, Domain 미설정: serverHost={}", serverHost);
+				java.net.URI uri = java.net.URI.create(redirectBase);
+				String host = uri.getHost();
+				if (host != null && !host.equals("localhost")) {
+					domainHost = WebUtils.toRegistrableDomain(host);
+					if (domainHost == null) {
+						log.warn("도메인 산출 실패, Domain 미설정: host={}", host);
+					}
 				}
 			} catch (Exception e) {
 				log.warn("도메인 추출 실패: {}", redirectBase, e);
