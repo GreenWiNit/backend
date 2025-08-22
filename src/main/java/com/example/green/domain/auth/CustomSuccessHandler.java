@@ -111,6 +111,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 		AccessToken accessToken = AccessToken.from(accessTokenString, tokenService);
 
 		boolean isLocalhost = WebUtils.isLocalDevelopment(redirectBase);
+		boolean secureFlag = !isLocalhost;
 
 		// redirectBase에서 도메인 추출
 		String domainHost = null;
@@ -131,7 +132,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
 		ResponseCookie refreshCookie = WebUtils.createRefreshTokenResponseCookie(
 			refreshTokenString,
-			true,
+			secureFlag,
 			7 * 24 * 60 * 60,
 			domainHost
 		);
