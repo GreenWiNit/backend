@@ -2,6 +2,8 @@ package com.example.green.domain.member.entity;
 
 import java.time.LocalDateTime;
 
+import org.springframework.util.StringUtils;
+
 import com.example.green.domain.common.BaseEntity;
 import com.example.green.domain.member.entity.enums.MemberRole;
 import com.example.green.domain.member.entity.enums.MemberStatus;
@@ -67,12 +69,20 @@ public class Member extends BaseEntity {
 
 	private LocalDateTime lastLoginAt;
 
-	private Member(String memberKey, String name, String email) {
+	private Member(String memberKey, String name, String email, String nickname) {
 		this.memberKey = memberKey;
 		this.name = name;
 		this.email = email;
+		// 전달받은 nickname 사용, 없으면 임시 닉네임 생성 (최대 20자)
+		String actualNickname;
+		if (StringUtils.hasText(nickname)) {
+			actualNickname = nickname;
+		} else {
+			// 랜덤 6자리 숫자로 임시 닉네임 생성 (예: user123456)
+			actualNickname = "user" + String.format("%06d", (int)(Math.random() * 1000000));
+		}
 		this.profile = Profile.builder()
-			.nickname(name)
+			.nickname(actualNickname)
 			.profileImageUrl(null)
 			.build();
 		this.status = MemberStatus.NORMAL;
@@ -81,7 +91,11 @@ public class Member extends BaseEntity {
 	}
 
 	public static Member create(String memberKey, String name, String email) {
-		return new Member(memberKey, name, email);
+		return new Member(memberKey, name, email, null);
+	}
+	
+	public static Member create(String memberKey, String name, String email, String nickname) {
+		return new Member(memberKey, name, email, nickname);
 	}
 
 	public void updateOAuth2Info(String name, String email) {

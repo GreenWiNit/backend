@@ -81,7 +81,7 @@ public class Profile {
 		
 		// 공백 검사 (정책: 공백 허용하지 않음 - 앞뒤 및 중간 공백 모두 금지)
 		if (nickname.contains(" ") || !nickname.equals(nickname.trim())) {
-			throw new BusinessException(MemberExceptionMessage.MEMBER_NICKNAME_INVALID);
+			throw new BusinessException(MemberExceptionMessage.MEMBER_NICKNAME_CONTAINS_SPACE);
 		}
 		
 		// 길이 검사 (정책: 최소 2자, 최대 20자)
@@ -91,7 +91,7 @@ public class Profile {
 		
 		// 허용 문자 검사 (정책: 한글, 영문, 숫자만 허용)
 		if (!nickname.matches("^[가-힣a-zA-Z0-9]+$")) {
-			throw new BusinessException(MemberExceptionMessage.MEMBER_NICKNAME_INVALID);
+			throw new BusinessException(MemberExceptionMessage.MEMBER_NICKNAME_INVALID_CHARACTER);
 		}
 	}
 }
