@@ -48,11 +48,21 @@ public class WebUtils {
 	 * RefreshToken용 HTTP-Only 쿠키 생성
 	 */
 	public static Cookie createRefreshTokenCookie(String value, boolean secure, int maxAge) {
+		return createRefreshTokenCookie(value, secure, maxAge, null);
+	}
+
+	/**
+	 * RefreshToken용 HTTP-Only 쿠키 생성 (도메인 지정)
+	 */
+	public static Cookie createRefreshTokenCookie(String value, boolean secure, int maxAge, String domain) {
 		Cookie cookie = new Cookie(REFRESH_TOKEN_COOKIE_NAME, value);
 		cookie.setPath("/");
 		cookie.setHttpOnly(true);
 		cookie.setMaxAge(maxAge);
 		cookie.setSecure(secure);
+		if (domain != null && !domain.isEmpty()) {
+			cookie.setDomain(domain);
+		}
 		return cookie;
 	}
 

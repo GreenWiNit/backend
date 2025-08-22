@@ -113,10 +113,22 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 		boolean isLocalhost = redirectBase.startsWith("http://localhost");
 		boolean secureFlag = !isLocalhost;
 
+		// redirectBase에서 도메인 추출
+		String domainHost = null;
+		if (!isLocalhost) {
+			try {
+				java.net.URI uri = java.net.URI.create(redirectBase);
+				domainHost = uri.getHost();
+			} catch (Exception e) {
+				log.warn("도메인 추출 실패: {}", redirectBase, e);
+			}
+		}
+
 		Cookie refreshCookie = WebUtils.createRefreshTokenCookie(
 			refreshTokenString,
 			secureFlag,
-			7 * 24 * 60 * 60
+			7 * 24 * 60 * 60,
+			domainHost
 		);
 		response.addCookie(refreshCookie);
 
