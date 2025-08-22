@@ -44,12 +44,38 @@ public interface AuthControllerDocs {
             description = "잘못된 요청 (임시 토큰 만료, 필수 필드 누락 등)",
             content = @Content(
                 mediaType = "application/json",
-                examples = @ExampleObject(value = """
-                    {
-                    "error": "INVALID_REQUEST",
-                    "message": "임시 토큰이 만료되었습니다."
-                    }
-                    """)))
+                examples = {
+                    @ExampleObject(
+                        name = "임시 토큰 만료",
+                        value = """
+                            {
+                                "success": false,
+                                "message": "임시 토큰이 만료되었습니다."
+                            }
+                            """),
+                    @ExampleObject(
+                        name = "닉네임 필수값 누락",
+                        value = """
+                            {
+                                "success": false,
+                                "message": "유효하지 않은 요청입니다.",
+                                "errors": [
+                                    {
+                                        "fieldName": "nickname",
+                                        "message": "닉네임은 필수입니다."
+                                    }
+                                ]
+                            }
+                            """),
+                    @ExampleObject(
+                        name = "탈퇴한 사용자 재가입 차단",
+                        value = """
+                            {
+                                "success": false,
+                                "message": "탈퇴한 사용자는 재가입할 수 없습니다."
+                            }
+                            """)
+                }))
     })
     ResponseEntity<TokenResponseDto> signup(
         @Parameter(
