@@ -60,7 +60,7 @@ public class WebUtils {
 		cookie.setHttpOnly(true);
 		cookie.setMaxAge(maxAge);
 		cookie.setSecure(secure);
-		if (domain != null && !domain.isEmpty()) {
+		if (domain != null && !domain.isBlank()) {
 			cookie.setDomain(domain);
 		}
 		return cookie;
