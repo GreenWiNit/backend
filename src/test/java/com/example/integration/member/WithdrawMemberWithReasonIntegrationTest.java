@@ -49,7 +49,7 @@ class WithdrawMemberWithReasonIntegrationTest extends BaseIntegrationTest {
 
     @BeforeEach
     void setUp() {
-        testMember = Member.create("google 123456", "테스트회원", "test@example.com");
+        testMember = Member.create("google 123456", "테스트회원", "test@example.com", "테스트닉네임");
         testMember.updateProfile("테스트닉네임", "https://example.com/profile.jpg");
         testMember = memberRepository.save(testMember);
 

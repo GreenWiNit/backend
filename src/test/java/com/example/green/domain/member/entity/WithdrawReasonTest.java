@@ -13,7 +13,7 @@ class WithdrawReasonTest {
     @DisplayName("탈퇴 사유를 생성하면 회원 정보와 사유가 올바르게 설정된다")
     void create_ShouldSetMemberAndReason() {
         // given
-        Member member = Member.create("google 123456", "테스트회원", "test@example.com");
+        Member member = Member.create("google 123456", "테스트회원", "test@example.com", "테스트닉네임");
         WithdrawReasonType reasonType = WithdrawReasonType.SERVICE_DISSATISFACTION;
         String customReason = "서비스가 불편해서 탈퇴합니다.";
 
@@ -31,7 +31,7 @@ class WithdrawReasonTest {
     @DisplayName("사용자 정의 사유가 있으면 hasCustomReason이 true를 반환한다")
     void hasCustomReason_WithCustomReason_ReturnsTrue() {
         // given
-        Member member = Member.create("google 123456", "테스트회원", "test@example.com");
+        Member member = Member.create("google 123456", "테스트회원", "test@example.com", "테스트닉네임");
         WithdrawReason withdrawReason = WithdrawReason.create(
             member, 
             WithdrawReasonType.OTHER, 
@@ -46,7 +46,7 @@ class WithdrawReasonTest {
     @DisplayName("사용자 정의 사유가 null이면 hasCustomReason이 false를 반환한다")
     void hasCustomReason_WithNullCustomReason_ReturnsFalse() {
         // given
-        Member member = Member.create("google 123456", "테스트회원", "test@example.com");
+        Member member = Member.create("google 123456", "테스트회원", "test@example.com", "테스트닉네임");
         WithdrawReason withdrawReason = WithdrawReason.create(
             member, 
             WithdrawReasonType.PRIVACY_CONCERN, 

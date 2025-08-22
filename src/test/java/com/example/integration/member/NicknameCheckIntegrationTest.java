@@ -55,8 +55,7 @@ class NicknameCheckIntegrationTest extends BaseIntegrationTest {
 	void checkNickname_TakenNickname_IntegrationTest() throws Exception {
 		// Given
 		String takenNickname = "existingNickname";
-		Member existingMember = Member.create("google_123", "기존회원", "existing@example.com");
-		existingMember.updateProfile(takenNickname, null);
+		Member existingMember = Member.create("google_123", "기존회원", "existing@example.com", takenNickname);
 		memberRepository.save(existingMember);
 
 		String requestBody = createNicknameCheckRequest(takenNickname);
@@ -76,7 +75,7 @@ class NicknameCheckIntegrationTest extends BaseIntegrationTest {
 	void checkNickname_WithdrawnMemberNickname_IntegrationTest() throws Exception {
 		// Given
 		String withdrawnNickname = "withdrawnNickname";
-		Member withdrawnMember = Member.create("google_456", "탈퇴회원", "withdrawn@example.com");
+		Member withdrawnMember = Member.create("google_456", "탈퇴회원", "withdrawn@example.com", "테스트닉네임");
 		withdrawnMember.updateProfile(withdrawnNickname, null);
 		withdrawnMember.withdraw();
 		memberRepository.save(withdrawnMember);
@@ -97,13 +96,13 @@ class NicknameCheckIntegrationTest extends BaseIntegrationTest {
 	@DisplayName("여러 회원 중 특정 닉네임 확인 - 전체 플로우")
 	void checkNickname_MultipleMembers_IntegrationTest() throws Exception {
 		// Given
-		Member member1 = Member.create("google_1", "회원1", "member1@example.com");
+		Member member1 = Member.create("google_1", "회원1", "member1@example.com", "테스트닉네임");
 		member1.updateProfile("nickname1", null);
 		
-		Member member2 = Member.create("google_2", "회원2", "member2@example.com");
+		Member member2 = Member.create("google_2", "회원2", "member2@example.com", "테스트닉네임");
 		member2.updateProfile("nickname2", null);
 		
-		Member member3 = Member.create("google_3", "회원3", "member3@example.com");
+		Member member3 = Member.create("google_3", "회원3", "member3@example.com", "테스트닉네임");
 		member3.updateProfile("nickname3", null);
 		
 		memberRepository.save(member1);
@@ -240,7 +239,7 @@ class NicknameCheckIntegrationTest extends BaseIntegrationTest {
 	void checkNickname_CaseSensitive_IntegrationTest() throws Exception {
 		// Given: 대문자 닉네임으로 회원 생성 (고유한 닉네임 사용)
 		String upperCaseNickname = "aabb";
-		Member member = Member.create("google_case_test", "대소문자회원", "casetest@example.com");
+		Member member = Member.create("google_case_test", "대소문자회원", "casetest@example.com", "테스트닉네임");
 		member.updateProfile(upperCaseNickname, null);
 		memberRepository.save(member);
 
