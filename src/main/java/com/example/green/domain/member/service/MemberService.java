@@ -119,7 +119,10 @@ public class MemberService {
 	private String createNewMember(String memberKey, String name, String email, String nickname,
 		String profileImageUrl) {
 		try {
-			Member member = Member.create(memberKey, name, email);
+			// nickname이 있으면 새로운 create 메서드 사용
+			Member member = StringUtils.hasText(nickname) 
+				? Member.create(memberKey, name, email, nickname)
+				: Member.create(memberKey, name, email);
 
 			if (!StringUtils.hasText(profileImageUrl)) {
 				profileImageUrl = systemFileConfig.getDefaultProfileImageUrl();
