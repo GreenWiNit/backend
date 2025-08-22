@@ -80,6 +80,7 @@ public class MemberController implements MemberControllerDocs {
 	@Override
 	@PublicApi
 	@PostMapping("/nickname-check")
+	@Deprecated
 	public ResponseEntity<NicknameCheckResponseDto> checkNickname(@Valid @RequestBody NicknameCheckRequestDto request) {
 		log.info("[NICKNAME_CHECK] 닉네임 중복 확인 요청: {}", request.nickname());
 
@@ -103,9 +104,38 @@ public class MemberController implements MemberControllerDocs {
 		return ResponseEntity.ok(response);
 	}
 
+	@PublicApi
+	@PostMapping("/v2/nickname-check")
+	public ApiTemplate<NicknameCheckResponseDto> checkNicknameV2(@Valid @RequestBody NicknameCheckRequestDto request) {
+		log.info("[NICKNAME_CHECK_V2] 닉네임 중복 확인 요청: {}", request.nickname());
+
+		boolean isAvailable = memberService.isNicknameAvailable(request.nickname());
+
+		String message;
+		MemberResponseMessage responseMessage;
+
+		if (isAvailable) {
+			message = MemberResponseMessage.NICKNAME_AVAILABLE.getMessage();
+			responseMessage = MemberResponseMessage.NICKNAME_AVAILABLE;
+		} else {
+			message = MemberResponseMessage.NICKNAME_TAKEN.getMessage();
+			responseMessage = MemberResponseMessage.NICKNAME_TAKEN;
+		}
+
+		NicknameCheckResponseDto response = new NicknameCheckResponseDto(
+			request.nickname(),
+			isAvailable,
+			message
+		);
+
+		log.info("[NICKNAME_CHECK_V2] 닉네임 중복 확인 완료: {} - {}", request.nickname(), message);
+		return ApiTemplate.ok(responseMessage, response);
+	}
+
 	@Override
 	@AuthenticatedApi(reason = "회원 탈퇴는 로그인한 사용자만 가능합니다")
 	@PostMapping("/withdraw")
+	@Deprecated
 	public ResponseEntity<Void> withdraw(
 		@AuthenticationPrincipal PrincipalDetails currentUser,
 		@Valid @RequestBody WithdrawRequestDto withdrawRequest) {
@@ -120,5 +150,23 @@ public class MemberController implements MemberControllerDocs {
 		log.info("[WITHDRAW] 회원 탈퇴 완료 - memberKey: {}, reasonTypes: {}", 
 				 memberKey, withdrawRequest.reasonTypes());
 		return ResponseEntity.ok().build();
+	}
+
+	@AuthenticatedApi(reason = "회원 탈퇴는 로그인한 사용자만 가능합니다")
+	@PostMapping("/v2/withdraw")
+	public ApiTemplate<Void> withdrawV2(
+		@AuthenticationPrincipal PrincipalDetails currentUser,
+		@Valid @RequestBody WithdrawRequestDto withdrawRequest) {
+		
+		String memberKey = currentUser.getUsername();
+
+		log.info("[WITHDRAW_V2] 회원 탈퇴 요청 - memberKey: {}, reasonTypes: {}", 
+				 memberKey, withdrawRequest.reasonTypes());
+
+		withdrawService.withdrawMemberWithReason(memberKey, withdrawRequest);
+
+		log.info("[WITHDRAW_V2] 회원 탈퇴 완료 - memberKey: {}, reasonTypes: {}", 
+				 memberKey, withdrawRequest.reasonTypes());
+		return ApiTemplate.ok(MemberResponseMessage.MEMBER_WITHDRAWN);
 	}
 }
