@@ -62,11 +62,10 @@ public class WebUtils {
 			.maxAge(maxAge)
 			.secure(secure);
 		
-		if (domain != null && !domain.isBlank()) {
-			builder.domain(domain);
-		} else {
-			// Cross-site 요청을 위해 SameSite=None 설정
+		if (domain == null || domain == "localhost") {
 			builder.sameSite("None");
+		} else {
+			builder.domain(domain);
 		}
 		
 		return builder.build();
