@@ -129,6 +129,13 @@ public class MemberService {
 			if (hasAdditionalProfileInfo(nickname, profileImageUrl)) {
 				member.updateProfile(nickname, profileImageUrl);
 				log.info("사용자 지정 프로필 설정: nickname={}, profileImageUrl={}", nickname, profileImageUrl);
+				
+				// 사용자가 지정한 프로필 이미지 URL 검증 및 사용 확정
+				// 시스템 기본 이미지가 아닌 경우에만 검증
+				if (!isDefaultImage(profileImageUrl)) {
+					fileClient.confirmUsingImage(profileImageUrl);
+					log.info("프로필 이미지 사용 확정: {}", profileImageUrl);
+				}
 			}
 
 			memberRepository.save(member);

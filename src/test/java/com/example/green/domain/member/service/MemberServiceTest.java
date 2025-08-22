@@ -241,16 +241,18 @@ class MemberServiceTest {
 		
 		given(memberRepository.findByMemberKey(memberKey)).willReturn(Optional.empty());
 		given(memberRepository.save(any(Member.class))).willAnswer(invocation -> invocation.getArgument(0));
+		given(systemFileConfig.getDefaultProfileImageUrl()).willReturn(DEFAULT_PROFILE_IMAGE_URL);
 
 		// When
 		String result = memberService.signupFromOAuth2(provider, providerId, name, email, nickname, profileImageUrl);
 
 		// Then
 		assertThat(result).isEqualTo(memberKey);
-		verify(systemFileConfig, never()).getDefaultProfileImageUrl();
 		verify(memberRepository).save(argThat(member -> 
 			member.getProfile().getProfileImageUrl().equals(profileImageUrl)
 		));
+		// 사용자 지정 이미지 URL 검증 확인
+		verify(fileClient).confirmUsingImage(profileImageUrl);
 	}
 
 } 
