@@ -110,13 +110,28 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 		String accessTokenString = tokenService.createAccessToken(memberKey, role);
 		AccessToken accessToken = AccessToken.from(accessTokenString, tokenService);
 
-		boolean isLocalhost = redirectBase.startsWith("http://localhost");
+		boolean isLocalhost = WebUtils.isLocalDevelopment(redirectBase);
 		boolean secureFlag = !isLocalhost;
+
+		// redirectBase에서 도메인 추출
+		String domainHost = null;
+		if (!isLocalhost) {
+			try {
+				String serverHost = request.getServerName(); // e.g., api.greenwinit.store
+				domainHost = WebUtils.toRegistrableDomain(serverHost); // e.g., greenwinit.store
+				if (domainHost == null) {
+					log.warn("도메인 산출 실패, Domain 미설정: serverHost={}", serverHost);
+				}
+			} catch (Exception e) {
+				log.warn("도메인 추출 실패: {}", redirectBase, e);
+			}
+		}
 
 		Cookie refreshCookie = WebUtils.createRefreshTokenCookie(
 			refreshTokenString,
 			secureFlag,
-			7 * 24 * 60 * 60
+			7 * 24 * 60 * 60,
+			domainHost
 		);
 		response.addCookie(refreshCookie);
 

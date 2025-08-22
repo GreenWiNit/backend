@@ -48,11 +48,21 @@ public class WebUtils {
 	 * RefreshToken용 HTTP-Only 쿠키 생성
 	 */
 	public static Cookie createRefreshTokenCookie(String value, boolean secure, int maxAge) {
+		return createRefreshTokenCookie(value, secure, maxAge, null);
+	}
+
+	/**
+	 * RefreshToken용 HTTP-Only 쿠키 생성 (도메인 지정)
+	 */
+	public static Cookie createRefreshTokenCookie(String value, boolean secure, int maxAge, String domain) {
 		Cookie cookie = new Cookie(REFRESH_TOKEN_COOKIE_NAME, value);
 		cookie.setPath("/");
 		cookie.setHttpOnly(true);
 		cookie.setMaxAge(maxAge);
 		cookie.setSecure(secure);
+		if (domain != null && !domain.isBlank()) {
+			cookie.setDomain(domain);
+		}
 		return cookie;
 	}
 
@@ -60,10 +70,18 @@ public class WebUtils {
 	 * TokenManager 쿠키 삭제 (Max-Age=0)
 	 */
 	public static void removeRefreshTokenCookie(HttpServletResponse response) {
+		removeRefreshTokenCookie(response, null, false);
+	}
+
+	public static void removeRefreshTokenCookie(HttpServletResponse response, String domain, boolean secure) {
 		Cookie cookie = new Cookie(REFRESH_TOKEN_COOKIE_NAME, "");
 		cookie.setPath("/");
 		cookie.setHttpOnly(true);
 		cookie.setMaxAge(0);
+		if (domain != null && !domain.isBlank()) {
+			cookie.setDomain(domain);
+		}
+		cookie.setSecure(secure);
 		response.addCookie(cookie);
 	}
 
@@ -146,6 +164,38 @@ public class WebUtils {
 		if (frontendUrl == null) {
 			return true;
 		}
-		return frontendUrl.contains(LOCALHOST) || frontendUrl.contains(IPV4_LOOPBACK);
+        try {
+            java.net.URI uri = java.net.URI.create(frontendUrl);
+            String host = uri.getHost();
+            if (host == null) {
+                return true;
+            }
+            String h = host.toLowerCase();
+            // Only exact loopback names/addresses are considered local.
+            return LOCALHOST.equals(h)
+                || IPV4_LOOPBACK.equals(h)
+                || "::1".equals(h)
+                || IPV6_LOOPBACK.equals(h);
+        } catch (Exception e) {
+            // URI parsing failed; conservative fallback (exact matches only)
+            String s = frontendUrl.toLowerCase();
+            return s.equals(LOCALHOST) || s.equals(IPV4_LOOPBACK) || s.equals("::1") || s.equals(IPV6_LOOPBACK);
+        }
+	}
+
+	public static String toRegistrableDomain(String host) {
+		if (host == null) {
+			return null;
+		}
+		String h = host.trim().toLowerCase();
+		if (h.equals("localhost") || h.matches("^\\d+\\.\\d+\\.\\d+\\.\\d+$")) {
+			return null;
+		}
+		String[] parts = h.split("\\.");
+		if (parts.length < 2) {
+			return null;
+		}
+		// naive eTLD+1 (sufficient for *.store); consider config if you need PSL accuracy.
+		return parts[parts.length - 2] + "." + parts[parts.length - 1];
 	}
 }

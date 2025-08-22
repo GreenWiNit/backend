@@ -59,21 +59,21 @@ spring:
             client-name: ${OAUTH2_GOOGLE_CLIENT_NAME:google}
             client-id: ${OAUTH2_GOOGLE_CLIENT_ID}
             client-secret: ${OAUTH2_GOOGLE_CLIENT_SECRET}
-            redirect-uri: ${OAUTH2_GOOGLE_REDIRECT_URI:https://api.greenwinit.store/login/oauth2/code/google}
+            redirect-uri: "{baseUrl}/login/oauth2/code/google"
             authorization-grant-type: ${OAUTH2_GOOGLE_GRANT_TYPE:authorization_code}
             scope: ${OAUTH2_GOOGLE_SCOPE:profile,email}
           naver:
             client-name: ${OAUTH2_NAVER_CLIENT_NAME:naver}
             client-id: ${OAUTH2_NAVER_CLIENT_ID}
             client-secret: ${OAUTH2_NAVER_CLIENT_SECRET}
-            redirect-uri: ${OAUTH2_NAVER_REDIRECT_URI:https://api.greenwinit.store/login/oauth2/code/naver}
+            redirect-uri: "{baseUrl}/login/oauth2/code/naver"
             authorization-grant-type: ${OAUTH2_NAVER_GRANT_TYPE:authorization_code}
             scope: ${OAUTH2_NAVER_SCOPE:name,email}
           kakao:
             client-name: ${OAUTH2_KAKAO_CLIENT_NAME:kakao}
             client-id: ${OAUTH2_KAKAO_CLIENT_ID}
             client-secret: ${OAUTH2_KAKAO_CLIENT_SECRET}
-            redirect-uri: ${OAUTH2_KAKAO_REDIRECT_URI:https://api.greenwinit.store/login/oauth2/code/kakao}
+            redirect-uri: "{baseUrl}/login/oauth2/code/kakao"
             authorization-grant-type: ${OAUTH2_KAKAO_GRANT_TYPE:authorization_code}
             scope: ${OAUTH2_KAKAO_SCOPE:profile_nickname,profile_image,account_email}
             client-authentication-method: client_secret_post
