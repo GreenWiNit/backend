@@ -176,4 +176,20 @@ public class WebUtils {
 			return frontendUrl.contains(LOCALHOST) || frontendUrl.contains(IPV4_LOOPBACK);
 		}
 	}
+
+	public static String toRegistrableDomain(String host) {
+		if (host == null) {
+			return null;
+		}
+		String h = host.trim().toLowerCase();
+		if (h.equals("localhost") || h.matches("^\\d+\\.\\d+\\.\\d+\\.\\d+$")) {
+			return null;
+		}
+		String[] parts = h.split("\\.");
+		if (parts.length < 2) {
+			return null;
+		}
+		// naive eTLD+1 (sufficient for *.store); consider config if you need PSL accuracy.
+		return parts[parts.length - 2] + "." + parts[parts.length - 1];
+	}
 }
