@@ -22,7 +22,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
-@Tag(name = "[멤버-클라이어트] 멤버(회원) 관련 API", description = "회원 프로필 관리 API")
+@Tag(name = "[멤버-클라이언트] 멤버(회원) 관련 API", description = "회원 프로필 관리 API")
 public interface MemberControllerDocs {
 
     @Operation(
