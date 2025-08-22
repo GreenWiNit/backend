@@ -120,25 +120,76 @@ public interface MemberControllerDocs {
             content = @Content(
                 mediaType = "application/json",
                 schema = @Schema(implementation = NicknameCheckResponseDto.class),
-                examples = @ExampleObject(value = """
-                    {
-                        "nickname": "홍길동",
-                        "available": true,
-                        "message": "사용 가능한 닉네임입니다."
-                    }
-                    """)
+                examples = {
+                    @ExampleObject(
+                        name = "사용 가능한 닉네임",
+                        value = """
+                            {
+                                "nickname": "홍길동",
+                                "available": true,
+                                "message": "사용 가능한 닉네임입니다."
+                            }
+                            """),
+                    @ExampleObject(
+                        name = "중복된 닉네임",
+                        value = """
+                            {
+                                "nickname": "버둥이",
+                                "available": false,
+                                "message": "중복된 닉네임이 존재합니다."
+                            }
+                            """)
+                }
             )),
         @ApiResponse(
             responseCode = "400",
             description = "잘못된 요청 (닉네임 누락 등)",
             content = @Content(
                 mediaType = "application/json",
-                examples = @ExampleObject(value = """
-                    {
-                        "error": "INVALID_REQUEST",
-                        "message": "닉네임을 입력해주세요."
-                    }
-                    """)
+                examples = {
+                    @ExampleObject(
+                        name = "닉네임 필수값 누락",
+                        value = """
+                            {
+                                "success": false,
+                                "message": "유효하지 않은 요청입니다.",
+                                "errors": [
+                                    {
+                                        "fieldName": "nickname",
+                                        "message": "닉네임은 필수입니다."
+                                    }
+                                ]
+                            }
+                            """),
+                    @ExampleObject(
+                        name = "닉네임 길이 제한 초과",
+                        value = """
+                            {
+                                "success": false,
+                                "message": "유효하지 않은 요청입니다.",
+                                "errors": [
+                                    {
+                                        "fieldName": "nickname",
+                                        "message": "닉네임은 2자 이상 20자 이하로 입력해주세요."
+                                    }
+                                ]
+                            }
+                            """),
+                    @ExampleObject(
+                        name = "닉네임 형식 오류",
+                        value = """
+                            {
+                                "success": false,
+                                "message": "유효하지 않은 요청입니다.",
+                                "errors": [
+                                    {
+                                        "fieldName": "nickname",
+                                        "message": "닉네임은 한글, 영문, 숫자만 사용 가능합니다."
+                                    }
+                                ]
+                            }
+                            """)
+                }
             ))
     })
     ResponseEntity<NicknameCheckResponseDto> checkNickname(@Valid NicknameCheckRequestDto request);

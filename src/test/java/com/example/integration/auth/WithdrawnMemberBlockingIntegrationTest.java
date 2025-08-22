@@ -37,7 +37,7 @@ class WithdrawnMemberBlockingIntegrationTest extends BaseIntegrationTest {
 			"홍길동", 
 			"test@example.com",
 			"원래닉네임",
-			"https://example.com/old-profile.jpg"
+			null  // 테스트에서는 기본 이미지 사용
 		);
 
 		withdrawnMember = memberRepository.findByMemberKey(originalMemberKey).orElseThrow();
@@ -56,7 +56,7 @@ class WithdrawnMemberBlockingIntegrationTest extends BaseIntegrationTest {
 		// When & Then
 		assertThatThrownBy(() -> 
 			memberService.signupFromOAuth2(
-				"google", "123456789", "홍길동", "test@example.com", "새닉네임", "new.jpg"
+				"google", "123456789", "홍길동", "test@example.com", "새닉네임", null
 			)
 		).isInstanceOf(IllegalStateException.class)
 		 .hasMessageContaining("탈퇴한 사용자는 재가입할 수 없습니다");
@@ -73,7 +73,7 @@ class WithdrawnMemberBlockingIntegrationTest extends BaseIntegrationTest {
 			"김철수", 
 			"new@example.com",
 			"새사용자",
-			"https://example.com/new-profile.jpg"
+			null  // 테스트에서는 기본 이미지 사용
 		);
 
 		// Then
