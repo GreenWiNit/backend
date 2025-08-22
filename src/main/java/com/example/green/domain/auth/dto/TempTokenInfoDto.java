@@ -8,7 +8,8 @@ import lombok.Getter;
  */
 @Getter
 @Builder
-public class TempTokenInfoDto {
+public class
+TempTokenInfoDto {
 
 	private final String email;
 	private final String name;

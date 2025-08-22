@@ -16,7 +16,8 @@ import lombok.Getter;
  */
 @AllArgsConstructor
 @Getter
-public class PrincipalDetails implements UserDetails {
+public class
+PrincipalDetails implements UserDetails {
 
 	private final Long memberId;
 	private final String memberKey; // OAuth2 memberKey (예: "google 123456789")

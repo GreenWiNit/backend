@@ -18,7 +18,8 @@ public enum MemberResponseMessage implements ResponseMessage {
 
 	MEMBER_LIST_RETRIEVED("회원 목록 조회가 완료되었습니다."),
 	WITHDRAWN_MEMBER_LIST_RETRIEVED("탈퇴 회원 목록 조회가 완료되었습니다."),
-	MEMBER_DELETED("회원 삭제가 완료되었습니다.")
+	MEMBER_DELETED("회원 삭제가 완료되었습니다."),
+	MEMBER_WITHDRAWN("회원 탈퇴가 완료되었습니다.")
 	;
 
 	private final String message;
