@@ -70,10 +70,18 @@ public class WebUtils {
 	 * TokenManager 쿠키 삭제 (Max-Age=0)
 	 */
 	public static void removeRefreshTokenCookie(HttpServletResponse response) {
+		removeRefreshTokenCookie(response, null, false);
+	}
+
+	public static void removeRefreshTokenCookie(HttpServletResponse response, String domain, boolean secure) {
 		Cookie cookie = new Cookie(REFRESH_TOKEN_COOKIE_NAME, "");
 		cookie.setPath("/");
 		cookie.setHttpOnly(true);
 		cookie.setMaxAge(0);
+		if (domain != null && !domain.isBlank()) {
+			cookie.setDomain(domain);
+		}
+		cookie.setSecure(secure);
 		response.addCookie(cookie);
 	}
 
