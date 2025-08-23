@@ -42,7 +42,8 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           source: "build/libs/green-0.0.1-SNAPSHOT.jar"
-          target: "~/backend/"
+          target: "~/"
+          strip_components: 2
 
       # .env 파일 복사
       - name: Copy .env to EC2
@@ -52,7 +53,7 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           source: ".env"
-          target: "~/backend/"
+          target: "~/"
 
       # EC2에서 애플리케이션 재시작
       - name: Run reload.sh

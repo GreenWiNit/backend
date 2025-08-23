@@ -91,18 +91,6 @@ spring:
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user-name-attribute: id
 
-logging:
-  level:
-    org.springframework: ${LOG_LEVEL_SPRING:INFO}
-    org.hibernate.SQL: ${LOG_LEVEL_SQL:DEBUG}
-    # OAuth2 디버그 로깅 추가
-    org.springframework.security.oauth2: DEBUG
-    org.springframework.security.web.authentication: DEBUG
-    com.example.green.domain.auth: DEBUG
-  pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss.SSS}{Asia/Seoul} [%thread] %-5level %logger{36} - %msg%n"
-    file: "%d{yyyy-MM-dd HH:mm:ss.SSS}{Asia/Seoul} [%thread] %-5level %logger{36} - %msg%n"
-
 decorator:
   datasource:
     p6spy:
