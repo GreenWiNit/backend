@@ -1,18 +1,120 @@
-## 그린위닛
+## 🌿 GreenWiNit
+GreenWiNit은 웹 기반의 환경 챌린지형 커뮤니티 플랫폼입니다.      
+일상 속에서 시민들이 쉽고 자발적으로 환경 보호 활동에 참여하고, 이를 공유하며 서로에게 동기를 부여할 수 있도록 설계된 서비스입니다.
+https://www.greenwinit.store/
 
-### 🥀 Architecture 
-![Wiki 용 Archi Process](https://github.com/user-attachments/assets/45d76ea5-9e54-4038-b6a2-25fe897945cb)
+<br>
+
+### 🌍 프로젝트 개요
+- 프로젝트명: GreenWiNit
+- 팀명: 노크
+- 기획 목적:    
+    - 누구나 쉽게 환경 보호 활동에 참여할 수 있는 온라인 플랫폼 제공
+    - 챌린지 참여와 포인트 리워드 시스템을 통한 지속가능한 참여 유도
+    - 오프라인 환경 캠페인과 연계하여 실질적인 사회적 실천 확산
+    - 참여 사업명: 2025년 서울 청년 기획봉사단
+    - 사업 기간: 2025.04.17 ~ 2025.08.31
 
 
-### 🧰 Tech Stack
-<p dir="auto"><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/4a2a76648ac74b1e794e66a65d6c39da2d76c090fdf16b1423a4c99fd9b7956a/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f4672616d65776f726b2d3535353535353f7374796c653d666f722d7468652d6261646765"><img src="https://camo.githubusercontent.com/4a2a76648ac74b1e794e66a65d6c39da2d76c090fdf16b1423a4c99fd9b7956a/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f4672616d65776f726b2d3535353535353f7374796c653d666f722d7468652d6261646765" data-canonical-src="https://img.shields.io/badge/Framework-555555?style=for-the-badge" style="max-width: 100%;"></a><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/7b764480ccab59c8de26a0df90a72f7a42d7b99cdcb5eba87226ca692f436a31/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f737072696e67626f6f742d2532333644423333462e7376673f7374796c653d666f722d7468652d6261646765266c6f676f3d737072696e67626f6f74266c6f676f436f6c6f723d7768697465"><img src="https://camo.githubusercontent.com/7b764480ccab59c8de26a0df90a72f7a42d7b99cdcb5eba87226ca692f436a31/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f737072696e67626f6f742d2532333644423333462e7376673f7374796c653d666f722d7468652d6261646765266c6f676f3d737072696e67626f6f74266c6f676f436f6c6f723d7768697465" alt="SpringBoot" data-canonical-src="https://img.shields.io/badge/springboot-%236DB33F.svg?style=for-the-badge&amp;logo=springboot&amp;logoColor=white" style="max-width: 100%;"></a><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/edc1f79fe6dfe3b3f79a7fa44e4f79d003050d44abe870130c1716f99665b66e/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f737072696e675f646174615f4a50412d2532333644423333463f7374796c653d666f722d7468652d6261646765266c6f676f3d64617461627269636b73266c6f676f436f6c6f723d7768697465"><img src="https://camo.githubusercontent.com/edc1f79fe6dfe3b3f79a7fa44e4f79d003050d44abe870130c1716f99665b66e/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f737072696e675f646174615f4a50412d2532333644423333463f7374796c653d666f722d7468652d6261646765266c6f676f3d64617461627269636b73266c6f676f436f6c6f723d7768697465" alt="spring_data_JPA" data-canonical-src="https://img.shields.io/badge/spring_data_JPA-%236DB33F?style=for-the-badge&amp;logo=databricks&amp;logoColor=white" style="max-width: 100%;"></a><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/3c28280702ced457af2e72f20c2a2cd1f5b2229be9c917781aabbaff7ac2682e/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f737072696e675f73656375726974792d2532333644423333462e7376673f7374796c653d666f722d7468652d6261646765266c6f676f3d737072696e677365637572697479266c6f676f436f6c6f723d7768697465"><img src="https://camo.githubusercontent.com/3c28280702ced457af2e72f20c2a2cd1f5b2229be9c917781aabbaff7ac2682e/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f737072696e675f73656375726974792d2532333644423333462e7376673f7374796c653d666f722d7468652d6261646765266c6f676f3d737072696e677365637572697479266c6f676f436f6c6f723d7768697465" alt="SpringSecurity" data-canonical-src="https://img.shields.io/badge/spring_security-%236DB33F.svg?style=for-the-badge&amp;logo=springsecurity&amp;logoColor=white" style="max-width: 100%;"></a> <a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/59a71e43068726c9f11b94338e102a216480ce2a8f5f14616680636e7998b7be/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f6275696c642d3535353535353f7374796c653d666f722d7468652d6261646765"><img src="https://camo.githubusercontent.com/59a71e43068726c9f11b94338e102a216480ce2a8f5f14616680636e7998b7be/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f6275696c642d3535353535353f7374796c653d666f722d7468652d6261646765" data-canonical-src="https://img.shields.io/badge/build-555555?style=for-the-badge" style="max-width: 100%;"></a><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/7e3f4753f2a0899249d02753d1effcd48163d3abb5e60e099a84a26569a76403/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f477261646c652d3032333033412e7376673f7374796c653d666f722d7468652d6261646765266c6f676f3d477261646c65266c6f676f436f6c6f723d7768697465"><img src="https://camo.githubusercontent.com/7e3f4753f2a0899249d02753d1effcd48163d3abb5e60e099a84a26569a76403/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f477261646c652d3032333033412e7376673f7374796c653d666f722d7468652d6261646765266c6f676f3d477261646c65266c6f676f436f6c6f723d7768697465" alt="Gradle" data-canonical-src="https://img.shields.io/badge/Gradle-02303A.svg?style=for-the-badge&amp;logo=Gradle&amp;logoColor=white" style="max-width: 100%;"></a></p>
+<br>
 
-<p dir="auto"><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/f45cad51db8deb15da74d137bb54a5879d8ed4f3b2cefd5d7374212098010887/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f44617461626173652d3535353535353f7374796c653d666f722d7468652d6261646765"><img src="https://camo.githubusercontent.com/f45cad51db8deb15da74d137bb54a5879d8ed4f3b2cefd5d7374212098010887/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f44617461626173652d3535353535353f7374796c653d666f722d7468652d6261646765" data-canonical-src="https://img.shields.io/badge/Database-555555?style=for-the-badge" style="max-width: 100%;"></a><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/38ce4d8be94d27406f2989b56efec7cdc5e2c2d6509600746fede440245c5afa/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f6d7973716c2d3434373941312e7376673f7374796c653d666f722d7468652d6261646765266c6f676f3d6d7973716c266c6f676f436f6c6f723d7768697465"><img src="https://camo.githubusercontent.com/38ce4d8be94d27406f2989b56efec7cdc5e2c2d6509600746fede440245c5afa/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f6d7973716c2d3434373941312e7376673f7374796c653d666f722d7468652d6261646765266c6f676f3d6d7973716c266c6f676f436f6c6f723d7768697465" alt="MySQL" data-canonical-src="https://img.shields.io/badge/mysql-4479A1.svg?style=for-the-badge&amp;logo=mysql&amp;logoColor=white" style="max-width: 100%;"></a></p>
+### 📜 프로젝트 구조 및 Coding Convetion 
+https://github.com/GreenWiNit/backend/wiki/Coding-Convention    
+https://github.com/GreenWiNit/backend/wiki/How-to-Contribute 
+```
+src/main/java/...
+├── domain/
+│   ├── challenge/
+│   │   ├── controller/
+│   │   ├── dto/
+│   │   ├── entity/
+│   │   ├── exception/
+│   │   ├── repository/
+│   │   └── service/
+│   ├── common/
+│   │   ├── BaseEntity.java
+│   │   └── ...
+│   ├── product/
+│   │   └── ...
+│   └── ...
+│
+├── global/
+│   ├── config/
+│   │   ├── WebConfig.java
+│   │   └── ...
+│   ├── error/
+│   │   ├── GlobalExceptionHandler.java
+│   │   ├── ErrorResponse.java
+│   │   └── ...
+│   └── util/
+│       ├── DateUtils.java
+│       └── ...
+│
+└── infra/
+    ├── storage/
+    │   ├── S3Client.java
+    │   ├── S3Config.java
+    │   └── ...
+    ├── mail/
+    │   ├── EmailSender.java
+    │   └── ...
+    └── security/
+        ├── JwtProvider.java
+        ├── SecurityConfig.java
+        └── ...
+```
 
 
-<p dir="auto"><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/eca5045c21dc8ed046fb888ee2ef58890c9ca7a767da97afce6fe59fa0b6b571/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f496e6672617374727563747572652d3535353535353f7374796c653d666f722d7468652d6261646765"><img src="https://camo.githubusercontent.com/eca5045c21dc8ed046fb888ee2ef58890c9ca7a767da97afce6fe59fa0b6b571/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f496e6672617374727563747572652d3535353535353f7374796c653d666f722d7468652d6261646765" data-canonical-src="https://img.shields.io/badge/Infrastructure-555555?style=for-the-badge" style="max-width: 100%;"></a><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/c73a6ba30b46b44f3171ca5a8121d65bc517d648b0858fae771105caa6780da8/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f616d617a6f6e5f6563322d4646393930302e7376673f7374796c653d666f722d7468652d6261646765266c6f676f3d616d617a6f6e656332266c6f676f436f6c6f723d7768697465"><img src="https://camo.githubusercontent.com/c73a6ba30b46b44f3171ca5a8121d65bc517d648b0858fae771105caa6780da8/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f616d617a6f6e5f6563322d4646393930302e7376673f7374796c653d666f722d7468652d6261646765266c6f676f3d616d617a6f6e656332266c6f676f436f6c6f723d7768697465" alt="Amazon Ec2" data-canonical-src="https://img.shields.io/badge/amazon_ec2-FF9900.svg?style=for-the-badge&amp;logo=amazonec2&amp;logoColor=white" style="max-width: 100%;"></a><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/054c15dee630468d0bcab76fd82bfbc59ab0c4fa8e51244c8b02f64a26fb5285/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f4157535f53332d3536394133312e7376673f7374796c653d666f722d7468652d6261646765266c6f676f3d616d617a6f6e7333266c6f676f436f6c6f723d7768697465"><img src="https://camo.githubusercontent.com/054c15dee630468d0bcab76fd82bfbc59ab0c4fa8e51244c8b02f64a26fb5285/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f4157535f53332d3536394133312e7376673f7374796c653d666f722d7468652d6261646765266c6f676f3d616d617a6f6e7333266c6f676f436f6c6f723d7768697465" alt="Amazon S3" data-canonical-src="https://img.shields.io/badge/AWS_S3-569A31.svg?style=for-the-badge&amp;logo=amazons3&amp;logoColor=white" style="max-width: 100%;"></a><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/ff070ae3ee824b0ee00648ece6d0f5f207108cb7a193615af1c2fbae0b5d7fbd/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f616d617a6f6e5f5244532d3532374646462e7376673f7374796c653d666f722d7468652d6261646765266c6f676f3d616d617a6f6e726473266c6f676f436f6c6f723d7768697465"><img src="https://camo.githubusercontent.com/ff070ae3ee824b0ee00648ece6d0f5f207108cb7a193615af1c2fbae0b5d7fbd/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f616d617a6f6e5f5244532d3532374646462e7376673f7374796c653d666f722d7468652d6261646765266c6f676f3d616d617a6f6e726473266c6f676f436f6c6f723d7768697465" alt="Amazon RDS" data-canonical-src="https://img.shields.io/badge/amazon_RDS-527FFF.svg?style=for-the-badge&amp;logo=amazonrds&amp;logoColor=white" style="max-width: 100%;"></a><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/243894e9f863972b8f1f4170f81a11d52ff704e62f956cbb6584fef9a8f8ba43/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f616d617a6f6e5f656c6173746963616368652d4646393930302e7376673f7374796c653d666f722d7468652d6261646765266c6f676f3d616d617a6f6e646f63756d656e746462266c6f676f436f6c6f723d7768697465"></p>
+### ✨ Architecture 
+<img width="945" height="295" alt="Image" src="https://github.com/user-attachments/assets/e266ce6f-e2c2-44de-8e92-5a85acc846a7" />
 
 
-<p dir="auto"><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/8bfcd2e722efbb3bcb70d97b5a154189b7582b0e3a9400c5a13b72facf31487d/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f434943442d3535353535353f7374796c653d666f722d7468652d6261646765"><img src="https://camo.githubusercontent.com/8bfcd2e722efbb3bcb70d97b5a154189b7582b0e3a9400c5a13b72facf31487d/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f434943442d3535353535353f7374796c653d666f722d7468652d6261646765" data-canonical-src="https://img.shields.io/badge/CICD-555555?style=for-the-badge" style="max-width: 100%;"><img src="https://camo.githubusercontent.com/d39f98e5f22de18187cdd6600398884869c8beb344b8b78ab34a685721cf8b1a/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f676974687562253230616374696f6e732d2532333236373145352e7376673f7374796c653d666f722d7468652d6261646765266c6f676f3d676974687562616374696f6e73266c6f676f436f6c6f723d7768697465" alt="GitHub Actions" data-canonical-src="https://img.shields.io/badge/github%20actions-%232671E5.svg?style=for-the-badge&amp;logo=githubactions&amp;logoColor=white" style="max-width: 100%;"></a><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/9b77e2be8bbac9c7624e8d643a764aba84d4b1a072d85443bcc84387073ca617/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f6769746875625f636f6e7461696e65722d3138313731372e7376673f7374796c653d666f722d7468652d6261646765266c6f676f3d676974687562266c6f676f436f6c6f723d7768697465"></p>
 
-### 👩‍💻 Contributors
+### 🛠 Tech Stack
+<p dir="auto"><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/4a2a76648ac74b1e794e66a65d6c39da2d76c090fdf16b1423a4c99fd9b7956a/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f4672616d65776f726b2d3535353535353f7374796c653d666f722d7468652d6261646765"><img src="https://camo.githubusercontent.com/4a2a76648ac74b1e794e66a65d6c39da2d76c090fdf16b1423a4c99fd9b7956a/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f4672616d65776f726b2d3535353535353f7374796c653d666f722d7468652d6261646765" data-canonical-src="https://img.shields.io/badge/Framework-555555?style=for-the-badge" style="max-width: 100%;"></a><a target="_blank"><img alt="SpringBoot" src="https://img.shields.io/badge/springboot-%236DB33F.svg?style=for-the-badge&amp;logo=springboot&amp;logoColor=white" style="max-width: 100%;"></a><a target="_blank"><img alt="spring_data_JPA" src="https://img.shields.io/badge/spring_data_JPA-%236DB33F?style=for-the-badge&amp;logo=databricks&amp;logoColor=white" style="max-width: 100%;"></a><a target="_blank"><img alt="SpringSecurity" src="https://img.shields.io/badge/spring_security-%236DB33F.svg?style=for-the-badge&amp;logo=springsecurity&amp;logoColor=white" style="max-width: 100%;"></a> <a target="_blank"><img src="https://img.shields.io/badge/build-555555?style=for-the-badge" style="max-width: 100%;"></a><a target="_blank"><img alt="Gradle" src="https://img.shields.io/badge/Gradle-02303A.svg?style=for-the-badge&amp;logo=Gradle&amp;logoColor=white" style="max-width: 100%;"></a></p>
+
+<p dir="auto"><a target="_blank" ><img src="https://img.shields.io/badge/Database-555555?style=for-the-badge" style="max-width: 100%;"></a><a target="_blank"><img alt="MySQL" src="https://img.shields.io/badge/mysql-4479A1.svg?style=for-the-badge&amp;logo=mysql&amp;logoColor=white" style="max-width: 100%;"></a></p>
+
+<p dir="auto"><a target="_blank"><img src="https://img.shields.io/badge/Infrastructure-555555?style=for-the-badge" style="max-width: 100%;"></a><a target="_blank" ><img alt="Amazon Ec2" src="https://img.shields.io/badge/amazon_ec2-FF9900.svg?style=for-the-badge&amp;logo=amazonec2&amp;logoColor=white" style="max-width: 100%;"></a><a target="_blank"><img alt="Amazon S3" src="https://img.shields.io/badge/AWS_S3-569A31.svg?style=for-the-badge&amp;logo=amazons3&amp;logoColor=white" style="max-width: 100%;"></a><a target="_blank"><img  alt="Amazon RDS" src="https://img.shields.io/badge/amazon_RDS-527FFF.svg?style=for-the-badge&amp;logo=amazonrds&amp;logoColor=white" style="max-width: 100%;"></a><a target="_blank"></p>
+
+
+<p dir="auto"><a target="_blank"><img src="https://img.shields.io/badge/CICD-555555?style=for-the-badge" style="max-width: 100%;"><img alt="GitHub Actions" src="https://img.shields.io/badge/github%20actions-%232671E5.svg?style=for-the-badge&amp;logo=githubactions&amp;logoColor=white" style="max-width: 100%;"></a><a target="_blank"></p>
+
+<br>
+
+
+### ✨ 주요 기능
+- 환경 챌린지 참여 (개인/팀 단위)
+- 챌린지 인증 및 후기 등록
+- 포인트 적립 및 리워드 교환 상점
+- 환경 정보 공유 및 커뮤니티 기능
+- 관리자 기능 (챌린지/회원/포인트 관리 등)
+- SNS 및 오프라인 활동과 연계한 참여 유도
+
+<br>
+
+### 🏁 기능 요약
+#### 기능	설명
+- 챌린지:	플로깅, 분리배출, 텀블러 사용 등 다양한 환경 행동 참여
+- 포인트:	챌린지 인증 시 포인트 적립, 굿즈 교환 가능
+- 정보공유:	정보 공유 탭을 통해 환경 관련 콘텐츠를 자유롭게 등록 및 열람 가능
+- 마이페이지:	챌린지 참여 내역, 포인트 내역, 리워드 신청 등 개인 활동 관리
+
+<img width="303" height="667" alt="Image" src="https://github.com/user-attachments/assets/d1f48a33-de44-4f8f-9516-7bd8cd37c38c" />
+<img width="263" height="653" alt="Image" src="https://github.com/user-attachments/assets/9c7fe4ab-1bcd-478d-8574-18ab2bb9c3e7" />
+<img width="265" height="599" alt="Image" src="https://github.com/user-attachments/assets/e3175ecb-0238-4ff6-9163-26170ce4ede9" /><br>
+<img width="212" height="434" alt="Image" src="https://github.com/user-attachments/assets/f0734e21-7b97-422c-a4c5-2ed3450e36f1" />
+<img width="193" height="474" alt="Image" src="https://github.com/user-attachments/assets/ce6f5b72-21b1-450f-b076-ebb010181525" /><br>
+<img width="282" height="581" alt="Image" src="https://github.com/user-attachments/assets/33563c9b-8d71-49fc-803f-cf694130164d" />
+<img width="196" height="614" alt="Image" src="https://github.com/user-attachments/assets/39d7f951-76f5-41ff-9484-73043b1ed769" />
+<br>
+<br>
+
+
+
+### 👩‍💻 Backend Contributors
+| 김지환                                | 최윤정                           | 김지호                                 | 
+| ------------------------------------- | ---------------------------------- | -------------------------------------- | 
+| [Github](https://github.com/jihwankim128) | [Github](https://github.com/yunjeooong) | [Github](https://github.com/JEEEEEEHO) |
+
+
