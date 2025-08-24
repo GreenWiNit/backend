@@ -100,15 +100,56 @@ src/main/java/...
 - 정보공유:	정보 공유 탭을 통해 환경 관련 콘텐츠를 자유롭게 등록 및 열람 가능
 - 마이페이지:	챌린지 참여 내역, 포인트 내역, 리워드 신청 등 개인 활동 관리
 
-<img width="303" height="667" alt="Image" src="https://github.com/user-attachments/assets/d1f48a33-de44-4f8f-9516-7bd8cd37c38c" />
-<img width="263" height="653" alt="Image" src="https://github.com/user-attachments/assets/9c7fe4ab-1bcd-478d-8574-18ab2bb9c3e7" />
-<img width="265" height="599" alt="Image" src="https://github.com/user-attachments/assets/e3175ecb-0238-4ff6-9163-26170ce4ede9" /><br>
-<img width="212" height="434" alt="Image" src="https://github.com/user-attachments/assets/f0734e21-7b97-422c-a4c5-2ed3450e36f1" />
-<img width="193" height="474" alt="Image" src="https://github.com/user-attachments/assets/ce6f5b72-21b1-450f-b076-ebb010181525" /><br>
-<img width="282" height="581" alt="Image" src="https://github.com/user-attachments/assets/33563c9b-8d71-49fc-803f-cf694130164d" />
-<img width="196" height="614" alt="Image" src="https://github.com/user-attachments/assets/39d7f951-76f5-41ff-9484-73043b1ed769" />
-<br>
-<br>
+
+<div align="center">
+  <img
+    src="https://github.com/user-attachments/assets/d1f48a33-de44-4f8f-9516-7bd8cd37c38c"
+    alt="홈 화면"
+    width="250"
+  />
+  <img
+    src="https://github.com/user-attachments/assets/9c7fe4ab-1bcd-478d-8574-18ab2bb9c3e7"
+    alt="챌린지 참여"
+    width="250"
+  />
+  <img
+    src="https://github.com/user-attachments/assets/e3175ecb-0238-4ff6-9163-26170ce4ede9"
+    alt="인증 작성"
+    width="250"
+  />
+</div>
+
+<br />
+
+<div align="center">
+  <img
+    src="https://github.com/user-attachments/assets/f0734e21-7b97-422c-a4c5-2ed3450e36f1"
+    alt="포인트/리워드"
+    width="250"
+  />
+  <img
+    src="https://github.com/user-attachments/assets/ce6f5b72-21b1-450f-b076-ebb010181525"
+    alt="마이페이지"
+    width="250"
+  />
+</div>
+
+<br />
+
+<div align="center">
+  <img
+    src="https://github.com/user-attachments/assets/33563c9b-8d71-49fc-803f-cf694130164d"
+    alt="커뮤니티(정보공유)"
+    width="250"
+  />
+  <img
+    src="https://github.com/user-attachments/assets/39d7f951-76f5-41ff-9484-73043b1ed769"
+    alt="관리자 기능"
+    width="250"
+  />
+</div>
+
+<br /><br />
 
 
 
