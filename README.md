@@ -15,6 +15,27 @@ GreenWiNit은 웹 기반의 환경 챌린지형 커뮤니티 플랫폼입니다.
 - 참여 사업명: 2025년 서울 청년 기획봉사단
 - 사업 기간: 2025.04.17 ~ 2025.08.31
 
+<div style="display: flex; gap: 10px;">
+  <img
+    src="https://github.com/user-attachments/assets/8c009eb3-3825-476c-84d1-4e36009da34e"
+    alt="현장사진1"
+    height="250"
+    style="object-fit: cover;"
+  />
+  <img
+    src="https://github.com/user-attachments/assets/8d963925-100e-476b-91c3-ee1e09a4b23b"
+    alt="현장사진2"
+    height="250"
+    style="object-fit: cover;"
+  />
+  <img
+    src="https://github.com/user-attachments/assets/2b415251-85fd-4764-90e3-3e5c2fd99db3"
+    alt="인증 작성"
+    height="250"
+    style="object-fit: cover;"
+  />
+</div>
+
 
 <br>
 
