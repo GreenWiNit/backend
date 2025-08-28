@@ -19,6 +19,7 @@ public class AllowedDomainsPolicy {
 
 	// 정적 허용 도메인 목록
 	public static final List<String> STATIC_ALLOWED_ORIGINS = Arrays.asList(
+		"greenwinit-admin-panel.greenwinit01.workers.dev",
 		"https://greenwinit.pages.dev",
 		"https://greenwinit-admin-panel.pages.dev",
 		"http://localhost:5173",
@@ -28,6 +29,7 @@ public class AllowedDomainsPolicy {
 
 	// 와일드카드 패턴 도메인 목록
 	public static final List<String> ALLOWED_ORIGIN_PATTERNS = Arrays.asList(
+		"https://*.greenwinit01.workers.dev",
 		"https://*.greenwinit.pages.dev",
 		"https://*.greenwinit-admin-panel.pages.dev",
 		"https://*.greenwinit.store"
