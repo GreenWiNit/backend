@@ -14,50 +14,48 @@ public class OrderDataSource extends BaseDataSource {
 
 	public void createOrder() {
 		jdbcTemplate.execute("""
-			    CREATE TABLE ORDERS (
-			        TOTAL_PRICE decimal(38,2) not null, 
-			        CREATED_DATE datetime(6) not null, 
-			        DELIVERY_ADDRESS_ID bigint not null, 
-			        MEMBER_ID bigint not null, 
-			        MODIFIED_DATE datetime(6), 
-			        ORDER_ID bigint not null auto_increment, 
-			        DETAIL_ADDRESS varchar(255) not null, 
-			        MEMBER_KEY varchar(255) not null, 
-			        MEMBER_EMAIL varchar(255) not null, 
-			        ORDER_NUMBER varchar(255), 
-			        PHONE_NUMBER varchar(255) not null, 
-			        RECIPIENT_NAME varchar(255) not null, 
-			        ROAD_ADDRESS varchar(255) not null, 
-			        ZIP_CODE varchar(255) not null, 
-			        STATUS enum ('CANCELLED','DELIVERED','PENDING_DELIVERY','SHIPPING') not null, 
-			        primary key (ORDER_ID)
-			    ) engine=InnoDB
+			    CREATE TABLE orders (
+			        total_price decimal(38,2) not null, 
+			        created_date timestamp not null, 
+			        delivery_address_id bigint not null, 
+			        member_id bigint not null, 
+			        modified_date timestamp, 
+			        order_id bigserial primary key, 
+			        detail_address varchar(255) not null, 
+			        member_key varchar(255) not null, 
+			        member_email varchar(255) not null, 
+			        order_number varchar(255), 
+			        phone_number varchar(255) not null, 
+			        recipient_name varchar(255) not null, 
+			        road_address varchar(255) not null, 
+			        zip_code varchar(255) not null, 
+			        status varchar(20) not null CHECK (status IN ('CANCELLED','DELIVERED','PENDING_DELIVERY','SHIPPING'))
+			    )
 			""");
 	}
 
 	public void createOrderItems() {
 		jdbcTemplate.execute("""
-			    CREATE TABLE ORDER_ITEMS (
-			        QUANTITY integer not null, 
-			        UNIT_PRICE decimal(38,2) not null, 
-			        CREATED_DATE datetime(6) not null, 
-			        MODIFIED_DATE datetime(6), 
-			        ORDER_ID bigint not null, 
-			        ORDER_ITEM_ID bigint not null auto_increment, 
-			        POINT_PRODUCT_ID bigint not null, 
-			        ITEM_CODE varchar(255) not null, 
-			        ITEM_NAME varchar(255) not null, 
-			        primary key (ORDER_ITEM_ID),
-			        FOREIGN KEY (ORDER_ID) REFERENCES ORDERS(ORDER_ID)
-			    ) engine=InnoDB
+			    CREATE TABLE order_items (
+			        quantity integer not null, 
+			        unit_price decimal(38,2) not null, 
+			        created_date timestamp not null, 
+			        modified_date timestamp, 
+			        order_id bigint not null, 
+			        order_item_id bigserial primary key, 
+			        point_product_id bigint not null, 
+			        item_code varchar(255) not null, 
+			        item_name varchar(255) not null, 
+			        FOREIGN KEY (order_id) REFERENCES orders(order_id)
+			    )
 			""");
 	}
 
 	public void deleteOrder() {
-		jdbcTemplate.execute("DROP TABLE IF EXISTS ORDERS");
+		jdbcTemplate.execute("DROP TABLE IF EXISTS orders CASCADE");
 	}
 
 	public void deleteOrderItems() {
-		jdbcTemplate.execute("DROP TABLE IF EXISTS ORDER_ITEMS");
+		jdbcTemplate.execute("DROP TABLE IF EXISTS order_items");
 	}
 }

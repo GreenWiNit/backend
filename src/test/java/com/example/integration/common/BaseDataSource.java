@@ -11,11 +11,11 @@ public abstract class BaseDataSource {
 
 	public void createIdempotency() {
 		jdbcTemplate.execute("""
-			    CREATE TABLE IDEMPOTENCIES (
-			        IDEMPOTENCY_KEY varchar(255) not null, 
-			        RESPONSE varchar(255) not null, 
-			        primary key (IDEMPOTENCY_KEY)
-			    ) engine=InnoDB
+				CREATE TABLE idempotencies (
+						idempotency_key varchar(255) not null,
+						response varchar(255) not null,
+						primary key (idempotency_key)
+					);
 			""");
 	}
 
