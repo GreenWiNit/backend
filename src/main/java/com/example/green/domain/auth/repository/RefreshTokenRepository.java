@@ -27,10 +27,7 @@ public interface RefreshTokenRepository extends JpaRepository<TokenManager, Long
 	List<TokenManager> findAllByMemberKeyAndNotRevoked(@Param("memberKey") String memberKey);
 
 	// memberKey로 가장 최신 TokenManager 조회 (로그아웃용)
-	@Query("SELECT rt FROM TokenManager rt "
-		+ "WHERE rt.member.memberKey = :memberKey AND rt.isRevoked = false "
-		+ "ORDER BY rt.tokenVersion DESC, rt.id DESC LIMIT 1")
-	Optional<TokenManager> findLatestByMemberKeyAndNotRevoked(@Param("memberKey") String memberKey);
+	Optional<TokenManager> findFirstByMemberMemberKeyAndIsRevokedFalseOrderByTokenVersionDescIdDesc(String memberKey);
 
 	// 토큰 정리 전용
 	@Lock(LockModeType.PESSIMISTIC_WRITE)
@@ -49,7 +46,8 @@ public interface RefreshTokenRepository extends JpaRepository<TokenManager, Long
 	@Modifying
 	@Query("DELETE FROM TokenManager rt " + "WHERE rt.member.memberKey = :memberKey "
 		+ "AND (rt.expiresAt < :now OR rt.isRevoked = true)")
-	void deleteExpiredAndRevokedTokensByMemberKey(@Param("memberKey") String memberKey, @Param("now") LocalDateTime now);
+	void deleteExpiredAndRevokedTokensByMemberKey(@Param("memberKey") String memberKey,
+		@Param("now") LocalDateTime now);
 
 	// 만료된 토큰 일괄 삭제 (스케줄러용)
 	@Modifying
