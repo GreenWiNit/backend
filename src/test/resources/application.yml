@@ -24,17 +24,17 @@ spring:
   autoconfigure:
     exclude: org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration
   datasource:
-    url: jdbc:mysql://localhost:3306/test-db
+    url: jdbc:postgresql://localhost:5432/test-db
     username: test
     password: test
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    driver-class-name: org.postgresql.Driver
     hikari:
       maximum-pool-size: 10
   jpa:
     hibernate:
       ddl-auto: create-drop
       naming:
-        physical-strategy: com.example.green.infra.database.strategy.UpperSnakeNamingStrategy
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     defer-datasource-initialization: false
   sql:
     init:

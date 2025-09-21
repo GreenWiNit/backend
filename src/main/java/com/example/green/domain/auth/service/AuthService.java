@@ -37,7 +37,7 @@ public class AuthService {
 	 * - TempToken에서 추출한 정보와 사용자 입력 정보를 결합
 	 * - Member 도메인에 회원 생성 위임
 	 * - 회원가입 결과로 생성된 username 반환
-	 * 
+	 *
 	 * @param tempInfo OAuth2 인증 정보 (provider, providerId, name, email)
 	 * @param nickname 사용자가 입력한 닉네임
 	 * @param profileImageUrl 사용자가 선택한 프로필 이미지 URL
@@ -56,7 +56,7 @@ public class AuthService {
 	/**
 	 * OAuth2 정보로 회원 생성
 	 * - Member 도메인에 회원 생성 요청
-	 * 
+	 *
 	 * @param tempInfo OAuth2 인증 정보
 	 * @param nickname 닉네임
 	 * @param profileImageUrl 프로필 이미지 URL
@@ -84,7 +84,8 @@ public class AuthService {
 		backoff = @Backoff(delay = 50, multiplier = 2.0, random = true)
 	)
 	public void logout(String memberKey) {
-		Optional<TokenManager> latestToken = refreshTokenRepository.findLatestByMemberKeyAndNotRevoked(memberKey);
+		Optional<TokenManager> latestToken =
+			refreshTokenRepository.findFirstByMemberMemberKeyAndIsRevokedFalseOrderByTokenVersionDescIdDesc(memberKey);
 		if (latestToken.isPresent()) {
 			TokenManager token = latestToken.get();
 			Long newTokenVersion = token.logout(); // tokenVersion++
@@ -124,7 +125,7 @@ public class AuthService {
 
 	/**
 	 * 모든 토큰 무효화 처리
-	 * 
+	 *
 	 * @param tokens 무효화할 토큰 목록
 	 * @return 최종 토큰 버전
 	 */
@@ -145,16 +146,16 @@ public class AuthService {
 	 * - 모든 디바이스에서 로그아웃 (AccessToken 무효화)
 	 * - 모든 RefreshToken 무효화 (즉시 처리)
 	 * - Auth 도메인의 단일 책임: 토큰 관리만 담당
-	 * 
+	 *
 	 * @param memberKey 회원키
 	 */
 	public void invalidateAllTokens(String memberKey) {
 		log.info("[AUTH] 토큰 무효화 처리 시작 - memberKey: {}", memberKey);
-		
+
 		invalidateAllAuthentications(memberKey);
-		
+
 		log.info("[AUTH] 토큰 무효화 완료 - memberKey: {}", memberKey);
-		
+
 		// TODO: 배치 시스템으로 토큰 물리적 삭제 처리
 		// - 탈퇴한 사용자의 모든 TokenManager 레코드 물리적 삭제
 		// - 관련 인증 로그, 세션 기록 등도 함께 정리
@@ -165,7 +166,7 @@ public class AuthService {
 	 * 모든 인증 정보 무효화
 	 * - 모든 디바이스 로그아웃 (AccessToken 무효화)
 	 * - 모든 RefreshToken 무효화
-	 * 
+	 *
 	 * @param memberKey 회원키
 	 */
 	private void invalidateAllAuthentications(String memberKey) {
@@ -176,6 +177,5 @@ public class AuthService {
 		refreshTokenRepository.revokeAllByMemberKey(memberKey);
 		log.info("[AUTH] 모든 RefreshToken 무효화 완료: {}", memberKey);
 	}
-
 
 }

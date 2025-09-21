@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -29,12 +30,23 @@ class PointTransactionServiceTest {
 	@InjectMocks
 	private PointTransactionService pointTransactionService;
 
+	private PointTransaction mock;
+	private PointAmount amount;
+
+	@BeforeEach
+	void setUp() {
+		mock = mock(PointTransaction.class);
+		amount = mock(PointAmount.class);
+	}
+
 	@Test
 	void 사용자Id와_사용_금액_포인트_출처_정보로_포인트_차감_내역을_저장한다() {
 		// given
-		PointAmount mock = mock(PointAmount.class);
-		when(pointTransactionRepository.findLatestBalance(anyLong())).thenReturn(Optional.of(mock));
-		when(mock.canSpend(any(PointAmount.class))).thenReturn(true);
+		PointAmount amount = mock(PointAmount.class);
+		when(mock.getBalanceAfter()).thenReturn(amount);
+		when(pointTransactionRepository.findFirstByMemberIdOrderByIdDesc(anyLong()))
+			.thenReturn(Optional.of(mock));
+		when(amount.canSpend(any(PointAmount.class))).thenReturn(true);
 
 		// when
 		pointTransactionService.spendPoints(
@@ -47,9 +59,10 @@ class PointTransactionServiceTest {
 	@Test
 	void 포인트_차감_시_사용_가능한_포인트가_충분하지_않으면_예외가_발생한다() {
 		// given
-		PointAmount mock = mock(PointAmount.class);
-		when(pointTransactionRepository.findLatestBalance(anyLong())).thenReturn(Optional.of(mock));
-		when(mock.canSpend(any(PointAmount.class))).thenReturn(false);
+		when(pointTransactionRepository.findFirstByMemberIdOrderByIdDesc(anyLong()))
+			.thenReturn(Optional.of(mock));
+		when(mock.getBalanceAfter()).thenReturn(amount);
+		when(amount.canSpend(any(PointAmount.class))).thenReturn(false);
 
 		assertThatThrownBy(() ->
 			pointTransactionService.spendPoints(
@@ -62,8 +75,7 @@ class PointTransactionServiceTest {
 	@Test
 	void 포인트_적립_시_기존_포인트에_추가_지급한다() {
 		// given
-		PointAmount mock = mock(PointAmount.class);
-		when(pointTransactionRepository.findLatestBalance(anyLong())).thenReturn(Optional.of(mock));
+		when(pointTransactionRepository.findFirstByMemberIdOrderByIdDesc(anyLong())).thenReturn(Optional.of(mock));
 
 		// when
 		pointTransactionService.earnPoints(
@@ -77,7 +89,7 @@ class PointTransactionServiceTest {
 	@Test
 	void 포인트_적립_시_기존_포인트가_없어도_지급이_된다() {
 		// given
-		when(pointTransactionRepository.findLatestBalance(anyLong())).thenReturn(Optional.empty());
+		when(pointTransactionRepository.findFirstByMemberIdOrderByIdDesc(anyLong())).thenReturn(Optional.empty());
 
 		// when
 		pointTransactionService.earnPoints(
