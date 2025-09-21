@@ -23,7 +23,7 @@ public class AllowedDomainsPolicy {
 		"https://greenwinit.pages.dev",
 		"https://greenwinit-admin-panel.pages.dev",
 		"http://localhost:5173",
-		"http://localhost:5174", 
+		"http://localhost:5174",
 		"http://localhost:3000"
 	);
 
@@ -32,7 +32,7 @@ public class AllowedDomainsPolicy {
 		"https://*.greenwinit01.workers.dev",
 		"https://*.greenwinit.pages.dev",
 		"https://*.greenwinit-admin-panel.pages.dev",
-		"https://*.greenwinit.store"
+		"https://*.greenwinit.com"
 	);
 
 	private final String frontendBaseUrl;
@@ -43,8 +43,8 @@ public class AllowedDomainsPolicy {
 		@Value("${app.backend.base-url}") String backendBaseUrl) {
 		this.frontendBaseUrl = frontendBaseUrl;
 		this.backendBaseUrl = backendBaseUrl;
-		
-		log.info("AllowedDomainsPolicy 초기화 - frontendBaseUrl: {}, backendBaseUrl: {}", 
+
+		log.info("AllowedDomainsPolicy 초기화 - frontendBaseUrl: {}, backendBaseUrl: {}",
 			frontendBaseUrl, backendBaseUrl);
 	}
 
@@ -70,7 +70,7 @@ public class AllowedDomainsPolicy {
 	 */
 	public boolean isAllowedOrigin(String url) {
 		List<String> allAllowedOrigins = getAllAllowedOrigins();
-		
+
 		log.debug("도메인 검증 시작 - 대상 URL: {}", url);
 		log.debug("허용된 정확한 도메인 목록: {}", allAllowedOrigins);
 		log.debug("허용된 패턴 목록: {}", ALLOWED_ORIGIN_PATTERNS);
@@ -100,7 +100,7 @@ public class AllowedDomainsPolicy {
 		if (!pattern.contains("*")) {
 			return url.equals(pattern);
 		}
-		
+
 		String regex = pattern.replace("*", "[^./]+");
 		boolean matches = url.matches(regex);
 		log.debug("패턴 매칭 - URL: {}, 패턴: {}, 정규식: {}, 결과: {}", url, pattern, regex, matches);
