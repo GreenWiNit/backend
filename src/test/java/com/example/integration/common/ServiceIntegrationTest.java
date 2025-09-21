@@ -5,8 +5,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import com.example.green.GreenApplication;
-import com.example.integration.config.MySqlTestContainerConfig;
 import com.example.integration.config.S3TestContainerConfig;
+import com.example.integration.config.TestContainerConfig;
 
 /*
  * 해당 클래스는 복잡하게 설정됐습니다!
@@ -16,7 +16,7 @@ import com.example.integration.config.S3TestContainerConfig;
 @Deprecated
 @SpringBootTest(classes = {
 	GreenApplication.class,
-	MySqlTestContainerConfig.class,
+	TestContainerConfig.class,
 	S3TestContainerConfig.class,
 }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
