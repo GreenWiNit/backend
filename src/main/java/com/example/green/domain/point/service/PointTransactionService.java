@@ -6,6 +6,7 @@ import org.springframework.dao.CannotAcquireLockException;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.green.domain.point.entity.PointTransaction;
@@ -19,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Transactional(isolation = Isolation.SERIALIZABLE)
 public class PointTransactionService {
 
 	private final PointTransactionRepository pointTransactionRepository;
@@ -52,7 +53,8 @@ public class PointTransactionService {
 	}
 
 	public PointAmount getPointAmount(Long memberId) {
-		return pointTransactionRepository.findLatestBalance(memberId)
-			.orElseGet(PointAmount::ofZero);
+		return pointTransactionRepository.findFirstByMemberIdOrderByIdDesc(memberId)
+			.map(PointTransaction::getBalanceAfter)
+			.orElse(PointAmount.ofZero());
 	}
 }

@@ -39,7 +39,7 @@ public class PointTransactionRaceConditionTest extends BaseIntegrationTest {
 
 	@BeforeEach
 	void setUp() {
-		jdbcTemplate.execute("TRUNCATE TABLE POINT_TRANSACTIONS");
+		repository.deleteAll();
 	}
 
 	@Test
@@ -101,8 +101,7 @@ public class PointTransactionRaceConditionTest extends BaseIntegrationTest {
 			.toList();
 
 		assertThat(earnTransactions).hasSize(2);
-		assertThat(earnTransactions)
-			.extracting(PointTransaction::getBalanceAfter)
+		assertThat(earnTransactions).extracting(PointTransaction::getBalanceAfter)
 			.containsExactlyInAnyOrder(PointAmount.of(1000), PointAmount.of(2000));
 	}
 
