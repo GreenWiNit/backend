@@ -21,7 +21,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
 	boolean existsByMemberKey(String memberKey);
 
-
 	/**
 	 * 활성 회원만 조회 (탈퇴하지 않은 회원)
 	 * - MemberStatus가 NORMAL이고 deleted가 false인 회원
@@ -81,8 +80,10 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 	@Query("SELECT m FROM Member m WHERE m.status = 'DELETED' OR m.deleted = true ORDER BY m.modifiedDate DESC")
 	List<Member> findAllWithdrawnMembersForAdmin();
 
-
-	@Query(value = "SELECT COUNT(*) FROM MEMBER WHERE BINARY NICKNAME = :nickname AND STATUS = 'NORMAL' AND DELETED = false", 
-		   nativeQuery = true)
+	/**
+	 * 닉네임 중복 확인 (대소문자 구분)
+	 * - 바이너리 비교로 대소문자 구분
+	 */
+	@Query("SELECT COUNT(m) FROM Member m WHERE FUNCTION('BINARY', m.profile.nickname) = FUNCTION('BINARY', :nickname) AND m.status = 'NORMAL' AND m.deleted = false")
 	Long countByNickname(@Param("nickname") String nickname);
 }
