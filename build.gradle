@@ -40,7 +40,9 @@ dependencies {
     implementation 'me.paulschwarz:spring-dotenv:4.0.0'
 
     // DB - local & dev & prod -> 추후 변경 가능
-    implementation 'mysql:mysql-connector-java:8.0.33'
+    //implementation 'mysql:mysql-connector-java:8.0.33'
+    // PostgreSQL 의존성 추가
+    implementation 'org.postgresql:postgresql'
 
     // p6spy
     implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.10.0'
@@ -67,7 +69,8 @@ dependencies {
 
     // test container
     testImplementation 'org.springframework.boot:spring-boot-testcontainers'
-    testImplementation 'org.testcontainers:mysql:1.21.0'
+    //testImplementation 'org.testcontainers:mysql:1.21.0'
+    testImplementation 'org.testcontainers:postgresql:1.21.0'
     testImplementation 'org.testcontainers:localstack:1.21.0'
     testImplementation 'org.testcontainers:junit-jupiter:1.21.0'
 
