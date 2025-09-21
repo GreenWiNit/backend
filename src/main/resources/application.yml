@@ -24,7 +24,7 @@ spring:
     hibernate:
       ddl-auto: ${DB_DDL_AUTO:create-drop}
       naming:
-        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+        physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
     properties:
       hibernate:
         default_batch_fetch_size: ${BATCH_FETCH_SIZE:100}
