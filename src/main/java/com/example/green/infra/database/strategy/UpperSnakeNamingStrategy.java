@@ -4,6 +4,11 @@ import org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy;
 import org.hibernate.boot.model.naming.Identifier;
 import org.hibernate.engine.jdbc.env.spi.JdbcEnvironment;
 
+/*
+ * DB Migration MySQL -> PostgreSql
+ * We will use postgreSqlNamingStrategy
+ * */
+@Deprecated
 public class UpperSnakeNamingStrategy extends CamelCaseToUnderscoresNamingStrategy {
 
 	@Override
