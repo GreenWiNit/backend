@@ -1,0 +1,17 @@
+#!/bin/sh
+# Pre-push hook to validate branch name format
+# Branch format should be: branch-type/(purpose)
+# Allowed branch types: feat, fix
+
+branch=$(git rev-parse --abbrev-ref HEAD)
+allowed_types="feat|fix"
+
+if [[ $branch =~ ^($allowed_types)/ ]]; then
+    echo "✅ Branch name '$branch' follows the correct format."
+else
+    echo "❌ Branch name '$branch' does not follow the required format."
+    echo "Required format: branch-type/(purpose)"
+    echo "Allowed branch types: $allowed_types"
+    echo "Example: feat/add-user-authentication"
+    exit 1
+fi

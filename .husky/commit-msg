@@ -1,0 +1,4 @@
+#!/bin/sh
+# Commit-msg hook to validate commit message format using commitlint
+
+npx --no-install commitlint --edit $1

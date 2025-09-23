@@ -1,0 +1,16 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "Backend project with Git hooks management",
+  "private": true,
+  "devDependencies": {
+    "husky": "^9.1.7"
+  },
+  "dependencies": {
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1"
+  },
+  "scripts": {
+    "prepare": "husky"
+  }
+}
