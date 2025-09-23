@@ -28,4 +28,9 @@ public class PointProductQueryService {
 			throw new PointProductException(PointProductExceptionMessage.DUPLICATE_POINT_PRODUCT_CODE);
 		}
 	}
+
+	public PointProduct getPointProductWithPessimisticLock(Long id) {
+		return pointProductRepository.findByIdWithPessimisticLock(id)
+			.orElseThrow(() -> new PointProductException(PointProductExceptionMessage.NOT_FOUND_POINT_PRODUCT));
+	}
 }
