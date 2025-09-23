@@ -1,17 +1,31 @@
 #!/bin/sh
-# Pre-push hook to validate branch name format
-# Branch format should be: branch-type/(purpose)
-# Allowed branch types: feat, fix
+# Pre-push hook to validate branch name format (POSIX sh)
+# Valid: <type>/<purpose>, where type ∈ {feat, fix, docs, refactor, perf, test, chore}
 
-branch=$(git rev-parse --abbrev-ref HEAD)
-allowed_types="feat|fix"
+allowed_types='feat|fix|docs|refactor|perf|test|chore'
 
-if [[ $branch =~ ^($allowed_types)/ ]]; then
-    echo "✅ Branch name '$branch' follows the correct format."
-else
-    echo "❌ Branch name '$branch' does not follow the required format."
-    echo "Required format: branch-type/(purpose)"
-    echo "Allowed branch types: $allowed_types"
-    echo "Example: feat/add-user-authentication"
-    exit 1
-fi
+# Read: <local_ref> <local_sha> <remote_ref> <remote_sha>
+while read local_ref local_sha remote_ref remote_sha
+do
+  case "$local_ref" in
+    refs/heads/*)
+      branch=${local_ref#refs/heads/}
+      # Allow protected/special branches
+      case "$branch" in
+        main|master|develop|release/*|hotfix/*) continue ;;
+      esac
+      echo "$branch" | grep -Eq "^($allowed_types)/" && {
+        echo "✅ Branch name '$branch' is valid."
+        continue
+      }
+      echo "❌ Branch name '$branch' is invalid."
+      echo "Required: <type>/<purpose> where <type> ∈ {$allowed_types}"
+      echo "Example: feat/add-user-authentication"
+      exit 1
+      ;;
+    refs/tags/*)
+      # Ignore tags
+      ;;
+  esac
+done
+exit 0
