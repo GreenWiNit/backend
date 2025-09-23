@@ -87,6 +87,7 @@ public class PointProductService {
 	}
 
 	public void decreaseSingleItemStock(Long pointProductId, int amount) {
-		pointProductQueryService.getPointProduct(pointProductId).decreaseStock(amount);
+		PointProduct pointProduct = pointProductQueryService.getPointProductWithPessimisticLock(pointProductId);
+		pointProduct.decreaseStock(amount);
 	}
 }

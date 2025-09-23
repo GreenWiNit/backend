@@ -173,7 +173,7 @@ class PointProductServiceTest {
 	void 포인트_상품_아이디와_수량으로_재고를_감소한다() {
 		// given
 		PointProduct mockPointProduct = mock(PointProduct.class);
-		when(pointProductQueryService.getPointProduct(anyLong())).thenReturn(mockPointProduct);
+		when(pointProductQueryService.getPointProductWithPessimisticLock(anyLong())).thenReturn(mockPointProduct);
 
 		// when
 		pointProductService.decreaseSingleItemStock(1L, 10);
