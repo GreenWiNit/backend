@@ -1,14 +1,16 @@
 ## 🌿 GreenWiNit
-GreenWiNit은 웹 기반의 환경 챌린지형 커뮤니티 플랫폼입니다.      
-일상 속에서 시민들이 쉽고 자발적으로 환경 보호 활동에 참여하고, 이를 공유하며 서로에게 동기를 부여할 수 있도록 설계된 서비스입니다.    
+
+GreenWiNit은 웹 기반의 환경 챌린지형 커뮤니티 플랫폼입니다.
+일상 속에서 시민들이 쉽고 자발적으로 환경 보호 활동에 참여하고, 이를 공유하며 서로에게 동기를 부여할 수 있도록 설계된 서비스입니다.
 🔗 https://www.greenwinit.com/
 
 <br>
 
 ### 🌍 프로젝트 개요
+
 - 프로젝트명: GreenWiNit
 - 팀명: 노크
-- 기획 목적:    
+- 기획 목적:
     - 누구나 쉽게 환경 보호 활동에 참여할 수 있는 온라인 플랫폼 제공
     - 챌린지 참여와 포인트 리워드 시스템을 통한 지속가능한 참여 유도
     - 오프라인 환경 캠페인과 연계하여 실질적인 사회적 실천 확산
@@ -33,13 +35,57 @@ GreenWiNit은 웹 기반의 환경 챌린지형 커뮤니티 플랫폼입니다.
   />
 </div>
 
+<br>
 
+### 🚀 개발 환경 설정
+
+#### Git Hooks (Husky) 설정
+
+이 프로젝트는 코드 품질을 유지하기 위해 Husky를 사용하여 Git hooks를 관리합니다.
+
+**설치 방법:**
+
+```bash
+# 1. 패키지 의존성 설치
+npm install
+
+# 2. Git hooks 자동 설치 (npm install 시 자동으로 실행됩니다)
+# 또는 수동으로 설치하려면:
+npx husky
+```
+
+**설정된 Git Hooks:**
+
+- **commit-msg**: 커밋 메시지 형식을 검사합니다
+    - 허용되는 타입: `feat`, `fix`, `docs`, `refactor`, `perf`, `test`, `chore`
+    - 형식: `type: 설명` 또는 `type(scope): 설명`
+- **pre-push**: 브랜치명 형식을 검사합니다
+    - 허용되는 브랜치 타입: `feat`, `fix`
+    - 형식: `branch-type/purpose` (예: `feat/add-user-authentication`)
+
+**사용 예시:**
+
+```bash
+# 브랜치 생성 (✅ 올바른 형식)
+git checkout -b feat/add-user-authentication
+git checkout -b fix/bug-login-issue
+
+# 커밋 메시지 (✅ 올바른 형식)
+git commit -m "feat: 사용자 인증 기능 추가"
+git commit -m "fix: 로그인 버그 수정"
+git commit -m "docs: API 문서 업데이트"
+
+# 푸시 (브랜치명과 커밋 메시지가 모두 검사됩니다)
+git push origin feat/add-user-authentication
+```
 
 <br>
 
-### 📜 프로젝트 구조 및 Coding Convetion 
+### 📜 프로젝트 구조 및 Coding Convetion
+
 https://github.com/GreenWiNit/backend/wiki/Coding-Convention    
-https://github.com/GreenWiNit/backend/wiki/How-to-Contribute 
+https://github.com/GreenWiNit/backend/wiki/How-to-Contribute
+
 ```
 src/main/java/...
 ├── domain/
@@ -83,13 +129,12 @@ src/main/java/...
         └── ...
 ```
 
+### ✨ Architecture
 
-### ✨ Architecture 
 <img width="945" height="295" alt="Image" src="https://github.com/user-attachments/assets/e266ce6f-e2c2-44de-8e92-5a85acc846a7" />
 
-
-
 ### 🛠 Tech Stack
+
 <p dir="auto"><a target="_blank" rel="noopener noreferrer nofollow" href="https://camo.githubusercontent.com/4a2a76648ac74b1e794e66a65d6c39da2d76c090fdf16b1423a4c99fd9b7956a/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f4672616d65776f726b2d3535353535353f7374796c653d666f722d7468652d6261646765"><img src="https://camo.githubusercontent.com/4a2a76648ac74b1e794e66a65d6c39da2d76c090fdf16b1423a4c99fd9b7956a/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f4672616d65776f726b2d3535353535353f7374796c653d666f722d7468652d6261646765" data-canonical-src="https://img.shields.io/badge/Framework-555555?style=for-the-badge" style="max-width: 100%;"></a><a target="_blank"><img alt="SpringBoot" src="https://img.shields.io/badge/springboot-%236DB33F.svg?style=for-the-badge&amp;logo=springboot&amp;logoColor=white" style="max-width: 100%;"></a><a target="_blank"><img alt="spring_data_JPA" src="https://img.shields.io/badge/spring_data_JPA-%236DB33F?style=for-the-badge&amp;logo=databricks&amp;logoColor=white" style="max-width: 100%;"></a><a target="_blank"><img alt="SpringSecurity" src="https://img.shields.io/badge/spring_security-%236DB33F.svg?style=for-the-badge&amp;logo=springsecurity&amp;logoColor=white" style="max-width: 100%;"></a> <a target="_blank"><img src="https://img.shields.io/badge/build-555555?style=for-the-badge" style="max-width: 100%;"></a><a target="_blank"><img alt="Gradle" src="https://img.shields.io/badge/Gradle-02303A.svg?style=for-the-badge&amp;logo=Gradle&amp;logoColor=white" style="max-width: 100%;"></a></p>
 
 <p dir="auto"><a target="_blank" ><img src="https://img.shields.io/badge/Database-555555?style=for-the-badge" style="max-width: 100%;"></a><a target="_blank"><img alt="MySQL" src="https://img.shields.io/badge/mysql-4479A1.svg?style=for-the-badge&amp;logo=mysql&amp;logoColor=white" style="max-width: 100%;"></a></p>
@@ -101,8 +146,8 @@ src/main/java/...
 
 <br>
 
-
 ### ✨ 주요 기능
+
 - 환경 챌린지 참여 (개인/팀 단위)
 - 챌린지 인증 및 후기 등록
 - 포인트 적립 및 리워드 교환 상점
@@ -113,12 +158,13 @@ src/main/java/...
 <br>
 
 ### 🏁 기능 요약
-#### 기능	설명
-- 챌린지:	플로깅, 분리배출, 텀블러 사용 등 다양한 환경 행동 참여
-- 포인트:	챌린지 인증 시 포인트 적립, 굿즈 교환 가능
-- 정보공유:	정보 공유 탭을 통해 환경 관련 콘텐츠를 자유롭게 등록 및 열람 가능
-- 마이페이지:	챌린지 참여 내역, 포인트 내역, 리워드 신청 등 개인 활동 관리
 
+#### 기능	설명
+
+- 챌린지:    플로깅, 분리배출, 텀블러 사용 등 다양한 환경 행동 참여
+- 포인트:    챌린지 인증 시 포인트 적립, 굿즈 교환 가능
+- 정보공유:    정보 공유 탭을 통해 환경 관련 콘텐츠를 자유롭게 등록 및 열람 가능
+- 마이페이지:    챌린지 참여 내역, 포인트 내역, 리워드 신청 등 개인 활동 관리
 
 <div align="center">
   <img
@@ -170,11 +216,10 @@ src/main/java/...
 
 <br /><br />
 
-
-
 ### 👩‍💻 Backend Contributors
-| 김지환                                | 최윤정                           | 김지호                                 | 
-| ------------------------------------- | ---------------------------------- | -------------------------------------- | 
+
+| 김지환                                       | 최윤정                                     | 김지호                                    | 
+|-------------------------------------------|-----------------------------------------|----------------------------------------| 
 | [Github](https://github.com/jihwankim128) | [Github](https://github.com/yunjeooong) | [Github](https://github.com/JEEEEEEHO) |
 
 

@@ -1,0 +1,31 @@
+#!/bin/sh
+# Pre-push hook to validate branch name format (POSIX sh)
+# Valid: <type>/<purpose>, where type ∈ {feat, fix, docs, refactor, perf, test, chore}
+
+allowed_types='feat|fix|docs|refactor|perf|test|chore'
+
+# Read: <local_ref> <local_sha> <remote_ref> <remote_sha>
+while read local_ref local_sha remote_ref remote_sha
+do
+  case "$local_ref" in
+    refs/heads/*)
+      branch=${local_ref#refs/heads/}
+      # Allow protected/special branches
+      case "$branch" in
+        main|master|develop|release/*|hotfix/*) continue ;;
+      esac
+      echo "$branch" | grep -Eq "^($allowed_types)/" && {
+        echo "✅ Branch name '$branch' is valid."
+        continue
+      }
+      echo "❌ Branch name '$branch' is invalid."
+      echo "Required: <type>/<purpose> where <type> ∈ {$allowed_types}"
+      echo "Example: feat/add-user-authentication"
+      exit 1
+      ;;
+    refs/tags/*)
+      # Ignore tags
+      ;;
+  esac
+done
+exit 0
