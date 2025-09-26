@@ -23,12 +23,12 @@ public class IdemPotency {
 	@Column(nullable = false)
 	private String response;
 
-	private IdemPotency(String idempotencyKey, ApiTemplate<?> response) {
+	private IdemPotency(String idempotencyKey, Object response) {
 		this.idempotencyKey = idempotencyKey;
 		this.response = ApiTemplateObjectMapper.toString(response);
 	}
 
-	public static IdemPotency of(String idempotencyKey, ApiTemplate<?> response) {
+	public static IdemPotency of(String idempotencyKey, Object response) {
 		return new IdemPotency(idempotencyKey, response);
 	}
 

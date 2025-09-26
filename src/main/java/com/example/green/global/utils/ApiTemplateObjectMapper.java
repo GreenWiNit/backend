@@ -26,7 +26,7 @@ public class ApiTemplateObjectMapper {
 		}
 	}
 
-	public static String toString(ApiTemplate<?> response) {
+	public static String toString(Object response) {
 		try {
 			return objectMapper.writeValueAsString(response);
 		} catch (JsonProcessingException e) {

@@ -1,12 +1,14 @@
 package com.example.green.domain.common.idempotency;
 
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
 
+import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.error.exception.BusinessException;
 import com.example.green.global.error.exception.GlobalExceptionMessage;
 
@@ -21,24 +23,31 @@ import lombok.extern.slf4j.Slf4j;
 public class IdempotencyAspect {
 
 	private final IdempotencyService idempotencyService;
+	private final ConcurrentHashMap<String, Object> lockMap = new ConcurrentHashMap<>();
 	private final HttpServletRequest request;
 
 	@Around("@annotation(Idempotent)")
-	public Object handleIdempotentRequest(ProceedingJoinPoint joinPoint) {
+	public Object handleIdempotentRequest(ProceedingJoinPoint joinPoint) throws Throwable {
 		String idempotencyKey = extractIdempotencyKey();
-		return idempotencyService.executeIdempotent(idempotencyKey, () -> executeBusinessLogic(joinPoint));
+		Object lock = lockMap.computeIfAbsent(idempotencyKey, k -> new Object());
+
+		synchronized (lock) {
+			try {
+				return executeIdempotent(joinPoint, idempotencyKey);
+			} finally {
+				lockMap.remove(idempotencyKey);
+			}
+		}
 	}
 
-	private Object executeBusinessLogic(ProceedingJoinPoint joinPoint) {
-		try {
-			return joinPoint.proceed();
-		} catch (BusinessException e) {
-			log.error("멱등성 비즈니스 예외: ", e);
-			throw e;
-		} catch (Throwable e) {
-			log.error("멱등성 알 수 없는 예외: ", e);
-			throw new RuntimeException(e);
+	private ApiTemplate<?> executeIdempotent(ProceedingJoinPoint joinPoint, String idempotencyKey) throws Throwable {
+		Optional<IdemPotency> existing = idempotencyService.findExisting(idempotencyKey);
+		if (existing.isPresent()) {
+			return existing.get().toResponse();
 		}
+		Object result = joinPoint.proceed();
+		IdemPotency idemPotency = idempotencyService.saveResult(idempotencyKey, result);
+		return idemPotency.toResponse();
 	}
 
 	private String extractIdempotencyKey() {
