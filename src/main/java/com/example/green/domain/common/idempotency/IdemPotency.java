@@ -1,6 +1,8 @@
 package com.example.green.domain.common.idempotency;
 
 import com.example.green.global.api.ApiTemplate;
+import com.example.green.global.error.exception.BusinessException;
+import com.example.green.global.error.exception.GlobalExceptionMessage;
 import com.example.green.global.utils.ApiTemplateObjectMapper;
 
 import jakarta.persistence.Column;
@@ -10,10 +12,12 @@ import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Entity
 @Table(name = "idempotencies")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Slf4j
 public class IdemPotency {
 
 	@Id
@@ -28,8 +32,13 @@ public class IdemPotency {
 		this.response = ApiTemplateObjectMapper.toString(response);
 	}
 
-	public static IdemPotency of(String idempotencyKey, ApiTemplate<?> response) {
-		return new IdemPotency(idempotencyKey, response);
+	public static IdemPotency of(String idempotencyKey, Object response) {
+		try {
+			return new IdemPotency(idempotencyKey, (ApiTemplate<?>)response);
+		} catch (ClassCastException e) {
+			log.error("Idempotency Cast Exception: response = {}", response, e);
+			throw new BusinessException(GlobalExceptionMessage.INTERNAL_SERVER_ERROR_MESSAGE);
+		}
 	}
 
 	public ApiTemplate<?> toResponse() {
