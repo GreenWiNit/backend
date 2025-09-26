@@ -1,6 +1,8 @@
 package com.example.green.domain.common.idempotency;
 
 import com.example.green.global.api.ApiTemplate;
+import com.example.green.global.error.exception.BusinessException;
+import com.example.green.global.error.exception.GlobalExceptionMessage;
 import com.example.green.global.utils.ApiTemplateObjectMapper;
 
 import jakarta.persistence.Column;
@@ -23,13 +25,17 @@ public class IdemPotency {
 	@Column(nullable = false)
 	private String response;
 
-	private IdemPotency(String idempotencyKey, Object response) {
+	private IdemPotency(String idempotencyKey, ApiTemplate<?> response) {
 		this.idempotencyKey = idempotencyKey;
 		this.response = ApiTemplateObjectMapper.toString(response);
 	}
 
 	public static IdemPotency of(String idempotencyKey, Object response) {
-		return new IdemPotency(idempotencyKey, response);
+		try {
+			return new IdemPotency(idempotencyKey, (ApiTemplate<?>)response);
+		} catch (ClassCastException e) {
+			throw new BusinessException(GlobalExceptionMessage.INTERNAL_SERVER_ERROR_MESSAGE);
+		}
 	}
 
 	public ApiTemplate<?> toResponse() {
