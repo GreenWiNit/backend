@@ -12,10 +12,12 @@ import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Entity
 @Table(name = "idempotencies")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Slf4j
 public class IdemPotency {
 
 	@Id
@@ -34,6 +36,7 @@ public class IdemPotency {
 		try {
 			return new IdemPotency(idempotencyKey, (ApiTemplate<?>)response);
 		} catch (ClassCastException e) {
+			log.error("Idempotency Cast Exception: response = {}", response, e);
 			throw new BusinessException(GlobalExceptionMessage.INTERNAL_SERVER_ERROR_MESSAGE);
 		}
 	}
