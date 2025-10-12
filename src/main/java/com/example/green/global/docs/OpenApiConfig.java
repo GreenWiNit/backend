@@ -1,4 +1,4 @@
-package com.example.green.global.config;
+package com.example.green.global.docs;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

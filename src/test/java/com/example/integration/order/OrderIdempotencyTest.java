@@ -73,8 +73,6 @@ class OrderIdempotencyTest extends BaseIntegrationTest {
 
 		// when & then
 		ConcurrencyTestResult result = ConcurrencyTestTemplate.build()
-			.threadCount(3)
-			.timeout(10)
 			.execute(() -> {
 				ApiTemplate<Long> response = requestOrder(orderRequest);
 				assertThat(response.result()).isOne();

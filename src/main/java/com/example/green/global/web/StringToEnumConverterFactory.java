@@ -1,4 +1,4 @@
-package com.example.green.global.config.web;
+package com.example.green.global.web;
 
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.convert.converter.ConverterFactory;

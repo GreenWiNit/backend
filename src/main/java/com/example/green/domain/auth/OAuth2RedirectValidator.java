@@ -5,7 +5,7 @@ import java.net.URI;
 import org.springframework.stereotype.Component;
 
 import com.example.green.domain.auth.resolver.CustomAuthorizationRequestResolver;
-import com.example.green.global.config.AllowedDomainsPolicy;
+import com.example.green.global.security.AllowedDomainsPolicy;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +25,7 @@ public class OAuth2RedirectValidator {
 
 	/**
 	 * 요청의 Origin/Referer가 허용된 도메인인지 검증하여 안전한 리다이렉트 URL 반환
-	 * 
+	 *
 	 * @param request HTTP 요청
 	 * @return 안전한 리다이렉트 base URL, 허용되지 않은 도메인이면 null
 	 */
@@ -60,7 +60,7 @@ public class OAuth2RedirectValidator {
 				URI refererUri = URI.create(referer);
 				String refererOrigin = refererUri.getScheme() + "://" + refererUri.getHost()
 					+ (refererUri.getPort() != -1 ? ":" + refererUri.getPort() : "");
-				
+
 				// Google OAuth 콜백인 경우 스킵 (이미 세션에서 확인함)
 				if ("https://accounts.google.com".equals(refererOrigin)) {
 					log.info("Google OAuth 콜백 감지 - 세션에서 원본 도메인을 찾지 못했으므로 실패");

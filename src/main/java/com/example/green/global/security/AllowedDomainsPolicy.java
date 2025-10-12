@@ -1,4 +1,4 @@
-package com.example.green.global.config;
+package com.example.green.global.security;
 
 import java.util.ArrayList;
 import java.util.Arrays;
