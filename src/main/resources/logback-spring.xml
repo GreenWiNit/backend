@@ -4,7 +4,10 @@
     <property name="LOG_FILE" value="greenWinitApp"/>
     <property name="FILE_LOG_PATTERN"
               value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"/>
+    <property name="CONSOLE_LOG_PATTERN"
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} %highlight(%-5level) %magenta([%thread]) %cyan(%logger{36}) - %msg%n"/>
 
+    <!-- FILE Appender (운영 환경용) -->
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${LOG_PATH}/${LOG_FILE}.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
@@ -19,17 +22,44 @@
         </encoder>
     </appender>
 
-    <!-- 기본 설정 -->
-    <root level="INFO">
-        <appender-ref ref="FILE"/>
-    </root>
+    <!-- CONSOLE Appender (개발 환경용) -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
 
-    <logger name="com.example.green" level="INFO" additivity="false">
-        <appender-ref ref="FILE"/>
-    </logger>
+    <!-- 운영 환경 (prod): 파일 로깅, 최소 로그 레벨 -->
+    <springProfile name="prod">
+        <root level="INFO">
+            <appender-ref ref="FILE"/>
+        </root>
 
-    <logger name="org.springframework.web" level="WARN"/>        <!-- 웹 요청 로그 -->
-    <logger name="org.springframework.security" level="WARN"/>   <!-- 보안 로그 -->
-    <logger name="com.zaxxer.hikari" level="WARN"/>             <!-- 커넥션풀 로그 -->
-    <logger name="org.hibernate.SQL" level="ERROR"/>            <!-- DB 로그 -->
+        <logger name="com.example.green" level="INFO" additivity="false">
+            <appender-ref ref="FILE"/>
+        </logger>
+
+        <logger name="org.springframework.web" level="WARN"/>
+        <logger name="org.springframework.security" level="WARN"/>
+        <logger name="com.zaxxer.hikari" level="WARN"/>
+        <logger name="org.hibernate.SQL" level="ERROR"/>
+    </springProfile>
+
+    <!-- 개발/로컬 환경 (!prod): 콘솔 로깅, 상세 로그 레벨 -->
+    <springProfile name="!prod">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+
+        <logger name="com.example.green" level="DEBUG" additivity="false">
+            <appender-ref ref="CONSOLE"/>
+        </logger>
+
+        <logger name="org.springframework.web" level="DEBUG"/>
+        <logger name="org.springframework.security" level="DEBUG"/>
+        <logger name="com.zaxxer.hikari" level="DEBUG"/>
+        <logger name="org.hibernate.SQL" level="DEBUG"/>
+        <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE"/>
+    </springProfile>
 </configuration>
