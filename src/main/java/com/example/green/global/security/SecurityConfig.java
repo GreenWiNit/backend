@@ -21,9 +21,10 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import com.example.green.domain.auth.CustomSuccessHandler;
 import com.example.green.domain.auth.OAuth2FailureHandler;
 import com.example.green.domain.auth.filter.JwtFilter;
+import com.example.green.domain.auth.resolver.CustomAuthorizationRequestResolver;
 import com.example.green.domain.auth.service.CustomOAuth2UserService;
 import com.example.green.domain.auth.service.TokenService;
-import com.example.green.domain.auth.resolver.CustomAuthorizationRequestResolver;
+import com.example.green.global.security.AllowedDomainsPolicy;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -47,7 +48,8 @@ public class SecurityConfig {
 
 	public SecurityConfig(CustomOAuth2UserService customOAuth2UserService, CustomSuccessHandler customSuccessHandler,
 		OAuth2FailureHandler oauth2FailureHandler, TokenService tokenService,
-		AllowedDomainsPolicy allowedDomainsPolicy, CustomAuthorizationRequestResolver customAuthorizationRequestResolver) {
+		AllowedDomainsPolicy allowedDomainsPolicy,
+		CustomAuthorizationRequestResolver customAuthorizationRequestResolver) {
 
 		this.customOAuth2UserService = customOAuth2UserService;
 		this.customSuccessHandler = customSuccessHandler;
