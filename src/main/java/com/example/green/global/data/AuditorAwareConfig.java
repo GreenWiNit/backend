@@ -1,4 +1,4 @@
-package com.example.green.global.config;
+package com.example.green.global.data;
 
 import java.util.Optional;
 
@@ -19,7 +19,7 @@ public class AuditorAwareConfig implements AuditorAware<String> {
 	public Optional<String> getCurrentAuditor() {
 		try {
 			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-			
+
 			if (authentication == null || !authentication.isAuthenticated()) {
 				log.debug("인증되지 않은 요청에서 Auditor 조회 시도");
 				return Optional.of("SYSTEM"); // 인증되지 않은 경우 시스템으로 처리
@@ -40,7 +40,7 @@ public class AuditorAwareConfig implements AuditorAware<String> {
 
 			log.warn("알 수 없는 Principal 타입: {}", authentication.getPrincipal().getClass());
 			return Optional.of("UNKNOWN");
-			
+
 		} catch (Exception e) {
 			log.error("getCurrentAuditor 실행 중 오류 발생: {}", e.getMessage());
 			return Optional.of("ERROR");

@@ -31,6 +31,7 @@ public class ChallengeAdapter implements ChallengeClient {
 
 	@Override
 	public ChallengeDto getTeamChallenge(Long challengeId) {
+		
 		TeamChallenge challenge = teamChallengeQuery.getTeamChallengeById(challengeId);
 		return ChallengeDto.from(challenge);
 	}

@@ -1,4 +1,4 @@
-package com.example.green.global.config;
+package com.example.green.global.security;
 
 import java.util.Arrays;
 
@@ -24,7 +24,6 @@ import com.example.green.domain.auth.filter.JwtFilter;
 import com.example.green.domain.auth.resolver.CustomAuthorizationRequestResolver;
 import com.example.green.domain.auth.service.CustomOAuth2UserService;
 import com.example.green.domain.auth.service.TokenService;
-import com.example.green.global.security.AllowedDomainsPolicy;
 
 import jakarta.servlet.http.HttpServletRequest;
 
