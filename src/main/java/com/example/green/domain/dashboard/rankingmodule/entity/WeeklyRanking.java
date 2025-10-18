@@ -24,7 +24,7 @@ import lombok.NoArgsConstructor;
 	uniqueConstraints = @UniqueConstraint(columnNames = {"member_id", "week_start"})
 )
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 public class WeeklyRanking {
 
 	@Id
