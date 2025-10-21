@@ -1,5 +1,9 @@
 package com.example.green.domain.info.domain;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Where;
 
@@ -9,12 +13,14 @@ import com.example.green.global.error.exception.BusinessException;
 import com.example.green.global.error.exception.GlobalExceptionMessage;
 import com.example.green.global.utils.EntityValidator;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -56,6 +62,9 @@ public class InfoEntity extends BaseEntity {
 	 */
 	@Column(nullable = false, columnDefinition = "CHAR(1)")
 	private String isDisplay;
+
+	@OneToMany(mappedBy = "info", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<InfoImage> images = new ArrayList<>();
 
 	@Builder
 	private InfoEntity(
@@ -106,5 +115,40 @@ public class InfoEntity extends BaseEntity {
 			throw new BusinessException(GlobalExceptionMessage.UNPROCESSABLE_ENTITY);
 		}
 		return isDisplay.toUpperCase();
+	}
+
+	/**
+	 * 이미지 목록 업데이트
+	 * 기존 이미지를 모두 제거하고 새로운 이미지 목록으로 교체
+	 */
+	public void updateImages(List<String> imageUrls) {
+		EntityValidator.validateNullData(imageUrls, "이미지 목록은 필수입니다.");
+		if (imageUrls.isEmpty()) {
+			throw new IllegalArgumentException("최소 1개 이상의 이미지가 필요합니다.");
+		}
+
+		this.images.clear();
+		for (int i = 0; i < imageUrls.size(); i++) {
+			this.images.add(InfoImage.create(this, imageUrls.get(i), i));
+		}
+	}
+
+	/**
+	 * 이미지 URL 목록 조회
+	 */
+	public List<String> getImageUrls() {
+		return images.stream()
+			.sorted(Comparator.comparing(InfoImage::getDisplayOrder))
+			.map(InfoImage::getImageUrl)
+			.toList();
+	}
+
+	/**
+	 * 첫 번째 이미지 URL 조회
+	 * @deprecated imageUrl 필드 대신 images 관계를 사용하세요
+	 */
+	@Deprecated
+	public String getFirstImageUrl() {
+		return images.isEmpty() ? imageUrl : images.get(0).getImageUrl();
 	}
 }
