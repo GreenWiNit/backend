@@ -1,6 +1,7 @@
 package com.example.green.domain.info.dto.admin;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.example.green.domain.info.domain.InfoEntity;
 
@@ -40,10 +41,10 @@ public record InfoDetailResponseByAdmin(
 	String content,
 
 	@Schema(
-		description = "첨부 이미지 URL (이미지 등록 후에 생성됨)",
-		example = "https://static.greenwinit.store/images-image123.png"
+		description = "첨부 이미지 URL 목록. 첫 번째 이미지가 썸네일로 사용됩니다.",
+		example = "[\"https://static.greenwinit.store/image1.png\", \"https://static.greenwinit.store/image2.png\"]"
 	)
-	String imageurl,
+	List<String> imageUrls,
 
 	@Schema(
 		description = "마지막 수정자 id",
@@ -78,7 +79,7 @@ public record InfoDetailResponseByAdmin(
 			e.getInfoCategory().getDescription(),// 카테고리 한글명
 			e.getInfoCategory().name(), // 카테고리 영문명 (수정용)
 			e.getContent(),
-			e.getImageUrl(),
+			e.getImageUrls(),
 			e.getLastModifiedBy(),
 			e.getIsDisplay(),
 			e.getModifiedDate(),
