@@ -98,6 +98,29 @@ public class InfoEntity extends BaseEntity {
 		this.isDisplay = determineIsDisplay(updateIsDisplay.trim());
 	}
 
+	/**
+	 * 다중 이미지를 포함한 엔티티 업데이트
+	 */
+	public void update(
+		final String updateTitle,
+		final String updateContent,
+		final InfoCategory updateInfoCategory,
+		final List<String> updateImageUrls,
+		final String updateIsDisplay
+	) {
+		validateNullInfo(updateTitle, updateContent, updateInfoCategory, updateIsDisplay);
+		this.title = updateTitle;
+		this.content = updateContent;
+		this.infoCategory = updateInfoCategory;
+		this.isDisplay = determineIsDisplay(updateIsDisplay.trim());
+
+		// 이미지 목록 업데이트
+		updateImages(updateImageUrls);
+
+		// 첫 번째 이미지를 imageUrl에도 설정 (하위 호환성)
+		this.imageUrl = updateImageUrls.isEmpty() ? null : updateImageUrls.get(0);
+	}
+
 	private void validateNullInfo(
 		String title,
 		String content,

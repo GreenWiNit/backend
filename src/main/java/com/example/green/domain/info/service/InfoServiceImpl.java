@@ -2,7 +2,6 @@ package com.example.green.domain.info.service;
 
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -67,7 +66,10 @@ public class InfoServiceImpl implements InfoService {
 	@Override
 	public InfoDetailResponseByAdmin saveInfo(InfoRequest saveRequest) {
 		InfoEntity infoEntity = infoRepository.save(saveRequest.toEntity());
-		fileClient.confirmUsingImage(saveRequest.imageUrl());
+
+		// 모든 이미지 URL에 대해 사용 확인
+		saveRequest.imageUrls().forEach(fileClient::confirmUsingImage);
+
 		log.info("[InfoServiceImpl] 정보공유 등록합니다. 정보공유 번호: {}", infoEntity.getId());
 		return InfoDetailResponseByAdmin.from(infoEntity);
 	}
@@ -75,29 +77,33 @@ public class InfoServiceImpl implements InfoService {
 	@Override
 	public InfoDetailResponseByAdmin updateInfo(String infoId, InfoRequest updateRequest) {
 		InfoEntity infoEntity = getInfoEntity(infoId);
-		String formerImageUrl = infoEntity.getImageUrl();
-		String newImageUrl = updateRequest.imageUrl();
+		List<String> formerImageUrls = infoEntity.getImageUrls();
+		List<String> newImageUrls = updateRequest.imageUrls();
 
 		log.info("[InfoServiceImpl] 정보공유 수정합니다. 정보공유 번호: {}", infoEntity.getId());
 		makeUpdateEntity(updateRequest, infoEntity);
 
-		checkWhetherImageChanged(formerImageUrl, newImageUrl);
+		checkWhetherImagesChanged(formerImageUrls, newImageUrls);
 
 		return InfoDetailResponseByAdmin.from(infoEntity);
 	}
 
-	private void checkWhetherImageChanged(String formerImageUrl, String newImageUrl) {
-		// 방어 로직: DB 제약상 formerImageUrl이 null일 가능성은 낮음
-		if (StringUtils.isEmpty(formerImageUrl)) {
-			fileClient.confirmUsingImage(newImageUrl);
-			return;
-		}
+	private void checkWhetherImagesChanged(List<String> formerUrls, List<String> newUrls) {
+		// 삭제된 이미지: formerUrls에는 있는데 newUrls에 없는 것
+		List<String> deletedUrls = formerUrls.stream()
+			.filter(url -> !newUrls.contains(url))
+			.toList();
 
-		// 이미지가 변경된 경우
-		if (!formerImageUrl.equals(newImageUrl)) {
-			fileClient.unUseImage(formerImageUrl);
-			fileClient.confirmUsingImage(newImageUrl);
-		}
+		// 새로 추가된 이미지: newUrls에는 있는데 formerUrls에 없는 것
+		List<String> addedUrls = newUrls.stream()
+			.filter(url -> !formerUrls.contains(url))
+			.toList();
+
+		// 삭제된 이미지 사용 해제
+		deletedUrls.forEach(fileClient::unUseImage);
+
+		// 새로 추가된 이미지 사용 확인
+		addedUrls.forEach(fileClient::confirmUsingImage);
 	}
 
 	@Override
@@ -105,7 +111,9 @@ public class InfoServiceImpl implements InfoService {
 		InfoEntity infoEntity = getInfoEntity(infoId);
 		log.info("[InfoServiceImpl] 정보공유 삭제합니다. 정보공유 번호: {}", infoEntity.getId());
 		infoEntity.markDeleted();
-		fileClient.unUseImage(infoEntity.getImageUrl());
+
+		// 모든 이미지 URL 사용 해제
+		infoEntity.getImageUrls().forEach(fileClient::unUseImage);
 	}
 
 	@Override
@@ -147,7 +155,7 @@ public class InfoServiceImpl implements InfoService {
 			updateRequest.title(),
 			updateRequest.content(),
 			updateRequest.infoCategory(),
-			updateRequest.imageUrl(),
+			updateRequest.imageUrls(),
 			updateRequest.isDisplay()
 		);
 	}
