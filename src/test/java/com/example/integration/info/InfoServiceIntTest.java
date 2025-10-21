@@ -3,6 +3,8 @@ package com.example.integration.info;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import java.util.Arrays;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -45,7 +47,7 @@ class InfoServiceIntTest extends BaseIntegrationTest {
 			.title("title")
 			.content("content")
 			.infoCategory(InfoCategory.CONTENTS)
-			.imageUrl("imageUrl")
+			.imageUrls(Arrays.asList("imageUrl"))
 			.isDisplay("Y")
 			.build();
 	}
@@ -55,7 +57,7 @@ class InfoServiceIntTest extends BaseIntegrationTest {
 			.title("updateTitle")
 			.content("updateContent")
 			.infoCategory(InfoCategory.ETC)
-			.imageUrl("updateImageUrl")
+			.imageUrls(Arrays.asList("updateImageUrl"))
 			.isDisplay("N")
 			.build();
 	}
@@ -172,7 +174,7 @@ class InfoServiceIntTest extends BaseIntegrationTest {
 				assertThat(response.title()).isEqualTo(updateRequest.title());
 				assertThat(response.infoCategoryCode()).isEqualTo("ETC"); // 컨텐츠 -> 기타
 				assertThat(response.infoCategoryName()).isEqualTo("기타");
-				assertThat(response.imageurl()).isEqualTo(updateRequest.imageUrl());
+				assertThat(response.imageUrls()).isEqualTo(updateRequest.imageUrls());
 			}
 
 			@Test
@@ -182,7 +184,7 @@ class InfoServiceIntTest extends BaseIntegrationTest {
 					.title("updateTitle")
 					.content("updateContent")
 					.infoCategory(InfoCategory.ETC)
-					.imageUrl(infoEntity.getImageUrl()) // 기존 이미지 URL과 동일
+					.imageUrls(infoEntity.getImageUrls()) // 기존 이미지 URL과 동일
 					.isDisplay("N")
 					.build();
 
@@ -190,7 +192,7 @@ class InfoServiceIntTest extends BaseIntegrationTest {
 				var response = infoService.updateInfo(infoEntity.getId(), updateRequest);
 
 				// then - 결과 값 검증
-				assertThat(response.imageurl()).isEqualTo(infoEntity.getImageUrl());
+				assertThat(response.imageUrls()).isEqualTo(infoEntity.getImageUrls());
 
 				// then - 메서드 호출 여부 검증
 				verify(fileClient, never()).unUseImage(anyString());

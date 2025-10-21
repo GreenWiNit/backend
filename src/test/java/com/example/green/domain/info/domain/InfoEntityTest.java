@@ -6,6 +6,8 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
 
 import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.query.sql.spi.NativeQueryImplementor;
@@ -157,6 +159,69 @@ class InfoEntityTest {
 		// Jackson이 파싱 중에 InvalidFormatException 던짐
 		assertThatThrownBy(() -> objectMapper.readValue(json, InfoRequest.class))
 			.isInstanceOf(InvalidFormatException.class);
+	}
+
+	@Test
+	void 정보_도메인에_다중_이미지를_추가한다() {
+		// given
+		InfoEntity infoEntity = createInfo("Y");
+		List<String> imageUrls = Arrays.asList(
+			"https://example.com/image1.jpg",
+			"https://example.com/image2.jpg",
+			"https://example.com/image3.jpg"
+		);
+
+		// when
+		infoEntity.updateImages(imageUrls);
+
+		// then
+		assertThat(infoEntity.getImageUrls()).hasSize(3);
+		assertThat(infoEntity.getImageUrls()).containsExactly(
+			"https://example.com/image1.jpg",
+			"https://example.com/image2.jpg",
+			"https://example.com/image3.jpg"
+		);
+	}
+
+	@Test
+	void 정보_도메인을_다중_이미지와_함께_수정한다() {
+		// given
+		InfoEntity infoEntity = createInfo("Y");
+		List<String> imageUrls = Arrays.asList(
+			"https://example.com/new1.jpg",
+			"https://example.com/new2.jpg"
+		);
+
+		// when
+		infoEntity.update(
+			"updateTitle",
+			"updateContent",
+			InfoCategory.EVENT,
+			imageUrls,
+			"N"
+		);
+
+		// then
+		assertThat(infoEntity.getTitle()).isEqualTo("updateTitle");
+		assertThat(infoEntity.getContent()).isEqualTo("updateContent");
+		assertThat(infoEntity.getInfoCategory()).isEqualTo(InfoCategory.EVENT);
+		assertThat(infoEntity.getImageUrls()).hasSize(2);
+		assertThat(infoEntity.getImageUrls()).containsExactly(
+			"https://example.com/new1.jpg",
+			"https://example.com/new2.jpg"
+		);
+	}
+
+	@Test
+	void 이미지_목록이_비어있으면_예외를_던진다() {
+		// given
+		InfoEntity infoEntity = createInfo("Y");
+		List<String> emptyImageUrls = Arrays.asList();
+
+		// when & then
+		assertThatThrownBy(() -> infoEntity.updateImages(emptyImageUrls))
+			.isInstanceOf(IllegalArgumentException.class)
+			.hasMessageContaining("최소 1개 이상의 이미지가 필요합니다.");
 	}
 
 }
