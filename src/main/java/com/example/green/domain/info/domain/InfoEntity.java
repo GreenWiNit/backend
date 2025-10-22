@@ -31,7 +31,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "INFO")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Where(clause = "deleted = false ")//AND is_display = 'Y' 를 제외시킴
+@Where(clause = "deleted = false ")
 public class InfoEntity extends BaseEntity {
 	@Id
 	@GeneratedValue(generator = "info-id-gen")
@@ -55,11 +55,6 @@ public class InfoEntity extends BaseEntity {
 	@Column(nullable = false)
 	private String imageUrl;
 
-	/**
-	 * 전시 여부
-	 * - Y: 전시
-	 * - N: 비전시
-	 */
 	@Column(nullable = false, columnDefinition = "CHAR(1)")
 	private String isDisplay;
 
@@ -82,7 +77,6 @@ public class InfoEntity extends BaseEntity {
 		this.isDisplay = determineIsDisplay(isDisplay.trim());
 	}
 
-	// 변수 직접 받아 필드 변경 -> 도미엔단 외부 영향도 최소화
 	public void update(
 		final String updateTitle,
 		final String updateContent,
@@ -98,9 +92,6 @@ public class InfoEntity extends BaseEntity {
 		this.isDisplay = determineIsDisplay(updateIsDisplay.trim());
 	}
 
-	/**
-	 * 다중 이미지를 포함한 엔티티 업데이트
-	 */
 	public void update(
 		final String updateTitle,
 		final String updateContent,
@@ -114,10 +105,7 @@ public class InfoEntity extends BaseEntity {
 		this.infoCategory = updateInfoCategory;
 		this.isDisplay = determineIsDisplay(updateIsDisplay.trim());
 
-		// 이미지 목록 업데이트
 		updateImages(updateImageUrls);
-
-		// 첫 번째 이미지를 imageUrl에도 설정 (하위 호환성)
 		this.imageUrl = updateImageUrls.isEmpty() ? null : updateImageUrls.get(0);
 	}
 
@@ -140,10 +128,6 @@ public class InfoEntity extends BaseEntity {
 		return isDisplay.toUpperCase();
 	}
 
-	/**
-	 * 이미지 목록 업데이트
-	 * 기존 이미지를 모두 제거하고 새로운 이미지 목록으로 교체
-	 */
 	public void updateImages(List<String> imageUrls) {
 		EntityValidator.validateNullData(imageUrls, "이미지 목록은 필수입니다.");
 		if (imageUrls.isEmpty()) {
@@ -156,9 +140,6 @@ public class InfoEntity extends BaseEntity {
 		}
 	}
 
-	/**
-	 * 이미지 URL 목록 조회
-	 */
 	public List<String> getImageUrls() {
 		return images.stream()
 			.sorted(Comparator.comparing(InfoImage::getDisplayOrder))
@@ -166,10 +147,6 @@ public class InfoEntity extends BaseEntity {
 			.toList();
 	}
 
-	/**
-	 * 첫 번째 이미지 URL 조회
-	 * @deprecated imageUrl 필드 대신 images 관계를 사용하세요
-	 */
 	@Deprecated
 	public String getFirstImageUrl() {
 		return images.isEmpty() ? imageUrl : images.get(0).getImageUrl();
