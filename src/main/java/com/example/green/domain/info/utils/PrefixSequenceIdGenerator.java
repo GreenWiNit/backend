@@ -11,7 +11,7 @@ import com.example.green.domain.info.exception.InfoExceptionMessage;
 /**
  * INFO Id값 커스텀 클래스
  * - P000001
- * */
+ */
 public class PrefixSequenceIdGenerator implements IdentifierGenerator {
 
 	private static final String PREFIX = "P";

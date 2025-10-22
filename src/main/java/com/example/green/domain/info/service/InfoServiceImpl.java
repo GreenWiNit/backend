@@ -2,6 +2,8 @@ package com.example.green.domain.info.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,24 +37,16 @@ public class InfoServiceImpl implements InfoService {
 
 	@Override
 	public PageTemplate<InfoSearchResponseByAdmin> getInfosForAdmin(int page, int size) {
-		// 1. 전체 데이터 수 조회
 		long totalElements = infoRepository.count();
-
-		// 2. Pagination 객체 생성 (null 처리 및 기본값 설정 포함)
 		Pagination pagination = Pagination.of(totalElements, page, size);
 
-		// 3. 실제 데이터 조회 (offset, limit 사용)
-		List<InfoEntity> infoList = infoRepository.findAllWithPagination(
-			pagination.calculateOffset(),
-			pagination.getPageSize()
-		);
+		Pageable pageable = PageRequest.of(page, pagination.getPageSize());
+		List<InfoEntity> infoList = infoRepository.findAllWithPagination(pageable);
 
-		// 4. DTO 변환
 		List<InfoSearchResponseByAdmin> result = infoList.stream()
 			.map(InfoSearchResponseByAdmin::from)
 			.toList();
 
-		// 5. PageTemplate 생성
 		return PageTemplate.of(result, pagination);
 	}
 
