@@ -14,7 +14,7 @@ class InfoImageTest {
 			.title("테스트 제목")
 			.content("테스트 내용")
 			.infoCategory(InfoCategory.CONTENTS)
-			.imageUrl("https://example.com/test.jpg")
+			.imageUrls(java.util.Arrays.asList("https://example.com/test.jpg"))
 			.isDisplay("Y")
 			.build();
 	}

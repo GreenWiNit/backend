@@ -45,7 +45,7 @@ class InfoEntityTest {
 			.title("title")
 			.content("content")
 			.infoCategory(InfoCategory.CONTENTS)
-			.imageUrl("imageUrl")
+			.imageUrls(Arrays.asList("https://example.com/image.jpg"))
 			.isDisplay(isDisplay)
 			.build();
 	}
@@ -123,7 +123,7 @@ class InfoEntityTest {
 			"updateTitle",
 			"updateContent",
 			updateInfoCategory,
-			"updateImageUrl",
+			Arrays.asList("https://example.com/updated.jpg"),
 			"N"
 		);
 

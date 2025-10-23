@@ -44,19 +44,13 @@ public record InfoRequest(
 ) {
 
 	public InfoEntity toEntity() {
-		// 첫 번째 이미지를 imageUrl로 설정 (하위 호환성)
-		InfoEntity entity = InfoEntity.builder()
+		return InfoEntity.builder()
 			.title(title)
 			.content(content)
 			.infoCategory(infoCategory)
-			.imageUrl(imageUrls.get(0))
+			.imageUrls(imageUrls)
 			.isDisplay(isDisplay)
 			.build();
-
-		// 이미지 목록 설정
-		entity.updateImages(imageUrls);
-
-		return entity;
 	}
 
 }

@@ -52,9 +52,6 @@ public class InfoEntity extends BaseEntity {
 	@Column(length = 1000, nullable = false)
 	private String content;
 
-	@Column(nullable = false)
-	private String imageUrl;
-
 	@Column(nullable = false, columnDefinition = "CHAR(1)")
 	private String isDisplay;
 
@@ -66,30 +63,17 @@ public class InfoEntity extends BaseEntity {
 		final String title,
 		final String content,
 		final InfoCategory infoCategory,
-		final String imageUrl,
+		final List<String> imageUrls,
 		final String isDisplay
 	) {
 		validateNullInfo(title, content, infoCategory, isDisplay);
 		this.title = title;
 		this.content = content;
 		this.infoCategory = infoCategory;
-		this.imageUrl = imageUrl;
 		this.isDisplay = determineIsDisplay(isDisplay.trim());
-	}
-
-	public void update(
-		final String updateTitle,
-		final String updateContent,
-		final InfoCategory updateInfoCategory,
-		final String updateImageUrl,
-		final String updateIsDisplay
-	) {
-		validateNullInfo(updateTitle, updateContent, updateInfoCategory, updateIsDisplay);
-		this.title = updateTitle;
-		this.content = updateContent;
-		this.infoCategory = updateInfoCategory;
-		this.imageUrl = updateImageUrl;
-		this.isDisplay = determineIsDisplay(updateIsDisplay.trim());
+		if (imageUrls != null && !imageUrls.isEmpty()) {
+			updateImages(imageUrls);
+		}
 	}
 
 	public void update(
@@ -104,9 +88,7 @@ public class InfoEntity extends BaseEntity {
 		this.content = updateContent;
 		this.infoCategory = updateInfoCategory;
 		this.isDisplay = determineIsDisplay(updateIsDisplay.trim());
-
 		updateImages(updateImageUrls);
-		this.imageUrl = updateImageUrls.isEmpty() ? null : updateImageUrls.get(0);
 	}
 
 	private void validateNullInfo(
@@ -145,10 +127,5 @@ public class InfoEntity extends BaseEntity {
 			.sorted(Comparator.comparing(InfoImage::getDisplayOrder))
 			.map(InfoImage::getImageUrl)
 			.toList();
-	}
-
-	@Deprecated
-	public String getFirstImageUrl() {
-		return images.isEmpty() ? imageUrl : images.get(0).getImageUrl();
 	}
 }
