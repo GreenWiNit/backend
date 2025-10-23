@@ -358,9 +358,9 @@ class InfoControllerTest {
 					.andDo(print())
 					.andExpect(status().isBadRequest())
 					.andExpect(jsonPath("$.success").value(false))
-					.andExpect(jsonPath("$.errors[0].fieldName").value("imageUrl"))
+					.andExpect(jsonPath("$.errors[0].fieldName").value("imageUrls"))
 					.andExpect(jsonPath("$.errors[0].message")
-						.value("이미지가 첨부되지 않았습니다."));
+						.value("최소 1개 이상의 이미지가 필요합니다."));
 			}
 
 			@Test
