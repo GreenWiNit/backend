@@ -13,9 +13,9 @@ public interface InfoImageRepository extends JpaRepository<InfoImage, Long> {
 
 	List<InfoImage> findByInfoIdOrderByDisplayOrder(String infoId);
 
-	@Modifying
+	@Modifying(flushAutomatically = true)
 	@Query("UPDATE InfoImage i SET i.deleted = true WHERE i.info.id = :infoId")
-	void softDeleteByInfoId(@Param("infoId") String infoId);
+	int softDeleteByInfoId(@Param("infoId") String infoId);
 
 	long countByInfoId(String infoId);
 }

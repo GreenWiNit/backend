@@ -16,6 +16,7 @@ import com.example.green.domain.info.dto.user.InfoSearchListResponseByUser;
 import com.example.green.domain.info.dto.user.InfoSearchResponseByUser;
 import com.example.green.domain.info.exception.InfoException;
 import com.example.green.domain.info.exception.InfoExceptionMessage;
+import com.example.green.domain.info.repository.InfoImageRepository;
 import com.example.green.domain.info.repository.InfoRepository;
 import com.example.green.global.api.page.PageTemplate;
 import com.example.green.global.api.page.Pagination;
@@ -31,6 +32,7 @@ import lombok.extern.log4j.Log4j2;
 public class InfoServiceImpl implements InfoService {
 
 	private final InfoRepository infoRepository;
+	private final InfoImageRepository infoImageRepository;
 	private final FileClient fileClient;
 
 	// TODO [확인필요] 사이즈가 0일때는 프론트 처리
@@ -104,7 +106,13 @@ public class InfoServiceImpl implements InfoService {
 	public void deleteInfo(String infoId) {
 		InfoEntity infoEntity = getInfoEntity(infoId);
 		log.info("[InfoServiceImpl] 정보공유 삭제합니다. 정보공유 번호: {}", infoEntity.getId());
+
+		// InfoEntity soft delete
 		infoEntity.markDeleted();
+
+		// InfoImage도 함께 soft delete
+		int deletedImageCount = infoImageRepository.softDeleteByInfoId(infoId);
+		log.info("[InfoServiceImpl] 관련 이미지 {}개 soft delete 완료", deletedImageCount);
 
 		// 모든 이미지 URL 사용 해제
 		infoEntity.getImageUrls().forEach(fileClient::unUseImage);
