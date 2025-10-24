@@ -4,6 +4,7 @@ import org.hibernate.annotations.Where;
 
 import com.example.green.domain.common.BaseEntity;
 import com.example.green.global.utils.EntityValidator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -32,6 +33,7 @@ public class InfoImage extends BaseEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "info_id", nullable = false)
+	@JsonIgnore
 	private InfoEntity info;
 
 	@Column(nullable = false, length = 500)
