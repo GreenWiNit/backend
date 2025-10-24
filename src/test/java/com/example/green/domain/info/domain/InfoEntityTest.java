@@ -213,15 +213,32 @@ class InfoEntityTest {
 	}
 
 	@Test
-	void 이미지_목록이_비어있으면_예외를_던진다() {
+	void 이미지_목록이_비어있어도_정상적으로_처리된다() {
 		// given
 		InfoEntity infoEntity = createInfo("Y");
 		List<String> emptyImageUrls = Arrays.asList();
 
-		// when & then
-		assertThatThrownBy(() -> infoEntity.updateImages(emptyImageUrls))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("최소 1개 이상의 이미지가 필요합니다.");
+		// when
+		infoEntity.updateImages(emptyImageUrls);
+
+		// then
+		assertThat(infoEntity.getImageUrls()).isEmpty();
+	}
+
+	@Test
+	void 이미지_없이_정보를_생성할_수_있다() {
+		// given & when
+		InfoEntity infoEntity = InfoEntity.builder()
+			.title("title")
+			.content("content")
+			.infoCategory(InfoCategory.CONTENTS)
+			.imageUrls(null)
+			.isDisplay("Y")
+			.build();
+
+		// then
+		assertThat(infoEntity.getTitle()).isEqualTo("title");
+		assertThat(infoEntity.getImageUrls()).isEmpty();
 	}
 
 }

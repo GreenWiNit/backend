@@ -338,13 +338,13 @@ class InfoControllerTest {
 			}
 
 			@Test
-			void 이미지는_첨부되지_않은_경우_VALIDATION_예외를_던진다() throws Exception {
+			void 이미지_없이_정보를_등록할_수_있다() throws Exception {
 				// given
 				InfoRequest request = InfoRequest.builder()
 					.title("테스트 제목")
 					.content("테스트 내용 총 10자 이상 테스트")
 					.infoCategory(InfoCategory.CONTENTS)
-					.imageUrls(Arrays.asList(""))
+					.imageUrls(null)
 					.isDisplay("Y")
 					.build();
 
@@ -356,11 +356,8 @@ class InfoControllerTest {
 							.content(objectMapper.writeValueAsString(request))
 					)
 					.andDo(print())
-					.andExpect(status().isBadRequest())
-					.andExpect(jsonPath("$.success").value(false))
-					.andExpect(jsonPath("$.errors[0].fieldName").value("imageUrls"))
-					.andExpect(jsonPath("$.errors[0].message")
-						.value("최소 1개 이상의 이미지가 필요합니다."));
+					.andExpect(status().isOk())
+					.andExpect(jsonPath("$.success").value(true));
 			}
 
 			@Test

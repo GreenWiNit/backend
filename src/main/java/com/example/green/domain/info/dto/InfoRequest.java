@@ -29,9 +29,8 @@ public record InfoRequest(
 		allowableValues = {"EVENT", "CONTENTS", "ETC"})
 	InfoCategory infoCategory,
 
-	@NotEmpty(message = "최소 1개 이상의 이미지가 필요합니다.")
 	@Schema(type = "array",
-		description = "정보 이미지 목록 (필수, URL 형식). 첫 번째 이미지가 썸네일로 사용됩니다.",
+		description = "정보 이미지 목록 (선택, URL 형식). 첫 번째 이미지가 썸네일로 사용됩니다.",
 		example = "[\"https://static.greenwinit.store/image1.jpg\", \"https://static.greenwinit.store/image2.jpg\"]")
 	List<String> imageUrls,
 

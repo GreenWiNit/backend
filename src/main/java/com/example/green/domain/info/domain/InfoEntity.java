@@ -111,12 +111,12 @@ public class InfoEntity extends BaseEntity {
 	}
 
 	public void updateImages(List<String> imageUrls) {
-		EntityValidator.validateNullData(imageUrls, "이미지 목록은 필수입니다.");
-		if (imageUrls.isEmpty()) {
-			throw new IllegalArgumentException("최소 1개 이상의 이미지가 필요합니다.");
+		this.images.clear();
+
+		if (imageUrls == null || imageUrls.isEmpty()) {
+			return;
 		}
 
-		this.images.clear();
 		for (int i = 0; i < imageUrls.size(); i++) {
 			this.images.add(InfoImage.create(this, imageUrls.get(i), i));
 		}
