@@ -39,7 +39,7 @@ jobs:
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
-          username: ubuntu
+          username: ec2-user
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           source: "build/libs/green-0.0.1-SNAPSHOT.jar"
           target: "~/"
@@ -50,7 +50,7 @@ jobs:
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
-          username: ubuntu
+          username: ec2-user
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           source: ".env"
           target: "~/"
@@ -60,7 +60,7 @@ jobs:
         uses: appleboy/ssh-action@v0.1.10
         with:
           host: ${{ secrets.EC2_HOST }}
-          username: ubuntu
+          username: ec2-user
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
             sudo chmod +x ~/reload.sh
