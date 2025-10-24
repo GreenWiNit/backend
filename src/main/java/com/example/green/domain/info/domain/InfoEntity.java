@@ -1,5 +1,8 @@
 package com.example.green.domain.info.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Where;
 
@@ -9,12 +12,15 @@ import com.example.green.global.error.exception.BusinessException;
 import com.example.green.global.error.exception.GlobalExceptionMessage;
 import com.example.green.global.utils.EntityValidator;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderColumn;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -25,7 +31,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "INFO")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Where(clause = "deleted = false ")//AND is_display = 'Y' 를 제외시킴
+@Where(clause = "deleted = false ")
 public class InfoEntity extends BaseEntity {
 	@Id
 	@GeneratedValue(generator = "info-id-gen")
@@ -46,47 +52,44 @@ public class InfoEntity extends BaseEntity {
 	@Column(length = 1000, nullable = false)
 	private String content;
 
-	@Column(nullable = false)
-	private String imageUrl;
-
-	/**
-	 * 전시 여부
-	 * - Y: 전시
-	 * - N: 비전시
-	 */
 	@Column(nullable = false, columnDefinition = "CHAR(1)")
 	private String isDisplay;
+
+	@OneToMany(mappedBy = "info", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OrderColumn(name = "display_order")
+	private List<InfoImage> images = new ArrayList<>();
 
 	@Builder
 	private InfoEntity(
 		final String title,
 		final String content,
 		final InfoCategory infoCategory,
-		final String imageUrl,
+		final List<String> imageUrls,
 		final String isDisplay
 	) {
 		validateNullInfo(title, content, infoCategory, isDisplay);
 		this.title = title;
 		this.content = content;
 		this.infoCategory = infoCategory;
-		this.imageUrl = imageUrl;
 		this.isDisplay = determineIsDisplay(isDisplay.trim());
+		if (imageUrls != null && !imageUrls.isEmpty()) {
+			updateImages(imageUrls);
+		}
 	}
 
-	// 변수 직접 받아 필드 변경 -> 도미엔단 외부 영향도 최소화
 	public void update(
 		final String updateTitle,
 		final String updateContent,
 		final InfoCategory updateInfoCategory,
-		final String updateImageUrl,
+		final List<String> updateImageUrls,
 		final String updateIsDisplay
 	) {
 		validateNullInfo(updateTitle, updateContent, updateInfoCategory, updateIsDisplay);
 		this.title = updateTitle;
 		this.content = updateContent;
 		this.infoCategory = updateInfoCategory;
-		this.imageUrl = updateImageUrl;
 		this.isDisplay = determineIsDisplay(updateIsDisplay.trim());
+		updateImages(updateImageUrls);
 	}
 
 	private void validateNullInfo(
@@ -106,5 +109,23 @@ public class InfoEntity extends BaseEntity {
 			throw new BusinessException(GlobalExceptionMessage.UNPROCESSABLE_ENTITY);
 		}
 		return isDisplay.toUpperCase();
+	}
+
+	public void updateImages(List<String> imageUrls) {
+		this.images.clear();
+
+		if (imageUrls == null || imageUrls.isEmpty()) {
+			return;
+		}
+
+		for (String imageUrl : imageUrls) {
+			this.images.add(InfoImage.create(this, imageUrl));
+		}
+	}
+
+	public List<String> getImageUrls() {
+		return images.stream()
+			.map(InfoImage::getImageUrl)
+			.toList();
 	}
 }

@@ -1,10 +1,13 @@
 package com.example.green.domain.info.dto;
 
+import java.util.List;
+
 import com.example.green.domain.info.domain.InfoEntity;
 import com.example.green.domain.info.domain.vo.InfoCategory;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 
@@ -26,10 +29,10 @@ public record InfoRequest(
 		allowableValues = {"EVENT", "CONTENTS", "ETC"})
 	InfoCategory infoCategory,
 
-	@NotBlank(message = "이미지가 첨부되지 않았습니다.")
-	@Schema(type = "string",
-		description = "정보 이미지 (필수, URL 형식) https://static.greenwinit.store/image-example.jpg")
-	String imageUrl,
+	@Schema(type = "array",
+		description = "정보 이미지 목록 (선택, URL 형식). 첫 번째 이미지가 썸네일로 사용됩니다.",
+		example = "[\"https://static.greenwinit.store/image1.jpg\", \"https://static.greenwinit.store/image2.jpg\"]")
+	List<String> imageUrls,
 
 	@NotBlank(message = "전시여부를 선택해주세요.")
 	@Schema(type = "string",
@@ -44,7 +47,7 @@ public record InfoRequest(
 			.title(title)
 			.content(content)
 			.infoCategory(infoCategory)
-			.imageUrl(imageUrl)
+			.imageUrls(imageUrls)
 			.isDisplay(isDisplay)
 			.build();
 	}

@@ -2,7 +2,8 @@ package com.example.green.domain.info.service;
 
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +16,7 @@ import com.example.green.domain.info.dto.user.InfoSearchListResponseByUser;
 import com.example.green.domain.info.dto.user.InfoSearchResponseByUser;
 import com.example.green.domain.info.exception.InfoException;
 import com.example.green.domain.info.exception.InfoExceptionMessage;
+import com.example.green.domain.info.repository.InfoImageRepository;
 import com.example.green.domain.info.repository.InfoRepository;
 import com.example.green.global.api.page.PageTemplate;
 import com.example.green.global.api.page.Pagination;
@@ -30,30 +32,23 @@ import lombok.extern.log4j.Log4j2;
 public class InfoServiceImpl implements InfoService {
 
 	private final InfoRepository infoRepository;
+	private final InfoImageRepository infoImageRepository;
 	private final FileClient fileClient;
 
 	// TODO [확인필요] 사이즈가 0일때는 프론트 처리
 
 	@Override
 	public PageTemplate<InfoSearchResponseByAdmin> getInfosForAdmin(int page, int size) {
-		// 1. 전체 데이터 수 조회
 		long totalElements = infoRepository.count();
-
-		// 2. Pagination 객체 생성 (null 처리 및 기본값 설정 포함)
 		Pagination pagination = Pagination.of(totalElements, page, size);
 
-		// 3. 실제 데이터 조회 (offset, limit 사용)
-		List<InfoEntity> infoList = infoRepository.findAllWithPagination(
-			pagination.calculateOffset(),
-			pagination.getPageSize()
-		);
+		Pageable pageable = PageRequest.of(page, pagination.getPageSize());
+		List<InfoEntity> infoList = infoRepository.findAllWithPagination(pageable);
 
-		// 4. DTO 변환
 		List<InfoSearchResponseByAdmin> result = infoList.stream()
 			.map(InfoSearchResponseByAdmin::from)
 			.toList();
 
-		// 5. PageTemplate 생성
 		return PageTemplate.of(result, pagination);
 	}
 
@@ -67,7 +62,10 @@ public class InfoServiceImpl implements InfoService {
 	@Override
 	public InfoDetailResponseByAdmin saveInfo(InfoRequest saveRequest) {
 		InfoEntity infoEntity = infoRepository.save(saveRequest.toEntity());
-		fileClient.confirmUsingImage(saveRequest.imageUrl());
+
+		// 모든 이미지 URL에 대해 사용 확인
+		saveRequest.imageUrls().forEach(fileClient::confirmUsingImage);
+
 		log.info("[InfoServiceImpl] 정보공유 등록합니다. 정보공유 번호: {}", infoEntity.getId());
 		return InfoDetailResponseByAdmin.from(infoEntity);
 	}
@@ -75,37 +73,49 @@ public class InfoServiceImpl implements InfoService {
 	@Override
 	public InfoDetailResponseByAdmin updateInfo(String infoId, InfoRequest updateRequest) {
 		InfoEntity infoEntity = getInfoEntity(infoId);
-		String formerImageUrl = infoEntity.getImageUrl();
-		String newImageUrl = updateRequest.imageUrl();
+		List<String> formerImageUrls = infoEntity.getImageUrls();
+		List<String> newImageUrls = updateRequest.imageUrls();
 
 		log.info("[InfoServiceImpl] 정보공유 수정합니다. 정보공유 번호: {}", infoEntity.getId());
 		makeUpdateEntity(updateRequest, infoEntity);
 
-		checkWhetherImageChanged(formerImageUrl, newImageUrl);
+		checkWhetherImagesChanged(formerImageUrls, newImageUrls);
 
 		return InfoDetailResponseByAdmin.from(infoEntity);
 	}
 
-	private void checkWhetherImageChanged(String formerImageUrl, String newImageUrl) {
-		// 방어 로직: DB 제약상 formerImageUrl이 null일 가능성은 낮음
-		if (StringUtils.isEmpty(formerImageUrl)) {
-			fileClient.confirmUsingImage(newImageUrl);
-			return;
-		}
+	private void checkWhetherImagesChanged(List<String> formerUrls, List<String> newUrls) {
+		// 삭제된 이미지: formerUrls에는 있는데 newUrls에 없는 것
+		List<String> deletedUrls = formerUrls.stream()
+			.filter(url -> !newUrls.contains(url))
+			.toList();
 
-		// 이미지가 변경된 경우
-		if (!formerImageUrl.equals(newImageUrl)) {
-			fileClient.unUseImage(formerImageUrl);
-			fileClient.confirmUsingImage(newImageUrl);
-		}
+		// 새로 추가된 이미지: newUrls에는 있는데 formerUrls에 없는 것
+		List<String> addedUrls = newUrls.stream()
+			.filter(url -> !formerUrls.contains(url))
+			.toList();
+
+		// 삭제된 이미지 사용 해제
+		deletedUrls.forEach(fileClient::unUseImage);
+
+		// 새로 추가된 이미지 사용 확인
+		addedUrls.forEach(fileClient::confirmUsingImage);
 	}
 
 	@Override
 	public void deleteInfo(String infoId) {
 		InfoEntity infoEntity = getInfoEntity(infoId);
 		log.info("[InfoServiceImpl] 정보공유 삭제합니다. 정보공유 번호: {}", infoEntity.getId());
+
+		// InfoEntity soft delete
 		infoEntity.markDeleted();
-		fileClient.unUseImage(infoEntity.getImageUrl());
+
+		// InfoImage도 함께 soft delete
+		int deletedImageCount = infoImageRepository.softDeleteByInfoId(infoId);
+		log.info("[InfoServiceImpl] 관련 이미지 {}개 soft delete 완료", deletedImageCount);
+
+		// 모든 이미지 URL 사용 해제
+		infoEntity.getImageUrls().forEach(fileClient::unUseImage);
 	}
 
 	@Override
@@ -147,7 +157,7 @@ public class InfoServiceImpl implements InfoService {
 			updateRequest.title(),
 			updateRequest.content(),
 			updateRequest.infoCategory(),
-			updateRequest.imageUrl(),
+			updateRequest.imageUrls(),
 			updateRequest.isDisplay()
 		);
 	}

@@ -1,5 +1,7 @@
 package com.example.green.domain.info.dto.user;
 
+import java.util.List;
+
 import com.example.green.domain.info.domain.InfoEntity;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -30,10 +32,10 @@ public record InfoSearchResponseByUser(
 	String content,
 
 	@Schema(
-		description = "첨부 이미지 URL (이미지 등록 후에 생성됨) 해당 경로를 통해 S3에서 이미지 반환",
-		example = "https://static.greenwinit.store/images-image123.png"
+		description = "첨부 이미지 URL 목록. 첫 번째 이미지가 썸네일로 사용됩니다.",
+		example = "[\"https://static.greenwinit.store/image1.png\", \"https://static.greenwinit.store/image2.png\"]"
 	)
-	String imageurl
+	List<String> imageUrls
 
 ) {
 	public static InfoSearchResponseByUser from(InfoEntity e) {
@@ -42,7 +44,7 @@ public record InfoSearchResponseByUser(
 			e.getInfoCategory().getDescription(),// @JsonValue 대신 명시적인 방법으로 사용
 			e.getTitle(),
 			e.getContent(),
-			e.getImageUrl()
+			e.getImageUrls()
 		);
 	}
 }

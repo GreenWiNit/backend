@@ -4,10 +4,11 @@ import static org.mockito.Mockito.*;
 import static org.springframework.http.MediaType.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -112,7 +113,7 @@ class InfoControllerTest {
 				"공지사항",
 				"ETC",
 				"테스트 내용 10자 이상 테스트 작성",
-				"imageUrl",
+				Arrays.asList("http://example.com/image1.jpg", "http://example.com/image2.jpg"),
 				"adminUser",
 				"Y",
 				dummyDate,
@@ -172,7 +173,7 @@ class InfoControllerTest {
 				.title("테스트 제목")
 				.content("테스트 내용 총 10자 이상 테스트")
 				.infoCategory(InfoCategory.CONTENTS)
-				.imageUrl("http://example.com/image.jpg")
+				.imageUrls(Arrays.asList("http://example.com/image.jpg"))
 				.isDisplay("Y")
 				.build();
 
@@ -183,7 +184,7 @@ class InfoControllerTest {
 				"컨텐츠",
 				"CONTENTS",
 				"테스트 내용 10자 이상 테스트 작성",
-				"imageUrl",
+				Arrays.asList("http://example.com/image1.jpg", "http://example.com/image2.jpg"),
 				"adminUser",
 				"Y",
 				dummyDate,
@@ -236,7 +237,7 @@ class InfoControllerTest {
 					.title("테스트 제목")
 					.content("테스트 내용 총 10자 이상 테스트")
 					.infoCategory(InfoCategory.CONTENTS)
-					.imageUrl("http://example.com/image.jpg")
+					.imageUrls(Arrays.asList("http://example.com/image.jpg"))
 					.isDisplay("Y")
 					.build();
 
@@ -315,7 +316,7 @@ class InfoControllerTest {
 			void 정보_카테고리ENUM에_등록되지_않은_값이_들어왔을_때_DATA_NOT_READABLE_MESSAGE를_던진다() throws Exception {
 				// given
 				String json = String.format(
-					"{\"title\":\"%s\",\"content\":\"%s\",\"infoCategory\":\"%s\",\"imageUrl\":\"%s\",\"isDisplay\":\"%s\"}",
+					"{\"title\":\"%s\",\"content\":\"%s\",\"infoCategory\":\"%s\",\"imageUrls\":[\"%s\"],\"isDisplay\":\"%s\"}",
 					"테스트 제목",
 					"테스트 내용 총 10자 이상 테스트",
 					"NOT_EXISTING",
@@ -337,13 +338,13 @@ class InfoControllerTest {
 			}
 
 			@Test
-			void 이미지는_첨부되지_않은_경우_VALIDATION_예외를_던진다() throws Exception {
+			void 이미지_없이_정보를_등록할_수_있다() throws Exception {
 				// given
 				InfoRequest request = InfoRequest.builder()
 					.title("테스트 제목")
 					.content("테스트 내용 총 10자 이상 테스트")
 					.infoCategory(InfoCategory.CONTENTS)
-					.imageUrl("")
+					.imageUrls(null)
 					.isDisplay("Y")
 					.build();
 
@@ -355,11 +356,8 @@ class InfoControllerTest {
 							.content(objectMapper.writeValueAsString(request))
 					)
 					.andDo(print())
-					.andExpect(status().isBadRequest())
-					.andExpect(jsonPath("$.success").value(false))
-					.andExpect(jsonPath("$.errors[0].fieldName").value("imageUrl"))
-					.andExpect(jsonPath("$.errors[0].message")
-						.value("이미지가 첨부되지 않았습니다."));
+					.andExpect(status().isOk())
+					.andExpect(jsonPath("$.success").value(true));
 			}
 
 			@Test
@@ -369,7 +367,7 @@ class InfoControllerTest {
 					.title("테스트 제목")
 					.content("테스트 내용 총 10자 이상 테스트")
 					.infoCategory(InfoCategory.CONTENTS)
-					.imageUrl("http://example.com/image.jpg")
+					.imageUrls(Arrays.asList("http://example.com/image.jpg"))
 					.isDisplay("")
 					.build();
 
@@ -393,7 +391,7 @@ class InfoControllerTest {
 					.title("x".repeat(length))
 					.content("테스트 내용 총 10자 이상 테스트")
 					.infoCategory(InfoCategory.CONTENTS)
-					.imageUrl("http://example.com/image.jpg")
+					.imageUrls(Arrays.asList("http://example.com/image.jpg"))
 					.isDisplay("Y")
 					.build();
 			}
@@ -403,7 +401,7 @@ class InfoControllerTest {
 					.title("테스트 제목")
 					.content("x".repeat(length))
 					.infoCategory(InfoCategory.CONTENTS)
-					.imageUrl("http://example.com/image.jpg")
+					.imageUrls(Arrays.asList("http://example.com/image.jpg"))
 					.isDisplay("Y")
 					.build();
 			}
@@ -452,7 +450,7 @@ class InfoControllerTest {
 				"테스트 제목",
 				"공지사항",
 				"테스트 내용 10자 이상 테스트 작성",
-				"http://example.com/image.jpg"
+				Arrays.asList("http://example.com/image1.jpg", "http://example.com/image2.jpg")
 
 			);
 
