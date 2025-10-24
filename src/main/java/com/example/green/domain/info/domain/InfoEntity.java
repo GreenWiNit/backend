@@ -1,7 +1,6 @@
 package com.example.green.domain.info.domain;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -21,6 +20,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderColumn;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -56,6 +56,7 @@ public class InfoEntity extends BaseEntity {
 	private String isDisplay;
 
 	@OneToMany(mappedBy = "info", cascade = CascadeType.ALL, orphanRemoval = true)
+	@OrderColumn(name = "display_order")
 	private List<InfoImage> images = new ArrayList<>();
 
 	@Builder
@@ -117,14 +118,13 @@ public class InfoEntity extends BaseEntity {
 			return;
 		}
 
-		for (int i = 0; i < imageUrls.size(); i++) {
-			this.images.add(InfoImage.create(this, imageUrls.get(i), i));
+		for (String imageUrl : imageUrls) {
+			this.images.add(InfoImage.create(this, imageUrl));
 		}
 	}
 
 	public List<String> getImageUrls() {
 		return images.stream()
-			.sorted(Comparator.comparing(InfoImage::getDisplayOrder))
 			.map(InfoImage::getImageUrl)
 			.toList();
 	}

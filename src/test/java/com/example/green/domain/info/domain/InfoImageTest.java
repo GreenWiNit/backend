@@ -24,15 +24,13 @@ class InfoImageTest {
 		// given
 		InfoEntity info = createTestInfo();
 		String imageUrl = "https://example.com/image1.jpg";
-		Integer displayOrder = 0;
 
 		// when
-		InfoImage infoImage = InfoImage.create(info, imageUrl, displayOrder);
+		InfoImage infoImage = InfoImage.create(info, imageUrl);
 
 		// then
 		assertThat(infoImage.getInfo()).isEqualTo(info);
 		assertThat(infoImage.getImageUrl()).isEqualTo(imageUrl);
-		assertThat(infoImage.getDisplayOrder()).isEqualTo(0);
 	}
 
 	@Test
@@ -40,10 +38,9 @@ class InfoImageTest {
 		// given
 		InfoEntity nullInfo = null;
 		String imageUrl = "https://example.com/image1.jpg";
-		Integer displayOrder = 0;
 
 		// when & then
-		assertThatThrownBy(() -> InfoImage.create(nullInfo, imageUrl, displayOrder))
+		assertThatThrownBy(() -> InfoImage.create(nullInfo, imageUrl))
 			.isInstanceOf(BusinessException.class);
 	}
 
@@ -52,37 +49,9 @@ class InfoImageTest {
 		// given
 		InfoEntity info = createTestInfo();
 		String emptyUrl = "";
-		Integer displayOrder = 0;
 
 		// when & then
-		assertThatThrownBy(() -> InfoImage.create(info, emptyUrl, displayOrder))
+		assertThatThrownBy(() -> InfoImage.create(info, emptyUrl))
 			.isInstanceOf(BusinessException.class);
-	}
-
-	@Test
-	void displayOrder가_음수면_예외를_던진다() {
-		// given
-		InfoEntity info = createTestInfo();
-		String imageUrl = "https://example.com/image1.jpg";
-		Integer negativeOrder = -1;
-
-		// when & then
-		assertThatThrownBy(() -> InfoImage.create(info, imageUrl, negativeOrder))
-			.isInstanceOf(IllegalArgumentException.class)
-			.hasMessageContaining("이미지 순서는 0 이상이어야 합니다.");
-	}
-
-	@Test
-	void displayOrder가_0이면_정상적으로_생성된다() {
-		// given
-		InfoEntity info = createTestInfo();
-		String imageUrl = "https://example.com/image1.jpg";
-		Integer displayOrder = 0;
-
-		// when
-		InfoImage infoImage = InfoImage.create(info, imageUrl, displayOrder);
-
-		// then
-		assertThat(infoImage.getDisplayOrder()).isEqualTo(0);
 	}
 }

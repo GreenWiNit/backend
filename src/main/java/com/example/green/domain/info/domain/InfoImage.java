@@ -39,39 +39,27 @@ public class InfoImage extends BaseEntity {
 	@Column(nullable = false, length = 500)
 	private String imageUrl;
 
-	@Column(nullable = false)
-	private Integer displayOrder;
-
 	private InfoImage(
 		final InfoEntity info,
-		final String imageUrl,
-		final Integer displayOrder
+		final String imageUrl
 	) {
-		validateInfoImage(info, imageUrl, displayOrder);
+		validateInfoImage(info, imageUrl);
 		this.info = info;
 		this.imageUrl = imageUrl;
-		this.displayOrder = displayOrder;
 	}
 
 	public static InfoImage create(
 		final InfoEntity info,
-		final String imageUrl,
-		final Integer displayOrder
+		final String imageUrl
 	) {
-		return new InfoImage(info, imageUrl, displayOrder);
+		return new InfoImage(info, imageUrl);
 	}
 
 	private void validateInfoImage(
 		final InfoEntity info,
-		final String imageUrl,
-		final Integer displayOrder
+		final String imageUrl
 	) {
 		EntityValidator.validateNullData(info, "정보 게시글은 필수입니다.");
 		EntityValidator.validateEmptyString(imageUrl, "이미지 URL은 필수입니다.");
-		EntityValidator.validateNullData(displayOrder, "이미지 순서는 필수입니다.");
-
-		if (displayOrder < 0) {
-			throw new IllegalArgumentException("이미지 순서는 0 이상이어야 합니다.");
-		}
 	}
 }
