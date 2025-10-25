@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 
 import com.example.green.domain.challenge.entity.challenge.PersonalChallenge;
 import com.example.green.domain.challenge.entity.challenge.TeamChallenge;
-import com.example.green.domain.challenge.entity.challenge.vo.ChallengeDisplayStatus;
+import com.example.green.domain.challenge.entity.challenge.vo.ChallengeDisplay;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -46,7 +46,7 @@ public record AdminChallengeCreateDto(
 
 	@Schema(description = "디스플레이 여부")
 	@NotNull
-	ChallengeDisplayStatus displayStatus
+	ChallengeDisplay displayStatus
 ) {
 
 	@JsonIgnore
@@ -63,7 +63,7 @@ public record AdminChallengeCreateDto(
 			beginDateTime.toLocalDate(),
 			endDateTime.toLocalDate(),
 			challengeContent, challengeImageUrl,
-			ChallengeDisplayStatus.VISIBLE);
+			ChallengeDisplay.VISIBLE);
 	}
 
 	public TeamChallenge toTeamChallenge(String challengeCode) {

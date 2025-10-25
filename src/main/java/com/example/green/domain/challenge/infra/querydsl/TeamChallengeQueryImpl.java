@@ -18,7 +18,7 @@ import com.example.green.domain.challenge.controller.query.dto.challenge.Challen
 import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDetailDtoV2;
 import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDto;
 import com.example.green.domain.challenge.entity.challenge.TeamChallenge;
-import com.example.green.domain.challenge.entity.challenge.vo.ChallengeDisplayStatus;
+import com.example.green.domain.challenge.entity.challenge.vo.ChallengeDisplay;
 import com.example.green.domain.challenge.exception.ChallengeException;
 import com.example.green.domain.challenge.infra.querydsl.projections.TeamChallengeProjections;
 import com.example.green.domain.challenge.repository.TeamChallengeRepository;
@@ -83,7 +83,7 @@ public class TeamChallengeQueryImpl implements TeamChallengeQuery {
 		return Optional.ofNullable(queryFactory
 				.select(TeamChallengeProjections.toChallengeByMember(exists))
 				.from(teamChallenge)
-				.where(teamChallenge.id.eq(challengeId), teamChallenge.displayStatus.eq(ChallengeDisplayStatus.VISIBLE))
+				.where(teamChallenge.id.eq(challengeId), teamChallenge.displayStatus.eq(ChallengeDisplay.VISIBLE))
 				.fetchOne())
 			.orElseThrow(() -> new ChallengeException(CHALLENGE_NOT_FOUND));
 	}
@@ -134,7 +134,7 @@ public class TeamChallengeQueryImpl implements TeamChallengeQuery {
 		return Optional.ofNullable(queryFactory
 				.select(TeamChallengeProjections.toChallengeByMemberV2(exists))
 				.from(teamChallenge)
-				.where(teamChallenge.id.eq(challengeId), teamChallenge.displayStatus.eq(ChallengeDisplayStatus.VISIBLE))
+				.where(teamChallenge.id.eq(challengeId), teamChallenge.displayStatus.eq(ChallengeDisplay.VISIBLE))
 				.fetchOne())
 			.orElseThrow(() -> new ChallengeException(CHALLENGE_NOT_FOUND));
 	}
@@ -151,7 +151,7 @@ public class TeamChallengeQueryImpl implements TeamChallengeQuery {
 
 	private BooleanExpression activeChallengeCondition(Long cursor, LocalDateTime now) {
 		return BooleanExpressionConnector.combineWithAnd(
-			teamChallenge.displayStatus.eq(ChallengeDisplayStatus.VISIBLE),
+			teamChallenge.displayStatus.eq(ChallengeDisplay.VISIBLE),
 			teamChallenge.beginDate.loe(now.toLocalDate()),
 			teamChallenge.endDate.goe(now.toLocalDate()),
 			cursorCondition(cursor)

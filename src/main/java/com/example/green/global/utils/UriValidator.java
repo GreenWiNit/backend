@@ -20,4 +20,17 @@ public class UriValidator {
 			return false;
 		}
 	}
+
+	public static boolean isAbsoluteUri(String uriString) {
+		if (uriString == null || uriString.isEmpty()) {
+			return false;
+		}
+
+		try {
+			URI uri = new URI(uriString);
+			return uri.isAbsolute();
+		} catch (URISyntaxException e) {
+			return false;
+		}
+	}
 }

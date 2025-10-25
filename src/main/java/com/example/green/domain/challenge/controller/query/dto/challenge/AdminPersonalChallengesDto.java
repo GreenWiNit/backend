@@ -5,7 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-import com.example.green.domain.challenge.entity.challenge.vo.ChallengeDisplayStatus;
+import com.example.green.domain.challenge.entity.challenge.vo.ChallengeDisplay;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -30,7 +30,7 @@ public record AdminPersonalChallengesDto(
 	BigDecimal challengePoint,
 
 	@Schema(description = "전시 상태", example = "VISIBLE")
-	ChallengeDisplayStatus displayStatus,
+	ChallengeDisplay displayStatus,
 
 	@Schema(description = "생성 일시")
 	LocalDateTime createdDate

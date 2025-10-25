@@ -13,7 +13,7 @@ import com.example.green.domain.challenge.controller.query.dto.challenge.AdminPe
 import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDetailDto;
 import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDetailDtoV2;
 import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDto;
-import com.example.green.domain.challenge.entity.challenge.vo.ChallengeDisplayStatus;
+import com.example.green.domain.challenge.entity.challenge.vo.ChallengeDisplay;
 import com.example.green.domain.challenge.infra.querydsl.projections.PersonalChallengeProjections;
 import com.example.green.global.api.page.Pagination;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -59,7 +59,7 @@ public class PersonalChallengeQueryExecutor {
 			queryFactory.select(PersonalChallengeProjections.toChallengeByMemberV2(participationExists))
 				.from(personalChallenge)
 				.where(personalChallenge.id.eq(challengeId),
-					personalChallenge.displayStatus.eq(ChallengeDisplayStatus.VISIBLE))
+					personalChallenge.displayStatus.eq(ChallengeDisplay.VISIBLE))
 				.fetchOne());
 	}
 
