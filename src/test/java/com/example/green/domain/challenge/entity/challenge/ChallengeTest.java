@@ -52,6 +52,19 @@ class ChallengeTest {
 	}
 
 	@Test
+	void 미전시된_챌린지를_전시한다() {
+		// given
+		Challenge challenge = Challenge.ofPersonal(challengeInfo, challengeContent);
+		challenge.hide();
+
+		// when
+		challenge.show();
+
+		// then
+		assertThat(challenge.getDisplay()).isEqualTo(ChallengeDisplay.VISIBLE);
+	}
+
+	@Test
 	void 챌린지_정보를_수정한다() {
 		// given
 		ChallengeInfo newInfo = mock(ChallengeInfo.class);
