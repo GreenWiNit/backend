@@ -5,7 +5,7 @@ import static com.example.green.domain.challenge.entity.challenge.QPersonalChall
 
 import java.time.LocalDateTime;
 
-import com.example.green.domain.challenge.entity.challenge.vo.ChallengeDisplayStatus;
+import com.example.green.domain.challenge.entity.challenge.vo.ChallengeDisplay;
 import com.example.green.infra.database.querydsl.BooleanExpressionConnector;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
@@ -27,7 +27,7 @@ public class PersonalChallengePredicates {
 		return BooleanExpressionConnector.combineWithAnd(
 			personalChallenge.beginDate.loe(now.toLocalDate()),
 			personalChallenge.endDate.goe(now.toLocalDate()),
-			personalChallenge.displayStatus.eq(ChallengeDisplayStatus.VISIBLE),
+			personalChallenge.displayStatus.eq(ChallengeDisplay.VISIBLE),
 			getCursorCondition(cursor)
 		);
 	}

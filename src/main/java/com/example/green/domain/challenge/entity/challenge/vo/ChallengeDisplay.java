@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Getter
 @Schema(description = "챌린지 전시 상태", allowableValues = {"HIDDEN", "VISIBLE"})
-public enum ChallengeDisplayStatus {
+public enum ChallengeDisplay {
 	@Schema(description = "숨김 - 사용자에게 보이지 않음")
 	HIDDEN("숨김"),
 

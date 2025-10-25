@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.example.green.domain.challenge.entity.challenge.TeamChallenge;
-import com.example.green.domain.challenge.entity.challenge.vo.ChallengeDisplayStatus;
+import com.example.green.domain.challenge.entity.challenge.vo.ChallengeDisplay;
 import com.example.green.domain.challenge.repository.TeamChallengeRepository;
 import com.example.green.domain.challenge.service.TeamChallengeService;
 import com.example.integration.common.BaseIntegrationTest;
@@ -41,7 +41,7 @@ class ChallengeJoinConcurrencyTest extends BaseIntegrationTest {
 			BigDecimal.valueOf(100),
 			LocalDate.now(),
 			LocalDate.now().plusDays(7),
-			ChallengeDisplayStatus.VISIBLE
+			ChallengeDisplay.VISIBLE
 		);
 		teamChallenge = teamChallengeRepository.saveAndFlush(teamChallenge);
 	}

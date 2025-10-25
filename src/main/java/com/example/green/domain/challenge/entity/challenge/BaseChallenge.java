@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-import com.example.green.domain.challenge.entity.challenge.vo.ChallengeDisplayStatus;
+import com.example.green.domain.challenge.entity.challenge.vo.ChallengeDisplay;
 import com.example.green.domain.challenge.entity.challenge.vo.ChallengeStatus;
 import com.example.green.domain.challenge.entity.challenge.vo.ChallengeType;
 import com.example.green.domain.challenge.exception.ChallengeException;
@@ -65,7 +65,7 @@ public abstract class BaseChallenge extends BaseEntity {
 
 	@Enumerated(EnumType.STRING)
 	@Column(length = 20, nullable = false)
-	private ChallengeDisplayStatus displayStatus;
+	private ChallengeDisplay displayStatus;
 
 	@Column(nullable = false)
 	private Integer participantCount;
@@ -82,7 +82,7 @@ public abstract class BaseChallenge extends BaseEntity {
 		LocalDate beginDate,
 		LocalDate endDate,
 		ChallengeType challengeType,
-		ChallengeDisplayStatus displayStatus
+		ChallengeDisplay displayStatus
 	) {
 		validateCreateParameters(challengeCode, challengeName, challengeImage, challengeContent,
 			beginDate, endDate, challengeType, displayStatus);
@@ -113,7 +113,7 @@ public abstract class BaseChallenge extends BaseEntity {
 		LocalDate beginDate,
 		LocalDate endDate,
 		ChallengeType challengeType,
-		ChallengeDisplayStatus displayStatus) {
+		ChallengeDisplay displayStatus) {
 		validateEmptyString(challengeCode, "챌린지 코드는 필수값입니다.");
 		validateEmptyString(challengeName, "챌린지명은 필수값입니다.");
 		validateEmptyString(challengeImage, "챌린지 이미지는 필수값입니다.");
@@ -132,17 +132,17 @@ public abstract class BaseChallenge extends BaseEntity {
 
 	public boolean isActive(LocalDate now) {
 		return challengeStatus == ChallengeStatus.PROCEEDING
-			&& displayStatus == ChallengeDisplayStatus.VISIBLE
+			&& displayStatus == ChallengeDisplay.VISIBLE
 			&& !now.isBefore(beginDate)
 			&& !now.isAfter(endDate);
 	}
 
 	public void show() {
-		this.displayStatus = ChallengeDisplayStatus.VISIBLE;
+		this.displayStatus = ChallengeDisplay.VISIBLE;
 	}
 
 	public void hide() {
-		this.displayStatus = ChallengeDisplayStatus.HIDDEN;
+		this.displayStatus = ChallengeDisplay.HIDDEN;
 	}
 
 	public void updateImage(String newImageUrl) {

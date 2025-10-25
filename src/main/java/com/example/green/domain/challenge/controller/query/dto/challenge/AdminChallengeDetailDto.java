@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import com.example.green.domain.challenge.entity.challenge.BaseChallenge;
-import com.example.green.domain.challenge.entity.challenge.vo.ChallengeDisplayStatus;
+import com.example.green.domain.challenge.entity.challenge.vo.ChallengeDisplay;
 import com.example.green.domain.challenge.entity.challenge.vo.ChallengeType;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -33,7 +33,7 @@ public record AdminChallengeDetailDto(
 	LocalDate endDate,
 
 	@Schema(description = "전시 상태", example = "VISIBLE")
-	ChallengeDisplayStatus displayStatus,
+	ChallengeDisplay displayStatus,
 
 	@Schema(description = "챌린지 이미지 URL", example = "https://example.com/image.jpg")
 	String challengeImage,

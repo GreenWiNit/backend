@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.example.green.domain.challenge.entity.challenge.vo.ChallengeDisplayStatus;
+import com.example.green.domain.challenge.entity.challenge.vo.ChallengeDisplay;
 import com.example.green.domain.challenge.entity.challenge.vo.ChallengeType;
 import com.example.green.domain.challenge.exception.ChallengeException;
 import com.example.green.domain.challenge.exception.ChallengeExceptionMessage;
@@ -34,7 +34,7 @@ public class TeamChallenge extends BaseChallenge {
 
 	private TeamChallenge(
 		String challengeCode, String challengeName, String challengeImage, String challengeContent,
-		BigDecimal challengePoint, LocalDate beginDate, LocalDate endDate, ChallengeDisplayStatus displayStatus
+		BigDecimal challengePoint, LocalDate beginDate, LocalDate endDate, ChallengeDisplay displayStatus
 	) {
 		super(challengeCode, challengeName, challengeImage, challengeContent, challengePoint, beginDate,
 			endDate, ChallengeType.TEAM, displayStatus);
@@ -43,7 +43,7 @@ public class TeamChallenge extends BaseChallenge {
 
 	public static TeamChallenge create(
 		String challengeCode, String challengeName, String challengeImage, String challengeContent,
-		BigDecimal challengePoint, LocalDate beginDate, LocalDate endDate, ChallengeDisplayStatus displayStatus
+		BigDecimal challengePoint, LocalDate beginDate, LocalDate endDate, ChallengeDisplay displayStatus
 	) {
 		return new TeamChallenge(
 			challengeCode, challengeName, challengeImage, challengeContent,
