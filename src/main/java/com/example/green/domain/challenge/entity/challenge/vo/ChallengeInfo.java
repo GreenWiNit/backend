@@ -2,8 +2,6 @@ package com.example.green.domain.challenge.entity.challenge.vo;
 
 import static com.example.green.domain.challenge.exception.ChallengeExceptionMessage.*;
 
-import java.util.Objects;
-
 import com.example.green.domain.challenge.exception.ChallengeException;
 
 import jakarta.persistence.Column;
@@ -31,7 +29,7 @@ public class ChallengeInfo {
 	private Integer point;
 
 	private ChallengeInfo(String code, String name, Integer point) {
-		Objects.requireNonNull(code, CHALLENGE_CODE_NON_NULL);
+		validateCode(code);
 		validateName(name);
 		validatePoint(point);
 
@@ -40,13 +38,19 @@ public class ChallengeInfo {
 		this.point = point;
 	}
 
+	private void validateCode(String code) {
+		if (code == null || code.isBlank()) {
+			throw new ChallengeException(CHALLENGE_CODE_BLANK);
+		}
+	}
+
 	public static ChallengeInfo of(String code, String name, Integer point) {
 		return new ChallengeInfo(code, name, point);
 	}
 
 	private void validateName(String name) {
 		if (name == null || name.isBlank()) {
-			throw new ChallengeException(CHALLENGE_NAME_EMPTY);
+			throw new ChallengeException(CHALLENGE_NAME_BLANK);
 		}
 		if (name.length() > MAX_NAME_LENGTH) {
 			throw new ChallengeException(CHALLENGE_NAME_LENGTH_EXCEEDED);
@@ -55,7 +59,7 @@ public class ChallengeInfo {
 
 	private void validatePoint(Integer point) {
 		if (point == null) {
-			throw new ChallengeException(CHALLENGE_POINT_EMPTY);
+			throw new ChallengeException(CHALLENGE_POINT_BLANK);
 		}
 		if (point < 0) {
 			throw new ChallengeException(POINT_LESS_THAN_ZERO);

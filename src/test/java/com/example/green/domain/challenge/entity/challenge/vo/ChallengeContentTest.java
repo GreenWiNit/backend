@@ -34,7 +34,7 @@ class ChallengeContentTest {
 		// when & then
 		assertThatThrownBy(() -> ChallengeContent.of(emptyContent, imageUrl))
 			.isInstanceOf(ChallengeException.class)
-			.hasFieldOrPropertyWithValue("exceptionMessage", ChallengeExceptionMessage.CHALLENGE_CONTENT_EMPTY);
+			.hasFieldOrPropertyWithValue("exceptionMessage", ChallengeExceptionMessage.CHALLENGE_CONTENT_BLANK);
 	}
 
 	@Test

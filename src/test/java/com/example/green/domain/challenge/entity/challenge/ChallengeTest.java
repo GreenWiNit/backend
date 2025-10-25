@@ -85,7 +85,7 @@ class ChallengeTest {
 		// when
 		challenge.participate(1L);
 
-		// thengi
+		// then
 		assertThat(challenge.getParticipantCount()).isEqualTo(before + 1);
 	}
 

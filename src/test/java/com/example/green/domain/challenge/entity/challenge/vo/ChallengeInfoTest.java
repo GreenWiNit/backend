@@ -27,12 +27,13 @@ class ChallengeInfoTest {
 		assertThat(info.getPoint()).isEqualTo(point);
 	}
 
-	@Test
-	void 챌린지_코드_정보는_필수다() {
+	@ParameterizedTest
+	@NullAndEmptySource
+	void 챌린지_코드_정보는_필수다(String invalidCode) {
 		// when & then
-		assertThatThrownBy(() -> ChallengeInfo.of(null, "challengeName", 1000))
-			.isInstanceOf(NullPointerException.class)
-			.hasMessageContaining(ChallengeExceptionMessage.CHALLENGE_CODE_NON_NULL);
+		assertThatThrownBy(() -> ChallengeInfo.of(invalidCode, "challengeName", 1000))
+			.isInstanceOf(ChallengeException.class)
+			.hasFieldOrPropertyWithValue("exceptionMessage", ChallengeExceptionMessage.CHALLENGE_CODE_BLANK);
 	}
 
 	@ParameterizedTest
@@ -41,7 +42,7 @@ class ChallengeInfoTest {
 		// when & then
 		assertThatThrownBy(() -> ChallengeInfo.of("code", emptyName, 1000))
 			.isInstanceOf(ChallengeException.class)
-			.hasFieldOrPropertyWithValue("exceptionMessage", ChallengeExceptionMessage.CHALLENGE_NAME_EMPTY);
+			.hasFieldOrPropertyWithValue("exceptionMessage", ChallengeExceptionMessage.CHALLENGE_NAME_BLANK);
 	}
 
 	@Test
@@ -60,7 +61,7 @@ class ChallengeInfoTest {
 		// when & then
 		assertThatThrownBy(() -> ChallengeInfo.of("code", "challengeName", null))
 			.isInstanceOf(ChallengeException.class)
-			.hasFieldOrPropertyWithValue("exceptionMessage", ChallengeExceptionMessage.CHALLENGE_POINT_EMPTY);
+			.hasFieldOrPropertyWithValue("exceptionMessage", ChallengeExceptionMessage.CHALLENGE_POINT_BLANK);
 	}
 
 	@Test

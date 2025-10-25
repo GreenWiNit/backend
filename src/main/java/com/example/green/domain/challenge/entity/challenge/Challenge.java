@@ -90,12 +90,12 @@ public class Challenge extends BaseEntity {
 	}
 
 	public void updateInfo(ChallengeInfo info) {
-		Objects.requireNonNull(info, "챌린지 정보는 필수값입니다.");
+		Objects.requireNonNull(info, CHALLENGE_INFO_NON_NULL);
 		this.info = info;
 	}
 
 	public void updateContent(ChallengeContent content) {
-		Objects.requireNonNull(content, "챌린지 콘텐츠는 필수값입니다.");
+		Objects.requireNonNull(content, CHALLENGE_CONTENT_NON_NULL);
 		this.content = content;
 	}
 

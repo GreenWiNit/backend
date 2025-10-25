@@ -26,7 +26,7 @@ public class ChallengeContent {
 
 	private ChallengeContent(String content, String imageUrl) {
 		if (content == null || content.isEmpty()) {
-			throw new ChallengeException(CHALLENGE_CONTENT_EMPTY);
+			throw new ChallengeException(CHALLENGE_CONTENT_BLANK);
 		}
 		if (!isAbsoluteUri(imageUrl)) {
 			throw new ChallengeException(INVALID_CHALLENGE_IMAGE);
@@ -37,13 +37,5 @@ public class ChallengeContent {
 
 	public static ChallengeContent of(String content, String imageUrl) {
 		return new ChallengeContent(content, imageUrl);
-	}
-
-	void updateContent(String content) {
-		this.content = content;
-	}
-
-	void updateImageUrl(String imageUrl) {
-		this.imageUrl = imageUrl;
 	}
 }
