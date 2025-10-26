@@ -3,6 +3,7 @@ package com.example.green.domain.challenge.controller.query.dto.challenge;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import com.example.green.domain.challenge.entity.challenge.vo.ChallengeInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -41,5 +42,13 @@ public class ChallengeDto {
 	public ChallengeDto(Long id, String challengeName, LocalDate beginDate, LocalDate endDate,
 		String challengeImage, BigDecimal challengePoint, Integer currentParticipant) {
 		this(id, challengeName, beginDate, endDate, challengeImage, challengePoint, currentParticipant, id);
+	}
+
+	public ChallengeDto(Long id, ChallengeInfo info, String image, Integer currentParticipant, Long cursor) {
+		this(id, info.getName(), null, null, image, BigDecimal.valueOf(info.getPoint()), currentParticipant, cursor);
+	}
+
+	public ChallengeDto(Long id, ChallengeInfo info, String image, Integer currentParticipant) {
+		this(id, info.getName(), null, null, image, BigDecimal.valueOf(info.getPoint()), currentParticipant, null);
 	}
 }
