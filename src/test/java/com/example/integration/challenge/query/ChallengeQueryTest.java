@@ -34,10 +34,19 @@ public class ChallengeQueryTest extends BaseIntegrationTest {
 		dataSource.챌린지_참여_역순();
 
 		// when : 31번 아이디부터 개인챌린지 조회
-		CursorTemplate<Long, ChallengeDto> result = challengeQuery.findMyParticipationByCursor(1L, 999L, 10, type);
+		CursorTemplate<Long, ChallengeDto> result = challengeQuery.findMyParticipationByCursor(1L, 999L, 20, type);
 
 		// then : 30번부터 짝수번째만 개인, 홀수번째 팀
 		ChallengeQueryTestHelper.참여_챌린지_검증(result, type);
 	}
 
+	@ParameterizedTest
+	@EnumSource(ChallengeType.class)
+	void 챌린지_조회(ChallengeType type) {
+		// when
+		CursorTemplate<Long, ChallengeDto> result = challengeQuery.findChallengesByCursor(999L, 20, type);
+
+		// then
+		ChallengeQueryTestHelper.챌린지_조회_검증(result, type);
+	}
 }
