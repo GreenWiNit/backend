@@ -17,9 +17,10 @@ public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
 	}
 
 	@Query("""
-		SELECT count(p) > 0 FROM Participation p
+		SELECT p.challenge
+		FROM Participation p
 		WHERE p.challenge.id = :challengeId
-		AND p.memberId =:memberId
+		AND p.memberId = :memberId
 		AND p.challenge.display = 'VISIBLE'
 		""")
 	Optional<Challenge> findChallengeByMembership(Long challengeId, Long memberId);

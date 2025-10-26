@@ -39,10 +39,10 @@ public class ChallengeQueryTest extends BaseIntegrationTest {
 		// given: ID 내림차순으로 챌린지 참여
 		dataSource.챌린지_참여_역순();
 
-		// when : 31번 아이디부터 개인챌린지 조회
+		// when : 999번 아이디부터 개인챌린지 조회
 		CursorTemplate<Long, ChallengeDto> result = challengeQuery.findMyParticipationByCursor(1L, 999L, 20, type);
 
-		// then : 30번부터 짝수번째만 개인, 홀수번째 팀
+		// then : 짝수번째만 개인, 홀수번째 팀
 		ChallengeQueryTestHelper.참여_챌린지_검증(result, type);
 	}
 

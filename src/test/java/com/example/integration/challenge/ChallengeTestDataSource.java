@@ -30,7 +30,7 @@ public class ChallengeTestDataSource {
 
 		List<Challenge> challenges = new ArrayList<>();
 		for (int i = 1; i <= 50; i++) {
-			ChallengeInfo info = ChallengeInfo.of("challenge" + 1, i);
+			ChallengeInfo info = ChallengeInfo.of("challenge" + i, i);
 			ChallengeContent content = ChallengeContent.of("content", "https://newImage.url/image.png");
 			Challenge challenge = Challenge.of("CODE" + i, info, content, i % 2 == 0 ? PERSONAL : TEAM);
 			challenges.add(challenge);
