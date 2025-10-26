@@ -40,6 +40,9 @@ public class Challenge extends BaseEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@Column(length = 30, nullable = false, unique = true)
+	private String code;
+
 	@Embedded
 	private ChallengeInfo info;
 
@@ -63,9 +66,9 @@ public class Challenge extends BaseEntity {
 	@Version
 	private Long version;
 
-	private Challenge(ChallengeInfo info, ChallengeContent content, ChallengeType type) {
-		Objects.requireNonNull(info, CHALLENGE_INFO_NON_NULL);
-		Objects.requireNonNull(content, CHALLENGE_CONTENT_NON_NULL);
+	private Challenge(String code, ChallengeInfo info, ChallengeContent content, ChallengeType type) {
+		validate(code, info, content, type);    // 개발 레벨에서(개발자의 실수 등을) 검증하는거라 검증할 필요는 없음
+		this.code = code;
 		this.info = info;
 		this.content = content;
 		this.type = type;
@@ -73,12 +76,15 @@ public class Challenge extends BaseEntity {
 		this.participantCount = 0;
 	}
 
-	public static Challenge ofTeam(ChallengeInfo info, ChallengeContent content) {
-		return new Challenge(info, content, ChallengeType.TEAM);
+	private static void validate(String code, ChallengeInfo info, ChallengeContent content, ChallengeType type) {
+		Objects.requireNonNull(code, CHALLENGE_CODE_NON_NULL);
+		Objects.requireNonNull(info, CHALLENGE_INFO_NON_NULL);
+		Objects.requireNonNull(content, CHALLENGE_CONTENT_NON_NULL);
+		Objects.requireNonNull(type, CHALLENGE_TYPE_NON_NULL);
 	}
 
-	public static Challenge ofPersonal(ChallengeInfo info, ChallengeContent content) {
-		return new Challenge(info, content, ChallengeType.PERSONAL);
+	public static Challenge of(String code, ChallengeInfo info, ChallengeContent content, ChallengeType type) {
+		return new Challenge(code, info, content, type);
 	}
 
 	public void show() {
@@ -104,6 +110,10 @@ public class Challenge extends BaseEntity {
 		Participation participation = Participation.create(this, memberId);
 		participations.add(participation);
 		this.participantCount++;
+	}
+
+	public String getImageUrl() {
+		return content.getImageUrl();
 	}
 
 	private void validateParticipation(Long memberId) {
