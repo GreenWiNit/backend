@@ -2,6 +2,8 @@ package com.example.green.domain.challenge.repository;
 
 import static com.example.green.domain.challenge.exception.ChallengeExceptionMessage.*;
 
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -18,6 +20,7 @@ public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
 		SELECT count(p) > 0 FROM Participation p
 		WHERE p.challenge.id = :challengeId
 		AND p.memberId =:memberId
+		AND p.challenge.display = 'VISIBLE'
 		""")
-	boolean existsMembership(Long challengeId, Long memberId);
+	Optional<Challenge> findChallengeByMembership(Long challengeId, Long memberId);
 }

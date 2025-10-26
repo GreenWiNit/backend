@@ -10,14 +10,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDetailDtoV2;
 import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDto;
-import com.example.green.domain.challenge.entity.challenge.Challenge;
-import com.example.green.domain.challenge.entity.challenge.vo.ChallengeDisplay;
 import com.example.green.domain.challenge.entity.challenge.vo.ChallengeType;
 import com.example.green.domain.challenge.exception.ChallengeException;
-import com.example.green.domain.challenge.exception.ChallengeExceptionMessage;
 import com.example.green.domain.challenge.infra.querydsl.executor.ChallengeClientQueryExecutor;
 import com.example.green.domain.challenge.infra.querydsl.predicates.ChallengePredicates;
-import com.example.green.domain.challenge.repository.ChallengeRepository;
 import com.example.green.domain.challenge.repository.query.ChallengeQuery;
 import com.example.green.global.api.page.CursorTemplate;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -31,7 +27,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ChallengeQueryImpl implements ChallengeQuery {
 
-	private final ChallengeRepository challengeRepository;
 	private final ChallengeClientQueryExecutor executor;
 
 	@Override
@@ -56,18 +51,5 @@ public class ChallengeQueryImpl implements ChallengeQuery {
 		ChallengeDetailDtoV2 result = executor.executeChallengeDetailQuery(condition, challengeId);
 		return Optional.ofNullable(result)
 			.orElseThrow(() -> new ChallengeException(CHALLENGE_NOT_FOUND));
-	}
-
-	@Override
-	public Challenge getChallengeByMember(Long id, Long memberId) {
-		if (!challengeRepository.existsMembership(id, memberId)) {
-			throw new ChallengeException(ChallengeExceptionMessage.NOT_PARTICIPATING_CHALLENGE);
-		}
-
-		Challenge challenge = challengeRepository.findByIdWithThrow(id);
-		if (challenge.getDisplay() == ChallengeDisplay.HIDDEN) {
-			throw new ChallengeException(INACTIVE_CHALLENGE);
-		}
-		return challenge;
 	}
 }
