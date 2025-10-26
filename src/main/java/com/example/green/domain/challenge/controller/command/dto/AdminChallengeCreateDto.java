@@ -4,9 +4,13 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import com.example.green.domain.challenge.entity.challenge.Challenge;
 import com.example.green.domain.challenge.entity.challenge.PersonalChallenge;
 import com.example.green.domain.challenge.entity.challenge.TeamChallenge;
+import com.example.green.domain.challenge.entity.challenge.vo.ChallengeContent;
 import com.example.green.domain.challenge.entity.challenge.vo.ChallengeDisplay;
+import com.example.green.domain.challenge.entity.challenge.vo.ChallengeInfo;
+import com.example.green.domain.challenge.entity.challenge.vo.ChallengeType;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -78,5 +82,11 @@ public record AdminChallengeCreateDto(
 			challengeCode, challengeName, challengeImageUrl, challengeContent,
 			challengePoint, beginDate, endDate, displayStatus
 		);
+	}
+
+	public Challenge toChallenge(String challengeCode, ChallengeType challengeType) {
+		ChallengeInfo info = ChallengeInfo.of(challengeName, challengePoint.intValue());
+		ChallengeContent content = ChallengeContent.of(challengeContent, challengeImageUrl);
+		return Challenge.of(challengeCode, info, content, challengeType);
 	}
 }

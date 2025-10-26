@@ -19,33 +19,22 @@ public class ChallengeInfo {
 
 	private static final int MAX_NAME_LENGTH = 90;
 
-	@Column(length = 30, nullable = false, unique = true)
-	private String code;
-
 	@Column(length = 90, nullable = false)
 	private String name;
 
 	@Column(nullable = false)
 	private Integer point;
 
-	private ChallengeInfo(String code, String name, Integer point) {
-		validateCode(code);
+	private ChallengeInfo(String name, Integer point) {
 		validateName(name);
 		validatePoint(point);
 
-		this.code = code;
 		this.name = name;
 		this.point = point;
 	}
 
-	private void validateCode(String code) {
-		if (code == null || code.isBlank()) {
-			throw new ChallengeException(CHALLENGE_CODE_BLANK);
-		}
-	}
-
-	public static ChallengeInfo of(String code, String name, Integer point) {
-		return new ChallengeInfo(code, name, point);
+	public static ChallengeInfo of(String name, Integer point) {
+		return new ChallengeInfo(name, point);
 	}
 
 	private void validateName(String name) {

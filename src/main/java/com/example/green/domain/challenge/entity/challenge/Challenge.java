@@ -40,6 +40,9 @@ public class Challenge extends BaseEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@Column(length = 30, nullable = false, unique = true)
+	private String code;
+
 	@Embedded
 	private ChallengeInfo info;
 
@@ -63,9 +66,9 @@ public class Challenge extends BaseEntity {
 	@Version
 	private Long version;
 
-	private Challenge(ChallengeInfo info, ChallengeContent content, ChallengeType type) {
-		Objects.requireNonNull(info, CHALLENGE_INFO_NON_NULL);
-		Objects.requireNonNull(content, CHALLENGE_CONTENT_NON_NULL);
+	private Challenge(String code, ChallengeInfo info, ChallengeContent content, ChallengeType type) {
+		validateChallenge(code, info, content);
+		this.code = code;
 		this.info = info;
 		this.content = content;
 		this.type = type;
@@ -73,12 +76,16 @@ public class Challenge extends BaseEntity {
 		this.participantCount = 0;
 	}
 
-	public static Challenge ofTeam(ChallengeInfo info, ChallengeContent content) {
-		return new Challenge(info, content, ChallengeType.TEAM);
+	private static void validateChallenge(String code, ChallengeInfo info, ChallengeContent content) {
+		if (code == null || code.isBlank()) {
+			throw new ChallengeException(CHALLENGE_CODE_BLANK);
+		}
+		Objects.requireNonNull(info, CHALLENGE_INFO_NON_NULL);
+		Objects.requireNonNull(content, CHALLENGE_CONTENT_NON_NULL);
 	}
-
-	public static Challenge ofPersonal(ChallengeInfo info, ChallengeContent content) {
-		return new Challenge(info, content, ChallengeType.PERSONAL);
+	
+	public static Challenge of(String code, ChallengeInfo info, ChallengeContent content, ChallengeType type) {
+		return new Challenge(code, info, content, type);
 	}
 
 	public void show() {
@@ -104,6 +111,10 @@ public class Challenge extends BaseEntity {
 		Participation participation = Participation.create(this, memberId);
 		participations.add(participation);
 		this.participantCount++;
+	}
+
+	public String getImageUrl() {
+		return content.getImageUrl();
 	}
 
 	private void validateParticipation(Long memberId) {

@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import com.example.green.domain.challenge.entity.challenge.vo.ChallengeContent;
+import com.example.green.domain.challenge.entity.challenge.vo.ChallengeInfo;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -57,5 +59,13 @@ public record AdminChallengeUpdateDto(
 			beginDateTime.toLocalDate(),
 			endDateTime.toLocalDate(),
 			challengeContent, challengeImageUrl);
+	}
+
+	public ChallengeInfo info() {
+		return ChallengeInfo.of(challengeName(), challengePoint().intValue());
+	}
+
+	public ChallengeContent content() {
+		return ChallengeContent.of(challengeContent(), challengeImageUrl());
 	}
 }
