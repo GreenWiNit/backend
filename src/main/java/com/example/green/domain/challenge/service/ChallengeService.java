@@ -32,7 +32,7 @@ public class ChallengeService {
 	private final SequenceService sequenceService;
 
 	public Long create(AdminChallengeCreateDto dto, ChallengeType challengeType) {
-		String challengeCode = sequenceService.generateCode(PERSONAL_CHALLENGE, LocalDateTime.now(clock));
+		String challengeCode = generateChallengeCode(challengeType);
 		Challenge challenge = dto.toChallenge(challengeCode, challengeType);
 		Challenge savedChallenge = challengeRepository.save(challenge);
 		fileClient.confirmUsingImage(savedChallenge.getImageUrl());
@@ -40,27 +40,34 @@ public class ChallengeService {
 		return savedChallenge.getId();
 	}
 
+	private String generateChallengeCode(ChallengeType challengeType) {
+		if (challengeType == ChallengeType.TEAM) {
+			return sequenceService.generateCode(TEAM_CHALLENGE, LocalDateTime.now(clock));
+		}
+		return sequenceService.generateCode(PERSONAL_CHALLENGE, LocalDateTime.now(clock));
+	}
+
 	@Retryable(
 		retryFor = OptimisticLockingFailureException.class,
 		backoff = @Backoff(delay = 100, multiplier = 2)
 	)
 	public void join(Long challengeId, Long memberId) {
-		Challenge challenge = challengeRepository.getById(challengeId);
+		Challenge challenge = challengeRepository.findByIdWithThrow(challengeId);
 		challenge.participate(memberId);
 	}
 
 	public void show(Long challengeId) {
-		Challenge challenge = challengeRepository.getById(challengeId);
+		Challenge challenge = challengeRepository.findByIdWithThrow(challengeId);
 		challenge.show();
 	}
 
 	public void hide(Long challengeId) {
-		Challenge challenge = challengeRepository.getById(challengeId);
+		Challenge challenge = challengeRepository.findByIdWithThrow(challengeId);
 		challenge.hide();
 	}
 
 	public void update(Long challengeId, AdminChallengeUpdateDto dto) {
-		Challenge challenge = challengeRepository.getById(challengeId);
+		Challenge challenge = challengeRepository.findByIdWithThrow(challengeId);
 		String beforeImageUrl = challenge.getImageUrl();
 
 		challenge.updateInfo(dto.info());

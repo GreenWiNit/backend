@@ -11,6 +11,8 @@ import java.time.ZoneId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -48,15 +50,16 @@ class ChallengeServiceTest {
 		;
 	}
 
-	@Test
-	void 챌린지_생성() {
+	@ParameterizedTest
+	@EnumSource(ChallengeType.class)
+	void 챌린지_생성(ChallengeType type) {
 		// given
 		AdminChallengeCreateDto dto = mock(AdminChallengeCreateDto.class);
 		String imageUrl = "url";
 		챌린지_생성_스텁(dto, imageUrl);
 
 		// when
-		Long result = challengeService.create(dto, ChallengeType.PERSONAL);
+		Long result = challengeService.create(dto, type);
 
 		// then
 		assertThat(result).isEqualTo(1L);
@@ -66,7 +69,7 @@ class ChallengeServiceTest {
 	@Test
 	void 챌린지_조회_후_참여() {
 		// given
-		when(challengeRepository.getById(anyLong())).thenReturn(mockChallenge);
+		when(challengeRepository.findByIdWithThrow(anyLong())).thenReturn(mockChallenge);
 
 		// when
 		challengeService.join(1L, 1L);
@@ -78,7 +81,7 @@ class ChallengeServiceTest {
 	@Test
 	void 챌린지_조회_후_전시() {
 		// given
-		when(challengeRepository.getById(anyLong())).thenReturn(mockChallenge);
+		when(challengeRepository.findByIdWithThrow(anyLong())).thenReturn(mockChallenge);
 
 		// when
 		challengeService.show(1L);
@@ -90,7 +93,7 @@ class ChallengeServiceTest {
 	@Test
 	void 챌린지_조회_후_미전시() {
 		// given
-		when(challengeRepository.getById(anyLong())).thenReturn(mockChallenge);
+		when(challengeRepository.findByIdWithThrow(anyLong())).thenReturn(mockChallenge);
 
 		// when
 		challengeService.hide(1L);
@@ -115,7 +118,7 @@ class ChallengeServiceTest {
 	}
 
 	private void 챌린지_수정_스텁(AdminChallengeUpdateDto dto) {
-		when(challengeRepository.getById(anyLong())).thenReturn(mockChallenge);
+		when(challengeRepository.findByIdWithThrow(anyLong())).thenReturn(mockChallenge);
 		when(mockChallenge.getImageUrl()).thenReturn("before").thenReturn("after");
 		when(dto.info()).thenReturn(mock(ChallengeInfo.class));
 		ChallengeContent content = mock(ChallengeContent.class);
@@ -125,7 +128,7 @@ class ChallengeServiceTest {
 	private void 챌린지_생성_스텁(AdminChallengeCreateDto dto, String imageUrl) {
 		Challenge created = mock(Challenge.class);
 		Challenge saved = mock(Challenge.class);
-		String code = "CH-P-212121";
+		String code = "CH-212121";
 		when(clock.getZone()).thenReturn(ZoneId.of("Asia/Seoul"));
 		when(clock.instant()).thenReturn(Instant.ofEpochSecond(1L));
 		when(sequenceService.generateCode(any(SequenceType.class), any(LocalDateTime.class))).thenReturn(code);

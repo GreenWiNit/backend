@@ -5,7 +5,7 @@ import static org.mockito.Mockito.*;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.EnumSource;
 
 import com.example.green.domain.challenge.entity.challenge.vo.ChallengeContent;
 import com.example.green.domain.challenge.entity.challenge.vo.ChallengeDisplay;
@@ -20,31 +20,14 @@ class ChallengeTest {
 	ChallengeInfo challengeInfo = mock(ChallengeInfo.class);
 	ChallengeContent challengeContent = mock(ChallengeContent.class);
 
-	@Test
-	void 개인_챌린지를_생성_할_수_있다() {
-		// when
-		Challenge result = Challenge.of(challengeCode, challengeInfo, challengeContent, ChallengeType.PERSONAL);
-
-		// then
-		assertThat(result.getType()).isEqualTo(ChallengeType.PERSONAL);
-	}
-
-	@Test
-	void 팀_챌린지도_생성_할_수_있다() {
-		// when
-		Challenge result = Challenge.of(challengeCode, challengeInfo, challengeContent, ChallengeType.TEAM);
-
-		// then
-		assertThat(result.getType()).isEqualTo(ChallengeType.TEAM);
-	}
-
 	@ParameterizedTest
-	@NullAndEmptySource
-	void 챌린지_코드가_없으면_생성할_수_없다(String invalidCode) {
-		// when & then
-		assertThatThrownBy(() -> Challenge.of(invalidCode, challengeInfo, challengeContent, ChallengeType.TEAM))
-			.isInstanceOf(ChallengeException.class)
-			.hasFieldOrPropertyWithValue("exceptionMessage", ChallengeExceptionMessage.CHALLENGE_CODE_BLANK);
+	@EnumSource(ChallengeType.class)
+	void 챌린지를_생성_할_수_있다(ChallengeType type) {
+		// when
+		Challenge result = Challenge.of(challengeCode, challengeInfo, challengeContent, type);
+
+		// then
+		assertThat(result.getType()).isEqualTo(type);
 	}
 
 	@Test
@@ -75,7 +58,7 @@ class ChallengeTest {
 	@Test
 	void 챌린지_정보를_수정한다() {
 		// given
-		ChallengeInfo newInfo = mock(ChallengeInfo.class);
+		ChallengeInfo newInfo = ChallengeInfo.of("challenge", 100);
 		Challenge challenge = Challenge.of(challengeCode, challengeInfo, challengeContent, ChallengeType.TEAM);
 
 		// when
@@ -87,7 +70,7 @@ class ChallengeTest {
 
 	@Test
 	void 챌린지_콘텐츠를_수정한다() {
-		ChallengeContent newContent = mock(ChallengeContent.class);
+		ChallengeContent newContent = ChallengeContent.of("content", "https://newimage.url/new.png");
 		Challenge challenge = Challenge.of(challengeCode, challengeInfo, challengeContent, ChallengeType.TEAM);
 
 		// when
@@ -137,12 +120,14 @@ class ChallengeTest {
 	@Test
 	void 챌린지_이미지_조회시_콘텐츠_이미지_정보를_가져온다() {
 		// given
-		Challenge challenge = Challenge.of(challengeCode, challengeInfo, challengeContent, ChallengeType.TEAM);
+		String imageUrl = "https://newimage.url/new.png";
+		ChallengeContent content = ChallengeContent.of("content", imageUrl);
+		Challenge challenge = Challenge.of(challengeCode, challengeInfo, content, ChallengeType.TEAM);
 
 		// when
 		String result = challenge.getImageUrl();
 
 		// then
-		assertThat(result).isEqualTo(challengeContent.getImageUrl());
+		assertThat(result).isEqualTo(imageUrl);
 	}
 }
