@@ -1,13 +1,19 @@
 package com.example.integration.challenge.query;
 
+import static org.assertj.core.api.Assertions.*;
+
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDetailDtoV2;
 import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDto;
 import com.example.green.domain.challenge.entity.challenge.vo.ChallengeType;
+import com.example.green.domain.challenge.exception.ChallengeException;
+import com.example.green.domain.challenge.exception.ChallengeExceptionMessage;
 import com.example.green.domain.challenge.repository.query.ChallengeQuery;
 import com.example.green.global.api.page.CursorTemplate;
 import com.example.integration.challenge.ChallengeTestDataSource;
@@ -42,11 +48,50 @@ public class ChallengeQueryTest extends BaseIntegrationTest {
 
 	@ParameterizedTest
 	@EnumSource(ChallengeType.class)
-	void 챌린지_조회(ChallengeType type) {
+	void 챌린지_목록_조회(ChallengeType type) {
 		// when
 		CursorTemplate<Long, ChallengeDto> result = challengeQuery.findChallengesByCursor(999L, 20, type);
 
 		// then
 		ChallengeQueryTestHelper.챌린지_조회_검증(result, type);
+	}
+
+	@Test
+	void 미참여_챌린지_상세_조회() {
+		// when
+		ChallengeDetailDtoV2 result = challengeQuery.findChallenge(1L, 1L);
+
+		// then
+		assertThat(result.participating()).isFalse();
+	}
+
+	@Test
+	void 참여_챌린지_상세_조회() {
+		// given
+		dataSource.챌린지_하나_참여(1L, 1L);
+
+		// when
+		ChallengeDetailDtoV2 result = challengeQuery.findChallenge(1L, 1L);
+
+		// then
+		assertThat(result.participating()).isTrue();
+	}
+
+	@Test
+	void 없는_챌린지_상세_조회() {
+		// when & then
+		assertThatThrownBy(() -> challengeQuery.findChallenge(51L, 1L))
+			.isInstanceOf(ChallengeException.class)
+			.hasFieldOrPropertyWithValue("exceptionMessage", ChallengeExceptionMessage.CHALLENGE_NOT_FOUND);
+	}
+
+	@Test
+	void 미공개_챌린지_상세_조회() {
+		dataSource.챌린지_미공개(1L);
+
+		// when & then
+		assertThatThrownBy(() -> challengeQuery.findChallenge(1L, 1L))
+			.isInstanceOf(ChallengeException.class)
+			.hasFieldOrPropertyWithValue("exceptionMessage", ChallengeExceptionMessage.CHALLENGE_NOT_FOUND);
 	}
 }

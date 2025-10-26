@@ -47,4 +47,16 @@ public class ChallengeTestDataSource {
 			challengeRepository.flush();
 		}
 	}
+
+	public void 챌린지_하나_참여(Long id, Long memberId) {
+		Challenge challenge = challengeRepository.findByIdWithThrow(id);
+		challenge.participate(memberId);
+		challengeRepository.flush();
+	}
+
+	public void 챌린지_미공개(Long id) {
+		Challenge challenge = challengeRepository.findByIdWithThrow(id);
+		challenge.hide();
+		challengeRepository.flush();
+	}
 }
