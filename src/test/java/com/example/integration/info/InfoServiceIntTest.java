@@ -64,7 +64,7 @@ class InfoServiceIntTest extends BaseIntegrationTest {
 
 	@AfterEach
 	void tearDown() {
-		infoRepository.deleteAllInBatch();
+		infoRepository.deleteAll();
 	}
 
 	@Nested
@@ -219,7 +219,7 @@ class InfoServiceIntTest extends BaseIntegrationTest {
 		class 디폴트_Entity_생성하지_않음 {
 			@BeforeEach
 			void cleanUpBefore() {
-				jdbcTemplate.execute("TRUNCATE TABLE INFO");
+				jdbcTemplate.execute("TRUNCATE TABLE INFO CASCADE");
 			}
 
 			@Test
