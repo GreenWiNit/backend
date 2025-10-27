@@ -13,7 +13,7 @@ import com.example.green.domain.challenge.entity.challenge.vo.ChallengeType;
 import com.example.green.domain.challenge.service.PersonalChallengeService;
 import com.example.green.domain.challenge.service.TeamChallengeService;
 import com.example.green.global.api.ApiTemplate;
-import com.example.green.global.security.annotation.PublicApi;
+import com.example.green.global.security.annotation.AuthenticatedApi;
 
 import lombok.RequiredArgsConstructor;
 
@@ -26,7 +26,7 @@ public class ChallengeCommandController implements ChallengeCommandControllerDoc
 	private final TeamChallengeService teamChallengeService;
 
 	@PostMapping("/{type}")
-	@PublicApi
+	@AuthenticatedApi
 	public ApiTemplate<Long> create(@PathVariable ChallengeType type, @RequestBody AdminChallengeCreateDto dto) {
 		if (type == ChallengeType.PERSONAL) {
 			Long result = personalChallengeService.create(dto);

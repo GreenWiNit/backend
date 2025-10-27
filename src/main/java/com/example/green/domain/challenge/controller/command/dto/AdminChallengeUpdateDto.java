@@ -28,12 +28,10 @@ public record AdminChallengeUpdateDto(
 	@Positive(message = "챌린지 포인트는 양수이어야 합니다.")
 	BigDecimal challengePoint,
 
-	@Schema(description = "시작 일시", requiredMode = Schema.RequiredMode.REQUIRED)
-	@NotNull(message = "시작 일시는 필수값입니다.")
+	@Schema(description = "시작 일시", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
 	LocalDate beginDate,
 
-	@Schema(description = "종료 일시", requiredMode = Schema.RequiredMode.REQUIRED)
-	@NotNull(message = "종료 일시는 필수값입니다.")
+	@Schema(description = "종료 일시", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
 	LocalDate endDate,
 
 	@Schema(description = "챌린지 설명 및 참여방법", example = "매일 30분 이상 운동하기")
@@ -55,10 +53,7 @@ public record AdminChallengeUpdateDto(
 		@JsonProperty("challengeContent") String challengeContent,
 		@JsonProperty("challengeImageUrl") String challengeImageUrl) {
 
-		this(challengeName, challengePoint,
-			beginDateTime.toLocalDate(),
-			endDateTime.toLocalDate(),
-			challengeContent, challengeImageUrl);
+		this(challengeName, challengePoint, LocalDate.now(), LocalDate.now(), challengeContent, challengeImageUrl);
 	}
 
 	public ChallengeInfo info() {

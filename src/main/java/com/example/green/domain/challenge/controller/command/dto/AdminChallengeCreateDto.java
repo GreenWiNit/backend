@@ -61,11 +61,7 @@ public record AdminChallengeCreateDto(
 		@JsonProperty("challengeContent") String challengeContent,
 		@JsonProperty("challengeImageUrl") String challengeImageUrl) {
 
-		this(challengeName, challengePoint,
-			null,
-			null,
-			challengeContent, challengeImageUrl,
-			ChallengeDisplay.VISIBLE);
+		this(challengeName, challengePoint, null, null, challengeContent, challengeImageUrl, ChallengeDisplay.VISIBLE);
 	}
 
 	public TeamChallenge toTeamChallenge(String challengeCode) {

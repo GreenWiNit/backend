@@ -70,7 +70,7 @@ public class TeamChallengeService {
 	public void update(Long challengeId, AdminChallengeUpdateDto dto) {
 		TeamChallenge teamChallenge = teamChallengeQuery.getTeamChallengeById(challengeId);
 		teamChallenge.updateBasicInfo(
-			dto.challengeName(), dto.challengePoint(), dto.beginDate(), dto.endDate(), dto.challengeContent()
+			dto.challengeName(), dto.challengePoint(), dto.challengeContent()
 		);
 
 		String beforeImageUrl = teamChallenge.getChallengeImage();

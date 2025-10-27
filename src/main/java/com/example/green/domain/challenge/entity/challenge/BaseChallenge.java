@@ -144,16 +144,12 @@ public abstract class BaseChallenge extends BaseEntity {
 	public void updateBasicInfo(
 		String challengeName,
 		BigDecimal challengePoint,
-		LocalDate beginDate,
-		LocalDate endDate,
 		String challengeContent
 	) {
 		validateEmptyString(challengeName, "챌린지명은 필수값입니다.");
 		validateNullData(challengePoint, "챌린지 포인트는 필수값입니다.");
 		this.challengeName = challengeName;
 		this.challengePoint = challengePoint;
-		this.beginDate = beginDate;
-		this.endDate = endDate;
 		this.challengeContent = challengeContent;
 	}
 
