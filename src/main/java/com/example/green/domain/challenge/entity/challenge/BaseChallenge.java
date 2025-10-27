@@ -49,10 +49,8 @@ public abstract class BaseChallenge extends BaseEntity {
 	@Column(columnDefinition = "TEXT")
 	private String challengeContent;
 
-	@Column(nullable = false)
 	private LocalDate beginDate;
 
-	@Column(nullable = false)
 	private LocalDate endDate;
 
 	@Enumerated(EnumType.STRING)
@@ -89,9 +87,6 @@ public abstract class BaseChallenge extends BaseEntity {
 		if (challengePoint.compareTo(BigDecimal.ZERO) < 0) {
 			throw new ChallengeException(ChallengeExceptionMessage.INVALID_MINIMUM_POINT);
 		}
-		if (beginDate.isAfter(endDate)) {
-			throw new ChallengeException(ChallengeExceptionMessage.INVALID_CHALLENGE_PERIOD);
-		}
 		this.challengeCode = challengeCode;
 		this.challengeName = challengeName;
 		this.challengeImage = challengeImage;
@@ -118,8 +113,6 @@ public abstract class BaseChallenge extends BaseEntity {
 		validateEmptyString(challengeName, "챌린지명은 필수값입니다.");
 		validateEmptyString(challengeImage, "챌린지 이미지는 필수값입니다.");
 		validateNullData(challengeContent, "챌린지 내용은 필수값입니다.");
-		validateNullData(beginDate, "시작일시는 필수값입니다.");
-		validateNullData(endDate, "종료일시는 필수값입니다.");
 		validateNullData(challengeType, "챌린지 타입은 필수값입니다.");
 		validateNullData(displayStatus, "전시 여부 설정은 필수 값입니다.");
 	}
@@ -132,9 +125,7 @@ public abstract class BaseChallenge extends BaseEntity {
 
 	public boolean isActive(LocalDate now) {
 		return challengeStatus == ChallengeStatus.PROCEEDING
-			&& displayStatus == ChallengeDisplay.VISIBLE
-			&& !now.isBefore(beginDate)
-			&& !now.isAfter(endDate);
+			&& displayStatus == ChallengeDisplay.VISIBLE;
 	}
 
 	public void show() {
@@ -153,22 +144,12 @@ public abstract class BaseChallenge extends BaseEntity {
 	public void updateBasicInfo(
 		String challengeName,
 		BigDecimal challengePoint,
-		LocalDate beginDate,
-		LocalDate endDate,
 		String challengeContent
 	) {
 		validateEmptyString(challengeName, "챌린지명은 필수값입니다.");
 		validateNullData(challengePoint, "챌린지 포인트는 필수값입니다.");
-		validateNullData(beginDate, "시작일시는 필수값입니다.");
-		validateNullData(endDate, "종료일시는 필수값입니다.");
-		if (beginDate.isAfter(endDate)) {
-			throw new ChallengeException(ChallengeExceptionMessage.INVALID_CHALLENGE_PERIOD);
-		}
-
 		this.challengeName = challengeName;
 		this.challengePoint = challengePoint;
-		this.beginDate = beginDate;
-		this.endDate = endDate;
 		this.challengeContent = challengeContent;
 	}
 
