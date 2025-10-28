@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.green.domain.challenge.entity.challenge.QBaseChallengeParticipation;
+import com.example.green.domain.dashboard.rankingmodule.dto.LoadWeeklyRankingResponse;
+import com.example.green.domain.dashboard.rankingmodule.dto.TopMemberPointResponseDto;
 import com.example.green.domain.dashboard.rankingmodule.entity.WeeklyRanking;
 import com.example.green.domain.dashboard.rankingmodule.exception.WeeklyRankingException;
 import com.example.green.domain.dashboard.rankingmodule.message.WeeklyRankingExceptionMessage;
@@ -60,9 +62,43 @@ public class WeeklyRankingService {
 				.weekStart(weekStart)
 				.weekEnd(weekStart.plusDays(6))
 				.build();
-			
+
 			weeklyRankingRepository.save(weeklyRanking);
 		}
+	}
+
+	public LoadWeeklyRankingResponse loadWeeklyRanking(LocalDate weekStart, int topN, Long memberId) {
+
+		// 상위 N명 랭킹 엔티티 조회
+		List<WeeklyRanking> topMembersFromDb = weeklyRankingRepository.findTopNByWeekStartOrderByRankAsc(weekStart,
+			topN);
+
+		// 엔티티 → DTO 변환
+		List<TopMemberPointResponseDto> topMembersDto = topMembersFromDb.stream()
+			.map(r -> new TopMemberPointResponseDto(
+				r.getMemberId(),
+				r.getMemberName(),
+				r.getTotalPoint(),
+				r.getCertificationCount(),
+				r.getWeekStart(),
+				r.getWeekEnd()
+			))
+			.toList();
+
+		// 로그인 유저 데이터 조회
+		WeeklyRanking myRankingEntity = weeklyRankingRepository.myData(weekStart, memberId)
+			.orElseThrow(() -> new WeeklyRankingException(WeeklyRankingExceptionMessage.NOT_FOUND_USER));
+
+		TopMemberPointResponseDto myData = new TopMemberPointResponseDto(
+			myRankingEntity.getMemberId(),
+			myRankingEntity.getMemberName(),
+			myRankingEntity.getTotalPoint(),
+			myRankingEntity.getCertificationCount(),
+			myRankingEntity.getWeekStart(),
+			myRankingEntity.getWeekEnd()
+		);
+
+		return new LoadWeeklyRankingResponse(topMembersDto, myData);
 	}
 
 }

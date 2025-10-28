@@ -3,8 +3,11 @@ package com.example.green.domain.dashboard.rankingmodule.repository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import com.example.green.domain.challenge.entity.challenge.QBaseChallengeParticipation;
+import com.example.green.domain.dashboard.rankingmodule.entity.QWeeklyRanking;
+import com.example.green.domain.dashboard.rankingmodule.entity.WeeklyRanking;
 import com.example.green.domain.member.entity.QMember;
 import com.example.green.domain.point.entity.QPointTransaction;
 import com.example.green.domain.point.entity.vo.TransactionType;
@@ -52,6 +55,22 @@ public class WeeklyRankingRepositoryImpl implements WeeklyRankingRepositoryCusto
 			)
 			.limit(topN)
 			.fetch();
-		
+
 	}
+
+	@Override
+	public Optional<WeeklyRanking> myData(LocalDate weekStart, Long memberId) {
+		QWeeklyRanking weeklyRanking = QWeeklyRanking.weeklyRanking;
+
+		WeeklyRanking myRanking = queryFactory
+			.selectFrom(weeklyRanking)
+			.where(
+				weeklyRanking.weekStart.eq(weekStart)
+					.and(weeklyRanking.memberId.eq(memberId))
+			)
+			.fetchOne();
+
+		return Optional.ofNullable(myRanking);
+	}
+
 }
