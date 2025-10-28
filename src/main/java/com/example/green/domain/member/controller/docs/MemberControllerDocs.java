@@ -8,8 +8,10 @@ import com.example.green.domain.member.dto.NicknameCheckRequestDto;
 import com.example.green.domain.member.dto.NicknameCheckResponseDto;
 import com.example.green.domain.member.dto.ProfileUpdateRequestDto;
 import com.example.green.domain.member.dto.ProfileUpdateResponseDto;
+import com.example.green.domain.member.dto.UserSummaryDto;
 import com.example.green.domain.member.dto.WithdrawRequestDto;
 import com.example.green.global.api.ApiTemplate;
+import com.example.green.global.api.page.PageTemplate;
 import com.example.green.global.security.PrincipalDetails;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,6 +26,77 @@ import jakarta.validation.Valid;
 
 @Tag(name = "[멤버-클라이언트] 멤버(회원) 관련 API", description = "회원 프로필 관리 API")
 public interface MemberControllerDocs {
+
+	@Operation(
+		summary = "사용자 목록 조회",
+		description = """
+			모든 활성 사용자 목록을 페이지네이션으로 조회합니다.
+
+			## 조회 정보
+			- 회원 ID
+			- 닉네임
+			- 프로필 이미지 URL
+			- 자기 자신 여부 (로그인 시에만 true/false 판단)
+			- 총 챌린지 인증 횟수
+			- 현재 보유 포인트
+
+			## 인증 요구사항
+			- 인증 없이 조회 가능 (Public API)
+			- 로그인 시 자기 자신 여부(isMe) 판단 가능
+
+			## 정렬 및 필터링
+			- 최신 가입자 순으로 정렬 (ID 역순)
+			- NORMAL 상태 회원만 조회
+			- 탈퇴한 회원은 제외
+			"""
+	)
+	@ApiResponses(value = {
+		@ApiResponse(
+			responseCode = "200",
+			description = "사용자 목록 조회 성공",
+			content = @Content(
+				mediaType = "application/json",
+				schema = @Schema(implementation = ApiTemplate.class),
+				examples = @ExampleObject(value = """
+					{
+						"success": true,
+						"message": "사용자 목록 조회에 성공했습니다.",
+						"result": {
+							"totalElements": 100,
+							"totalPages": 10,
+							"currentPage": 1,
+							"pageSize": 10,
+							"hasNext": true,
+							"content": [
+								{
+									"userId": 1,
+									"nickname": "환경지킴이",
+									"profileImageUrl": "https://example.com/profile.jpg",
+									"isMe": false,
+									"totalCertificationCount": 42,
+									"currentPoints": 1500.00
+								},
+								{
+									"userId": 2,
+									"nickname": "그린위닛",
+									"profileImageUrl": null,
+									"isMe": true,
+									"totalCertificationCount": 15,
+									"currentPoints": 500.00
+								}
+							]
+						}
+					}
+					""")
+			))
+	})
+	ApiTemplate<PageTemplate<UserSummaryDto>> getUsers(
+		@Parameter(description = "페이지 번호 (1부터 시작, 기본값: 1)", example = "1")
+		Integer page,
+		@Parameter(description = "페이지 당 데이터 개수 (기본값: 10)", example = "10")
+		Integer size
+	);
+
 
     @Operation(
         summary = "현재 사용자 정보 조회",

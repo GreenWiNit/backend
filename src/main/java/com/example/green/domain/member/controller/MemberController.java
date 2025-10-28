@@ -47,6 +47,7 @@ public class MemberController implements MemberControllerDocs {
 	private final MemberQueryService memberQueryService;
 	private final WithdrawService withdrawService;
 
+	@Override
 	@PublicApi(reason = "누구나 사용자 목록을 조회할 수 있습니다")
 	@GetMapping("/api/users")
 	public ApiTemplate<PageTemplate<UserSummaryDto>> getUsers(
