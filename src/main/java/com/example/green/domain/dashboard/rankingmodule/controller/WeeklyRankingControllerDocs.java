@@ -3,12 +3,14 @@ package com.example.green.domain.dashboard.rankingmodule.controller;
 import java.time.LocalDate;
 
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.green.domain.dashboard.rankingmodule.dto.LoadWeeklyRankingResponse;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.docs.ApiErrorStandard;
 import com.example.green.global.error.dto.DetailedExceptionResponse;
+import com.example.green.global.security.PrincipalDetails;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -63,7 +65,8 @@ public interface WeeklyRankingControllerDocs {
 			requiredMode = Schema.RequiredMode.REQUIRED
 		)
 		@RequestParam("weekStart")
-		@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate weekStart
-	);
+		@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate weekStart,
 
+		@AuthenticationPrincipal PrincipalDetails principal
+	);
 }

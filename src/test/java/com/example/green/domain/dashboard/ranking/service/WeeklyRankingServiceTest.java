@@ -22,7 +22,7 @@ import com.example.green.domain.dashboard.rankingmodule.message.WeeklyRankingExc
 import com.example.green.domain.dashboard.rankingmodule.repository.WeeklyRankingRepository;
 import com.example.green.domain.dashboard.rankingmodule.service.WeeklyRankingService;
 
-public class WeeklyRankingServiceTest {
+class WeeklyRankingServiceTest {
 
 	@Mock
 	private WeeklyRankingRepository weeklyRankingRepository;
