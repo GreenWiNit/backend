@@ -25,7 +25,7 @@ public class WeeklyRankingController {
 
 	private final WeeklyRankingService weeklyRankingService;
 
-	@AuthenticatedApi(reason = "")
+	@AuthenticatedApi(reason = "상위 8명 주간 랭킹 조회")
 	@GetMapping("/weekly-ranking")
 	public LoadWeeklyRankingResponse getWeeklyRanking(
 		@RequestParam("weekStart") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate weekStart,
