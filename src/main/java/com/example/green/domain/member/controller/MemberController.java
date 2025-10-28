@@ -49,7 +49,7 @@ public class MemberController implements MemberControllerDocs {
 
 	@Override
 	@PublicApi(reason = "누구나 사용자 목록을 조회할 수 있습니다")
-	@GetMapping("/api/users")
+	@GetMapping
 	public ApiTemplate<PageTemplate<UserSummaryDto>> getUsers(
 		@RequestParam(required = false) Integer page,
 		@RequestParam(required = false, defaultValue = "10") Integer size

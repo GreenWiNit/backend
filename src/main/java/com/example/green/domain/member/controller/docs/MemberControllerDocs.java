@@ -28,9 +28,11 @@ import jakarta.validation.Valid;
 public interface MemberControllerDocs {
 
 	@Operation(
-		summary = "사용자 목록 조회",
+		summary = "회원 목록 조회",
 		description = """
-			모든 활성 사용자 목록을 페이지네이션으로 조회합니다.
+			모든 활성 회원 목록을 페이지네이션으로 조회합니다.
+
+			**경로**: `GET /api/members`
 
 			## 조회 정보
 			- 회원 ID
@@ -53,7 +55,7 @@ public interface MemberControllerDocs {
 	@ApiResponses(value = {
 		@ApiResponse(
 			responseCode = "200",
-			description = "사용자 목록 조회 성공",
+			description = "회원 목록 조회 성공",
 			content = @Content(
 				mediaType = "application/json",
 				schema = @Schema(implementation = ApiTemplate.class),
