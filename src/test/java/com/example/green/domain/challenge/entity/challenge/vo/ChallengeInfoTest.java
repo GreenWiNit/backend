@@ -12,35 +12,24 @@ import com.example.green.domain.challenge.exception.ChallengeExceptionMessage;
 class ChallengeInfoTest {
 
 	@Test
-	void 챌린지_정보는_코드_이름_포인트로_구성된다() {
+	void 챌린지_정보는_이름_포인트로_구성된다() {
 		// given
-		String code = "code";
 		String name = "challengeName";
 		Integer point = 1000;
 
 		// when
-		ChallengeInfo info = ChallengeInfo.of(code, name, point);
+		ChallengeInfo info = ChallengeInfo.of(name, point);
 
 		// then
-		assertThat(info.getCode()).isEqualTo(code);
 		assertThat(info.getName()).isEqualTo(name);
 		assertThat(info.getPoint()).isEqualTo(point);
 	}
 
 	@ParameterizedTest
 	@NullAndEmptySource
-	void 챌린지_코드_정보는_필수다(String invalidCode) {
-		// when & then
-		assertThatThrownBy(() -> ChallengeInfo.of(invalidCode, "challengeName", 1000))
-			.isInstanceOf(ChallengeException.class)
-			.hasFieldOrPropertyWithValue("exceptionMessage", ChallengeExceptionMessage.CHALLENGE_CODE_BLANK);
-	}
-
-	@ParameterizedTest
-	@NullAndEmptySource
 	void 챌린지_이름_정보는_비어_있을_수_없다(String emptyName) {
 		// when & then
-		assertThatThrownBy(() -> ChallengeInfo.of("code", emptyName, 1000))
+		assertThatThrownBy(() -> ChallengeInfo.of(emptyName, 1000))
 			.isInstanceOf(ChallengeException.class)
 			.hasFieldOrPropertyWithValue("exceptionMessage", ChallengeExceptionMessage.CHALLENGE_NAME_BLANK);
 	}
@@ -51,7 +40,7 @@ class ChallengeInfoTest {
 		String challengeName = "1".repeat(91);
 
 		// when & then
-		assertThatThrownBy(() -> ChallengeInfo.of("code", challengeName, 1000))
+		assertThatThrownBy(() -> ChallengeInfo.of(challengeName, 1000))
 			.isInstanceOf(ChallengeException.class)
 			.hasFieldOrPropertyWithValue("exceptionMessage", ChallengeExceptionMessage.CHALLENGE_NAME_LENGTH_EXCEEDED);
 	}
@@ -59,7 +48,7 @@ class ChallengeInfoTest {
 	@Test
 	void 챌린지_포인트_정보는_필수다() {
 		// when & then
-		assertThatThrownBy(() -> ChallengeInfo.of("code", "challengeName", null))
+		assertThatThrownBy(() -> ChallengeInfo.of("challengeName", null))
 			.isInstanceOf(ChallengeException.class)
 			.hasFieldOrPropertyWithValue("exceptionMessage", ChallengeExceptionMessage.CHALLENGE_POINT_BLANK);
 	}
@@ -70,7 +59,7 @@ class ChallengeInfoTest {
 		Integer negativePoint = -1;
 
 		// when & then
-		assertThatThrownBy(() -> ChallengeInfo.of("code", "challengeName", negativePoint))
+		assertThatThrownBy(() -> ChallengeInfo.of("challengeName", negativePoint))
 			.isInstanceOf(ChallengeException.class)
 			.hasFieldOrPropertyWithValue("exceptionMessage", ChallengeExceptionMessage.POINT_LESS_THAN_ZERO);
 	}

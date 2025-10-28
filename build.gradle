@@ -119,7 +119,7 @@ def findQClassPatterns() {
 // Jacoco 제외 항목 추가
 def createFilteredClassDirectories() {
     def defaultExcludedPatterns = [
-            '**/GreenApplication.class',
+            '**/GreenApplication.class', '**/dto/**', '**/command/**', '**/result/**',
             '**/infra/**', '**/config/**', '**/docs/**', '**/com/example/green/**/example/**'
     ]
 

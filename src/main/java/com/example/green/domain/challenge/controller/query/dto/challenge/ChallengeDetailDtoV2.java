@@ -3,6 +3,9 @@ package com.example.green.domain.challenge.controller.query.dto.challenge;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import com.example.green.domain.challenge.entity.challenge.vo.ChallengeContent;
+import com.example.green.domain.challenge.entity.challenge.vo.ChallengeInfo;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "챌린지 상세 응답")
@@ -24,4 +27,9 @@ public record ChallengeDetailDtoV2(
 	@Schema(description = "참여 여부")
 	boolean participating
 ) {
+
+	public ChallengeDetailDtoV2(Long id, ChallengeInfo info, ChallengeContent content, boolean participating) {
+		this(id, info.getName(), null, null, content.getImageUrl(), content.getContent(),
+			BigDecimal.valueOf(info.getPoint()), participating);
+	}
 }
