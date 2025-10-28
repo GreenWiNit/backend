@@ -1,4 +1,4 @@
-package com.example.green.domain.dashboard.rankingmodule.controller.message;
+package com.example.green.domain.dashboard.rankingmodule.message;
 
 import com.example.green.global.api.ResponseMessage;
 

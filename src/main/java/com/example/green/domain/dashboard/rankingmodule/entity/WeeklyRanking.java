@@ -3,6 +3,8 @@ package com.example.green.domain.dashboard.rankingmodule.entity;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import com.example.green.domain.common.TimeBaseEntity;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -16,37 +18,36 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Getter
 @Entity
-@Builder
+
 @Table(
 	name = "weekly_ranking",
 	uniqueConstraints = @UniqueConstraint(columnNames = {"member_id", "week_start"})
 )
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@NoArgsConstructor
-public class WeeklyRanking {
+@Getter
+@Builder
+public class WeeklyRanking extends TimeBaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(nullable = false)
 	private Long memberId;
 
-	@Column(nullable = false)
 	private String memberName;
 
-	@Column(nullable = false)
-	private BigDecimal totalEarned;
+	private BigDecimal totalPoint;
 
-	@Column(nullable = false)
 	private int certificationCount;
 
-	@Column(nullable = false)
-	private String rank;
+	private int rank;
 
 	@Column(name = "week_start", nullable = false)
 	private LocalDate weekStart;
+
+	@Column(name = "week_end", nullable = false)
+	private LocalDate weekEnd;
 
 }

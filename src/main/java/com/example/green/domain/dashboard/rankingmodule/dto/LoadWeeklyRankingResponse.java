@@ -5,7 +5,7 @@ import java.util.List;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "주간 포인트 랭킹 응답")
-public record WeeklyRankingResponse(
+public record LoadWeeklyRankingResponse(
 	@Schema(description = "상위 회원 리스트")
 	List<TopMemberPointResponseDto> topMembers,
 
