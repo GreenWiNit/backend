@@ -1,14 +1,18 @@
 package com.example.green.domain.member.controller;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 
 import com.example.green.domain.member.controller.docs.MemberControllerDocs;
@@ -18,11 +22,14 @@ import com.example.green.domain.member.dto.NicknameCheckRequestDto;
 import com.example.green.domain.member.dto.NicknameCheckResponseDto;
 import com.example.green.domain.member.dto.ProfileUpdateRequestDto;
 import com.example.green.domain.member.dto.ProfileUpdateResponseDto;
+import com.example.green.domain.member.dto.UserSummaryDto;
 import com.example.green.domain.member.dto.WithdrawRequestDto;
 import com.example.green.domain.member.entity.Member;
+import com.example.green.domain.member.service.MemberQueryService;
 import com.example.green.domain.member.service.MemberService;
 import com.example.green.domain.member.service.WithdrawService;
 import com.example.green.global.api.ApiTemplate;
+import com.example.green.global.api.page.PageTemplate;
 import com.example.green.global.security.PrincipalDetails;
 import com.example.green.global.security.annotation.AuthenticatedApi;
 import com.example.green.global.security.annotation.PublicApi;
@@ -37,7 +44,23 @@ import lombok.extern.slf4j.Slf4j;
 public class MemberController implements MemberControllerDocs {
 
 	private final MemberService memberService;
+	private final MemberQueryService memberQueryService;
 	private final WithdrawService withdrawService;
+
+	@PublicApi(reason = "누구나 사용자 목록을 조회할 수 있습니다")
+	@GetMapping("/api/users")
+	public ApiTemplate<PageTemplate<UserSummaryDto>> getUsers(
+		@RequestParam(required = false) Integer page,
+		@RequestParam(required = false, defaultValue = "10") Integer size
+	) {
+		Long currentMemberId = getCurrentMemberIdOrNull();
+
+		PageTemplate<UserSummaryDto> response = memberQueryService.getUsersSummary(page, size, currentMemberId);
+
+		log.info("[USER_LIST] 사용자 목록 조회: page={}, size={}, currentMemberId={}", page, size, currentMemberId);
+
+		return ApiTemplate.ok(MemberResponseMessage.USER_LIST_RETRIEVED, response);
+	}
 
 	@AuthenticatedApi(reason = "자신의 정보를 조회할 수 있습니다")
 	@GetMapping("/me")
@@ -165,8 +188,17 @@ public class MemberController implements MemberControllerDocs {
 
 		withdrawService.withdrawMemberWithReason(memberKey, withdrawRequest);
 
-		log.info("[WITHDRAW_V2] 회원 탈퇴 완료 - memberKey: {}, reasonTypes: {}", 
+		log.info("[WITHDRAW_V2] 회원 탈퇴 완료 - memberKey: {}, reasonTypes: {}",
 				 memberKey, withdrawRequest.reasonTypes());
 		return ApiTemplate.ok(MemberResponseMessage.MEMBER_WITHDRAWN);
+	}
+
+	@Nullable
+	private Long getCurrentMemberIdOrNull() {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		if (auth != null && auth.getPrincipal() instanceof PrincipalDetails details) {
+			return details.getMemberId();
+		}
+		return null;
 	}
 }
