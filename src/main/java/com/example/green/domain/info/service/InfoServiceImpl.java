@@ -64,7 +64,9 @@ public class InfoServiceImpl implements InfoService {
 		InfoEntity infoEntity = infoRepository.save(saveRequest.toEntity());
 
 		// 모든 이미지 URL에 대해 사용 확인
-		saveRequest.imageUrls().forEach(fileClient::confirmUsingImage);
+		if (saveRequest.imageUrls() != null && !saveRequest.imageUrls().isEmpty()) {
+			saveRequest.imageUrls().forEach(fileClient::confirmUsingImage);
+		}
 
 		log.info("[InfoServiceImpl] 정보공유 등록합니다. 정보공유 번호: {}", infoEntity.getId());
 		return InfoDetailResponseByAdmin.from(infoEntity);
