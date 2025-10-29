@@ -1,6 +1,7 @@
 package com.example.green.domain.dashboard.rankingmodule.service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -45,9 +46,11 @@ public class WeeklyRankingService {
 		for (Tuple tuple : topMembers) {
 			boolean hasNull = Arrays.stream(tuple.toArray()).anyMatch(v -> v == null);
 			if (hasNull) {
-				throw new WeeklyRankingException(WeeklyRankingExceptionMessage.VALIDATION_NULL_OR_BLANK_);
+				throw new WeeklyRankingException(WeeklyRankingExceptionMessage.VALIDATION_NULL_OR_BLANK);
 			}
 		}
+
+		List<WeeklyRanking> rankings = new ArrayList<>();
 
 		for (int i = 0; i < topMembers.size(); i++) {
 			Tuple rankData = topMembers.get(i);
@@ -63,8 +66,9 @@ public class WeeklyRankingService {
 				.weekEnd(weekStart.plusDays(6))
 				.build();
 
-			weeklyRankingRepository.save(weeklyRanking);
+			rankings.add(weeklyRanking);
 		}
+		weeklyRankingRepository.saveAll(rankings);
 	}
 
 	public LoadWeeklyRankingResponse loadWeeklyRanking(LocalDate weekStart, int topN, Long memberId) {
