@@ -7,12 +7,14 @@ import org.springframework.boot.autoconfigure.mail.MailProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 @Configuration
 @EnableConfigurationProperties(MailProperties.class)
 public class ImapConfig {
 
 	@Bean
+	@Primary
 	public Properties imapConnectionProperties(MailProperties mailProperties) {
 		Properties props = new Properties();
 		props.put("mail.store.protocol", "imaps");
