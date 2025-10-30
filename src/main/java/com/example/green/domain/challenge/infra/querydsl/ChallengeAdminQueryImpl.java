@@ -71,7 +71,10 @@ public class ChallengeAdminQueryImpl implements ChallengeAdminQuery {
 		if (type == ChallengeType.TEAM) {
 			List<Long> challengeIds = result.stream().map(AdminChallengesDto::getId).toList();
 			Map<Long, Long> countByTeamChallenge = challengeGroupQuery.countByChallengeIds(challengeIds);
-			result.forEach(challenge -> challenge.setTeamCount(countByTeamChallenge.get(challenge.getId())));
+			result.forEach(challenge -> {
+				Long teamCount = countByTeamChallenge.getOrDefault(challenge.getId(), 0L);
+				challenge.setTeamCount(teamCount);
+			});
 		}
 	}
 }
