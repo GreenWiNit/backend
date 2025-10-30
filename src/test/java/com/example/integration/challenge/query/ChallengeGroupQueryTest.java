@@ -10,6 +10,7 @@ import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.green.domain.challenge.entity.group.ChallengeGroup;
 import com.example.green.domain.challenge.entity.group.GroupAddress;
@@ -19,6 +20,7 @@ import com.example.green.domain.challenge.repository.ChallengeGroupRepository;
 import com.example.green.domain.challenge.repository.query.ChallengeGroupQuery;
 import com.example.integration.common.BaseIntegrationTest;
 
+@Transactional
 public class ChallengeGroupQueryTest extends BaseIntegrationTest {
 
 	@Autowired
@@ -29,7 +31,7 @@ public class ChallengeGroupQueryTest extends BaseIntegrationTest {
 
 	@BeforeEach
 	void setUp() {
-		challengeGroupRepository.deleteAllInBatch();
+		challengeGroupRepository.deleteAll();
 		Long id = 0L;
 		List<ChallengeGroup> challengeGroups = new ArrayList<>();
 		for (int i = 1; i <= 50; i++) {
