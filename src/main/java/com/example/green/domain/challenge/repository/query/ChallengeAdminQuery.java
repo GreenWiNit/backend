@@ -15,9 +15,10 @@ public interface ChallengeAdminQuery {
 	// 팀 & 개인 챌린지 페이지 조회
 	PageTemplate<AdminChallengesDto> findChallengePage(Integer page, Integer size, ChallengeType type);
 
-	List<AdminChallengesDto> findChallengePageExcel();
+	List<AdminChallengesDto> findChallengePageExcel(ChallengeType type);
 
 	PageTemplate<AdminPersonalParticipationDto> findParticipantByChallenge(Long id, Integer page, Integer size);
 
 	List<AdminPersonalParticipationDto> findParticipantExcelByChallenge(Long id);
+
 }
