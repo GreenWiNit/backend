@@ -2,6 +2,7 @@ package com.example.green.domain.challenge.repository.query;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 
 import com.example.green.domain.challenge.controller.query.dto.challenge.AdminChallengeGroupDetailDto;
 import com.example.green.domain.challenge.controller.query.dto.challenge.AdminTeamParticipantDto;
@@ -39,4 +40,6 @@ public interface ChallengeGroupQuery {
 	void validateActivityDateParticipation(Long memberId, Long challengeId, LocalDate activityDate);
 
 	ChallengeGroupParticipation getChallengeParticipation(Long groupId, Long memberId);
+
+	Map<Long, Long> countByChallengeIds(List<Long> challengeIds);
 }

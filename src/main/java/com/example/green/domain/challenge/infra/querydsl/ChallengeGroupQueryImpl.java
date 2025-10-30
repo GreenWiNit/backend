@@ -125,4 +125,9 @@ public class ChallengeGroupQueryImpl implements ChallengeGroupQuery {
 		return challengeGroupRepository.findParticipant(groupId, memberId)
 			.orElseThrow(() -> new ChallengeException(ChallengeExceptionMessage.INVALID_GROUP_MEMBERSHIP));
 	}
+
+	@Override
+	public Map<Long, Long> countByChallengeIds(List<Long> challengeIds) {
+		return executor.executeCountByChallengeIds(challengeIds);
+	}
 }

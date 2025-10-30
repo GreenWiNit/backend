@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import com.example.green.domain.challenge.entity.challenge.Challenge;
+import com.example.green.domain.challenge.entity.challenge.vo.ChallengeType;
 import com.example.green.domain.challenge.exception.ChallengeException;
 
 public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
@@ -24,4 +25,9 @@ public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
 		AND p.challenge.display = 'VISIBLE'
 		""")
 	Optional<Challenge> findChallengeByMembership(Long challengeId, Long memberId);
+
+	long countChallengeByType(ChallengeType type);
+
+	@Query("SELECT COUNT(p) FROM Participation p WHERE p.challenge.id = :challengeId")
+	long countParticipantByChallenge(Long challengeId);
 }

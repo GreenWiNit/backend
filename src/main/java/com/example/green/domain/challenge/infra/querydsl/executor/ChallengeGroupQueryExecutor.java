@@ -4,6 +4,7 @@ import static com.example.green.domain.challenge.entity.challenge.QTeamChallenge
 import static com.example.green.domain.challenge.entity.group.QChallengeGroup.*;
 import static com.example.green.domain.challenge.entity.group.QChallengeGroupParticipation.*;
 import static com.example.green.domain.challenge.infra.querydsl.projections.ChallengeGroupProjections.*;
+import static com.querydsl.core.group.GroupBy.*;
 
 import java.util.List;
 import java.util.Map;
@@ -106,5 +107,13 @@ public class ChallengeGroupQueryExecutor {
 			.on(teamChallengeParticipation.teamChallenge.id.eq(challengeId)
 				.and(teamChallengeParticipation.memberId.eq(challengeGroupParticipation.memberId)))
 			.where(challengeGroup.teamChallengeId.eq(challengeId));
+	}
+
+	public Map<Long, Long> executeCountByChallengeIds(List<Long> challengeIds) {
+		return queryFactory.select(challengeGroup.teamChallengeId, challengeGroup.count())
+			.from(challengeGroup)
+			.where(challengeGroup.teamChallengeId.in(challengeIds))
+			.groupBy(challengeGroup.teamChallengeId)
+			.transform(groupBy(challengeGroup.teamChallengeId).as(challengeGroup.count()));
 	}
 }

@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import com.example.green.domain.challenge.entity.challenge.BaseChallenge;
+import com.example.green.domain.challenge.entity.challenge.Challenge;
 import com.example.green.domain.challenge.entity.challenge.vo.ChallengeDisplay;
 import com.example.green.domain.challenge.entity.challenge.vo.ChallengeType;
 
@@ -54,6 +55,20 @@ public record AdminChallengeDetailDto(
 			challenge.getDisplayStatus(),
 			challenge.getChallengeImage(),
 			challenge.getChallengeContent()
+		);
+	}
+
+	public static AdminChallengeDetailDto from(Challenge challenge) {
+		return new AdminChallengeDetailDto(
+			challenge.getId(),
+			challenge.getCode(),
+			challenge.getInfo().getName(),
+			challenge.getType(),
+			BigDecimal.valueOf(challenge.getInfo().getPoint()),
+			null, null,
+			challenge.getDisplay(),
+			challenge.getImageUrl(),
+			challenge.getContent().getContent()
 		);
 	}
 }
