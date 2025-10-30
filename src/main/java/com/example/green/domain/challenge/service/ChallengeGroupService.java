@@ -14,7 +14,6 @@ import com.example.green.domain.challenge.exception.ChallengeException;
 import com.example.green.domain.challenge.exception.ChallengeExceptionMessage;
 import com.example.green.domain.challenge.repository.ChallengeGroupRepository;
 import com.example.green.domain.challenge.repository.query.ChallengeGroupQuery;
-import com.example.green.domain.challenge.repository.query.TeamChallengeQuery;
 import com.example.green.domain.common.sequence.SequenceService;
 import com.example.green.domain.common.sequence.SequenceType;
 import com.example.green.global.utils.TimeUtils;
@@ -31,12 +30,10 @@ public class ChallengeGroupService {
 	private final TimeUtils timeUtils;
 	private final SequenceService sequenceService;
 	private final ChallengeGroupQuery challengeGroupQuery;
-	private final TeamChallengeQuery teamChallengeQuery;
 	private final ChallengeGroupRepository challengeGroupRepository;
 
 	public Long create(Long challengeId, Long leaderId, ChallengeGroupCreateDto dto) {
 		challengeGroupQuery.validateActivityDateParticipation(leaderId, challengeId, dto.challengeDate());
-		teamChallengeQuery.validateGroupPeriod(challengeId, dto.challengeDate());
 		String teamCode = sequenceService.generateCode(SequenceType.TEAM_CHALLENGE_GROUP, timeUtils.now());
 		ChallengeGroup challengeGroup = dto.toEntity(teamCode, challengeId, leaderId);
 		ChallengeGroup savedChallengeGroup = challengeGroupRepository.save(challengeGroup);
