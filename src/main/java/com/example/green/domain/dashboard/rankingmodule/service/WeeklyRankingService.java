@@ -74,7 +74,7 @@ public class WeeklyRankingService {
 	public LoadWeeklyRankingResponse loadWeeklyRanking(LocalDate weekStart, int topN, Long memberId) {
 
 		// 상위 N명 랭킹 엔티티 조회
-		List<WeeklyRanking> topMembersFromDb = weeklyRankingRepository.findTopNByWeekStartOrderByRankAsc(weekStart,
+		List<WeeklyRanking> topMembersFromDb = weeklyRankingRepository.findTopNByWeekStart(weekStart,
 			topN);
 
 		// 엔티티 → DTO 변환

@@ -11,4 +11,7 @@ public interface WeeklyRankingRepositoryCustom {
 	List<Tuple> findTopMembersOfWeek(LocalDate weekStart, int topN);
 
 	Optional<WeeklyRanking> myData(LocalDate weekStart, Long memberId);
+
+	List<WeeklyRanking> findTopNByWeekStart(LocalDate weekStart, int topN);
 }
+

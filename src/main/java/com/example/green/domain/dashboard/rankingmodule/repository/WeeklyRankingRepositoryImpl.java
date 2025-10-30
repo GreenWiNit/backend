@@ -73,4 +73,16 @@ public class WeeklyRankingRepositoryImpl implements WeeklyRankingRepositoryCusto
 		return Optional.ofNullable(myRanking);
 	}
 
+	@Override
+	public List<WeeklyRanking> findTopNByWeekStart(LocalDate weekStart, int topN) {
+
+		QWeeklyRanking weeklyRanking = QWeeklyRanking.weeklyRanking;
+
+		return queryFactory
+			.selectFrom(weeklyRanking)
+			.where(weeklyRanking.weekStart.eq(weekStart))
+			.orderBy(weeklyRanking.rank.asc())
+			.limit(topN)
+			.fetch();
+	}
 }

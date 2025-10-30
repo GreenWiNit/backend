@@ -64,7 +64,7 @@ class WeeklyRankingServiceTest {
 	@DisplayName("상위 랭킹과 내 랭킹 조회 성공한 경우")
 	void loadWeeklyRankingSuccess() {
 		//given
-		when(weeklyRankingRepository.findTopNByWeekStartOrderByRankAsc(any(), anyInt()))
+		when(weeklyRankingRepository.findTopNByWeekStart(any(), anyInt()))
 			.thenReturn(List.of(rank1, rank2));
 		when(weeklyRankingRepository.myData(weekStart, 1L))
 			.thenReturn(Optional.of(rank1));
@@ -76,7 +76,7 @@ class WeeklyRankingServiceTest {
 		assertThat(response.topMembers()).hasSize(2);
 		assertThat(response.myData().nickname()).isEqualTo("홍길동");
 
-		verify(weeklyRankingRepository, times(1)).findTopNByWeekStartOrderByRankAsc(any(), anyInt());
+		verify(weeklyRankingRepository, times(1)).findTopNByWeekStart(any(), anyInt());
 		verify(weeklyRankingRepository, times(1)).myData(weekStart, 1L);
 
 	}
@@ -85,7 +85,7 @@ class WeeklyRankingServiceTest {
 	@DisplayName("내 랭킹 데이터가 없는 경우 예외 발생")
 	void loadWeeklyRanking_NotFoundUser() {
 		//given
-		when(weeklyRankingRepository.findTopNByWeekStartOrderByRankAsc(any(), anyInt()))
+		when(weeklyRankingRepository.findTopNByWeekStart(any(), anyInt()))
 			.thenReturn(List.of(rank1, rank2));
 		when(weeklyRankingRepository.myData(weekStart, 3L))
 			.thenReturn(Optional.empty());
