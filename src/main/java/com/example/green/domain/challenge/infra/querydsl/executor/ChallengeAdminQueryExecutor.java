@@ -23,8 +23,7 @@ public class ChallengeAdminQueryExecutor {
 	private final JPAQueryFactory queryFactory;
 
 	public List<AdminChallengesDto> executeChallengePageQuery(Pagination pagination, ChallengeType type) {
-		return queryFactory
-			.select(ChallengeAdminProjections.toChallengePage())
+		return queryFactory.select(ChallengeAdminProjections.toChallengePage())
 			.from(challenge)
 			.where(challenge.type.eq(type))
 			.orderBy(challenge.id.desc())
@@ -35,8 +34,7 @@ public class ChallengeAdminQueryExecutor {
 
 	public List<AdminChallengesDto> executeChallengePageExcelQuery(ChallengeType type) {
 		// TODO: 이후 데이터 수량이 많아지면 개선하기
-		return queryFactory
-			.select(ChallengeAdminProjections.toChallengePage())
+		return queryFactory.select(ChallengeAdminProjections.toChallengePage())
 			.from(challenge)
 			.where(challenge.type.eq(type))
 			.orderBy(challenge.id.desc())
@@ -44,8 +42,7 @@ public class ChallengeAdminQueryExecutor {
 	}
 
 	public List<AdminPersonalParticipationDto> executeParticipantQuery(Pagination pagination, Long id) {
-		return queryFactory
-			.select(ChallengeAdminProjections.toParticipation())
+		return queryFactory.select(ChallengeAdminProjections.toParticipation())
 			.from(participation)
 			.where(participation.challenge.id.eq(id))
 			.orderBy(participation.createdDate.desc())
@@ -55,8 +52,7 @@ public class ChallengeAdminQueryExecutor {
 	}
 
 	public List<AdminPersonalParticipationDto> executeParticipantQueryForExcel(Long challengeId) {
-		return queryFactory
-			.select(ChallengeAdminProjections.toParticipation())
+		return queryFactory.select(ChallengeAdminProjections.toParticipation())
 			.from(participation)
 			.where(participation.challenge.id.eq(challengeId))
 			.orderBy(participation.createdDate.desc())

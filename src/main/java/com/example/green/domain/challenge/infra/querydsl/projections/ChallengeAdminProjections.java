@@ -19,9 +19,7 @@ public class ChallengeAdminProjections {
 			AdminChallengesDto.class,
 			challenge.id,
 			challenge.code,
-			challenge.info.name,
-			challenge.info.point,
-			null,
+			challenge.info,
 			challenge.display,
 			challenge.createdDate
 		);

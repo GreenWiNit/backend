@@ -3,6 +3,7 @@ package com.example.green.domain.challenge.controller.query.dto.challenge;
 import java.time.LocalDateTime;
 
 import com.example.green.domain.challenge.entity.challenge.vo.ChallengeDisplay;
+import com.example.green.domain.challenge.entity.challenge.vo.ChallengeInfo;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -34,4 +35,15 @@ public class AdminChallengesDto {
 
 	@Schema(description = "생성 일시")
 	private LocalDateTime createdDate;
+
+	public AdminChallengesDto(
+		Long id, String code, ChallengeInfo info, ChallengeDisplay display, LocalDateTime createdDate
+	) {
+		this.id = id;
+		this.code = code;
+		this.name = info.getName();
+		this.point = info.getPoint();
+		this.display = display;
+		this.createdDate = createdDate;
+	}
 }
