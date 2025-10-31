@@ -149,7 +149,7 @@ public class InfoServiceImpl implements InfoService {
 	}
 
 	private InfoEntity getInfoEntity(String infoId) {
-		InfoEntity infoEntity = infoRepository.findById(infoId)
+		InfoEntity infoEntity = infoRepository.findByIdWithImages(infoId)
 			.orElseThrow(() -> new InfoException(InfoExceptionMessage.INVALID_INFO_NUMBER));
 		return infoEntity;
 	}
