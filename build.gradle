@@ -39,8 +39,10 @@ dependencies {
     // dotenv - 환경 변수 관리용
     implementation 'me.paulschwarz:spring-dotenv:4.0.0'
 
-    // DB - postgresql
+    // DB - postgresql & flyway
     implementation 'org.postgresql:postgresql'
+    implementation 'org.flywaydb:flyway-core'
+    runtimeOnly 'org.flywaydb:flyway-database-postgresql'
 
     // p6spy
     implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.10.0'

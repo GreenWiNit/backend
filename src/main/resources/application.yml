@@ -12,7 +12,9 @@ spring:
       region:
         static: ${AWS_STATIC_REGION:ap-northeast-2}
   config:
-    import: optional:file:.env
+    import:
+      - optional:file:.env
+      - optional:config/flyway.yml
   autoconfigure:
     exclude: org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration
   datasource:
