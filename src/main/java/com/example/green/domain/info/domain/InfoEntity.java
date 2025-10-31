@@ -56,7 +56,6 @@ public class InfoEntity extends BaseEntity {
 	private String isDisplay;
 
 	@OneToMany(mappedBy = "info", cascade = CascadeType.ALL, orphanRemoval = true)
-	@OrderColumn(name = "display_order")
 	private List<InfoImage> images = new ArrayList<>();
 
 	@Builder
