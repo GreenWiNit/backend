@@ -2,13 +2,13 @@ package com.example.green.domain.member.entity;
 
 import java.time.LocalDateTime;
 
-import org.springframework.util.StringUtils;
-
 import com.example.green.domain.common.BaseEntity;
+import com.example.green.domain.dashboard.growth.entity.Growth;
 import com.example.green.domain.member.entity.enums.MemberRole;
 import com.example.green.domain.member.entity.enums.MemberStatus;
 import com.example.green.domain.member.entity.vo.Profile;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -18,6 +18,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
 import lombok.AccessLevel;
@@ -28,8 +29,8 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(
 	indexes = {
-		@Index(name = "idx_member_nickname_active", 
-			   columnList = "nickname, status, deleted")
+		@Index(name = "idx_member_nickname_active",
+			columnList = "nickname, status, deleted")
 	}
 )
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -67,6 +68,9 @@ public class Member extends BaseEntity {
 	@Enumerated(EnumType.STRING)
 	private MemberRole role;
 
+	@OneToOne(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+	private Growth growth;
+
 	private LocalDateTime lastLoginAt;
 
 	private Member(String memberKey, String name, String email, String nickname) {
@@ -85,7 +89,7 @@ public class Member extends BaseEntity {
 	public static Member create(String memberKey, String name, String email) {
 		return new Member(memberKey, name, email, null);
 	}
-	
+
 	public static Member create(String memberKey, String name, String email, String nickname) {
 		return new Member(memberKey, name, email, nickname);
 	}
@@ -114,4 +118,12 @@ public class Member extends BaseEntity {
 		return this.status == MemberStatus.DELETED || this.isDeleted();
 	}
 
+	public void setGrowth(Growth growth) {
+		this.growth = growth;
+
+		// 양방향 관계 동기화
+		if (growth.getMember() != this) {
+			growth.setMember(this);
+		}
+	}
 }

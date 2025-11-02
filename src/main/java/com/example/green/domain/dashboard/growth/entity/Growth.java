@@ -5,7 +5,6 @@ import java.math.BigDecimal;
 import com.example.green.domain.dashboard.growth.entity.enums.Level;
 import com.example.green.domain.member.entity.Member;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -46,9 +45,22 @@ public class Growth {
 	@Enumerated(EnumType.STRING)
 	private Level goalLevel;
 
-	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-	@JoinColumn(name = "member_id")
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "member_id", nullable = false)
 	private Member member;
+
+	public Growth(Level level, BigDecimal progress, BigDecimal requiredPoint, Level goalLevel, Member member) {
+		this.level = level;
+		this.progress = progress;
+		this.requiredPoint = requiredPoint;
+		this.goalLevel = goalLevel;
+		this.member = member;
+	}
+
+	public static Growth create(Level level, BigDecimal progress, BigDecimal requiredPoint, Level goalLevel,
+		Member member) {
+		return new Growth(level, progress, requiredPoint, goalLevel, member);
+	}
 
 	public void setProgress(Level level, BigDecimal progress, BigDecimal requiredPoint, Level goalLevel) {
 		this.level = (level != null) ? level : this.level;
@@ -57,4 +69,12 @@ public class Growth {
 		this.goalLevel = (goalLevel != null) ? goalLevel : this.goalLevel;
 	}
 
+	public void setMember(Member member) {
+		this.member = member;
+
+		// 양방향 관계 동기화
+		if (member.getGrowth() != this) {
+			member.setGrowth(this);
+		}
+	}
 }
