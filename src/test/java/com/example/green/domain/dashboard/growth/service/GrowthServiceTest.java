@@ -8,7 +8,6 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -22,57 +21,58 @@ import com.example.green.infra.client.PointClient;
 class GrowthServiceTest {
 
 	@Mock
-	GrowthRepository growthRepository;
+	private GrowthRepository growthRepository;
 
 	@Mock
 	private PointClient pointClient;
 
-	@InjectMocks
-	private GrowthService growthService;
+	private GrowthCalculateService calculateService; // 실제 객체
+	private GrowthService growthService; // 테스트 대상 서비스
 
 	private Growth growth;
 
 	@BeforeEach
 	void setUp() {
 		MockitoAnnotations.openMocks(this);
+
 		Member member = Member.create("memberKey-123", "홍길동", "test@test.com", "nickname");
 
-		growth = Growth.create(Level.SOIL, BigDecimal.valueOf(150L), BigDecimal.valueOf(500L), Level.SPROUT,
-			member);
+		growth = Growth.create(Level.SOIL, BigDecimal.valueOf(150L), BigDecimal.valueOf(500L), Level.SPROUT, member);
 		growth.setMember(member);
 		growth.setProgress(Level.SOIL, BigDecimal.ZERO, BigDecimal.valueOf(250L), Level.SPROUT);
+
+		calculateService = new GrowthCalculateService(growthRepository, pointClient);
+
+		growthService = new GrowthService(growthRepository, calculateService);
 	}
 
 	@Test
 	void 사용자_ID와_총포인트로_식물_성장_계산한다() {
-		//given
+		// given
 		Long memberId = 1L;
 		when(growthRepository.findByMemberId(memberId)).thenReturn(Optional.of(growth));
 		when(pointClient.getTotalPoints(memberId)).thenReturn(BigDecimal.valueOf(150L));
 
-		//when
-		growthService.calculateMemberGrowth(memberId);
+		// when
+		calculateService.calculateMemberGrowth(memberId);
 
-		//then
+		// then
 		assertThat(growth.getGoalLevel()).isEqualTo(Level.SPROUT);
 		assertThat(growth.getProgress()).isGreaterThan(BigDecimal.ZERO);
-
 	}
 
 	@Test
 	void 레벨별_다음_레벨과_진행률_반환() {
-		//given
+		// given
 		Long memberId = 1L;
 		when(growthRepository.findByMemberId(memberId)).thenReturn(Optional.of(growth));
 		when(pointClient.getTotalPoints(memberId)).thenReturn(BigDecimal.valueOf(550L));
 
-		//when
+		// when
 		LoadGrowthResponse growthResponse = growthService.loadGrowth(memberId);
 
-		//then
+		// then
 		assertThat(growthResponse.currentLevel()).isEqualTo(Level.SPROUT);
 		assertThat(growthResponse.goalLevel()).isEqualTo(Level.SAPLING);
-
 	}
-
 }
