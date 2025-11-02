@@ -17,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/dashboard/growth")
-public class GrowthController {
+public class GrowthController implements GrowthControllerDocs {
 
 	private final GrowthService growthService;
 
