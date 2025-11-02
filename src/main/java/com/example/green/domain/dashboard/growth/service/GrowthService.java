@@ -31,33 +31,27 @@ public class GrowthService {
 			.orElseThrow(() -> new GrowthException(GrowthExceptionMessage.NOT_FOUND_USER));
 
 		BigDecimal totalPoint = pointClient.getTotalPoints(memberId);
-
 		BigDecimal percent;
 
-		if (totalPoint.compareTo(BigDecimal.ZERO) > 0
-			&& totalPoint.compareTo(LevelStandard.LEVEL_2_REQUIREMENT) <= 0) {
-
+		if (totalPoint.compareTo(LevelStandard.LEVEL_2_REQUIREMENT) <= 0) {
+			// LEVEL_1 = 0이므로 0~LEVEL_2까지 SOIL 단계
 			percent = totalPoint
 				.divide(LevelStandard.LEVEL_2_REQUIREMENT, 2, RoundingMode.HALF_UP)
 				.multiply(BigDecimal.valueOf(100));
-			growth.setProgress(Level.SPROUT, percent, LevelStandard.LEVEL_3_REQUIREMENT, Level.SAPLING);
-		} else if (totalPoint.compareTo(LevelStandard.LEVEL_2_REQUIREMENT) > 0
-			&& totalPoint.compareTo(LevelStandard.LEVEL_3_REQUIREMENT) <= 0) {
-
+			growth.setProgress(Level.SOIL, percent, LevelStandard.LEVEL_2_REQUIREMENT, Level.SPROUT);
+		} else if (totalPoint.compareTo(LevelStandard.LEVEL_3_REQUIREMENT) <= 0) {
+			// LEVEL_2~LEVEL_3까지 SPROUT 단계
 			percent = calculatePercentage(LevelStandard.LEVEL_2_REQUIREMENT, LevelStandard.LEVEL_3_REQUIREMENT,
 				memberId);
-
-			growth.setProgress(Level.SAPLING, percent, LevelStandard.LEVEL_4_REQUIREMENT, Level.TREE);
-		} else if (totalPoint.compareTo(LevelStandard.LEVEL_3_REQUIREMENT) > 0
-			&& totalPoint.compareTo(LevelStandard.LEVEL_4_REQUIREMENT) <= 0) {
-
+			growth.setProgress(Level.SPROUT, percent, LevelStandard.LEVEL_3_REQUIREMENT, Level.SAPLING);
+		} else if (totalPoint.compareTo(LevelStandard.LEVEL_4_REQUIREMENT) <= 0) {
+			// LEVEL_3~LEVEL_4까지 SAPLING 단계
 			percent = calculatePercentage(LevelStandard.LEVEL_3_REQUIREMENT, LevelStandard.LEVEL_4_REQUIREMENT,
 				memberId);
-
-			growth.setProgress(Level.TREE, percent, null, Level.TREE);
-
+			growth.setProgress(Level.SAPLING, percent, LevelStandard.LEVEL_4_REQUIREMENT, Level.TREE);
 		} else {
-			growth.setProgress(Level.SOIL, BigDecimal.ZERO, LevelStandard.LEVEL_2_REQUIREMENT, Level.SPROUT);
+			// 최고 레벨 이상
+			growth.setProgress(Level.TREE, BigDecimal.valueOf(100), null, Level.TREE);
 		}
 	}
 
