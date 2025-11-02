@@ -34,14 +34,19 @@ public class WeeklyRanking extends TimeBaseEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@Column(name = "member_id", nullable = false)
 	private Long memberId;
 
+	@Column(nullable = false)
 	private String memberName;
 
+	@Column(nullable = false)
 	private BigDecimal totalPoint;
-
+	
+	@Column(nullable = false)
 	private int certificationCount;
 
+	@Column(nullable = false)
 	private int rank;
 
 	@Column(name = "week_start", nullable = false)
