@@ -14,6 +14,7 @@ import com.example.green.domain.dashboard.rankingmodule.message.WeeklyRankingRes
 import com.example.green.domain.dashboard.rankingmodule.service.WeeklyRankingService;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.security.PrincipalDetails;
+import com.example.green.global.security.annotation.AuthenticatedApi;
 
 import lombok.RequiredArgsConstructor;
 
@@ -24,6 +25,7 @@ public class WeeklyRankingController implements WeeklyRankingControllerDocs {
 
 	private final WeeklyRankingService weeklyRankingService;
 
+	@AuthenticatedApi(reason = "자신의 랭킹과 주간 랭킹을 조회할 수 있습니다")
 	@GetMapping
 	public ApiTemplate<LoadWeeklyRankingResponse> getWeeklyRanking(
 		@RequestParam("weekStart")

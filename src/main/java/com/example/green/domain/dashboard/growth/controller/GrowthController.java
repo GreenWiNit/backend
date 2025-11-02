@@ -10,6 +10,7 @@ import com.example.green.domain.dashboard.growth.message.GrowthResponseMessage;
 import com.example.green.domain.dashboard.growth.service.GrowthService;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.security.PrincipalDetails;
+import com.example.green.global.security.annotation.AuthenticatedApi;
 
 import lombok.RequiredArgsConstructor;
 
@@ -20,6 +21,7 @@ public class GrowthController {
 
 	private final GrowthService growthService;
 
+	@AuthenticatedApi(reason = "자신의 성장 정보를 조회할 수 있습니다")
 	@GetMapping
 	public ApiTemplate<LoadGrowthResponse> getGrowth(
 		@AuthenticationPrincipal PrincipalDetails principal
