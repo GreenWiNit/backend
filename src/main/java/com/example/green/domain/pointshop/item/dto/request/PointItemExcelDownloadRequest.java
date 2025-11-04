@@ -1,4 +1,4 @@
-package com.example.green.domain.pointshop.item.dto.response;
+package com.example.green.domain.pointshop.item.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Size;

@@ -2,6 +2,8 @@ package com.example.green.domain.pointshop.item.controller;
 
 import static com.example.green.domain.pointshop.item.controller.message.PointItemResponseMessage.*;
 
+import java.util.List;
+
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.green.domain.pointshop.item.controller.message.PointItemResponseMessage;
 import com.example.green.domain.pointshop.item.dto.request.CreatePointItemRequest;
+import com.example.green.domain.pointshop.item.dto.request.PointItemExcelDownloadRequest;
 import com.example.green.domain.pointshop.item.dto.request.PointItemSearchRequest;
 import com.example.green.domain.pointshop.item.dto.request.UpdatePointItemRequest;
 import com.example.green.domain.pointshop.item.dto.response.PointItemAdminResponse;
@@ -33,7 +36,9 @@ import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.NoContent;
 import com.example.green.global.api.page.PageTemplate;
 import com.example.green.global.security.annotation.AdminApi;
+import com.example.green.infra.excel.core.ExcelDownloader;
 
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -46,6 +51,7 @@ public class PointItemAdminController {
 	private final PointItemService pointItemService;
 	private final PointItemQueryService pointItemQueryService;
 	private final PointItemQueryRepository pointItemQueryRepository;
+	private final ExcelDownloader excelDownloader;
 
 	@PostMapping
 	public ApiTemplate<Long> createPointItem(@RequestBody @Valid CreatePointItemRequest createPointItemRequest) {
@@ -101,6 +107,17 @@ public class PointItemAdminController {
 	public NoContent hidePointItemDisplay(@PathVariable Long pointItemId) {
 		pointItemService.hideItemDisplay(pointItemId);
 		return NoContent.ok(DISPLAY_HIDE_ITEM_SUCCESS);
+	}
+
+	@GetMapping("/excel")
+	public void downloadPointItemsExcel(
+		@ParameterObject @ModelAttribute
+		PointItemExcelDownloadRequest pointItemExcelDownloadRequest,
+		HttpServletResponse response
+	) {
+		List<PointItemSearchResponse> result = pointItemQueryRepository.searchPointItemsForExcel(
+			pointItemExcelDownloadRequest);
+		excelDownloader.downloadAsStream(result, response);
 	}
 
 }
