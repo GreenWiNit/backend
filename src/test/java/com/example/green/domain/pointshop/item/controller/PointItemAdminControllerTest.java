@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import com.example.green.domain.pointshop.item.dto.request.CreatePointItemRequest;
+import com.example.green.domain.pointshop.item.dto.request.PointItemExcelDownloadRequest;
 import com.example.green.domain.pointshop.item.dto.request.PointItemSearchRequest;
 import com.example.green.domain.pointshop.item.dto.request.UpdatePointItemRequest;
 import com.example.green.domain.pointshop.item.dto.response.PointItemSearchResponse;
@@ -25,10 +26,12 @@ import com.example.green.domain.pointshop.item.service.command.PointItemUpdateCo
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.NoContent;
 import com.example.green.global.api.page.PageTemplate;
+import com.example.green.infra.excel.core.ExcelDownloader;
 import com.example.green.template.base.BaseControllerUnitTest;
 
 import io.restassured.common.mapper.TypeRef;
 import io.restassured.module.mockmvc.RestAssuredMockMvc;
+import jakarta.servlet.http.HttpServletResponse;
 
 @WebMvcTest(PointItemAdminController.class)
 class PointItemAdminControllerTest extends BaseControllerUnitTest {
@@ -41,6 +44,9 @@ class PointItemAdminControllerTest extends BaseControllerUnitTest {
 
 	@MockitoBean
 	private PointItemQueryRepository pointItemQueryRepository;
+
+	@MockitoBean
+	private ExcelDownloader excelDownloader;
 
 	@Test
 	void 포인트_아이템_생성_요청에_성공한다() {
@@ -179,4 +185,25 @@ class PointItemAdminControllerTest extends BaseControllerUnitTest {
 			});
 	}
 
+	@Test
+	void 엑셀_다운로드에_성공한다() {
+		// given
+		List<PointItemSearchResponse> mockResult = List.of(mock(PointItemSearchResponse.class));
+		when(pointItemQueryRepository.searchPointItemsForExcel(any(PointItemExcelDownloadRequest.class)))
+			.thenReturn(mockResult);
+
+		// when & then
+		downloadExcel();
+		verify(excelDownloader).downloadAsStream(anyList(), any(HttpServletResponse.class));
+	}
+
+	public static void downloadExcel() {
+		RestAssuredMockMvc
+			.given().log().all()
+			.contentType(MediaType.APPLICATION_JSON)
+			.when().get("/api/admin/point-items/excel")
+			.then().log().all()
+			.status(HttpStatus.OK);
+
+	}
 }
