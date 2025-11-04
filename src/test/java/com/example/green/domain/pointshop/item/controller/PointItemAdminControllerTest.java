@@ -67,7 +67,7 @@ class PointItemAdminControllerTest extends BaseControllerUnitTest {
 			.given().log().all()
 			.contentType(MediaType.APPLICATION_JSON)
 			.body(createPointItemRequest)
-			.when().post("api/admin/point-items")
+			.when().post("/api/admin/point-items")
 			.then().log().all()
 			.status(HttpStatus.OK)
 			.extract().as(new TypeRef<>() {

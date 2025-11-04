@@ -3,7 +3,7 @@ package com.example.green.domain.pointshop.item.dto.response;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-import com.example.green.domain.pointshop.product.entity.vo.DisplayStatus;
+import com.example.green.domain.pointshop.item.entity.vo.ItemDisplayStatus;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -24,8 +24,8 @@ public class PointItemSearchResponse {
 	private String name;
 	@Schema(description = "아이템 가격", example = "1200")
 	private BigDecimal pointPrice;
-	@Schema(description = "상품 전시 상태", example = "전시")
-	private DisplayStatus displayStatus;
+	@Schema(description = "아이템 전시 상태", example = "전시")
+	private ItemDisplayStatus displayStatus;
 	@Schema(description = "상품 등록 일자")
 	private LocalDateTime createdDate;
 }

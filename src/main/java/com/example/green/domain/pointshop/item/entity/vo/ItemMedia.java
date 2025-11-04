@@ -33,13 +33,13 @@ public class ItemMedia {
 		try {
 			validateAbsoluteItemUri(new URI(itemThumbNailUrl));
 		} catch (Exception e) {
-			throw new PointItemException(INVALID_ITEM_CODE);
+			throw new PointItemException(INVALID_ITEM_THUMBNAIL);
 		}
 	}
 
 	private static void validateAbsoluteItemUri(URI itemUri) {
 		if (!itemUri.isAbsolute()) {
-			throw new PointItemException(INVALID_ITEM_CODE);
+			throw new PointItemException(INVALID_ITEM_THUMBNAIL);
 		}
 	}
 }

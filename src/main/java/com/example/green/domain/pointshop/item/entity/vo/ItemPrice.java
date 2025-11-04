@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode
 public class ItemPrice {
 
-	@Column(nullable = false, precision = 19, scale = 2, name = "iterm_price")
+	@Column(nullable = false, precision = 19, scale = 2, name = "item_price")
 	private BigDecimal itemPrice;
 
 	public ItemPrice(BigDecimal itemPrice) {

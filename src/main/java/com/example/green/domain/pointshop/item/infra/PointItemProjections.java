@@ -17,7 +17,7 @@ public class PointItemProjections {
 		return Projections.fields(
 			PointItemSearchResponse.class,
 			qPointItem.id.as("id"),
-			qPointItem.itemCode.as("code"),
+			qPointItem.itemCode.code.as("code"),
 			qPointItem.itemBasicInfo.itemName.as("name"),
 			qPointItem.itemPrice.itemPrice.as("pointPrice"),
 			qPointItem.displayStatus,
@@ -34,6 +34,5 @@ public class PointItemProjections {
 			qPointItem.itemPrice.itemPrice
 		);
 	}
-
 
 }
