@@ -20,7 +20,6 @@ import com.example.green.domain.pointshop.item.dto.request.PointItemSearchReques
 import com.example.green.domain.pointshop.item.dto.request.UpdatePointItemRequest;
 import com.example.green.domain.pointshop.item.dto.response.PointItemAdminResponse;
 import com.example.green.domain.pointshop.item.dto.response.PointItemSearchResponse;
-import com.example.green.domain.pointshop.item.dto.response.UpdatePointItemResponse;
 import com.example.green.domain.pointshop.item.entity.vo.ItemBasicInfo;
 import com.example.green.domain.pointshop.item.entity.vo.ItemCode;
 import com.example.green.domain.pointshop.item.entity.vo.ItemMedia;
@@ -64,9 +63,10 @@ public class PointItemAdminController {
 	}
 
 	@PutMapping("/{pointItemId}")
-	public ApiTemplate<UpdatePointItemResponse> updatePointItem(
+	public NoContent updatePointItem(
 		@RequestBody @Valid UpdatePointItemRequest updatePointItemRequest,
-		@PathVariable Long pointItemId) {
+		@PathVariable Long pointItemId
+	) {
 		PointItemUpdateCommand command = new PointItemUpdateCommand(
 			new ItemCode(updatePointItemRequest.code()),
 			new ItemBasicInfo(updatePointItemRequest.name(), updatePointItemRequest.description()),
@@ -74,9 +74,9 @@ public class PointItemAdminController {
 			new ItemPrice(updatePointItemRequest.price())
 		);
 
-		UpdatePointItemResponse updatePointItem = pointItemService.updatePointItem(command, pointItemId);
+		pointItemService.updatePointItem(command, pointItemId);
 
-		return ApiTemplate.ok(PointItemResponseMessage.POINT_ITEM_UPDATE_SUCCESS, updatePointItem);
+		return NoContent.ok(POINT_ITEM_UPDATE_SUCCESS);
 	}
 
 	@GetMapping("/{pointItemId}")

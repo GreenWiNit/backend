@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.green.domain.pointshop.item.dto.response.PointItemClientResponse;
-import com.example.green.domain.pointshop.item.dto.response.UpdatePointItemResponse;
 import com.example.green.domain.pointshop.item.entity.PointItem;
 import com.example.green.domain.pointshop.item.entity.vo.ItemCode;
 import com.example.green.domain.pointshop.item.exception.PointItemException;
@@ -49,30 +48,24 @@ public class PointItemService {
 		}
 	}
 
-	public UpdatePointItemResponse updatePointItem(PointItemUpdateCommand command, Long pointItemId) {
+	public void updatePointItem(PointItemUpdateCommand command, Long pointItemId) {
 		pointItemQueryService.validateUniqueCodeForUpdate(command.itemCode(), pointItemId);
-		PointItem updatePointItem = pointItemQueryService.getPointItem(pointItemId);
 
-		updatePointItem.updateItemCode(command.itemCode());
-		updatePointItem.updateItemBasicInfo(command.info());
-		updatePointItem.updateItemPrice(command.price());
+		PointItem pointItem = pointItemQueryService.getPointItem(pointItemId);
+		pointItem.updateItemCode(command.itemCode());
+		pointItem.updateItemBasicInfo(command.info());
+		pointItem.updateItemMedia(command.media());
+		pointItem.updateItemPrice(command.price());
 
-		processSideEffect(command, updatePointItem);
-
-		return UpdatePointItemResponse.builder()
-			.itemId(pointItemId)
-			.itemCode(updatePointItem.getItemCode().getCode())
-			.itemName(updatePointItem.getItemBasicInfo().getItemName())
-			.itemDescription(updatePointItem.getItemBasicInfo().getDescription())
-			.itemPrice(updatePointItem.getItemPrice().getItemPrice())
-			.build();
+		processSideEffect(command, pointItem);
 	}
 
 	private void processSideEffect(PointItemUpdateCommand command, PointItem pointItem) {
 		if (pointItem.isNewImage(command.media())) {
-			String oldThumbnail = pointItem.getThumbnailUrl(); // 이전 이미지 저장
-			fileClient.unUseImage(oldThumbnail);
-			pointItem.updateItemMedia(command.media());
+			String oldThumbnail = pointItem.getThumbnailUrl();
+			if (oldThumbnail != null) {
+				fileClient.unUseImage(oldThumbnail);
+			}
 			fileClient.confirmUsingImage(pointItem.getThumbnailUrl());
 		}
 	}
