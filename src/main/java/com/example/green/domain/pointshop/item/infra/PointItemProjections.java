@@ -1,0 +1,39 @@
+package com.example.green.domain.pointshop.item.infra;
+
+import com.example.green.domain.pointshop.item.dto.response.PointItemResponse;
+import com.example.green.domain.pointshop.item.dto.response.PointItemSearchResponse;
+import com.example.green.domain.pointshop.item.entity.QPointItem;
+import com.querydsl.core.types.ConstructorExpression;
+import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.QBean;
+
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class PointItemProjections {
+
+	public static QBean<PointItemSearchResponse> toSearchItemResponse(QPointItem qPointItem) {
+		return Projections.fields(
+			PointItemSearchResponse.class,
+			qPointItem.id.as("id"),
+			qPointItem.itemCode.as("code"),
+			qPointItem.itemBasicInfo.itemName.as("name"),
+			qPointItem.itemPrice.itemPrice.as("pointPrice"),
+			qPointItem.displayStatus,
+			qPointItem.createdDate
+		);
+	}
+
+	public static ConstructorExpression<PointItemResponse> toPointItemView(QPointItem qPointItem) {
+		return Projections.constructor(
+			PointItemResponse.class,
+			qPointItem.id,
+			qPointItem.itemBasicInfo.itemName,
+			qPointItem.itemMedia.itemThumbNailUrl,
+			qPointItem.itemPrice.itemPrice
+		);
+	}
+
+
+}
