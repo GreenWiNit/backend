@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.green.domain.pointshop.item.dto.response.PointItemClientResponse;
 import com.example.green.domain.pointshop.item.dto.response.UpdatePointItemResponse;
 import com.example.green.domain.pointshop.item.entity.PointItem;
 import com.example.green.domain.pointshop.item.entity.vo.ItemCode;
@@ -78,6 +79,25 @@ public class PointItemService {
 
 	public void delete(Long pointItemId) {
 		pointItemQueryService.getPointItem(pointItemId).markDeleted();
+	}
+
+	public PointItemClientResponse getPointItemInfo(Long memberId, Long id) {
+
+		PointItem pointItem = pointItemQueryService.getPointItem(id);
+		List<BigDecimal> points = userPointsCalculate(memberId, id);
+		BigDecimal enablePoint = points.get(0);
+		BigDecimal decreasePoint = points.get(1);
+		BigDecimal remainPoint = points.get(2);
+
+		return new PointItemClientResponse(
+			pointItem.getItemBasicInfo().getItemName(),
+			pointItem.getItemBasicInfo().getDescription(),
+			pointItem.getItemMedia().getItemThumbNailUrl(),
+			pointItem.getItemPrice().getItemPrice(),
+			enablePoint,
+			decreasePoint,
+			remainPoint
+		);
 	}
 
 	public List<BigDecimal> userPointsCalculate(Long memberId, Long pointProduceId) {
