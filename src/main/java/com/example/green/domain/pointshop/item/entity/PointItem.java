@@ -10,6 +10,7 @@ import com.example.green.domain.pointshop.item.entity.vo.ItemMedia;
 import com.example.green.domain.pointshop.item.entity.vo.ItemPrice;
 import com.example.green.domain.pointshop.item.exception.PointItemExceptionMessage;
 
+import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -29,9 +30,8 @@ import lombok.extern.slf4j.Slf4j;
 
 @Entity
 @Table(
-	name = "point_items",
-	uniqueConstraints = @UniqueConstraint(name = "uk_point_item_code", columnNames = "itemCode")
-
+	name = "point_item",
+	uniqueConstraints = @UniqueConstraint(name = "uk_point_item_code", columnNames = "item_code")
 )
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -45,6 +45,7 @@ public class PointItem extends BaseEntity {
 	private Long id;
 
 	@Embedded
+	@AttributeOverride(name = "code", column = @Column(name = "item_code", nullable = false))
 	private ItemCode itemCode;
 
 	@Embedded
