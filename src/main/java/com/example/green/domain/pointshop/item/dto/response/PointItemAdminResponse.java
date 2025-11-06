@@ -4,6 +4,8 @@ import static com.example.green.global.utils.EntityValidator.*;
 
 import java.math.BigDecimal;
 
+import com.example.green.domain.pointshop.item.entity.PointItem;
+
 import jakarta.persistence.Column;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -40,6 +42,14 @@ public class PointItemAdminResponse {
 		this.description = description;
 		this.thumbnail = thumbnail;
 		this.price = price;
+	}
 
+	public static PointItemAdminResponse from(PointItem pointItem) {
+		return new PointItemAdminResponse(
+			pointItem.getItemBasicInfo().getItemName(),
+			pointItem.getItemBasicInfo().getDescription(),
+			pointItem.getItemMedia().getItemThumbNailUrl(),
+			pointItem.getItemPrice().getItemPrice()
+		);
 	}
 }

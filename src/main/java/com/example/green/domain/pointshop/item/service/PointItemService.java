@@ -1,12 +1,12 @@
 package com.example.green.domain.pointshop.item.service;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.green.domain.pointshop.item.dto.response.PointItemClientResponse;
+import com.example.green.domain.pointshop.item.dto.response.UserPointCalculation;
 import com.example.green.domain.pointshop.item.entity.PointItem;
 import com.example.green.domain.pointshop.item.entity.vo.ItemCode;
 import com.example.green.domain.pointshop.item.exception.PointItemException;
@@ -15,7 +15,6 @@ import com.example.green.domain.pointshop.item.repository.PointItemRepository;
 import com.example.green.domain.pointshop.item.service.command.PointItemCreateCommand;
 import com.example.green.domain.pointshop.item.service.command.PointItemUpdateCommand;
 import com.example.green.infra.client.FileClient;
-import com.example.green.infra.client.PointClient;
 
 import lombok.RequiredArgsConstructor;
 
@@ -27,7 +26,6 @@ public class PointItemService {
 	private final PointItemRepository pointItemRepository;
 	private final PointItemQueryService pointItemQueryService;
 	private final FileClient fileClient;
-	private final PointClient pointClient;
 
 	public Long create(PointItemCreateCommand createCommand) {
 		validatePointItemCode(createCommand.itemCode());
@@ -77,37 +75,25 @@ public class PointItemService {
 	public PointItemClientResponse getPointItemInfo(Long memberId, Long id) {
 
 		PointItem pointItem = pointItemQueryService.getPointItem(id);
-		List<BigDecimal> points = userPointsCalculate(memberId, id);
-		BigDecimal enablePoint = points.get(0);
-		BigDecimal decreasePoint = points.get(1);
-		BigDecimal remainPoint = points.get(2);
 
-		return new PointItemClientResponse(
-			pointItem.getItemBasicInfo().getItemName(),
-			pointItem.getItemBasicInfo().getDescription(),
-			pointItem.getItemMedia().getItemThumbNailUrl(),
-			pointItem.getItemPrice().getItemPrice(),
-			enablePoint,
-			decreasePoint,
-			remainPoint
-		);
-	}
-
-	public List<BigDecimal> userPointsCalculate(Long memberId, Long pointProduceId) {
-
-		BigDecimal enablePoint = pointClient.getTotalPoints(memberId);
-
-		PointItem pointItem = pointItemQueryService.getPointItem(pointProduceId);
-
-		BigDecimal decreasePoint = pointItem.getItemPrice().getItemPrice(); //차감 포인트
-
-		if (enablePoint.compareTo(decreasePoint) < 0) {
-			throw new PointItemException(PointItemExceptionMessage.NOT_POSSIBLE_BUY_ITEM);
+		//로그인을 안한 사용자인경우 - 포인트 0 으로 해서 보여줌
+		if (memberId == null) {
+			return PointItemClientResponse.from(
+				pointItem,
+				BigDecimal.ZERO,
+				pointItem.getItemPrice().getItemPrice(),
+				BigDecimal.ZERO
+			);
 		}
 
-		BigDecimal remainPoint = enablePoint.subtract(decreasePoint);
+		UserPointCalculation points = pointItemQueryService.userPointsCalculate(memberId, id);
 
-		return List.of(enablePoint, decreasePoint, remainPoint);
+		return PointItemClientResponse.from(
+			pointItem,
+			points.enablePoint(),
+			points.decreasePoint(),
+			points.remainPoint()
+		);
 	}
 
 	public void showItemDisplay(Long pointItemId) {
