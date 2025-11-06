@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.green.domain.pointshop.item.controller.docs.PointItemAdminControllerDocs;
 import com.example.green.domain.pointshop.item.controller.message.PointItemResponseMessage;
 import com.example.green.domain.pointshop.item.dto.request.CreatePointItemRequest;
 import com.example.green.domain.pointshop.item.dto.request.PointItemExcelDownloadRequest;
@@ -46,7 +47,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping("/api/admin/point-items")
 @AdminApi
-public class PointItemAdminController {
+public class PointItemAdminController implements PointItemAdminControllerDocs {
 
 	private final PointItemService pointItemService;
 	private final PointItemQueryService pointItemQueryService;

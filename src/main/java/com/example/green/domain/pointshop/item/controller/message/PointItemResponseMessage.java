@@ -9,8 +9,8 @@ import lombok.RequiredArgsConstructor;
 @Getter
 public enum PointItemResponseMessage implements ResponseMessage {
 
-	POINT_ITEM_CREATION_SUCCESS("아이템 상품 생성에 성공했습니다."),
-	POINT_ITEM_UPDATE_SUCCESS("아이템 상품 수정에 성공했습니다."),
+	POINT_ITEM_CREATION_SUCCESS("포인트 상점 아이템 생성에 성공했습니다."),
+	POINT_ITEM_UPDATE_SUCCESS("포인트 상점 아이템 수정에 성공했습니다."),
 	POINT_ITEMS_INQUIRY_SUCCESS("아이템 목록 조회에 성공했습니다."),
 	POINT_ITEM_DETAIL_INQUIRY_SUCCESS("아이템 상세 조회에 성공했습니다."),
 	POINT_ITEM_LOAD_SUCCESS("아이템 조회에 성공했습니다"),
