@@ -10,8 +10,7 @@ import com.example.green.domain.challenge.controller.command.docs.ChallengeComma
 import com.example.green.domain.challenge.controller.command.dto.AdminChallengeCreateDto;
 import com.example.green.domain.challenge.controller.message.AdminChallengeResponseMessage;
 import com.example.green.domain.challenge.entity.challenge.vo.ChallengeType;
-import com.example.green.domain.challenge.service.PersonalChallengeService;
-import com.example.green.domain.challenge.service.TeamChallengeService;
+import com.example.green.domain.challenge.service.ChallengeService;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.security.annotation.AuthenticatedApi;
 
@@ -22,17 +21,12 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ChallengeCommandController implements ChallengeCommandControllerDocs {
 
-	private final PersonalChallengeService personalChallengeService;
-	private final TeamChallengeService teamChallengeService;
+	private final ChallengeService challengeService;
 
 	@PostMapping("/{type}")
 	@AuthenticatedApi
 	public ApiTemplate<Long> create(@PathVariable ChallengeType type, @RequestBody AdminChallengeCreateDto dto) {
-		if (type == ChallengeType.PERSONAL) {
-			Long result = personalChallengeService.create(dto);
-			return ApiTemplate.ok(AdminChallengeResponseMessage.CHALLENGE_CREATED, result);
-		}
-		Long result = teamChallengeService.create(dto);
+		Long result = challengeService.create(dto, type);
 		return ApiTemplate.ok(AdminChallengeResponseMessage.CHALLENGE_CREATED, result);
 	}
 }

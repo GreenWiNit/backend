@@ -12,7 +12,8 @@ import com.example.green.domain.challenge.controller.command.docs.AdminTeamChall
 import com.example.green.domain.challenge.controller.command.dto.AdminChallengeCreateDto;
 import com.example.green.domain.challenge.controller.command.dto.AdminChallengeUpdateDto;
 import com.example.green.domain.challenge.controller.message.AdminChallengeResponseMessage;
-import com.example.green.domain.challenge.service.TeamChallengeService;
+import com.example.green.domain.challenge.entity.challenge.vo.ChallengeType;
+import com.example.green.domain.challenge.service.ChallengeService;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.NoContent;
 import com.example.green.global.security.annotation.AdminApi;
@@ -26,11 +27,11 @@ import lombok.RequiredArgsConstructor;
 @AdminApi
 public class AdminTeamChallengeCommandController implements AdminTeamChallengeCommandControllerDocs {
 
-	private final TeamChallengeService challengeService;
+	private final ChallengeService challengeService;
 
 	@PostMapping
 	public ApiTemplate<Long> create(@Valid @RequestBody AdminChallengeCreateDto request) {
-		Long challengeId = challengeService.create(request);
+		Long challengeId = challengeService.create(request, ChallengeType.TEAM);
 		return ApiTemplate.ok(AdminChallengeResponseMessage.CHALLENGE_CREATED, challengeId);
 	}
 

@@ -10,8 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.green.domain.challenge.controller.command.docs.PersonalChallengeCommandControllerDocs;
-import com.example.green.domain.challenge.controller.message.ChallengeResponseMessage;
-import com.example.green.domain.challenge.service.PersonalChallengeService;
+import com.example.green.domain.challenge.service.ChallengeService;
 import com.example.green.global.api.NoContent;
 import com.example.green.global.security.PrincipalDetails;
 import com.example.green.global.security.annotation.AuthenticatedApi;
@@ -24,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 @AuthenticatedApi
 public class PersonalChallengeCommandController implements PersonalChallengeCommandControllerDocs {
 
-	private final PersonalChallengeService challengeService;
+	private final ChallengeService challengeService;
 
 	@PostMapping("/{challengeId}/participate")
 	public NoContent join(@PathVariable Long challengeId, @AuthenticationPrincipal PrincipalDetails currentUser) {
@@ -33,10 +32,9 @@ public class PersonalChallengeCommandController implements PersonalChallengeComm
 		return NoContent.ok(CHALLENGE_JOINED);
 	}
 
+	@Deprecated
 	@DeleteMapping("/{challengeId}/leave")
 	public NoContent leave(@PathVariable Long challengeId, @AuthenticationPrincipal PrincipalDetails currentUser) {
-		Long memberId = currentUser.getMemberId();
-		challengeService.leave(challengeId, memberId);
-		return NoContent.ok(ChallengeResponseMessage.CHALLENGE_LEFT);
+		throw new IllegalArgumentException("개인 챌린지 탈퇴는 지원하지 않습니다.");
 	}
 }
