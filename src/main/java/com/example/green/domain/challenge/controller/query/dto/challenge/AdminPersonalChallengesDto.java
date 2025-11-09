@@ -38,6 +38,19 @@ public record AdminPersonalChallengesDto(
 
 	private static final DateTimeFormatter PERIOD_FORMATTER = DateTimeFormatter.ofPattern("yyyy.MM.dd");
 
+	public static AdminPersonalChallengesDto of(AdminChallengesDto it) {
+		return new AdminPersonalChallengesDto(
+			it.getId(),
+			it.getCode(),
+			it.getName(),
+			null,
+			null,
+			BigDecimal.valueOf(it.getPoint()),
+			it.getDisplay(),
+			it.getCreatedDate()
+		);
+	}
+
 	public String getPeriod() {
 		return beginDate.format(PERIOD_FORMATTER) + " ~ " + endDate.format(PERIOD_FORMATTER) + ".";
 	}

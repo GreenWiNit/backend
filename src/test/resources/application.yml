@@ -1,4 +1,6 @@
 spring:
+  flyway:
+    enabled: false
   profiles:
     active: test
     default: test

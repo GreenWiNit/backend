@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.green.domain.challenge.controller.command.docs.PersonalChallengeCommandControllerDocs;
 import com.example.green.domain.challenge.service.ChallengeService;
 import com.example.green.global.api.NoContent;
+import com.example.green.global.error.exception.BusinessException;
+import com.example.green.global.error.exception.GlobalExceptionMessage;
 import com.example.green.global.security.PrincipalDetails;
 import com.example.green.global.security.annotation.AuthenticatedApi;
 
@@ -35,6 +37,6 @@ public class PersonalChallengeCommandController implements PersonalChallengeComm
 	@Deprecated
 	@DeleteMapping("/{challengeId}/leave")
 	public NoContent leave(@PathVariable Long challengeId, @AuthenticationPrincipal PrincipalDetails currentUser) {
-		throw new IllegalArgumentException("개인 챌린지 탈퇴는 지원하지 않습니다.");
+		throw new BusinessException(GlobalExceptionMessage.NO_RESOURCE_MESSAGE);
 	}
 }

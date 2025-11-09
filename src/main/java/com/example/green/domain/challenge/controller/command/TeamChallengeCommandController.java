@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.green.domain.challenge.controller.command.docs.TeamChallengeCommandControllerDocs;
 import com.example.green.domain.challenge.service.ChallengeService;
 import com.example.green.global.api.NoContent;
+import com.example.green.global.error.exception.BusinessException;
+import com.example.green.global.error.exception.GlobalExceptionMessage;
 import com.example.green.global.security.PrincipalDetails;
 import com.example.green.global.security.annotation.AuthenticatedApi;
 
@@ -41,6 +43,6 @@ public class TeamChallengeCommandController implements TeamChallengeCommandContr
 		@PathVariable Long challengeId,
 		@AuthenticationPrincipal PrincipalDetails currentUser
 	) {
-		throw new IllegalArgumentException("팀 챌린지 탈퇴는 지원하지 않습니다.");
+		throw new BusinessException(GlobalExceptionMessage.NO_RESOURCE_MESSAGE);
 	}
 }
