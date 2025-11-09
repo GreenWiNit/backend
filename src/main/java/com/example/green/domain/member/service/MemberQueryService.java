@@ -15,7 +15,7 @@ import com.example.green.domain.member.repository.dto.UserBasicInfo;
 import com.example.green.global.api.page.PageSearchCondition;
 import com.example.green.global.api.page.PageTemplate;
 import com.example.green.global.api.page.Pagination;
-import com.example.green.infra.client.ChallengeClient;
+import com.example.green.infra.client.CertificationClient;
 import com.example.green.infra.client.PointClient;
 
 import lombok.RequiredArgsConstructor;
@@ -26,7 +26,7 @@ import lombok.RequiredArgsConstructor;
 public class MemberQueryService {
 
 	private final PointClient pointClient;
-	private final ChallengeClient challengeClient;
+	private final CertificationClient certificationClient;
 	private final MemberQueryRepository memberQueryRepository;
 
 	public PageTemplate<MemberPointsDto> searchMembersPoint(BasicInfoSearchCondition condition) {
@@ -70,7 +70,7 @@ public class MemberQueryService {
 			.toList();
 
 		Map<Long, BigDecimal> pointsMap = pointClient.getEarnedPointByMember(memberIds);
-		Map<Long, Long> certCountMap = challengeClient.getCertificationCountByMembers(memberIds);
+		Map<Long, Long> certCountMap = certificationClient.getCertificationCountByMembers(memberIds);
 
 		List<UserSummaryDto> result = basicPage.content().stream()
 			.map(info -> UserSummaryDto.of(

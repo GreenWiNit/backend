@@ -86,8 +86,4 @@ public class ChallengeCertificationQueryImpl implements ChallengeCertificationQu
 
 		return PageTemplate.of(content, pagination);
 	}
-
-	public int getTotalCertifiedCountByMember(Long memberId) {
-		return challengeCertificationRepository.countChallengeCertificationByMemberMemberId(memberId);
-	}
 }
