@@ -3,7 +3,6 @@ package com.example.green.domain.challenge.controller.query.dto.challenge;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 import com.example.green.domain.challenge.entity.challenge.vo.ChallengeDisplay;
 
@@ -30,7 +29,7 @@ public record AdminTeamChallengesDto(
 	BigDecimal challengePoint,
 
 	@Schema(description = "팀 수", example = "4")
-	Long teamCount,
+	Integer teamCount,
 
 	@Schema(description = "전시 상태", example = "VISIBLE")
 	ChallengeDisplay displayStatus,
@@ -38,8 +37,6 @@ public record AdminTeamChallengesDto(
 	@Schema(description = "생성 일시")
 	LocalDateTime createdDate
 ) {
-	private static final DateTimeFormatter PERIOD_FORMATTER = DateTimeFormatter.ofPattern("yyyy.MM.dd");
-
 	public static AdminTeamChallengesDto of(AdminChallengesDto it) {
 		return new AdminTeamChallengesDto(
 			it.getId(),
@@ -48,13 +45,9 @@ public record AdminTeamChallengesDto(
 			null,
 			null,
 			BigDecimal.valueOf(it.getPoint()),
-			it.getTeamCount(),
+			it.getTeamCount().intValue(),
 			it.getDisplay(),
 			it.getCreatedDate()
 		);
-	}
-
-	public String getPeriod() {
-		return beginDate.format(PERIOD_FORMATTER) + " ~ " + endDate.format(PERIOD_FORMATTER) + ".";
 	}
 }
