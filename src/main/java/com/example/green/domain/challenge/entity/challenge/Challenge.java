@@ -125,7 +125,7 @@ public class Challenge extends BaseEntity {
 		}
 	}
 
-	private boolean isAlreadyParticipated(Long memberId) {
+	public boolean isAlreadyParticipated(Long memberId) {
 		return participations.stream()
 			.anyMatch(p -> p.isParticipated(memberId));
 	}
