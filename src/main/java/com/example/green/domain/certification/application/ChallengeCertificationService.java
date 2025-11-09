@@ -38,8 +38,7 @@ public class ChallengeCertificationService {
 		validateFutureCertification(cmd.challengeDate());
 		challengeCertificationQuery.checkAlreadyPersonalCert(cmd.challengeId(), cmd.challengeDate(), cmd.memberId());
 
-		ChallengeSnapshot challenge =
-			certificationClientHelper.getPersonalSnapshot(cmd.challengeId(), cmd.memberId(), cmd.challengeDate());
+		ChallengeSnapshot challenge = certificationClientHelper.getPersonalSnapshot(cmd.challengeId(), cmd.memberId());
 		MemberSnapshot member = certificationClientHelper.getMemberSnapshot(cmd.memberId());
 		ChallengeCertification certification = cmd.toEntity(member, challenge);
 
