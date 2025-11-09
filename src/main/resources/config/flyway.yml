@@ -1,0 +1,7 @@
+spring:
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    baseline-version: 0
+    default-schema: greenwinitdb
+    locations: classpath:db/migration

@@ -1,6 +1,7 @@
 package com.example.green.domain.challenge.controller.query;
 
 import static com.example.green.domain.challenge.controller.message.ChallengeResponseMessage.*;
+import static com.example.green.domain.challenge.entity.challenge.vo.ChallengeType.*;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,13 +13,14 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.green.domain.challenge.controller.query.docs.TeamChallengeQueryControllerDocs;
 import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDetailDto;
 import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDto;
-import com.example.green.domain.challenge.repository.query.TeamChallengeQuery;
+import com.example.green.domain.challenge.repository.query.ChallengeQuery;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.page.CursorTemplate;
+import com.example.green.global.error.exception.BusinessException;
+import com.example.green.global.error.exception.GlobalExceptionMessage;
 import com.example.green.global.security.PrincipalDetails;
 import com.example.green.global.security.annotation.AuthenticatedApi;
 import com.example.green.global.security.annotation.PublicApi;
-import com.example.green.global.utils.TimeUtils;
 
 import lombok.RequiredArgsConstructor;
 
@@ -27,8 +29,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 public class TeamChallengeQueryController implements TeamChallengeQueryControllerDocs {
 
-	private final TeamChallengeQuery teamChallengeQuery;
-	private final TimeUtils timeUtils;
+	private final ChallengeQuery challengeQuery;
 
 	@GetMapping
 	@PublicApi
@@ -36,9 +37,7 @@ public class TeamChallengeQueryController implements TeamChallengeQueryControlle
 		@RequestParam(required = false) Long cursor,
 		@RequestParam(required = false, defaultValue = "20") Integer pageSize
 	) {
-		CursorTemplate<Long, ChallengeDto> result =
-			teamChallengeQuery.findTeamChallengesByCursor(cursor, pageSize, timeUtils.now());
-
+		CursorTemplate<Long, ChallengeDto> result = challengeQuery.findChallengesByCursor(cursor, pageSize, TEAM);
 		return ApiTemplate.ok(CHALLENGE_LIST_FOUND, result);
 	}
 
@@ -48,9 +47,7 @@ public class TeamChallengeQueryController implements TeamChallengeQueryControlle
 		@PathVariable Long challengeId,
 		@AuthenticationPrincipal PrincipalDetails principalDetails
 	) {
-		Long memberId = principalDetails.getMemberId();
-		ChallengeDetailDto result = teamChallengeQuery.findTeamChallenge(challengeId, memberId);
-		return ApiTemplate.ok(CHALLENGE_DETAIL_FOUND, result);
+		throw new BusinessException(GlobalExceptionMessage.NO_RESOURCE_MESSAGE);
 	}
 
 	@GetMapping("/me")
@@ -62,8 +59,7 @@ public class TeamChallengeQueryController implements TeamChallengeQueryControlle
 	) {
 		Long memberId = currentUser.getMemberId();
 		CursorTemplate<Long, ChallengeDto> result =
-			teamChallengeQuery.findMyParticipationByCursor(memberId, cursor, pageSize, timeUtils.now());
-
+			challengeQuery.findMyParticipationByCursor(memberId, cursor, pageSize, TEAM);
 		return ApiTemplate.ok(MY_TEAM_CHALLENGE_LIST_FOUND, result);
 	}
 }

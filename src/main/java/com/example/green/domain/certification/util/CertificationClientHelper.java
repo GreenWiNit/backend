@@ -1,7 +1,6 @@
 package com.example.green.domain.certification.util;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
@@ -33,8 +32,8 @@ public class CertificationClientHelper {
 	private final FileClient fileClient;
 	private final PointClient pointClient;
 
-	public ChallengeSnapshot getPersonalSnapshot(Long challengeId, Long memberId, LocalDate challengeDate) {
-		ChallengeDto dto = challengeClient.getPersonalChallengeByMemberAndDate(challengeId, memberId, challengeDate);
+	public ChallengeSnapshot getPersonalSnapshot(Long challengeId, Long memberId) {
+		ChallengeDto dto = challengeClient.getPersonalChallengeByMember(challengeId, memberId);
 		return ChallengeSnapshot.ofPersonal(dto.id(), dto.name(), dto.code(), dto.point(), dto.imageUrl());
 	}
 

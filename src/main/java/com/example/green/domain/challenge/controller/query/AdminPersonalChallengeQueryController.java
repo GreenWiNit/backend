@@ -1,6 +1,7 @@
 package com.example.green.domain.challenge.controller.query;
 
 import static com.example.green.domain.challenge.controller.message.AdminChallengeResponseMessage.*;
+import static com.example.green.domain.challenge.entity.challenge.vo.ChallengeType.*;
 
 import java.util.List;
 
@@ -13,14 +14,15 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.green.domain.challenge.controller.message.AdminChallengeResponseMessage;
 import com.example.green.domain.challenge.controller.query.docs.AdminPersonalChallengeQueryControllerDocs;
 import com.example.green.domain.challenge.controller.query.dto.challenge.AdminChallengeDetailDto;
+import com.example.green.domain.challenge.controller.query.dto.challenge.AdminChallengesDto;
 import com.example.green.domain.challenge.controller.query.dto.challenge.AdminPersonalChallengesDto;
 import com.example.green.domain.challenge.controller.query.dto.challenge.AdminPersonalParticipationDto;
-import com.example.green.domain.challenge.repository.query.PersonalChallengeQuery;
+import com.example.green.domain.challenge.repository.query.ChallengeAdminQuery;
 import com.example.green.domain.challenge.util.MemberKeyConverter;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.page.PageTemplate;
-import com.example.green.infra.excel.core.ExcelDownloader;
 import com.example.green.global.security.annotation.AdminApi;
+import com.example.green.infra.excel.core.ExcelDownloader;
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +33,7 @@ import lombok.RequiredArgsConstructor;
 @AdminApi
 public class AdminPersonalChallengeQueryController implements AdminPersonalChallengeQueryControllerDocs {
 
-	private final PersonalChallengeQuery personalChallengeQuery;
+	private final ChallengeAdminQuery challengeAdminQuery;
 	private final ExcelDownloader excelDownloader;
 	private final MemberKeyConverter converter;
 
@@ -40,20 +42,23 @@ public class AdminPersonalChallengeQueryController implements AdminPersonalChall
 		@RequestParam(required = false) Integer page,
 		@RequestParam(required = false, defaultValue = "10") Integer size
 	) {
-		PageTemplate<AdminPersonalChallengesDto> result = personalChallengeQuery.findChallengePage(page, size);
+		PageTemplate<AdminChallengesDto> temp = challengeAdminQuery.findChallengePage(page, size, PERSONAL);
+		List<AdminPersonalChallengesDto> data = temp.content().stream().map(AdminPersonalChallengesDto::of).toList();
+		PageTemplate<AdminPersonalChallengesDto> result = convertTemp(temp, data);
 		return ApiTemplate.ok(PERSONAL_CHALLENGE_LIST_FOUND, result);
 	}
 
 	@GetMapping("/{challengeId}")
 	public ApiTemplate<AdminChallengeDetailDto> getPersonalChallengeDetail(@PathVariable Long challengeId) {
-		AdminChallengeDetailDto result = personalChallengeQuery.getChallengeDetail(challengeId);
+		AdminChallengeDetailDto result = challengeAdminQuery.getChallengeDetail(challengeId);
 		return ApiTemplate.ok(AdminChallengeResponseMessage.CHALLENGE_DETAIL_FOUND, result);
 	}
 
 	@GetMapping("/excel")
 	public void downloadChallengeExcel(HttpServletResponse response) {
-		List<AdminPersonalChallengesDto> result = personalChallengeQuery.findChallengePageForExcel();
-		excelDownloader.downloadAsStream(result, response);
+		List<AdminChallengesDto> temp = challengeAdminQuery.findChallengePageExcel(PERSONAL);
+		List<AdminPersonalChallengesDto> data = temp.stream().map(AdminPersonalChallengesDto::of).toList();
+		excelDownloader.downloadAsStream(data, response);
 	}
 
 	@GetMapping("/{challengeId}/participants")
@@ -63,7 +68,7 @@ public class AdminPersonalChallengeQueryController implements AdminPersonalChall
 		@RequestParam(required = false, defaultValue = "10") Integer size
 	) {
 		PageTemplate<AdminPersonalParticipationDto> result =
-			personalChallengeQuery.findParticipantByChallenge(challengeId, page, size);
+			challengeAdminQuery.findParticipantByChallenge(challengeId, page, size);
 		converter.convertPage(result);
 		return ApiTemplate.ok(CHALLENGE_PARTICIPANTS_FOUND, result);
 	}
@@ -71,9 +76,22 @@ public class AdminPersonalChallengeQueryController implements AdminPersonalChall
 	@GetMapping("/{challengeId}/participants/excel")
 	public void downloadParticipantExcel(@PathVariable Long challengeId, HttpServletResponse response) {
 		List<AdminPersonalParticipationDto> result =
-			personalChallengeQuery.findParticipantByChallengeForExcel(challengeId);
+			challengeAdminQuery.findParticipantExcelByChallenge(challengeId);
 
 		converter.convert(result);
 		excelDownloader.downloadAsStream(result, response);
+	}
+
+	private static PageTemplate<AdminPersonalChallengesDto> convertTemp(
+		PageTemplate<AdminChallengesDto> temp,
+		List<AdminPersonalChallengesDto> data
+	) {
+		return new PageTemplate<>(
+			temp.totalElements(),
+			temp.totalPages(),
+			temp.currentPage(),
+			temp.pageSize(),
+			temp.hasNext(),
+			data);
 	}
 }

@@ -3,7 +3,6 @@ package com.example.green.domain.challenge.controller.query.dto.challenge;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 import com.example.green.domain.challenge.entity.challenge.vo.ChallengeDisplay;
 
@@ -38,9 +37,17 @@ public record AdminTeamChallengesDto(
 	@Schema(description = "생성 일시")
 	LocalDateTime createdDate
 ) {
-	private static final DateTimeFormatter PERIOD_FORMATTER = DateTimeFormatter.ofPattern("yyyy.MM.dd");
-
-	public String getPeriod() {
-		return beginDate.format(PERIOD_FORMATTER) + " ~ " + endDate.format(PERIOD_FORMATTER) + ".";
+	public static AdminTeamChallengesDto of(AdminChallengesDto it) {
+		return new AdminTeamChallengesDto(
+			it.getId(),
+			it.getCode(),
+			it.getName(),
+			null,
+			null,
+			BigDecimal.valueOf(it.getPoint()),
+			it.getTeamCount().intValue(),
+			it.getDisplay(),
+			it.getCreatedDate()
+		);
 	}
 }

@@ -22,6 +22,4 @@ public interface ChallengeCertificationQuery {
 	ChallengeCertificationDetailDto findCertificationDetail(Long certificationId, Long memberId);
 
 	PageTemplate<AdminCertificateSearchDto> search(ChallengeCertificationFilter filter);
-
-	int getTotalCertifiedCountByMember(Long memberId);
 }

@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.green.domain.challenge.controller.query.dto.challenge.ChallengeDetailDtoV2;
-import com.example.green.domain.challenge.repository.query.PersonalChallengeQuery;
+import com.example.green.domain.challenge.repository.query.ChallengeQuery;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.security.PrincipalDetails;
 import com.example.green.global.security.annotation.AuthenticatedApi;
@@ -22,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 @AuthenticatedApi
 public class PersonalChallengeQueryControllerV2 implements PersonalChallengeQueryControllerDocsV2 {
 
-	private final PersonalChallengeQuery personalChallengeQuery;
+	private final ChallengeQuery challengeQuery;
 
 	@GetMapping("/{challengeId}")
 	public ApiTemplate<ChallengeDetailDtoV2> getPersonalChallenge(
@@ -30,7 +30,7 @@ public class PersonalChallengeQueryControllerV2 implements PersonalChallengeQuer
 		@AuthenticationPrincipal PrincipalDetails principalDetails
 	) {
 		Long memberId = principalDetails.getMemberId();
-		ChallengeDetailDtoV2 result = personalChallengeQuery.findPersonalChallengeV2(challengeId, memberId);
+		ChallengeDetailDtoV2 result = challengeQuery.findChallenge(challengeId, memberId);
 		return ApiTemplate.ok(CHALLENGE_DETAIL_FOUND, result);
 	}
 }
