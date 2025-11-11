@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.green.domain.pointshop.item.controller.docs.PointItemAdminControllerDocs;
@@ -22,12 +23,14 @@ import com.example.green.domain.pointshop.item.dto.request.CreatePointItemReques
 import com.example.green.domain.pointshop.item.dto.request.PointItemExcelDownloadRequest;
 import com.example.green.domain.pointshop.item.dto.request.PointItemSearchRequest;
 import com.example.green.domain.pointshop.item.dto.request.UpdatePointItemRequest;
+import com.example.green.domain.pointshop.item.dto.response.ItemWithApplicantsDTO;
 import com.example.green.domain.pointshop.item.dto.response.PointItemAdminResponse;
 import com.example.green.domain.pointshop.item.dto.response.PointItemSearchResponse;
 import com.example.green.domain.pointshop.item.entity.vo.ItemBasicInfo;
 import com.example.green.domain.pointshop.item.entity.vo.ItemCode;
 import com.example.green.domain.pointshop.item.entity.vo.ItemMedia;
 import com.example.green.domain.pointshop.item.entity.vo.ItemPrice;
+import com.example.green.domain.pointshop.item.repository.PointItemOrderRepository;
 import com.example.green.domain.pointshop.item.repository.PointItemQueryRepository;
 import com.example.green.domain.pointshop.item.service.PointItemQueryService;
 import com.example.green.domain.pointshop.item.service.PointItemService;
@@ -52,6 +55,7 @@ public class PointItemAdminController implements PointItemAdminControllerDocs {
 	private final PointItemService pointItemService;
 	private final PointItemQueryService pointItemQueryService;
 	private final PointItemQueryRepository pointItemQueryRepository;
+	private final PointItemOrderRepository pointItemOrderRepository;
 	private final ExcelDownloader excelDownloader;
 
 	@PostMapping
@@ -121,4 +125,15 @@ public class PointItemAdminController implements PointItemAdminControllerDocs {
 		excelDownloader.downloadAsStream(result, response);
 	}
 
+	@GetMapping("/orders")
+	public ApiTemplate<PageTemplate<ItemWithApplicantsDTO>> findAllOrders(
+		@RequestParam(required = false) Integer page,
+		@RequestParam(required = false) Integer size) {
+
+		PageTemplate<ItemWithApplicantsDTO> result =
+			pointItemOrderRepository.findAllItemsWithApplicants(page, size);
+
+		return ApiTemplate.ok(LOAD_ALL_ITEMS, result);
+
+	}
 }
