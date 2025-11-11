@@ -33,7 +33,7 @@ public class PointItemOrderController {
 
 	@Idempotent
 	@AuthenticatedApi(reason = "로그인한 사용자만 아이템을 구매 가능하다")
-	@PostMapping("/{id}")
+	@PostMapping("/{itemId}")
 	public ApiTemplate<OrderPointItemResponse> orderPointItem(
 		@PathVariable Long itemId,
 		@AuthenticationPrincipal PrincipalDetails principal
