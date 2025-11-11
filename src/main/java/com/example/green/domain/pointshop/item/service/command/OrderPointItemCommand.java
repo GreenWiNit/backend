@@ -5,7 +5,6 @@ import com.example.green.domain.pointshop.order.entity.vo.MemberSnapshot;
 
 public record OrderPointItemCommand(
 	MemberSnapshot memberSnapshot,
-	PointItemSnapshot pointItemSnapshot,
-	Long itemId
+	PointItemSnapshot pointItemSnapshot
 ) {
 }
