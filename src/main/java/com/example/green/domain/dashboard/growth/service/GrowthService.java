@@ -16,12 +16,12 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class GrowthService {
 
 	private final GrowthRepository growthRepository;
 	private final GrowthCalculateService calculateService;
 
-	@Transactional(readOnly = true)
 	public LoadGrowthResponse loadGrowth(Long memberId) {
 
 		calculateService.calculateMemberGrowth(memberId);

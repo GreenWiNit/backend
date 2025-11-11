@@ -5,6 +5,8 @@ import java.math.BigDecimal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.green.domain.dashboard.growth.entity.PlantGrowthItem;
+import com.example.green.domain.dashboard.growth.repository.PlantGrowthItemRepository;
 import com.example.green.domain.member.repository.MemberRepository;
 import com.example.green.domain.pointshop.item.dto.response.OrderPointItemResponse;
 import com.example.green.domain.pointshop.item.entity.OrderPointItem;
@@ -28,6 +30,7 @@ public class PointItemOrderService {
 
 	private final PointItemOrderRepository pointItemOrderRepository;
 	private final PointItemRepository pointItemRepository;
+	private final PlantGrowthItemRepository plantGrowthItemRepository;
 	private final PointClient pointClient;
 	private final MemberRepository memberRepository;
 	private final TimeUtils timeUtils;
@@ -74,6 +77,13 @@ public class PointItemOrderService {
 			.build();
 
 		pointItemOrderRepository.save(order);
+
+		PlantGrowthItem userItem = PlantGrowthItem.create(
+			itemName,
+			itemImgUrl
+		);
+
+		plantGrowthItemRepository.save(userItem);
 
 		return new OrderPointItemResponse(
 			memberId,
