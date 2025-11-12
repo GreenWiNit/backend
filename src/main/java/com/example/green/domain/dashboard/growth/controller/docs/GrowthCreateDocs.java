@@ -1,4 +1,4 @@
-package com.example.green.domain.dashboard.growth.controller;
+package com.example.green.domain.dashboard.growth.controller.docs;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

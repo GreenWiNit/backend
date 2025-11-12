@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.green.domain.dashboard.growth.dto.LoadGrowthResponse;
+import com.example.green.domain.dashboard.growth.dto.response.LoadGrowthResponse;
 import com.example.green.domain.dashboard.growth.entity.Growth;
 import com.example.green.domain.dashboard.growth.entity.enums.Level;
 import com.example.green.domain.dashboard.growth.exception.GrowthException;

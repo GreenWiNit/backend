@@ -12,7 +12,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
-import com.example.green.domain.dashboard.growth.dto.LoadGrowthResponse;
+import com.example.green.domain.dashboard.growth.dto.response.LoadGrowthResponse;
 import com.example.green.domain.dashboard.growth.entity.enums.Level;
 import com.example.green.domain.dashboard.growth.message.GrowthResponseMessage;
 import com.example.green.domain.dashboard.growth.service.GrowthService;

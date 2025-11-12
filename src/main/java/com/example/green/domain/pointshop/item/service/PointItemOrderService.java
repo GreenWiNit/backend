@@ -79,6 +79,7 @@ public class PointItemOrderService {
 		pointItemOrderRepository.save(order);
 
 		PlantGrowthItem userItem = PlantGrowthItem.create(
+			memberId,
 			itemName,
 			itemImgUrl
 		);

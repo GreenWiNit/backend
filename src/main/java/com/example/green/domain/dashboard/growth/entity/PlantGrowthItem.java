@@ -19,6 +19,9 @@ public class PlantGrowthItem {
 	private Long id;
 
 	@Column(nullable = false)
+	private Long memberId;
+
+	@Column(nullable = false)
 	private String itemName;
 
 	@Column(nullable = false)
@@ -34,12 +37,14 @@ public class PlantGrowthItem {
 	private boolean applicability;
 
 	private PlantGrowthItem(
+		Long memberId,
 		String itemName,
 		String itemImgUrl,
 		double positionX,
 		double positionY,
 		boolean applicability
 	) {
+		this.memberId = memberId;
 		this.itemName = itemName;
 		this.itemImgUrl = itemImgUrl;
 		this.positionX = positionX;
@@ -48,10 +53,11 @@ public class PlantGrowthItem {
 	}
 
 	public static PlantGrowthItem create(
+		Long memberId,
 		String itemName,
 		String itemImgUrl
 	) {
-		return new PlantGrowthItem(itemName, itemImgUrl, 0, 0, false);
+		return new PlantGrowthItem(memberId, itemName, itemImgUrl, 0, 0, false);
 	}
 
 	public void changePosition(double x, double y) {
