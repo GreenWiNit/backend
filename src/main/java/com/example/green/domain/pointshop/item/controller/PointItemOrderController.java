@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.green.domain.common.idempotency.Idempotent;
+import com.example.green.domain.pointshop.item.controller.docs.PointItemOrderControllerDocs;
 import com.example.green.domain.pointshop.item.controller.message.PointItemResponseMessage;
 import com.example.green.domain.pointshop.item.dto.response.OrderPointItemResponse;
 import com.example.green.domain.pointshop.item.entity.PointItem;
@@ -26,7 +27,7 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/point-items/order")
 @RequiredArgsConstructor
-public class PointItemOrderController {
+public class PointItemOrderController implements PointItemOrderControllerDocs {
 
 	private final PointItemOrderService pointItemOrderService;
 	private final PointItemRepository pointItemRepository;
