@@ -45,8 +45,8 @@ public class GrowthController implements GrowthControllerDocs {
 	public ApiTemplate<List<GetPlantGrowthItemResponse>> getAllGrowth(
 		@AuthenticationPrincipal PrincipalDetails principal
 	) {
-		Long curentMemberId = principal.getMemberId();
-		List<GetPlantGrowthItemResponse> items = plantItemService.getPlantGrowthItems(curentMemberId);
+		Long currentMemberId = principal.getMemberId();
+		List<GetPlantGrowthItemResponse> items = plantItemService.getPlantGrowthItems(currentMemberId);
 		return ApiTemplate.ok(GrowthResponseMessage.LOAD_ITEMS_SUCCESS, items);
 
 	}
