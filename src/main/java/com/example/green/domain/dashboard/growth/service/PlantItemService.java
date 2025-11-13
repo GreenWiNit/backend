@@ -6,6 +6,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.green.domain.dashboard.growth.dto.response.GetPlantGrowthItemResponse;
+import com.example.green.domain.dashboard.growth.entity.PlantGrowthItem;
+import com.example.green.domain.dashboard.growth.exception.GrowthException;
+import com.example.green.domain.dashboard.growth.message.GrowthExceptionMessage;
 import com.example.green.domain.dashboard.growth.repository.PlantGrowthItemRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -23,6 +26,13 @@ public class PlantItemService {
 			return List.of();
 		}
 		return getItems;
+	}
+
+	@Transactional
+	public void changeApplicability(Long memberId, Long itemId) {
+		PlantGrowthItem growthItem = plantGrowthItemRepository.findItemByIdAndMemberId(memberId, itemId)
+			.orElseThrow(() -> new GrowthException(GrowthExceptionMessage.NOT_FOUND_ITEM));
+		growthItem.apply();
 	}
 
 }

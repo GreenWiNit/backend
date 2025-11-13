@@ -50,4 +50,5 @@ public class PointItemController implements PointItemControllerDocs {
 		return ApiTemplate.ok(PointItemResponseMessage.POINT_ITEM_DETAIL_INQUIRY_SUCCESS, response);
 	}
 
+	@
 }
