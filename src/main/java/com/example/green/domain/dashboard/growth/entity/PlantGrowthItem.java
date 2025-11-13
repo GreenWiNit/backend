@@ -67,7 +67,12 @@ public class PlantGrowthItem {
 		String itemName,
 		String itemImgUrl
 	) {
-		return new PlantGrowthItem(member, itemName, itemImgUrl, 0, 0, false);
+		PlantGrowthItem item = new PlantGrowthItem(member, itemName, itemImgUrl, 0, 0, false);
+		if (member != null) {
+			member.addPlantGrowthItem(item);
+		}
+
+		return item;
 	}
 
 	public void changePosition(double x, double y) {
