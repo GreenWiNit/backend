@@ -1,9 +1,12 @@
 package com.example.green.domain.member.entity;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.example.green.domain.common.BaseEntity;
 import com.example.green.domain.dashboard.growth.entity.Growth;
+import com.example.green.domain.dashboard.growth.entity.PlantGrowthItem;
 import com.example.green.domain.member.entity.enums.MemberRole;
 import com.example.green.domain.member.entity.enums.MemberStatus;
 import com.example.green.domain.member.entity.vo.Profile;
@@ -18,6 +21,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Index;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
@@ -70,6 +74,9 @@ public class Member extends BaseEntity {
 
 	@OneToOne(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
 	private Growth growth;
+
+	@OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<PlantGrowthItem> plantGrowthItems = new ArrayList<>();
 
 	private LocalDateTime lastLoginAt;
 
@@ -126,4 +133,12 @@ public class Member extends BaseEntity {
 			growth.setMember(this);
 		}
 	}
+
+	public void addPlantGrowthItem(PlantGrowthItem item) {
+		plantGrowthItems.add(item);
+		if (item.getMember() != this) {
+			item.setMember(this);
+		}
+	}
+
 }

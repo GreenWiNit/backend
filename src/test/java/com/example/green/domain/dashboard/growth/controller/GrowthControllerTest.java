@@ -68,7 +68,7 @@ class GrowthControllerTest extends BaseControllerUnitTest {
 		);
 
 		plantGrowthItem = PlantGrowthItem.create(
-			1L,
+			member,
 			"맑은 뭉게 구름",
 			"https://my-plant-growth-bucket.s3.ap-northeast-2.amazonaws.com/images/sunflower_growth_1.jpg"
 		);

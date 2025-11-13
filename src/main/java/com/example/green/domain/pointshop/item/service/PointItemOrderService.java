@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.green.domain.dashboard.growth.entity.PlantGrowthItem;
 import com.example.green.domain.dashboard.growth.repository.PlantGrowthItemRepository;
+import com.example.green.domain.member.entity.Member;
 import com.example.green.domain.member.repository.MemberRepository;
 import com.example.green.domain.pointshop.item.dto.response.OrderPointItemResponse;
 import com.example.green.domain.pointshop.item.entity.OrderPointItem;
@@ -40,14 +41,15 @@ public class PointItemOrderService {
 		MemberSnapshot memberSnapshot = command.memberSnapshot();
 		PointItemSnapshot itemSnapshot = command.pointItemSnapshot();
 
-		String memberKey = memberSnapshot.getMemberKey();
 		Long memberId = memberSnapshot.getMemberId();
+
+		Member member = memberRepository.findById(memberId)
+			.orElseThrow(() -> new PointItemException(PointItemExceptionMessage.NOT_FOUND_USER));
 
 		Long itemId = itemSnapshot.getPointItemId();
 		String itemName = itemSnapshot.getItemName();
 		String itemImgUrl = itemSnapshot.getItemImgUrl();
 
-		existMember(memberKey);
 		existItem(itemId);
 
 		BigDecimal itemPrice = itemSnapshot.getItemPrice();
@@ -79,7 +81,7 @@ public class PointItemOrderService {
 		pointItemOrderRepository.save(order);
 
 		PlantGrowthItem userItem = PlantGrowthItem.create(
-			memberId,
+			member,
 			itemName,
 			itemImgUrl
 		);
@@ -98,12 +100,6 @@ public class PointItemOrderService {
 	public void existItem(Long itemId) {
 		if (pointItemRepository.findById(itemId).isEmpty()) {
 			throw new PointItemException(PointItemExceptionMessage.NOT_POSSIBLE_BUY_ITEM);
-		}
-	}
-
-	public void existMember(String memberKey) {
-		if (!memberRepository.existsByMemberKey(memberKey)) {
-			throw new PointItemException(PointItemExceptionMessage.NOT_FOUND_USER);
 		}
 	}
 

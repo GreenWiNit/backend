@@ -19,6 +19,7 @@ import com.example.green.domain.dashboard.growth.entity.PlantGrowthItem;
 import com.example.green.domain.dashboard.growth.exception.GrowthException;
 import com.example.green.domain.dashboard.growth.message.GrowthExceptionMessage;
 import com.example.green.domain.dashboard.growth.repository.PlantGrowthItemRepository;
+import com.example.green.domain.member.entity.Member;
 
 class PlantItemServiceTest {
 
@@ -30,13 +31,22 @@ class PlantItemServiceTest {
 
 	private PlantGrowthItem plantGrowthItem;
 
+	private Member member;
+
 	@BeforeEach
 	void setUp() {
 
 		MockitoAnnotations.openMocks(this);
 
+		member = Member.create(
+			"mb-1234",
+			"이지은",
+			"user1@test.com",
+			"nickname"
+		);
+
 		plantGrowthItem = PlantGrowthItem.create(
-			1L,
+			member,
 			"맑은 뭉게 구름",
 			"https://my-plant-growth-bucket.s3.ap-northeast-2.amazonaws.com/images/sunflower_growth_1.jpg"
 		);

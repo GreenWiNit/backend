@@ -6,5 +6,4 @@ import com.example.green.domain.dashboard.growth.entity.PlantGrowthItem;
 
 public interface PlantGrowthItemRepository
 	extends JpaRepository<PlantGrowthItem, Long>, PlantGrowthItemRepositoryCustom {
-
 }

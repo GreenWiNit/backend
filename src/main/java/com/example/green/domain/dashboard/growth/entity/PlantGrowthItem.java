@@ -1,10 +1,15 @@
 package com.example.green.domain.dashboard.growth.entity;
 
+import com.example.green.domain.member.entity.Member;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Version;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -19,9 +24,9 @@ public class PlantGrowthItem {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(nullable = false)
-	private Long memberId;
-
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "member_id", nullable = false)
+	private Member member;
 	@Column(nullable = false)
 	private String itemName;
 
@@ -42,14 +47,14 @@ public class PlantGrowthItem {
 	private Long version;
 
 	private PlantGrowthItem(
-		Long memberId,
+		Member member,
 		String itemName,
 		String itemImgUrl,
 		double positionX,
 		double positionY,
 		boolean applicability
 	) {
-		this.memberId = memberId;
+		this.member = member;
 		this.itemName = itemName;
 		this.itemImgUrl = itemImgUrl;
 		this.positionX = positionX;
@@ -58,11 +63,11 @@ public class PlantGrowthItem {
 	}
 
 	public static PlantGrowthItem create(
-		Long memberId,
+		Member member,
 		String itemName,
 		String itemImgUrl
 	) {
-		return new PlantGrowthItem(memberId, itemName, itemImgUrl, 0, 0, false);
+		return new PlantGrowthItem(member, itemName, itemImgUrl, 0, 0, false);
 	}
 
 	public void changePosition(double x, double y) {
@@ -72,6 +77,10 @@ public class PlantGrowthItem {
 
 	public void apply() {
 		this.applicability = !this.applicability;
+	}
+
+	public void setMember(Member member) {
+		this.member = member;
 	}
 
 }

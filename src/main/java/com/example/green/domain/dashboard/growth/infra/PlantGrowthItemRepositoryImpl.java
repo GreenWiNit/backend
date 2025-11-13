@@ -27,7 +27,7 @@ public class PlantGrowthItemRepositoryImpl implements PlantGrowthItemRepositoryC
 				item.itemImgUrl,
 				item.applicability))
 			.from(item)
-			.where(item.memberId.eq(memberId))
+			.where(item.member.id.eq(memberId))
 			.fetch();
 	}
 
@@ -39,9 +39,10 @@ public class PlantGrowthItemRepositoryImpl implements PlantGrowthItemRepositoryC
 			.selectFrom(plantGrowthItem)
 			.where(
 				plantGrowthItem.id.eq(itemId),
-				plantGrowthItem.memberId.eq(memberId)
+				plantGrowthItem.member.id.eq(memberId)
 			)
 			.fetchOne();
 		return Optional.ofNullable(item);
 	}
 }
+
