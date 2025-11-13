@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.example.green.domain.dashboard.growth.dto.LoadGrowthResponse;
+import com.example.green.domain.dashboard.growth.dto.response.LoadGrowthResponse;
 import com.example.green.domain.dashboard.growth.entity.Growth;
 import com.example.green.domain.dashboard.growth.entity.enums.Level;
 import com.example.green.domain.dashboard.growth.repository.GrowthRepository;

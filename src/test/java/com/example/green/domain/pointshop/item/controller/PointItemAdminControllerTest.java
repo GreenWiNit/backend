@@ -18,6 +18,7 @@ import com.example.green.domain.pointshop.item.dto.request.PointItemExcelDownloa
 import com.example.green.domain.pointshop.item.dto.request.PointItemSearchRequest;
 import com.example.green.domain.pointshop.item.dto.request.UpdatePointItemRequest;
 import com.example.green.domain.pointshop.item.dto.response.PointItemSearchResponse;
+import com.example.green.domain.pointshop.item.repository.PointItemOrderRepository;
 import com.example.green.domain.pointshop.item.repository.PointItemQueryRepository;
 import com.example.green.domain.pointshop.item.service.PointItemQueryService;
 import com.example.green.domain.pointshop.item.service.PointItemService;
@@ -44,6 +45,9 @@ class PointItemAdminControllerTest extends BaseControllerUnitTest {
 
 	@MockitoBean
 	private PointItemQueryRepository pointItemQueryRepository;
+
+	@MockitoBean
+	private PointItemOrderRepository pointItemOrderRepository;
 
 	@MockitoBean
 	private ExcelDownloader excelDownloader;

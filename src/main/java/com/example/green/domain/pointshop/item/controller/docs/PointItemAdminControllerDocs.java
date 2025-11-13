@@ -4,6 +4,7 @@ import com.example.green.domain.pointshop.item.dto.request.CreatePointItemReques
 import com.example.green.domain.pointshop.item.dto.request.PointItemExcelDownloadRequest;
 import com.example.green.domain.pointshop.item.dto.request.PointItemSearchRequest;
 import com.example.green.domain.pointshop.item.dto.request.UpdatePointItemRequest;
+import com.example.green.domain.pointshop.item.dto.response.ItemWithApplicantsDTO;
 import com.example.green.domain.pointshop.item.dto.response.PointItemAdminResponse;
 import com.example.green.domain.pointshop.item.dto.response.PointItemSearchResponse;
 import com.example.green.global.api.ApiTemplate;
@@ -15,6 +16,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -84,5 +86,19 @@ public interface PointItemAdminControllerDocs {
 		content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
 	)
 	void downloadPointItemsExcel(PointItemExcelDownloadRequest request, HttpServletResponse response);
+
+	@Operation(
+		summary = "포인트 아이템 주문 내역 조회(관리자)",
+		description = "모든 포인트 아이템 주문 내역을 페이지네이션하여 조회합니다. ")
+	@ApiResponses(value = {
+		@ApiResponse(responseCode = "200", description = "포인트 아이템 주문 내역 조회 성공",
+			content = @Content(mediaType = "application/json",
+				schema = @Schema(implementation = ItemWithApplicantsDTO.class))
+		),
+		@ApiResponse(responseCode = "500", description = "주문 내역 조회 중 서버 오류 발생",
+			content = @Content(schema = @Schema(implementation = ExceptionResponse.class))
+		)
+	})
+	ApiTemplate<PageTemplate<ItemWithApplicantsDTO>> findAllOrders(Integer page, Integer size);
 
 }

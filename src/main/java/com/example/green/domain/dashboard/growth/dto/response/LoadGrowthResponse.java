@@ -1,4 +1,4 @@
-package com.example.green.domain.dashboard.growth.dto;
+package com.example.green.domain.dashboard.growth.dto.response;
 
 import java.math.BigDecimal;
 

@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.green.domain.dashboard.growth.dto.LoadGrowthResponse;
+import com.example.green.domain.dashboard.growth.dto.response.LoadGrowthResponse;
 import com.example.green.domain.dashboard.growth.entity.Growth;
 import com.example.green.domain.dashboard.growth.entity.enums.Level;
 import com.example.green.domain.dashboard.growth.exception.GrowthException;
@@ -16,12 +16,12 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class GrowthService {
 
 	private final GrowthRepository growthRepository;
 	private final GrowthCalculateService calculateService;
 
-	@Transactional(readOnly = true)
 	public LoadGrowthResponse loadGrowth(Long memberId) {
 
 		calculateService.calculateMemberGrowth(memberId);
