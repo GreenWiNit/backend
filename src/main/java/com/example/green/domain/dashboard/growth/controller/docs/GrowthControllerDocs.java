@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
+import com.example.green.domain.dashboard.growth.dto.request.ChangePositionRequest;
+import com.example.green.domain.dashboard.growth.dto.response.ChangePositionGrowthItemResponse;
 import com.example.green.domain.dashboard.growth.dto.response.GetPlantGrowthItemResponse;
 import com.example.green.domain.dashboard.growth.dto.response.LoadGrowthResponse;
 import com.example.green.global.api.ApiTemplate;
@@ -19,4 +21,14 @@ public interface GrowthControllerDocs {
 
 	@GrowthItemDocs
 	ApiTemplate<List<GetPlantGrowthItemResponse>> getAllGrowth(@AuthenticationPrincipal PrincipalDetails principal);
+
+	@GrowthApplicabilityDocs
+	ApiTemplate updateApplicability(@AuthenticationPrincipal PrincipalDetails principal, Long itemId);
+
+	@GrowthPositionDocs
+	ApiTemplate<ChangePositionGrowthItemResponse> changePositionGrowth(
+		@AuthenticationPrincipal PrincipalDetails principal,
+		Long itemId,
+		ChangePositionRequest changePositionRequest
+	);
 }
