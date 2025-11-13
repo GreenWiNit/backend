@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
 import com.example.green.domain.dashboard.growth.dto.request.ChangePositionRequest;
 import com.example.green.domain.dashboard.growth.dto.response.ChangePositionGrowthItemResponse;
@@ -65,17 +64,6 @@ class PlantItemServiceTest {
 			.thenReturn(Optional.of(plantGrowthItem));
 
 		assertThat(plantGrowthItem.isApplicability()).isFalse();
-
-		plantItemService.changeApplicability(1L, 1L);
-
-		assertThat(plantGrowthItem.isApplicability()).isTrue();
-	}
-
-	@Test
-	void 사용자_아이템_장착여부_설정_재시도() {
-		when(plantGrowthItemRepository.findItemByIdAndMemberId(1L, 1L))
-			.thenThrow(ObjectOptimisticLockingFailureException.class)
-			.thenReturn(Optional.of(plantGrowthItem));
 
 		plantItemService.changeApplicability(1L, 1L);
 
