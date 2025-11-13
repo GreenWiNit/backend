@@ -6,6 +6,8 @@ import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.green.domain.dashboard.growth.dto.request.ChangePositionRequest;
+import com.example.green.domain.dashboard.growth.dto.response.ChangePositionGrowthItemResponse;
 import com.example.green.domain.dashboard.growth.dto.response.GetPlantGrowthItemResponse;
 import com.example.green.domain.dashboard.growth.entity.PlantGrowthItem;
 import com.example.green.domain.dashboard.growth.exception.GrowthException;
@@ -51,4 +53,27 @@ public class PlantItemService {
 		}
 	}
 
+	@Transactional
+	public ChangePositionGrowthItemResponse changePositionGrowthItem(Long memberId, Long itemId,
+		ChangePositionRequest request) {
+		PlantGrowthItem growthItem = plantGrowthItemRepository.findItemByIdAndMemberId(memberId, itemId)
+			.orElseThrow(() -> new GrowthException(GrowthExceptionMessage.NOT_FOUND_ITEM));
+
+		double positionX = request.positionX();
+		double positionY = request.positionY();
+
+		if (!growthItem.isApplicability()) {
+			throw new GrowthException(GrowthExceptionMessage.NOT_SETTING_APPLICABILITY);
+		}
+
+		growthItem.changePosition(positionX, positionY);
+
+		return new ChangePositionGrowthItemResponse(
+			growthItem.getItemName(),
+			growthItem.getItemImgUrl(),
+			growthItem.isApplicability(),
+			growthItem.getPositionX(),
+			growthItem.getPositionY()
+		);
+	}
 }

@@ -6,10 +6,13 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.green.domain.dashboard.growth.controller.docs.GrowthControllerDocs;
+import com.example.green.domain.dashboard.growth.dto.request.ChangePositionRequest;
+import com.example.green.domain.dashboard.growth.dto.response.ChangePositionGrowthItemResponse;
 import com.example.green.domain.dashboard.growth.dto.response.GetPlantGrowthItemResponse;
 import com.example.green.domain.dashboard.growth.dto.response.LoadGrowthResponse;
 import com.example.green.domain.dashboard.growth.message.GrowthResponseMessage;
@@ -19,6 +22,7 @@ import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.security.PrincipalDetails;
 import com.example.green.global.security.annotation.AuthenticatedApi;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -54,7 +58,7 @@ public class GrowthController implements GrowthControllerDocs {
 	}
 
 	@AuthenticatedApi(reason = "아이템 장착 여부를 설정할 수 있습니다")
-	@PatchMapping("/{itemId}")
+	@PatchMapping("/{itemId}/applicability")
 	public ApiTemplate updateApplicability(
 		@AuthenticationPrincipal PrincipalDetails principal,
 		@PathVariable Long itemId
@@ -62,5 +66,18 @@ public class GrowthController implements GrowthControllerDocs {
 		Long currentMemberId = principal.getMemberId();
 		plantItemService.changeApplicability(currentMemberId, itemId);
 		return ApiTemplate.ok(GrowthResponseMessage.CHANGE_APPLICABILITY);
+	}
+
+	@AuthenticatedApi(reason = "아이템의 위치를 설정할 수 있습니다")
+	@PatchMapping("/{itemId}/position")
+	public ApiTemplate<ChangePositionGrowthItemResponse> changePositionGrowth(
+		@AuthenticationPrincipal PrincipalDetails principal,
+		@PathVariable Long itemId,
+		@Valid @RequestBody ChangePositionRequest changePositionRequest
+	) {
+		Long currentMemberId = principal.getMemberId();
+		ChangePositionGrowthItemResponse changePositionResponse = plantItemService.changePositionGrowthItem(
+			currentMemberId, itemId, changePositionRequest);
+		return ApiTemplate.ok(GrowthResponseMessage.CHANGE_POSITION_SUCCESS, changePositionResponse);
 	}
 }
