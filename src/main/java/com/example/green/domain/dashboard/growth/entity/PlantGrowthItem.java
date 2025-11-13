@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Version;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -36,6 +37,10 @@ public class PlantGrowthItem {
 	@Column(nullable = false)
 	private boolean applicability;
 
+	//낙관적 락 적용
+	@Version
+	private Long version;
+
 	private PlantGrowthItem(
 		Long memberId,
 		String itemName,
@@ -66,6 +71,7 @@ public class PlantGrowthItem {
 	}
 
 	public void apply() {
-		this.applicability = true;
+		this.applicability = !this.applicability;
 	}
+
 }

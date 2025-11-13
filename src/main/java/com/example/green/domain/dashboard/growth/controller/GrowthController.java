@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -49,5 +51,16 @@ public class GrowthController implements GrowthControllerDocs {
 		List<GetPlantGrowthItemResponse> items = plantItemService.getPlantGrowthItems(currentMemberId);
 		return ApiTemplate.ok(GrowthResponseMessage.LOAD_ITEMS_SUCCESS, items);
 
+	}
+
+	@AuthenticatedApi(reason = "아이템 장착 여부를 설정할 수 있습니다")
+	@PatchMapping("/{itemId}")
+	public ApiTemplate updateApplicability(
+		@AuthenticationPrincipal PrincipalDetails principal,
+		@PathVariable Long itemId
+	) {
+		Long currentMemberId = principal.getMemberId();
+		plantItemService.changeApplicability(currentMemberId, itemId);
+		return ApiTemplate.ok(GrowthResponseMessage.CHANGE_APPLICABILITY);
 	}
 }
