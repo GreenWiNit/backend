@@ -59,14 +59,11 @@ public class PlantItemService {
 		PlantGrowthItem growthItem = plantGrowthItemRepository.findItemByIdAndMemberId(memberId, itemId)
 			.orElseThrow(() -> new GrowthException(GrowthExceptionMessage.NOT_FOUND_ITEM));
 
-		double positionX = request.positionX();
-		double positionY = request.positionY();
-
 		if (!growthItem.isApplicability()) {
 			throw new GrowthException(GrowthExceptionMessage.NOT_SETTING_APPLICABILITY);
 		}
 
-		growthItem.changePosition(positionX, positionY);
+		growthItem.changePosition(request.positionX(), request.positionY());
 
 		return new ChangePositionGrowthItemResponse(
 			growthItem.getItemName(),
