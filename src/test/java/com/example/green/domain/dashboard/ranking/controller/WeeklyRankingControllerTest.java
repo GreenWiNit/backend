@@ -12,8 +12,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import com.example.green.domain.dashboard.rankingmodule.controller.WeeklyRankingController;
-import com.example.green.domain.dashboard.rankingmodule.dto.LoadWeeklyRankingResponse;
-import com.example.green.domain.dashboard.rankingmodule.dto.TopMemberPointResponseDto;
+import com.example.green.domain.dashboard.rankingmodule.dto.response.MemberPointResponse;
+import com.example.green.domain.dashboard.rankingmodule.dto.response.TopMemberPointResponse;
+import com.example.green.domain.dashboard.rankingmodule.message.WeeklyRankingResponseMessage;
 import com.example.green.domain.dashboard.rankingmodule.service.WeeklyRankingService;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.security.PrincipalDetails;
@@ -26,37 +27,61 @@ class WeeklyRankingControllerTest extends BaseControllerUnitTest {
 	private WeeklyRankingService weeklyRankingService;
 
 	@Test
-	void 주간_랭킹_조회_성공() {
+	void 주간_전체_랭킹_조회_성공() {
 		// given
 		LocalDate weekStart = LocalDate.of(2025, 10, 27);
 
-		TopMemberPointResponseDto topMember1 = new TopMemberPointResponseDto(
-			1L, "홍길동", BigDecimal.valueOf(150), 3, weekStart, weekStart.plusDays(6));
-		TopMemberPointResponseDto topMember2 = new TopMemberPointResponseDto(
-			2L, "김철수", BigDecimal.valueOf(120), 2, weekStart, weekStart.plusDays(6));
-		TopMemberPointResponseDto myData = new TopMemberPointResponseDto(
-			3L, "이지은", BigDecimal.valueOf(100), 1, weekStart, weekStart.plusDays(6));
+		List<TopMemberPointResponse> topMembers = List.of(
+			new TopMemberPointResponse(1L, "홍길동", 1, BigDecimal.valueOf(150), 3, weekStart, weekStart.plusDays(6)),
+			new TopMemberPointResponse(2L, "김철수", 2, BigDecimal.valueOf(120), 2, weekStart, weekStart.plusDays(6))
+		);
 
-		LoadWeeklyRankingResponse mockResponse = new LoadWeeklyRankingResponse(
-			List.of(topMember1, topMember2),
-			myData);
+		when(weeklyRankingService.getAllRankData(weekStart, 8))
+			.thenReturn(topMembers);
 
-		PrincipalDetails principal = new PrincipalDetails(
-			3L, "google_123456789", "USER", "이지은", "test@test.com");
-
-		when(weeklyRankingService.loadWeeklyRanking(weekStart, 8, 3L))
-			.thenReturn(mockResponse);
+		WeeklyRankingController controller = new WeeklyRankingController(weeklyRankingService);
 
 		// when
-		ApiTemplate<LoadWeeklyRankingResponse> response =
-			new WeeklyRankingController(weeklyRankingService)
-				.getWeeklyRanking(weekStart, principal);
+		ApiTemplate<List<TopMemberPointResponse>> response =
+			controller.getWeeklyRanking(weekStart);
 
 		// then
-		assertThat(response.result().topMembers()).hasSize(2);
-		assertThat(response.result().topMembers().get(0).nickname()).isEqualTo("홍길동");
-		assertThat(response.result().myData().nickname()).isEqualTo("이지은");
-		assertThat(response.message()).isEqualTo(
-			"주간 환경 챌린저 랭킹 조회에 성공했습니다"); // WeeklyRankingResponseMessage.LOAD_WEEKLY_RANKING_SUCCESS
+		assertThat(response.result()).hasSize(2);
+		assertThat(response.result().get(0).nickname()).isEqualTo("홍길동");
+		assertThat(response.message())
+			.isEqualTo(WeeklyRankingResponseMessage.LOAD_WEEKLY_RANKING_SUCCESS.getMessage());
+
+		verify(weeklyRankingService, times(1)).getAllRankData(weekStart, 8);
+	}
+
+	@Test
+	void 내_주간_기록_조회_성공() {
+		// given
+		LocalDate weekStart = LocalDate.of(2025, 10, 27);
+
+		MemberPointResponse myResponse = new MemberPointResponse(
+			3L, "이지은", BigDecimal.valueOf(100), 1, weekStart, weekStart.plusDays(6)
+		);
+
+		PrincipalDetails principal = new PrincipalDetails(
+			3L, "google_123456789", "USER", "이지은", "test@test.com"
+		);
+
+		when(weeklyRankingService.getMyData(weekStart, 3L))
+			.thenReturn(myResponse);
+
+		WeeklyRankingController controller = new WeeklyRankingController(weeklyRankingService);
+
+		// when
+		ApiTemplate<MemberPointResponse> response =
+			controller.getMyWeeklyRankingData(weekStart, principal);
+
+		// then
+		assertThat(response.result().nickname()).isEqualTo("이지은");
+		assertThat(response.result().totalEarned()).isEqualTo(BigDecimal.valueOf(100));
+		assertThat(response.message())
+			.isEqualTo(WeeklyRankingResponseMessage.LOAD_WEEKLY_MY_DATA_SUCCESS.getMessage());
+
+		verify(weeklyRankingService, times(1)).getMyData(weekStart, 3L);
 	}
 }

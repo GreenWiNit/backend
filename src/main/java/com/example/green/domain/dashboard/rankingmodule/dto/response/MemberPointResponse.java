@@ -1,4 +1,4 @@
-package com.example.green.domain.dashboard.rankingmodule.dto;
+package com.example.green.domain.dashboard.rankingmodule.dto.response;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -7,9 +7,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 
-@Schema(description = "포인트 상위 회원 정보 응답")
-public record TopMemberPointResponseDto(
-
+@Schema(description = "회원의 주간 데이터")
+public record MemberPointResponse(
 	@NotNull
 	@Schema(description = "회원 ID", example = "1")
 	Long memberId,
@@ -35,6 +34,5 @@ public record TopMemberPointResponseDto(
 	@NotNull
 	@Schema(description = "주 종료일", example = "2025-10-26")
 	LocalDate weekEnd
-	
 ) {
 }
