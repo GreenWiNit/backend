@@ -1,21 +1,25 @@
 package com.example.green.domain.dashboard.rankingmodule.service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.green.domain.challenge.entity.challenge.QBaseChallengeParticipation;
-import com.example.green.domain.dashboard.rankingmodule.dto.LoadWeeklyRankingResponse;
-import com.example.green.domain.dashboard.rankingmodule.dto.TopMemberPointResponseDto;
+import com.example.green.domain.dashboard.rankingmodule.dto.response.MemberPointResponse;
+import com.example.green.domain.dashboard.rankingmodule.dto.response.TopMemberPointResponse;
 import com.example.green.domain.dashboard.rankingmodule.entity.WeeklyRanking;
 import com.example.green.domain.dashboard.rankingmodule.exception.WeeklyRankingException;
 import com.example.green.domain.dashboard.rankingmodule.message.WeeklyRankingExceptionMessage;
 import com.example.green.domain.dashboard.rankingmodule.repository.WeeklyRankingRepository;
+import com.example.green.domain.member.entity.Member;
 import com.example.green.domain.member.entity.QMember;
+import com.example.green.domain.member.repository.MemberRepository;
 import com.example.green.domain.point.entity.QPointTransaction;
 import com.querydsl.core.Tuple;
 
@@ -29,6 +33,7 @@ import lombok.RequiredArgsConstructor;
 public class WeeklyRankingService {
 
 	private final WeeklyRankingRepository weeklyRankingRepository;
+	private final MemberRepository memberRepository;
 
 	@Transactional
 	public void calculateAndSaveWeeklyRanking(LocalDate weekStart, int topN) {
@@ -71,38 +76,60 @@ public class WeeklyRankingService {
 		weeklyRankingRepository.saveAll(rankings);
 	}
 
-	public LoadWeeklyRankingResponse loadWeeklyRanking(LocalDate weekStart, int topN, Long memberId) {
+	public List<TopMemberPointResponse> getAllRankData(LocalDate weekStart, int topN) {
 
 		// 상위 N명 랭킹 엔티티 조회
 		List<WeeklyRanking> topMembersFromDb = weeklyRankingRepository.findTopNByWeekStart(weekStart,
 			topN);
 
+		if (topMembersFromDb.isEmpty()) {
+			return new ArrayList<>();
+		}
+
 		// 엔티티 → DTO 변환
-		List<TopMemberPointResponseDto> topMembersDto = topMembersFromDb.stream()
-			.map(r -> new TopMemberPointResponseDto(
+		return topMembersFromDb.stream()
+			.map(r -> new TopMemberPointResponse(
 				r.getMemberId(),
 				r.getMemberName(),
+				r.getRank(),
 				r.getTotalPoint(),
 				r.getCertificationCount(),
 				r.getWeekStart(),
 				r.getWeekEnd()
 			))
 			.toList();
-
-		// 로그인 유저 데이터 조회
-		WeeklyRanking myRankingEntity = weeklyRankingRepository.myData(weekStart, memberId)
-			.orElseThrow(() -> new WeeklyRankingException(WeeklyRankingExceptionMessage.NOT_FOUND_USER));
-
-		TopMemberPointResponseDto myData = new TopMemberPointResponseDto(
-			myRankingEntity.getMemberId(),
-			myRankingEntity.getMemberName(),
-			myRankingEntity.getTotalPoint(),
-			myRankingEntity.getCertificationCount(),
-			myRankingEntity.getWeekStart(),
-			myRankingEntity.getWeekEnd()
-		);
-
-		return new LoadWeeklyRankingResponse(topMembersDto, myData);
 	}
 
+	public MemberPointResponse getMyData(LocalDate weekStart, Long memberId) {
+
+		Optional<WeeklyRanking> optionalMyRanking =
+			weeklyRankingRepository.myData(weekStart, memberId);
+
+		if (optionalMyRanking.isEmpty()) {
+			Member member = memberRepository.findById(memberId)
+				.orElseThrow(() ->
+					new WeeklyRankingException(WeeklyRankingExceptionMessage.NOT_FOUND_USER)
+				);
+
+			return new MemberPointResponse(
+				member.getId(),
+				member.getName(),        // 닉네임: member.name
+				BigDecimal.ZERO,         // totalPoint = 0 (테스트에서 검증)
+				0,                       // certificationCount = 0
+				weekStart,
+				weekStart.plusDays(6)
+			);
+		}
+
+		WeeklyRanking myRanking = optionalMyRanking.get();
+
+		return new MemberPointResponse(
+			myRanking.getMemberId(),
+			myRanking.getMemberName(),
+			myRanking.getTotalPoint(),
+			myRanking.getCertificationCount(),
+			myRanking.getWeekStart(),
+			myRanking.getWeekEnd()
+		);
+	}
 }

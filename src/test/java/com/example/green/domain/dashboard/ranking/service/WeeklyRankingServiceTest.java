@@ -15,17 +15,21 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import com.example.green.domain.dashboard.rankingmodule.dto.LoadWeeklyRankingResponse;
+import com.example.green.domain.dashboard.rankingmodule.dto.response.MemberPointResponse;
+import com.example.green.domain.dashboard.rankingmodule.dto.response.TopMemberPointResponse;
 import com.example.green.domain.dashboard.rankingmodule.entity.WeeklyRanking;
-import com.example.green.domain.dashboard.rankingmodule.exception.WeeklyRankingException;
-import com.example.green.domain.dashboard.rankingmodule.message.WeeklyRankingExceptionMessage;
 import com.example.green.domain.dashboard.rankingmodule.repository.WeeklyRankingRepository;
 import com.example.green.domain.dashboard.rankingmodule.service.WeeklyRankingService;
+import com.example.green.domain.member.entity.Member;
+import com.example.green.domain.member.repository.MemberRepository;
 
 class WeeklyRankingServiceTest {
 
 	@Mock
 	private WeeklyRankingRepository weeklyRankingRepository;
+
+	@Mock
+	private MemberRepository memberRepository;
 
 	@InjectMocks
 	private WeeklyRankingService weeklyRankingService;
@@ -61,38 +65,59 @@ class WeeklyRankingServiceTest {
 	}
 
 	@Test
-	@DisplayName("상위 랭킹과 내 랭킹 조회 성공한 경우")
-	void loadWeeklyRankingSuccess() {
-		//given
+	@DisplayName("상위 랭킹 조회 성공")
+	void 상위_랭킹_조회_성공() {
+		// given
 		when(weeklyRankingRepository.findTopNByWeekStart(any(), anyInt()))
 			.thenReturn(List.of(rank1, rank2));
-		when(weeklyRankingRepository.myData(weekStart, 1L))
-			.thenReturn(Optional.of(rank1));
 
-		//when
-		LoadWeeklyRankingResponse response = weeklyRankingService.loadWeeklyRanking(weekStart, 2, 1L);
+		// when
+		List<TopMemberPointResponse> response = weeklyRankingService.getAllRankData(weekStart, 2);
 
-		//then
-		assertThat(response.topMembers()).hasSize(2);
-		assertThat(response.myData().nickname()).isEqualTo("홍길동");
+		// then
+		assertThat(response).hasSize(2);
+		assertThat(response.get(0).nickname()).isEqualTo("홍길동");
+		assertThat(response.get(1).nickname()).isEqualTo("김철수");
 
 		verify(weeklyRankingRepository, times(1)).findTopNByWeekStart(any(), anyInt());
-		verify(weeklyRankingRepository, times(1)).myData(weekStart, 1L);
-
 	}
 
 	@Test
-	@DisplayName("내 랭킹 데이터가 없는 경우 예외 발생")
-	void loadWeeklyRanking_NotFoundUser() {
-		//given
-		when(weeklyRankingRepository.findTopNByWeekStart(any(), anyInt()))
-			.thenReturn(List.of(rank1, rank2));
-		when(weeklyRankingRepository.myData(weekStart, 3L))
+	void 내_주간_기록_조회_성공() {
+		// given
+		when(weeklyRankingRepository.myData(weekStart, 1L))
+			.thenReturn(Optional.of(rank1));
+
+		// when
+		MemberPointResponse response = weeklyRankingService.getMyData(weekStart, 1L);
+
+		// then
+		assertThat(response.nickname()).isEqualTo("홍길동");
+		assertThat(response.totalEarned()).isEqualTo(BigDecimal.valueOf(120L));
+
+		verify(weeklyRankingRepository, times(1)).myData(weekStart, 1L);
+	}
+
+	@Test
+	void 내_주간_기록_없는_경우의_조회_0포인트로_반환() {
+		// given
+		when(weeklyRankingRepository.myData(weekStart, 1L))
 			.thenReturn(Optional.empty());
 
-		//when . then
-		assertThatThrownBy(() -> weeklyRankingService.loadWeeklyRanking(weekStart, 2, 3L))
-			.isInstanceOf(WeeklyRankingException.class)
-			.hasMessage(WeeklyRankingExceptionMessage.NOT_FOUND_USER.getMessage());
+		Member member = Member.create("memberKey-123", "홍길동", "test@test.com", "nickname");
+
+		when(memberRepository.findById(1L))
+			.thenReturn(Optional.of(member));
+
+		// when
+		MemberPointResponse response = weeklyRankingService.getMyData(weekStart, 1L);
+
+		// then
+		assertThat(response.nickname()).isEqualTo("홍길동");
+		assertThat(response.totalEarned()).isEqualTo(BigDecimal.ZERO);
+		assertThat(response.verificationCount()).isEqualTo(0);
+
+		verify(weeklyRankingRepository, times(1)).myData(weekStart, 1L);
+		verify(memberRepository, times(1)).findById(1L);
 	}
 }

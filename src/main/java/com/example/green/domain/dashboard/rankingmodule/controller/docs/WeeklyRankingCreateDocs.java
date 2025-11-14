@@ -1,4 +1,4 @@
-package com.example.green.domain.dashboard.rankingmodule.controller;
+package com.example.green.domain.dashboard.rankingmodule.controller.docs;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
