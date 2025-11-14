@@ -35,7 +35,6 @@ public class WeeklyRankingController implements WeeklyRankingControllerDocs {
 		@RequestParam("weekStart")
 		@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate weekStart
 	) {
-		;
 		int topN = 8;
 
 		List<TopMemberPointResponse> response =
