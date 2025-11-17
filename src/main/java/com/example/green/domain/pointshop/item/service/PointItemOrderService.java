@@ -26,7 +26,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
+@Transactional(readOnly = false)
 public class PointItemOrderService {
 
 	private final PointItemOrderRepository pointItemOrderRepository;
