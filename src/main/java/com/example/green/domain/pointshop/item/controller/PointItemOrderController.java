@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.green.domain.common.idempotency.Idempotent;
 import com.example.green.domain.pointshop.item.controller.docs.PointItemOrderControllerDocs;
 import com.example.green.domain.pointshop.item.controller.message.PointItemResponseMessage;
 import com.example.green.domain.pointshop.item.dto.response.OrderPointItemResponse;
@@ -32,7 +31,7 @@ public class PointItemOrderController implements PointItemOrderControllerDocs {
 	private final PointItemOrderService pointItemOrderService;
 	private final PointItemRepository pointItemRepository;
 
-	@Idempotent
+	//@Idempotent
 	@AuthenticatedApi(reason = "로그인한 사용자만 아이템을 구매 가능하다")
 	@PostMapping("/{itemId}")
 	public ApiTemplate<OrderPointItemResponse> orderPointItem(
