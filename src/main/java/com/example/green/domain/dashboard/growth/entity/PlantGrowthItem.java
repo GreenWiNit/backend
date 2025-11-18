@@ -33,10 +33,10 @@ public class PlantGrowthItem {
 	@Column(nullable = false)
 	private String itemImgUrl;
 
-	@Column(nullable = false)
+	@Column(name = "position_x", nullable = false)
 	private double positionX;
 
-	@Column(nullable = false)
+	@Column(name = "position_y", nullable = false)
 	private double positionY;
 
 	@Column(nullable = false)
