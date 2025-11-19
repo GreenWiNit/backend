@@ -11,6 +11,8 @@ import com.example.green.domain.dashboard.growth.entity.enums.Level;
 import com.example.green.domain.dashboard.growth.exception.GrowthException;
 import com.example.green.domain.dashboard.growth.message.GrowthExceptionMessage;
 import com.example.green.domain.dashboard.growth.repository.GrowthRepository;
+import com.example.green.domain.member.entity.Member;
+import com.example.green.domain.member.repository.MemberRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -21,13 +23,26 @@ public class GrowthService {
 
 	private final GrowthRepository growthRepository;
 	private final GrowthCalculateService calculateService;
+	private final MemberRepository memberRepository;
 
 	public LoadGrowthResponse loadGrowth(Long memberId) {
 
 		calculateService.calculateMemberGrowth(memberId);
 
-		Growth growth = growthRepository.findByMemberId(memberId)
+		Member member = memberRepository.findById(memberId)
 			.orElseThrow(() -> new GrowthException(GrowthExceptionMessage.NOT_FOUND_USER));
+
+		Growth growth = growthRepository.findByMemberId(memberId)
+			.orElseGet(() -> {
+				Growth newGrowth = Growth.builder()
+					.level(Level.SOIL)
+					.progress(BigDecimal.ZERO)
+					.requiredPoint(BigDecimal.valueOf(250))
+					.goalLevel(Level.SPROUT)
+					.member(member)
+					.build();
+				return growthRepository.save(newGrowth);
+			});
 
 		Level nextLevel;
 		BigDecimal nextLevelPoint;

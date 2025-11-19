@@ -56,9 +56,13 @@ class PlantItemServiceTest {
 	void 사용자_아이템_조회_성공() {
 		when(plantGrowthItemRepository.findItemsByMemberId(1L))
 			.thenReturn(List.of(new GetPlantGrowthItemResponse(
-				plantGrowthItem.getItemName(),
-				plantGrowthItem.getItemImgUrl(),
-				plantGrowthItem.isApplicability()))
+					plantGrowthItem.getId(),
+					plantGrowthItem.getItemName(),
+					plantGrowthItem.getItemImgUrl(),
+					plantGrowthItem.isApplicability(),
+					plantGrowthItem.getPositionX(),
+					plantGrowthItem.getPositionY()
+				))
 			);
 		List<GetPlantGrowthItemResponse> items = plantItemService.getPlantGrowthItems(1L);
 
