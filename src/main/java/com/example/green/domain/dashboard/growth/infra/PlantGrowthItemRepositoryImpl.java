@@ -23,9 +23,13 @@ public class PlantGrowthItemRepositoryImpl implements PlantGrowthItemRepositoryC
 
 		return queryFactory
 			.select(Projections.constructor(GetPlantGrowthItemResponse.class,
+				item.id,
 				item.itemName,
 				item.itemImgUrl,
-				item.applicability))
+				item.applicability,
+				item.positionX,
+				item.positionY
+			))
 			.from(item)
 			.where(item.member.id.eq(memberId))
 			.fetch();
