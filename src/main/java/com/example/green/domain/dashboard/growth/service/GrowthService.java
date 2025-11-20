@@ -27,8 +27,6 @@ public class GrowthService {
 
 	public LoadGrowthResponse loadGrowth(Long memberId) {
 
-		calculateService.calculateMemberGrowth(memberId);
-
 		Member member = memberRepository.findById(memberId)
 			.orElseThrow(() -> new GrowthException(GrowthExceptionMessage.NOT_FOUND_USER));
 
@@ -43,6 +41,8 @@ public class GrowthService {
 					.build();
 				return growthRepository.save(newGrowth);
 			});
+
+		calculateService.calculateMemberGrowth(memberId);
 
 		Level nextLevel;
 		BigDecimal nextLevelPoint;
