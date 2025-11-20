@@ -59,12 +59,6 @@ public class PointItemOrderService {
 			throw new PointItemException(PointItemExceptionMessage.NOT_POSSIBLE_BUY_ITEM);
 		}
 
-		boolean alreadyBuy = pointItemOrderRepository.existsByMemberIdAndPointItemId(memberId, itemId);
-
-		if (alreadyBuy) {
-			throw new PointItemException(PointItemExceptionMessage.ALREADY_PURCHASED_ITEM);
-		}
-
 		BigDecimal remainPoint = currentPoint.subtract(itemPrice);
 
 		pointClient.spendPoints(

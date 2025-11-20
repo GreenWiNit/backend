@@ -84,7 +84,6 @@ class PointItemOrderServiceTest {
 			Optional.of(mock(com.example.green.domain.pointshop.item.entity.PointItem.class))
 		);
 		given(pointClient.getTotalPoints(1L)).willReturn(BigDecimal.valueOf(500));
-		given(pointItemOrderRepository.existsByMemberIdAndPointItemId(1L, 1L)).willReturn(false);
 		given(timeUtils.now()).willReturn(LocalDateTime.now(fixedClock));
 		given(plantGrowthItemRepository.save(any()))
 			.willAnswer(invocation -> invocation.getArgument(0)); // 입력 그대로 반환
@@ -122,25 +121,4 @@ class PointItemOrderServiceTest {
 			.hasMessage(PointItemExceptionMessage.NOT_POSSIBLE_BUY_ITEM.getMessage());
 	}
 
-	@Test
-	void 이미_구매한_아이템일_경우_예외() {
-		MemberSnapshot memberSnapshot = new MemberSnapshot(1L, "member_key", "user1@test.com");
-		PointItemSnapshot pointItemSnapshot = new PointItemSnapshot(
-			1L, "ITM-AA-002", "무지개", "https://thumbnail.url/image.jpg", BigDecimal.valueOf(100)
-		);
-		OrderPointItemCommand command = mock(OrderPointItemCommand.class);
-		when(command.memberSnapshot()).thenReturn(memberSnapshot);
-		when(command.pointItemSnapshot()).thenReturn(pointItemSnapshot);
-
-		given(memberRepository.findById(1L)).willReturn(Optional.of(member));
-		given(pointItemRepository.findById(anyLong())).willReturn(
-			Optional.of(mock(com.example.green.domain.pointshop.item.entity.PointItem.class))
-		);
-		given(pointClient.getTotalPoints(1L)).willReturn(BigDecimal.valueOf(200));
-		given(pointItemOrderRepository.existsByMemberIdAndPointItemId(1L, 1L)).willReturn(true);
-
-		assertThatThrownBy(() -> pointItemOrderService.orderPointItem(command))
-			.isInstanceOf(PointItemException.class)
-			.hasMessage(PointItemExceptionMessage.ALREADY_PURCHASED_ITEM.getMessage());
-	}
 }
