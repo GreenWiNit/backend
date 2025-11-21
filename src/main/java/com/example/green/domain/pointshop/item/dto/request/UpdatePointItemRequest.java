@@ -30,6 +30,10 @@ public record UpdatePointItemRequest(
 
 	@NotNull(message = "아이템 가격은 필수입니다.")
 	@Schema(description = "아이템 가격", example = "10000")
-	BigDecimal price
+	BigDecimal price,
+
+	@NotNull(message = "아이템 수량은 필수입니다")
+	@Schema(description = "아이템 수량", example = "10")
+	Integer stock
 ) {
 }

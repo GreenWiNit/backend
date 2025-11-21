@@ -9,6 +9,7 @@ import com.example.green.domain.dashboard.growth.entity.PlantGrowthItem;
 import com.example.green.domain.dashboard.growth.repository.PlantGrowthItemRepository;
 import com.example.green.domain.member.entity.Member;
 import com.example.green.domain.member.repository.MemberRepository;
+import com.example.green.domain.pointshop.item.dto.request.OrderPointItemRequest;
 import com.example.green.domain.pointshop.item.dto.response.OrderPointItemResponse;
 import com.example.green.domain.pointshop.item.entity.OrderPointItem;
 import com.example.green.domain.pointshop.item.entity.vo.PointItemSnapshot;
@@ -32,14 +33,17 @@ public class PointItemOrderService {
 	private final PointItemOrderRepository pointItemOrderRepository;
 	private final PointItemRepository pointItemRepository;
 	private final PlantGrowthItemRepository plantGrowthItemRepository;
+	private final PointItemService pointItemService;
 	private final PointClient pointClient;
 	private final MemberRepository memberRepository;
 	private final TimeUtils timeUtils;
 
-	public OrderPointItemResponse orderPointItem(OrderPointItemCommand command) {
+	public OrderPointItemResponse orderPointItem(OrderPointItemCommand command,
+		OrderPointItemRequest orderPointItemRequest) {
 
 		MemberSnapshot memberSnapshot = command.memberSnapshot();
 		PointItemSnapshot itemSnapshot = command.pointItemSnapshot();
+		Integer amount = orderPointItemRequest.amount();
 
 		Long memberId = memberSnapshot.getMemberId();
 
@@ -54,22 +58,19 @@ public class PointItemOrderService {
 
 		BigDecimal itemPrice = itemSnapshot.getItemPrice();
 		BigDecimal currentPoint = pointClient.getTotalPoints(memberId);
+		BigDecimal totalPoint = itemPrice.multiply(BigDecimal.valueOf(amount));
 
-		if (currentPoint == null || currentPoint.compareTo(itemPrice) < 0) {
+		if (currentPoint == null || currentPoint.compareTo(totalPoint) < 0) {
 			throw new PointItemException(PointItemExceptionMessage.NOT_POSSIBLE_BUY_ITEM);
 		}
 
-		boolean alreadyBuy = pointItemOrderRepository.existsByMemberIdAndPointItemId(memberId, itemId);
+		pointItemService.decreaseItemStock(itemId, amount);
 
-		if (alreadyBuy) {
-			throw new PointItemException(PointItemExceptionMessage.ALREADY_PURCHASED_ITEM);
-		}
-
-		BigDecimal remainPoint = currentPoint.subtract(itemPrice);
+		BigDecimal remainPoint = currentPoint.subtract(totalPoint);
 
 		pointClient.spendPoints(
 			new PointSpendRequest(
-				memberId, itemPrice, itemId, itemName + "아이템 구매", timeUtils.now()
+				memberId, totalPoint, itemId, itemName + "아이템 구매", timeUtils.now()
 			)
 		);
 
@@ -92,7 +93,8 @@ public class PointItemOrderService {
 			memberId,
 			itemName,
 			itemImgUrl,
-			remainPoint
+			remainPoint,
+			amount
 		);
 
 	}
