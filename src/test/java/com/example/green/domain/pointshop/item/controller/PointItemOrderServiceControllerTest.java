@@ -70,13 +70,11 @@ class PointItemOrderServiceControllerTest extends BaseControllerUnitTest {
 
 		);
 
-		when(pointItemOrderService.orderPointItem(any(OrderPointItemCommand.class), any(OrderPointItemRequest.class)))
-			.thenReturn(response);
+		when(pointItemOrderService.orderPointItem(any(OrderPointItemCommand.class), request)).thenReturn(response);
 
 		// when & then
 		mockMvc.perform(post("/api/point-items/order/{id}", itemId)
 				.contentType(MediaType.APPLICATION_JSON)
-				.content("{\"amount\": 3}")
 				.principal(() -> "testUser"))
 			.andExpect(status().isOk())
 			.andExpect(jsonPath("$.message").value("아이템 교환이 완료되었습니다"))
