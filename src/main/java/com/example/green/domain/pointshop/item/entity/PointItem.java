@@ -61,7 +61,7 @@ public class PointItem extends BaseEntity {
 	private ItemPrice itemPrice;
 
 	@Embedded
-	private ItemStock itemStock; //아이템 수량
+	private ItemStock itemStock;
 
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)

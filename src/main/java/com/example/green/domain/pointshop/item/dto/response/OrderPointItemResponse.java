@@ -7,6 +7,6 @@ public record OrderPointItemResponse(
 	String itemName,
 	String itemImgUrl,
 	BigDecimal remainPoint,
-	Integer amount //수량
+	Integer amount
 ) {
 }
