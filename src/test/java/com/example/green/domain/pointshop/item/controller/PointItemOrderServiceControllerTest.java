@@ -16,12 +16,14 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.example.green.domain.pointshop.item.dto.request.OrderPointItemRequest;
 import com.example.green.domain.pointshop.item.dto.response.OrderPointItemResponse;
 import com.example.green.domain.pointshop.item.entity.PointItem;
 import com.example.green.domain.pointshop.item.entity.vo.ItemBasicInfo;
 import com.example.green.domain.pointshop.item.entity.vo.ItemCode;
 import com.example.green.domain.pointshop.item.entity.vo.ItemMedia;
 import com.example.green.domain.pointshop.item.entity.vo.ItemPrice;
+import com.example.green.domain.pointshop.item.entity.vo.ItemStock;
 import com.example.green.domain.pointshop.item.repository.PointItemRepository;
 import com.example.green.domain.pointshop.item.service.PointItemOrderService;
 import com.example.green.domain.pointshop.item.service.command.OrderPointItemCommand;
@@ -49,18 +51,26 @@ class PointItemOrderServiceControllerTest extends BaseControllerUnitTest {
 		ItemBasicInfo itemBasicInfo = new ItemBasicInfo("무지개", "행운의 네잎클로버가 싱그럽게 피어나요. 오늘 하루도 행운 가득");
 		ItemMedia itemMedia = new ItemMedia("https://thumbnail.url/rainbow-pot.jpg");
 		ItemPrice itemPrice = new ItemPrice(BigDecimal.valueOf(400));
+		ItemStock itemStock = new ItemStock(10);
 
-		PointItem pointItem = new PointItem(itemCode, itemBasicInfo, itemMedia, itemPrice);
+		PointItem pointItem = new PointItem(itemCode, itemBasicInfo, itemMedia, itemPrice, itemStock);
 
 		when(pointItemRepository.findById(itemId)).thenReturn(Optional.of(pointItem));
+
+		OrderPointItemRequest request = new OrderPointItemRequest(
+			3
+		);
 
 		OrderPointItemResponse response = new OrderPointItemResponse(
 			1L,
 			"무지개",
 			"https://thumbnail.url/rainbow-pot.jpg",
-			BigDecimal.valueOf(400)
+			BigDecimal.valueOf(400),
+			3
+
 		);
-		when(pointItemOrderService.orderPointItem(any(OrderPointItemCommand.class))).thenReturn(response);
+
+		when(pointItemOrderService.orderPointItem(any(OrderPointItemCommand.class), request)).thenReturn(response);
 
 		// when & then
 		mockMvc.perform(post("/api/point-items/order/{id}", itemId)

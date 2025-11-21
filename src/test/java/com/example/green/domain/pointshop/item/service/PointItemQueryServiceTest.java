@@ -17,6 +17,7 @@ import com.example.green.domain.pointshop.item.entity.vo.ItemBasicInfo;
 import com.example.green.domain.pointshop.item.entity.vo.ItemCode;
 import com.example.green.domain.pointshop.item.entity.vo.ItemMedia;
 import com.example.green.domain.pointshop.item.entity.vo.ItemPrice;
+import com.example.green.domain.pointshop.item.entity.vo.ItemStock;
 import com.example.green.domain.pointshop.item.exception.PointItemException;
 import com.example.green.domain.pointshop.item.exception.PointItemExceptionMessage;
 import com.example.green.domain.pointshop.item.repository.PointItemRepository;
@@ -74,7 +75,8 @@ class PointItemQueryServiceTest {
 				new ItemCode("ITM-AA-002"),
 				new ItemBasicInfo("무지개 ", "무지개가 식물을 감싸요. 날씨가 좋을 것 같은 하루!"),
 				new ItemMedia("https://thumbnail.url/image.jpg"),
-				new ItemPrice(BigDecimal.valueOf(450))
+				new ItemPrice(BigDecimal.valueOf(450)),
+				new ItemStock(10)
 			));
 		//when
 		when(repository.findById(anyLong())).thenReturn(Optional.of(dummyEntity));
