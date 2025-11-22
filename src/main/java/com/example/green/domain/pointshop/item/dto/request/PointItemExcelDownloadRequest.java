@@ -1,5 +1,7 @@
 package com.example.green.domain.pointshop.item.dto.request;
 
+import com.example.green.domain.pointshop.product.entity.vo.SellingStatus;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Size;
 
@@ -7,7 +9,9 @@ import jakarta.validation.constraints.Size;
 public record PointItemExcelDownloadRequest(
 	@Schema(description = "아이템 코드 및 아이템 명", example = "맑은 뭉게 구름")
 	@Size(min = 2)
-	String keyword
+	String keyword,
+	@Schema(description = "아이템 판매 상태 ", type = "string", allowableValues = {"exchangeable", "sold-out"})
+	SellingStatus status
 ) {
 
 }

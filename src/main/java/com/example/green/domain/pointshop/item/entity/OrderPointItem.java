@@ -1,5 +1,7 @@
 package com.example.green.domain.pointshop.item.entity;
 
+import java.math.BigDecimal;
+
 import com.example.green.domain.common.TimeBaseEntity;
 import com.example.green.domain.pointshop.item.entity.vo.PointItemSnapshot;
 import com.example.green.domain.pointshop.order.entity.vo.MemberSnapshot;
@@ -25,6 +27,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class OrderPointItem extends TimeBaseEntity {
 
+	private static final int MIN_QUANTITY = 1;
+	private static final int MAX_QUANTITY = 5;
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "point_item_order_id")
@@ -35,5 +40,11 @@ public class OrderPointItem extends TimeBaseEntity {
 
 	@Embedded
 	private PointItemSnapshot pointItemSnapshot;
+
+	@Column(nullable = false)
+	private Integer quantity;
+
+	@Column(nullable = false)
+	private BigDecimal totalPrice;
 
 }

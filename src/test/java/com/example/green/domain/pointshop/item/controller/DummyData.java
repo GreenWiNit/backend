@@ -13,7 +13,8 @@ public class DummyData {
 			"맑은 뭉게 구름",
 			"하늘에서 포근한 구름이 내려와 식물을 감싸요. 몽글몽글 기분 좋은 하루!",
 			"https://thumbnail.url/rainbow-pot.jpg",
-			BigDecimal.valueOf(450)
+			BigDecimal.valueOf(450),
+			10
 		);
 	}
 
@@ -23,7 +24,8 @@ public class DummyData {
 			"행운의 네잎클로버",
 			"행운의 네잎클로버가 싱그럽게 피어나요. 오늘 하루도 행운 가득!",
 			"https://thumbnail.url/clover.jpg",
-			BigDecimal.valueOf(600)
+			BigDecimal.valueOf(600),
+			20
 		);
 	}
 
