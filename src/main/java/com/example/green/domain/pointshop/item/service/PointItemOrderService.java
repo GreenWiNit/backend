@@ -77,6 +77,7 @@ public class PointItemOrderService {
 		OrderPointItem order = OrderPointItem.builder()
 			.memberSnapshot(memberSnapshot)
 			.pointItemSnapshot(itemSnapshot)
+			.quantity(amount)
 			.totalPrice(totalPoint)
 			.build();
 

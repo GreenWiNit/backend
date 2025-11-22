@@ -15,7 +15,7 @@ public record PointItemSearchRequest(
 	@Schema(description = "아이템 코드 및 아이템 명", example = "맑은 뭉게 구름 ")
 	@Size(min = 2)
 	String keyword,
-	@Schema(description = "아이템 판매 상태", type = "string", allowableValues = {"exchangeable", "sold-out"})
+	@Schema(description = "아이템 판매 상태", type = "string", allowableValues = {"EXCHANGEABLE", "SOLD_OUT"})
 	SellingStatus status
 ) implements PageSearchCondition {
 }
