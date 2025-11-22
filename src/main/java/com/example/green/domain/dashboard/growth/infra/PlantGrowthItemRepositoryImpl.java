@@ -36,7 +36,7 @@ public class PlantGrowthItemRepositoryImpl implements PlantGrowthItemRepositoryC
 	}
 
 	@Override
-	public Optional<PlantGrowthItem> findItemByIdAndMemberId(Long memberId, Long itemId) {
+	public Optional<PlantGrowthItem> findByIdAndMember_Id(Long itemId, Long memberId) {
 		QPlantGrowthItem plantGrowthItem = QPlantGrowthItem.plantGrowthItem;
 
 		PlantGrowthItem item = queryFactory
@@ -48,5 +48,7 @@ public class PlantGrowthItemRepositoryImpl implements PlantGrowthItemRepositoryC
 			.fetchOne();
 		return Optional.ofNullable(item);
 	}
+
 }
+
 

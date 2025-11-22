@@ -40,7 +40,7 @@ public class PlantItemService {
 	)
 	@Transactional
 	public void changeApplicability(Long memberId, Long itemId) {
-		PlantGrowthItem growthItem = plantGrowthItemRepository.findItemByIdAndMemberId(memberId, itemId)
+		PlantGrowthItem growthItem = plantGrowthItemRepository.findByIdAndMember_Id(itemId, memberId)
 			.orElseThrow(() -> new GrowthException(GrowthExceptionMessage.NOT_FOUND_ITEM));
 
 		growthItem.apply();
@@ -49,7 +49,7 @@ public class PlantItemService {
 	@Transactional
 	public ChangePositionGrowthItemResponse changePositionGrowthItem(Long memberId, Long itemId,
 		ChangePositionRequest request) {
-		PlantGrowthItem growthItem = plantGrowthItemRepository.findItemByIdAndMemberId(memberId, itemId)
+		PlantGrowthItem growthItem = plantGrowthItemRepository.findByIdAndMember_Id(itemId, memberId)
 			.orElseThrow(() -> new GrowthException(GrowthExceptionMessage.NOT_FOUND_ITEM));
 
 		if (!growthItem.isApplicability()) {

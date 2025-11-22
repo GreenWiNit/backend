@@ -9,5 +9,5 @@ import com.example.green.domain.dashboard.growth.entity.PlantGrowthItem;
 public interface PlantGrowthItemRepositoryCustom {
 	List<GetPlantGrowthItemResponse> findItemsByMemberId(Long memberId);
 
-	Optional<PlantGrowthItem> findItemByIdAndMemberId(Long memberId, Long itemId);
+	Optional<PlantGrowthItem> findByIdAndMember_Id(Long itemId, Long memberId);
 }
