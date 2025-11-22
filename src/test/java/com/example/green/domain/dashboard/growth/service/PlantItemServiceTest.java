@@ -74,9 +74,9 @@ class PlantItemServiceTest {
 
 	@Test
 	void 사용자_아이템_장착여부_설정_성공() {
-		when(plantGrowthItemRepository.findItemByIdAndMemberId(1L, 1L))
+		when(plantGrowthItemRepository.findByIdAndMember_Id(1L, 1L))
 			.thenReturn(Optional.of(plantGrowthItem));
-
+		
 		assertThat(plantGrowthItem.isApplicability()).isFalse();
 
 		plantItemService.changeApplicability(1L, 1L);
@@ -86,7 +86,7 @@ class PlantItemServiceTest {
 
 	@Test
 	void 사용자_아이템_위치_변경_성공() {
-		when(plantGrowthItemRepository.findItemByIdAndMemberId(1L, 1L))
+		when(plantGrowthItemRepository.findByIdAndMember_Id(1L, 1L))
 			.thenReturn(Optional.of(plantGrowthItem));
 
 		// 장착 후 위치 변경
@@ -102,7 +102,7 @@ class PlantItemServiceTest {
 
 	@Test
 	void 아이템_미장착_위치변경_실패() {
-		when(plantGrowthItemRepository.findItemByIdAndMemberId(1L, 1L))
+		when(plantGrowthItemRepository.findByIdAndMember_Id(1L, 1L))
 			.thenReturn(Optional.of(plantGrowthItem));
 
 		ChangePositionRequest request = new ChangePositionRequest(10.0, 20.0);
