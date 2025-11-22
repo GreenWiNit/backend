@@ -87,7 +87,6 @@ class PointItemOrderServiceTest {
 		// 현재 보유 포인트 (remain 50 되려면 = total 1850)
 		given(pointClient.getTotalPoints(1L)).willReturn(BigDecimal.valueOf(1850));
 
-		// Repository mock
 		given(memberRepository.findById(1L)).willReturn(Optional.of(member));
 		given(pointItemRepository.findById(anyLong()))
 			.willReturn(Optional.of(mock(com.example.green.domain.pointshop.item.entity.PointItem.class)));
