@@ -54,7 +54,7 @@ public class PointItemQueryExecutor {
 			.from(qPointItem)
 			.where(expression)
 			.orderBy(qPointItem.id.desc())
-			.limit(cursorViewSize + 1)
+			.limit(cursorViewSize)
 			.fetch();
 	}
 

@@ -44,6 +44,7 @@ public class PointItemQueryRepositoryImpl implements PointItemQueryRepository {
 		return List.of();
 	}
 
+	@Override
 	public CursorTemplate<Long, PointItemResponse> getPointItemsByCursor(Long cursor) {
 		BooleanExpression cursorContents = PointItemPredicates.fromCursorCondition(cursor);
 
@@ -52,20 +53,14 @@ public class PointItemQueryRepositoryImpl implements PointItemQueryRepository {
 
 		boolean hasNext = pointItemResponse.size() > DEFAULT_CURSOR_VIEW_SIZE;
 
-		if (hasNext) {
-			// 조회한 extra 1개 제거
-			pointItemResponse.remove(DEFAULT_CURSOR_VIEW_SIZE);
-			return CursorTemplate.ofWithNextCursor(
-				pointItemResponse.get(DEFAULT_CURSOR_VIEW_SIZE - 1).pointItemId(),
-				pointItemResponse
-			);
+		if (!hasNext) {
+			return CursorTemplate.of(pointItemResponse);
 		}
-
+		pointItemResponse.removeLast();
 		if (pointItemResponse.isEmpty()) {
 			return CursorTemplate.ofEmpty();
 		}
-
-		return CursorTemplate.of(pointItemResponse);
+		return CursorTemplate.ofWithNextCursor(pointItemResponse.getLast().pointItemId(), pointItemResponse);
 	}
 
 }
