@@ -41,8 +41,11 @@ public class WeeklyRanking extends TimeBaseEntity {
 	private String memberName;
 
 	@Column(nullable = false)
+	private String profileImageUrl;
+
+	@Column(nullable = false)
 	private BigDecimal totalPoint;
-	
+
 	@Column(nullable = false)
 	private int certificationCount;
 

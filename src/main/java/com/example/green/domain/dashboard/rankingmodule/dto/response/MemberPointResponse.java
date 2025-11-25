@@ -18,6 +18,10 @@ public record MemberPointResponse(
 	String nickname,
 
 	@NotNull
+	@Schema(description = "프로필 사진", example = "https://my-app-profile.s3.ap-northeast-2.amazonaws.com/profile/user123.png")
+	String profileImageUrl,
+
+	@NotNull
 	@PositiveOrZero
 	@Schema(description = "총 포인트", example = "123")
 	BigDecimal totalEarned,

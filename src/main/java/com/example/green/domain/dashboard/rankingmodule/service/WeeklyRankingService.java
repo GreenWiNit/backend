@@ -19,6 +19,7 @@ import com.example.green.domain.dashboard.rankingmodule.message.WeeklyRankingExc
 import com.example.green.domain.dashboard.rankingmodule.repository.WeeklyRankingRepository;
 import com.example.green.domain.member.entity.Member;
 import com.example.green.domain.member.entity.QMember;
+import com.example.green.domain.member.entity.vo.QProfile;
 import com.example.green.domain.member.repository.MemberRepository;
 import com.example.green.domain.point.entity.QPointTransaction;
 import com.querydsl.core.Tuple;
@@ -63,6 +64,7 @@ public class WeeklyRankingService {
 			WeeklyRanking weeklyRanking = WeeklyRanking.builder()
 				.memberId(rankData.get(QMember.member.id))
 				.memberName(rankData.get(QMember.member.name))
+				.profileImageUrl(rankData.get(QProfile.profile.profileImageUrl))
 				.totalPoint(rankData.get(QPointTransaction.pointTransaction.pointAmount.amount.sum()))
 				.certificationCount(
 					rankData.get(QBaseChallengeParticipation.baseChallengeParticipation.certCount.sum().coalesce(0)))
@@ -91,6 +93,7 @@ public class WeeklyRankingService {
 			.map(r -> new TopMemberPointResponse(
 				r.getMemberId(),
 				r.getMemberName(),
+				r.getProfileImageUrl(),
 				r.getRank(),
 				r.getTotalPoint(),
 				r.getCertificationCount(),
@@ -113,7 +116,8 @@ public class WeeklyRankingService {
 
 			return new MemberPointResponse(
 				member.getId(),
-				member.getName(),        // 닉네임: member.name
+				member.getName(),// 닉네임: member.name
+				member.getProfile().getProfileImageUrl(),
 				BigDecimal.ZERO,         // totalPoint = 0 (테스트에서 검증)
 				0,                       // certificationCount = 0
 				weekStart,
@@ -126,6 +130,7 @@ public class WeeklyRankingService {
 		return new MemberPointResponse(
 			myRanking.getMemberId(),
 			myRanking.getMemberName(),
+			myRanking.getProfileImageUrl(),
 			myRanking.getTotalPoint(),
 			myRanking.getCertificationCount(),
 			myRanking.getWeekStart(),

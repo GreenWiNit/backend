@@ -32,8 +32,12 @@ class WeeklyRankingControllerTest extends BaseControllerUnitTest {
 		LocalDate weekStart = LocalDate.of(2025, 10, 27);
 
 		List<TopMemberPointResponse> topMembers = List.of(
-			new TopMemberPointResponse(1L, "홍길동", 1, BigDecimal.valueOf(150), 3, weekStart, weekStart.plusDays(6)),
-			new TopMemberPointResponse(2L, "김철수", 2, BigDecimal.valueOf(120), 2, weekStart, weekStart.plusDays(6))
+			new TopMemberPointResponse(1L, "홍길동",
+				"https://my-app-profile.s3.ap-northeast-2.amazonaws.com/profile/user123.png", 1,
+				BigDecimal.valueOf(150), 3, weekStart, weekStart.plusDays(6)),
+			new TopMemberPointResponse(2L, "김철수",
+				"https://my-app-profile.s3.ap-northeast-2.amazonaws.com/profile/user123.png", 2,
+				BigDecimal.valueOf(120), 2, weekStart, weekStart.plusDays(6))
 		);
 
 		when(weeklyRankingService.getAllRankData(weekStart, 8))
@@ -60,7 +64,8 @@ class WeeklyRankingControllerTest extends BaseControllerUnitTest {
 		LocalDate weekStart = LocalDate.of(2025, 10, 27);
 
 		MemberPointResponse myResponse = new MemberPointResponse(
-			3L, "이지은", BigDecimal.valueOf(100), 1, weekStart, weekStart.plusDays(6)
+			3L, "이지은", "https://my-app-profile.s3.ap-northeast-2.amazonaws.com/profile/user123.png",
+			BigDecimal.valueOf(100), 1, weekStart, weekStart.plusDays(6)
 		);
 
 		PrincipalDetails principal = new PrincipalDetails(
