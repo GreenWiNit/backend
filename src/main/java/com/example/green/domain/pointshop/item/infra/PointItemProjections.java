@@ -32,8 +32,7 @@ public class PointItemProjections {
 			qPointItem.id.as("pointItemId"),
 			qPointItem.itemBasicInfo.itemName.as("pointItemName"),
 			qPointItem.itemMedia.itemThumbNailUrl.as("thumbnailUrl"),
-			qPointItem.itemPrice.itemPrice.as("pointPrice"),
-			qPointItem.sellingStatus.as("sellingStatus")
+			qPointItem.itemPrice.itemPrice.as("pointPrice")
 		);
 	}
 
