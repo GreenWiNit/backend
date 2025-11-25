@@ -35,6 +35,7 @@ public class WeeklyRankingRepositoryImpl implements WeeklyRankingRepositoryCusto
 			.select(
 				member.id,
 				member.name,
+				member.profile.profileImageUrl,
 				point.pointAmount.amount.sum(),
 				challenge.certCount.sum().coalesce(0)
 			)
@@ -48,7 +49,7 @@ public class WeeklyRankingRepositoryImpl implements WeeklyRankingRepositoryCusto
 				challenge.memberId.eq(member.id)
 					.and(challenge.participatedAt.between(startDateTime, endDateTime))
 			)
-			.groupBy(member.id, member.name)
+			.groupBy(member.id, member.name, member.profile.profileImageUrl)
 			.orderBy(
 				point.pointAmount.amount.sum().desc(),      // 총 포인트 우선
 				challenge.certCount.sum().desc()            // 동점 시 챌린지 수 우선
