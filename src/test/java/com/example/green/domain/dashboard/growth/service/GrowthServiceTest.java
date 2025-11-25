@@ -16,6 +16,7 @@ import com.example.green.domain.dashboard.growth.entity.Growth;
 import com.example.green.domain.dashboard.growth.entity.enums.Level;
 import com.example.green.domain.dashboard.growth.repository.GrowthRepository;
 import com.example.green.domain.member.entity.Member;
+import com.example.green.domain.member.repository.MemberRepository;
 import com.example.green.infra.client.PointClient;
 
 class GrowthServiceTest {
@@ -28,6 +29,8 @@ class GrowthServiceTest {
 
 	private GrowthCalculateService calculateService; // 실제 객체
 	private GrowthService growthService; // 테스트 대상 서비스
+	@Mock
+	private MemberRepository memberRepository;
 
 	private Growth growth;
 
@@ -43,7 +46,7 @@ class GrowthServiceTest {
 
 		calculateService = new GrowthCalculateService(growthRepository, pointClient);
 
-		growthService = new GrowthService(growthRepository, calculateService);
+		growthService = new GrowthService(growthRepository, calculateService, memberRepository);
 	}
 
 	@Test
@@ -65,6 +68,9 @@ class GrowthServiceTest {
 	void 레벨별_다음_레벨과_진행률_반환() {
 		// given
 		Long memberId = 1L;
+		Member member = Member.create("memberKey-123", "홍길동", "test@test.com", "nickname");
+
+		when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
 		when(growthRepository.findByMemberId(memberId)).thenReturn(Optional.of(growth));
 		when(pointClient.getTotalPoints(memberId)).thenReturn(BigDecimal.valueOf(550L));
 

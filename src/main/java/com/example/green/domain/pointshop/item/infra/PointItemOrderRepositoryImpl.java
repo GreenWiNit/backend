@@ -59,7 +59,8 @@ public class PointItemOrderRepositoryImpl implements PointItemOrderQueryReposito
 			List<BuyerInformation> buyers = queryFactory
 				.select(Projections.constructor(BuyerInformation.class,
 					order.memberSnapshot.memberKey,
-					order.memberSnapshot.memberEmail
+					order.memberSnapshot.memberEmail,
+					order.quantity
 				))
 				.from(order)
 				.where(order.pointItemSnapshot.pointItemId.eq(item.getId()))

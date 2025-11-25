@@ -6,6 +6,7 @@ import com.example.green.domain.pointshop.item.entity.vo.ItemBasicInfo;
 import com.example.green.domain.pointshop.item.entity.vo.ItemCode;
 import com.example.green.domain.pointshop.item.entity.vo.ItemMedia;
 import com.example.green.domain.pointshop.item.entity.vo.ItemPrice;
+import com.example.green.domain.pointshop.item.entity.vo.ItemStock;
 import com.example.green.domain.pointshop.item.service.command.PointItemCreateCommand;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -34,14 +35,18 @@ public record CreatePointItemRequest(
 	String thumbnailUrl,
 	@NotNull(message = "아이템 상품 가격은 필수입니다.")
 	@Schema(description = "아이템 상품 가격", example = "10000")
-	BigDecimal price
+	BigDecimal price,
+	@NotNull(message = "아이템 상품 재고는 필수입니다")
+	@Schema(description = "아이템 상품 재고", example = "2")
+	Integer stock
 ) {
 	public PointItemCreateCommand toCommand() {
 		return new PointItemCreateCommand(
 			new ItemCode(code),
 			new ItemBasicInfo(name, description),
 			new ItemMedia(thumbnailUrl),
-			new ItemPrice(price)
+			new ItemPrice(price),
+			new ItemStock(stock)
 		);
 	}
 }

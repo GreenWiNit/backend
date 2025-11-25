@@ -7,9 +7,6 @@ import org.springframework.stereotype.Component;
 import com.example.green.domain.pointshop.item.dto.response.PointItemResponse;
 import com.example.green.domain.pointshop.item.dto.response.PointItemSearchResponse;
 import com.example.green.domain.pointshop.item.entity.QPointItem;
-import com.example.green.domain.pointshop.product.controller.dto.PointProductSearchResult;
-import com.example.green.domain.pointshop.product.controller.dto.PointProductView;
-import com.example.green.domain.pointshop.product.infra.PointProductProjections;
 import com.example.green.global.api.page.Pagination;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -28,6 +25,7 @@ public class PointItemQueryExecutor {
 			.select(PointItemProjections.toSearchItemResponse(qPointItem))
 			.from(qPointItem)
 			.where(expression)
+			.orderBy(qPointItem.createdDate.desc())
 			.offset(pagination.calculateOffset())
 			.limit(pagination.getPageSize())
 			.fetch();
@@ -59,4 +57,5 @@ public class PointItemQueryExecutor {
 			.limit(cursorViewSize)
 			.fetch();
 	}
+
 }

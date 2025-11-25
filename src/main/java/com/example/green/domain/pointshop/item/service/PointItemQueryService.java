@@ -40,7 +40,7 @@ public class PointItemQueryService {
 		BigDecimal decreasePoint = pointItem.getItemPrice().getItemPrice(); //차감 포인트
 
 		if (enablePoint.compareTo(decreasePoint) < 0) {
-			throw new PointItemException(PointItemExceptionMessage.NOT_POSSIBLE_BUY_ITEM);
+			return new UserPointCalculation(enablePoint, decreasePoint, BigDecimal.ZERO);
 		}
 
 		BigDecimal remainPoint = enablePoint.subtract(decreasePoint);

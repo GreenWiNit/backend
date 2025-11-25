@@ -33,7 +33,8 @@ public class PointItemService {
 			createCommand.itemCode(),
 			createCommand.info(),
 			createCommand.media(),
-			createCommand.price()
+			createCommand.price(),
+			createCommand.stock()
 		);
 
 		PointItem savedPointItem = pointItemRepository.save(pointItem);
@@ -54,6 +55,7 @@ public class PointItemService {
 		pointItem.updateItemBasicInfo(command.info());
 		pointItem.updateItemMedia(command.media());
 		pointItem.updateItemPrice(command.price());
+		pointItem.updateItemStock(command.stock());
 
 		processSideEffect(command, pointItem);
 	}
@@ -102,6 +104,11 @@ public class PointItemService {
 
 	public void hideItemDisplay(Long pointItemId) {
 		pointItemQueryService.getPointItem(pointItemId).hideItemDisplay();
+	}
+
+	public void decreaseItemStock(Long pointItemId, int amount) {
+		PointItem pointItem = pointItemQueryService.getPointItem(pointItemId);
+		pointItem.decreaseStock(amount);
 	}
 
 }

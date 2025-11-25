@@ -3,7 +3,9 @@ package com.example.green.domain.pointshop.item.controller.docs;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
+import com.example.green.domain.pointshop.item.dto.request.OrderPointItemRequest;
 import com.example.green.domain.pointshop.item.dto.response.OrderPointItemResponse;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.error.dto.ExceptionResponse;
@@ -15,6 +17,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 
 @Tag(name = "포인트 상점 아이템 교환 API", description = "포인트 상점 아이템 교환 관련 API 모음입니다")
 public interface PointItemOrderControllerDocs {
@@ -36,7 +39,9 @@ public interface PointItemOrderControllerDocs {
 		@Parameter(description = "주문할 포인트 아이템의 ID", example = "1")
 		@PathVariable Long itemId,
 
+		@Parameter(description = "구매 수량 및 기타 정보")
+		@RequestBody @Valid OrderPointItemRequest orderPointItemRequest,
+
 		@AuthenticationPrincipal PrincipalDetails principal
 	);
-
 }

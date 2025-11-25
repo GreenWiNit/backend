@@ -1,5 +1,6 @@
 package com.example.green.domain.pointshop.item.dto.request;
 
+import com.example.green.domain.pointshop.product.entity.vo.SellingStatus;
 import com.example.green.global.api.page.PageSearchCondition;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -13,6 +14,8 @@ public record PointItemSearchRequest(
 	Integer size,
 	@Schema(description = "아이템 코드 및 아이템 명", example = "맑은 뭉게 구름 ")
 	@Size(min = 2)
-	String keyword
+	String keyword,
+	@Schema(description = "아이템 판매 상태", type = "string", allowableValues = {"EXCHANGEABLE", "SOLD_OUT"})
+	SellingStatus status
 ) implements PageSearchCondition {
 }

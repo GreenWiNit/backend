@@ -5,10 +5,6 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
 
 import java.math.BigDecimal;
-import java.time.Clock;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -22,6 +18,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import com.example.green.domain.dashboard.growth.repository.PlantGrowthItemRepository;
 import com.example.green.domain.member.entity.Member;
 import com.example.green.domain.member.repository.MemberRepository;
+import com.example.green.domain.pointshop.item.dto.request.OrderPointItemRequest;
 import com.example.green.domain.pointshop.item.dto.response.OrderPointItemResponse;
 import com.example.green.domain.pointshop.item.entity.vo.PointItemSnapshot;
 import com.example.green.domain.pointshop.item.exception.PointItemException;
@@ -32,6 +29,7 @@ import com.example.green.domain.pointshop.item.service.command.OrderPointItemCom
 import com.example.green.domain.pointshop.order.entity.vo.MemberSnapshot;
 import com.example.green.global.utils.TimeUtils;
 import com.example.green.infra.client.PointClient;
+import com.example.green.infra.client.request.PointSpendRequest;
 
 @ExtendWith(MockitoExtension.class)
 class PointItemOrderServiceTest {
@@ -57,6 +55,9 @@ class PointItemOrderServiceTest {
 	@Mock
 	private TimeUtils timeUtils;
 
+	@Mock
+	private PointItemService pointItemService;
+
 	private Member member;
 
 	@BeforeEach
@@ -71,26 +72,33 @@ class PointItemOrderServiceTest {
 	void 포인트_아이템_교환_성공() {
 		// given
 		MemberSnapshot memberSnapshot = new MemberSnapshot(1L, "member_key", "user1@test.com");
+
 		PointItemSnapshot pointItemSnapshot = new PointItemSnapshot(
-			1L, "ITM-AA-002", "무지개", "https://thumbnail.url/image.jpg", BigDecimal.valueOf(450)
+			1L,
+			"ITM-AA-002",
+			"무지개",
+			"https://thumbnail.url/image.jpg",
+			BigDecimal.valueOf(450)
 		);
+
 		OrderPointItemCommand command = new OrderPointItemCommand(memberSnapshot, pointItemSnapshot);
+		OrderPointItemRequest request = new OrderPointItemRequest(4); // 구매 수량
 
-		Clock fixedClock = Clock.fixed(Instant.now(), ZoneId.systemDefault());
+		// 현재 보유 포인트 (remain 50 되려면 = total 1850)
+		given(pointClient.getTotalPoints(1L)).willReturn(BigDecimal.valueOf(1850));
 
-		// Repository/Client mock
 		given(memberRepository.findById(1L)).willReturn(Optional.of(member));
-		given(pointItemRepository.findById(anyLong())).willReturn(
-			Optional.of(mock(com.example.green.domain.pointshop.item.entity.PointItem.class))
-		);
-		given(pointClient.getTotalPoints(1L)).willReturn(BigDecimal.valueOf(500));
-		given(pointItemOrderRepository.existsByMemberIdAndPointItemId(1L, 1L)).willReturn(false);
-		given(timeUtils.now()).willReturn(LocalDateTime.now(fixedClock));
-		given(plantGrowthItemRepository.save(any()))
-			.willAnswer(invocation -> invocation.getArgument(0)); // 입력 그대로 반환
+		given(pointItemRepository.findById(anyLong()))
+			.willReturn(Optional.of(mock(com.example.green.domain.pointshop.item.entity.PointItem.class)));
+
+		// Stock 감소 mock
+		doNothing().when(pointItemService).decreaseItemStock(1L, 4);
+
+		// spend 포인트 mock
+		doNothing().when(pointClient).spendPoints(any(PointSpendRequest.class));
 
 		// when
-		OrderPointItemResponse response = pointItemOrderService.orderPointItem(command);
+		OrderPointItemResponse response = pointItemOrderService.orderPointItem(command, request);
 
 		// then
 		assertThat(response.memberId()).isEqualTo(1L);
@@ -107,6 +115,8 @@ class PointItemOrderServiceTest {
 		PointItemSnapshot pointItemSnapshot = new PointItemSnapshot(
 			1L, "ITM-AA-002", "무지개", "https://thumbnail.url/image.jpg", BigDecimal.valueOf(100)
 		);
+		OrderPointItemRequest request = new OrderPointItemRequest(4); // 구매 수량
+
 		OrderPointItemCommand command = mock(OrderPointItemCommand.class);
 		when(command.memberSnapshot()).thenReturn(memberSnapshot);
 		when(command.pointItemSnapshot()).thenReturn(pointItemSnapshot);
@@ -117,30 +127,50 @@ class PointItemOrderServiceTest {
 		);
 		given(pointClient.getTotalPoints(1L)).willReturn(BigDecimal.valueOf(50));
 
-		assertThatThrownBy(() -> pointItemOrderService.orderPointItem(command))
+		assertThatThrownBy(() -> pointItemOrderService.orderPointItem(command, request))
 			.isInstanceOf(PointItemException.class)
 			.hasMessage(PointItemExceptionMessage.NOT_POSSIBLE_BUY_ITEM.getMessage());
 	}
 
 	@Test
-	void 이미_구매한_아이템일_경우_예외() {
+	void 재고가_부족하면_예외발생() {
+		// given
 		MemberSnapshot memberSnapshot = new MemberSnapshot(1L, "member_key", "user1@test.com");
-		PointItemSnapshot pointItemSnapshot = new PointItemSnapshot(
-			1L, "ITM-AA-002", "무지개", "https://thumbnail.url/image.jpg", BigDecimal.valueOf(100)
-		);
-		OrderPointItemCommand command = mock(OrderPointItemCommand.class);
-		when(command.memberSnapshot()).thenReturn(memberSnapshot);
-		when(command.pointItemSnapshot()).thenReturn(pointItemSnapshot);
 
+		PointItemSnapshot snapshot = new PointItemSnapshot(
+			1L,
+			"무지개",
+			"ITM-AA-002",
+			"https://thumbnail.url/image.jpg",
+			BigDecimal.valueOf(450)
+		);
+
+		OrderPointItemCommand command = new OrderPointItemCommand(memberSnapshot, snapshot);
+		OrderPointItemRequest request = new OrderPointItemRequest(5); // 구매 요청 수량: 5
+
+		// member mocking
 		given(memberRepository.findById(1L)).willReturn(Optional.of(member));
-		given(pointItemRepository.findById(anyLong())).willReturn(
-			Optional.of(mock(com.example.green.domain.pointshop.item.entity.PointItem.class))
-		);
-		given(pointClient.getTotalPoints(1L)).willReturn(BigDecimal.valueOf(200));
-		given(pointItemOrderRepository.existsByMemberIdAndPointItemId(1L, 1L)).willReturn(true);
 
-		assertThatThrownBy(() -> pointItemOrderService.orderPointItem(command))
+		// 아이템 존재
+		given(pointItemRepository.findById(anyLong()))
+			.willReturn(Optional.of(mock(com.example.green.domain.pointshop.item.entity.PointItem.class)));
+
+		// 포인트는 충분하다고 가정 (문제 관심사는 재고)
+		given(pointClient.getTotalPoints(1L)).willReturn(BigDecimal.valueOf(9999));
+
+		// 재고 부족 상황 mocking
+		doThrow(new PointItemException(PointItemExceptionMessage.OUT_OF_ITEM_STOCK))
+			.when(pointItemService)
+			.decreaseItemStock(1L, 5);
+
+		// when & then
+		assertThatThrownBy(() -> pointItemOrderService.orderPointItem(command, request))
 			.isInstanceOf(PointItemException.class)
-			.hasMessage(PointItemExceptionMessage.ALREADY_PURCHASED_ITEM.getMessage());
+			.hasMessage(PointItemExceptionMessage.OUT_OF_ITEM_STOCK.getMessage());
+
+		// spendPoints, save 등 → 호출되면 안 됨
+		verify(pointClient, never()).spendPoints(any());
+		verify(pointItemOrderRepository, never()).save(any());
 	}
+
 }
