@@ -3,7 +3,6 @@ package com.example.green.domain.pointshop.item.infra;
 import com.example.green.domain.pointshop.item.dto.response.PointItemResponse;
 import com.example.green.domain.pointshop.item.dto.response.PointItemSearchResponse;
 import com.example.green.domain.pointshop.item.entity.QPointItem;
-import com.querydsl.core.types.ConstructorExpression;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.QBean;
 
@@ -20,13 +19,15 @@ public class PointItemProjections {
 			qPointItem.itemCode.code.as("code"),
 			qPointItem.itemBasicInfo.itemName.as("name"),
 			qPointItem.itemPrice.itemPrice.as("pointPrice"),
+			qPointItem.itemStock.stock.as("stockQuantity"),
+			qPointItem.sellingStatus,
 			qPointItem.displayStatus,
 			qPointItem.createdDate
 		);
 	}
 
-	public static ConstructorExpression<PointItemResponse> toPointItemView(QPointItem qPointItem) {
-		return Projections.constructor(
+	public static QBean<PointItemResponse> toPointItemView(QPointItem qPointItem) {
+		return Projections.fields(
 			PointItemResponse.class,
 			qPointItem.id.as("pointItemId"),
 			qPointItem.itemBasicInfo.itemName.as("pointItemName"),

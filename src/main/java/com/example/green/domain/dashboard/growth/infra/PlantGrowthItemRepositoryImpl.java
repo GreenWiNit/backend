@@ -23,16 +23,20 @@ public class PlantGrowthItemRepositoryImpl implements PlantGrowthItemRepositoryC
 
 		return queryFactory
 			.select(Projections.constructor(GetPlantGrowthItemResponse.class,
+				item.id,
 				item.itemName,
 				item.itemImgUrl,
-				item.applicability))
+				item.applicability,
+				item.positionX,
+				item.positionY
+			))
 			.from(item)
 			.where(item.member.id.eq(memberId))
 			.fetch();
 	}
 
 	@Override
-	public Optional<PlantGrowthItem> findItemByIdAndMemberId(Long memberId, Long itemId) {
+	public Optional<PlantGrowthItem> findByIdAndMember_Id(Long itemId, Long memberId) {
 		QPlantGrowthItem plantGrowthItem = QPlantGrowthItem.plantGrowthItem;
 
 		PlantGrowthItem item = queryFactory
@@ -44,5 +48,7 @@ public class PlantGrowthItemRepositoryImpl implements PlantGrowthItemRepositoryC
 			.fetchOne();
 		return Optional.ofNullable(item);
 	}
+
 }
+
 

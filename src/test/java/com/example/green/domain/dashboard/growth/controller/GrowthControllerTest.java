@@ -108,9 +108,12 @@ class GrowthControllerTest extends BaseControllerUnitTest {
 		Long memberId = 1L;
 
 		GetPlantGrowthItemResponse getPlantGrowthItemResponse = new GetPlantGrowthItemResponse(
+			plantGrowthItem.getId(),
 			plantGrowthItem.getItemName(),
 			plantGrowthItem.getItemImgUrl(),
-			plantGrowthItem.isApplicability()
+			plantGrowthItem.isApplicability(),
+			plantGrowthItem.getPositionX(),
+			plantGrowthItem.getPositionY()
 		);
 
 		when(plantItemService.getPlantGrowthItems(anyLong()))

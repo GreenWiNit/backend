@@ -52,16 +52,15 @@ public class PointItemQueryRepositoryImpl implements PointItemQueryRepository {
 			pointItemQueryExecutor.findItemByCursor(cursorContents, DEFAULT_CURSOR_VIEW_SIZE);
 
 		boolean hasNext = pointItemResponse.size() > DEFAULT_CURSOR_VIEW_SIZE;
+
 		if (!hasNext) {
 			return CursorTemplate.of(pointItemResponse);
 		}
-
 		pointItemResponse.removeLast();
-
 		if (pointItemResponse.isEmpty()) {
 			return CursorTemplate.ofEmpty();
 		}
-
 		return CursorTemplate.ofWithNextCursor(pointItemResponse.getLast().pointItemId(), pointItemResponse);
 	}
+
 }

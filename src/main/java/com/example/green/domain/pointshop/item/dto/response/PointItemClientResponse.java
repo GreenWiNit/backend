@@ -1,5 +1,6 @@
 package com.example.green.domain.pointshop.item.dto.response;
 
+import static com.example.green.domain.pointshop.item.exception.PointItemExceptionMessage.*;
 import static com.example.green.global.utils.EntityValidator.*;
 
 import java.math.BigDecimal;
@@ -36,6 +37,9 @@ public class PointItemClientResponse {
 	@Column(nullable = false)
 	private BigDecimal remainPoint;
 
+	@Column(nullable = false)
+	private Integer stock;
+
 	public PointItemClientResponse(
 		String itemName,
 		String description,
@@ -43,15 +47,17 @@ public class PointItemClientResponse {
 		BigDecimal price,
 		BigDecimal enablePoint,
 		BigDecimal decreasePoint,
-		BigDecimal remainPoint
+		BigDecimal remainPoint,
+		Integer stock
 	) {
-		validateEmptyString(itemName, "아이템 이름은 필수 값입니다.");
-		validateEmptyString(description, "아이템 설명은 필수 값입니다.");
-		validateEmptyString(thumbnail, "아이템 썸네일 이미지는 필수 값입니다. ");
-		validateNullData(price, "아이템 가격은 필수 값입니다.");
-		validateNullData(enablePoint, "사용 가능한 포인트는 필수 값입니다.");
-		validateNullData(decreasePoint, "차감 포인트는 필수 값입니다.");
-		validateNullData(remainPoint, "남은 포인트는 필수 값입니다.");
+		validateEmptyString(itemName, REQUIRED_ITEM_NAME);
+		validateEmptyString(description, REQUIRED_ITEM_DESCRIPTION);
+		validateEmptyString(thumbnail, REQUIRED_ITEM_MEDIA);
+		validateNullData(price, REQUIRED_ITEM_PRICE);
+		validateNullData(enablePoint, REQUIRED_ENABLE_POINT);
+		validateNullData(decreasePoint, REQUIRED_DECREASE_POINT);
+		validateNullData(remainPoint, REQUIRED_REMAIN_POINT);
+		validateNullData(stock, REQUIRED_ITEM_STOCK);
 
 		this.itemName = itemName;
 		this.description = description;
@@ -60,6 +66,7 @@ public class PointItemClientResponse {
 		this.enablePoint = enablePoint;
 		this.decreasePoint = decreasePoint;
 		this.remainPoint = remainPoint;
+		this.stock = stock;
 	}
 
 	public static PointItemClientResponse from(PointItem pointItem, BigDecimal enablePoint, BigDecimal decreasePoint,
@@ -71,7 +78,8 @@ public class PointItemClientResponse {
 			pointItem.getItemPrice().getItemPrice(),
 			enablePoint,
 			decreasePoint,
-			remainPoint
+			remainPoint,
+			pointItem.getItemStock().getStock()
 		);
 	}
 }
