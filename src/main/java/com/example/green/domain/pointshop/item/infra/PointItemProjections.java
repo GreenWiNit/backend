@@ -28,10 +28,10 @@ public class PointItemProjections {
 	public static ConstructorExpression<PointItemResponse> toPointItemView(QPointItem qPointItem) {
 		return Projections.constructor(
 			PointItemResponse.class,
-			qPointItem.id,
-			qPointItem.itemBasicInfo.itemName,
-			qPointItem.itemMedia.itemThumbNailUrl,
-			qPointItem.itemPrice.itemPrice
+			qPointItem.id.as("pointItemId"),
+			qPointItem.itemBasicInfo.itemName.as("pointItemName"),
+			qPointItem.itemMedia.itemThumbNailUrl.as("thumbnailUrl"),
+			qPointItem.itemPrice.itemPrice.as("pointPrice")
 		);
 	}
 
