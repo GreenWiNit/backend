@@ -118,6 +118,7 @@ public class WeeklyRankingService {
 				member.getId(),
 				member.getName(),// 닉네임: member.name
 				member.getProfile().getProfileImageUrl(),
+				0,
 				BigDecimal.ZERO,         // totalPoint = 0 (테스트에서 검증)
 				0,                       // certificationCount = 0
 				weekStart,
@@ -131,6 +132,7 @@ public class WeeklyRankingService {
 			myRanking.getMemberId(),
 			myRanking.getMemberName(),
 			myRanking.getProfileImageUrl(),
+			myRanking.getRank(),
 			myRanking.getTotalPoint(),
 			myRanking.getCertificationCount(),
 			myRanking.getWeekStart(),

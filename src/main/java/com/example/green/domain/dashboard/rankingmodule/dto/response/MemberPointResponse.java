@@ -22,6 +22,10 @@ public record MemberPointResponse(
 	String profileImageUrl,
 
 	@NotNull
+	@Schema(description = "랭킹", example = "1")
+	int rank,
+
+	@NotNull
 	@PositiveOrZero
 	@Schema(description = "총 포인트", example = "123")
 	BigDecimal totalEarned,
