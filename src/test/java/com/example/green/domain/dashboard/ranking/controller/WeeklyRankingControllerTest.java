@@ -65,7 +65,7 @@ class WeeklyRankingControllerTest extends BaseControllerUnitTest {
 
 		MemberPointResponse myResponse = new MemberPointResponse(
 			3L, "이지은", "https://my-app-profile.s3.ap-northeast-2.amazonaws.com/profile/user123.png",
-			BigDecimal.valueOf(100), 1, weekStart, weekStart.plusDays(6)
+			3, BigDecimal.valueOf(100), 1, weekStart, weekStart.plusDays(6)
 		);
 
 		PrincipalDetails principal = new PrincipalDetails(
