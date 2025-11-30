@@ -8,6 +8,7 @@ import com.example.green.domain.pointshop.item.dto.response.PointItemResponse;
 import com.example.green.domain.pointshop.item.dto.response.PointItemSearchResponse;
 import com.example.green.domain.pointshop.item.entity.QPointItem;
 import com.example.green.global.api.page.Pagination;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
@@ -50,7 +51,14 @@ public class PointItemQueryExecutor {
 
 	public List<PointItemResponse> findItemByCursor(BooleanExpression expression, int cursorViewSize) {
 		return jpaQueryFactory
-			.select(PointItemProjections.toPointItemView(qPointItem))
+			.select(Projections.constructor(
+				PointItemResponse.class,
+				qPointItem.id,
+				qPointItem.itemBasicInfo.itemName,
+				qPointItem.itemMedia.itemThumbNailUrl,
+				qPointItem.itemPrice.itemPrice,
+				qPointItem.sellingStatus
+			))
 			.from(qPointItem)
 			.where(expression)
 			.orderBy(qPointItem.id.desc())
