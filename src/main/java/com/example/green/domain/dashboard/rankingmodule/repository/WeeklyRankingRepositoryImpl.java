@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import com.example.green.domain.challenge.entity.challenge.QBaseChallengeParticipation;
+import com.example.green.domain.challenge.entity.challenge.QParticipation;
 import com.example.green.domain.dashboard.rankingmodule.entity.QWeeklyRanking;
 import com.example.green.domain.dashboard.rankingmodule.entity.WeeklyRanking;
 import com.example.green.domain.member.entity.QMember;
@@ -26,7 +26,7 @@ public class WeeklyRankingRepositoryImpl implements WeeklyRankingRepositoryCusto
 
 		QMember member = QMember.member;
 		QPointTransaction point = QPointTransaction.pointTransaction;
-		QBaseChallengeParticipation challenge = QBaseChallengeParticipation.baseChallengeParticipation;
+		QParticipation challenge = QParticipation.participation;
 
 		LocalDateTime startDateTime = weekStart.atStartOfDay();
 		LocalDateTime endDateTime = weekStart.plusDays(6).atTime(23, 59, 59);
@@ -47,7 +47,7 @@ public class WeeklyRankingRepositoryImpl implements WeeklyRankingRepositoryCusto
 			)
 			.leftJoin(challenge).on(
 				challenge.memberId.eq(member.id)
-					.and(challenge.participatedAt.between(startDateTime, endDateTime))
+					.and(challenge.createdDate.between(startDateTime, endDateTime))
 			)
 			.groupBy(member.id, member.name, member.profile.profileImageUrl)
 			.orderBy(

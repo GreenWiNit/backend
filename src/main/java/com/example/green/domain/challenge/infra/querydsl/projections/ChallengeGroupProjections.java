@@ -1,6 +1,6 @@
 package com.example.green.domain.challenge.infra.querydsl.projections;
 
-import static com.example.green.domain.challenge.entity.challenge.QTeamChallengeParticipation.*;
+import static com.example.green.domain.challenge.entity.challenge.QParticipation.*;
 import static com.example.green.domain.challenge.entity.group.QChallengeGroup.*;
 import static com.example.green.domain.challenge.entity.group.QChallengeGroupParticipation.*;
 
@@ -57,7 +57,7 @@ public class ChallengeGroupProjections {
 			AdminTeamParticipantDto.class,
 			challengeGroup.teamCode,
 			challengeGroupParticipation.memberId,
-			teamChallengeParticipation.participatedAt,
+			participation.createdDate,
 			challengeGroupParticipation.createdDate
 		);
 	}

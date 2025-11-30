@@ -24,10 +24,15 @@ public class ChallengeTestDataSource {
 	@Autowired
 	private EntityManager entityManager;
 
-	public void 챌린지_50개_생성() {
-		challengeRepository.deleteAllInBatch();
+	public void init() {
+		entityManager.createNativeQuery("TRUNCATE TABLE challenge_participations CASCADE").executeUpdate();
+		entityManager.createNativeQuery("TRUNCATE TABLE challenges CASCADE").executeUpdate();
 		entityManager.createNativeQuery("ALTER SEQUENCE challenges_id_seq RESTART WITH 1").executeUpdate();
+		entityManager.createNativeQuery("ALTER SEQUENCE challenge_participations_id_seq RESTART WITH 1")
+			.executeUpdate();
+	}
 
+	public void 챌린지_50개_생성() {
 		List<Challenge> challenges = new ArrayList<>();
 		for (int i = 1; i <= 50; i++) {
 			ChallengeInfo info = ChallengeInfo.of("challenge" + i, i);
@@ -39,8 +44,6 @@ public class ChallengeTestDataSource {
 	}
 
 	public void 챌린지_참여_역순() {
-		entityManager.createNativeQuery("ALTER SEQUENCE challenge_participations_id_seq RESTART WITH 1")
-			.executeUpdate();
 		for (long id = 50; id >= 1; id--) {
 			Challenge challenge = challengeRepository.findByIdWithThrow(id);
 			challenge.participate(1L);

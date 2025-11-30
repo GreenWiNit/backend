@@ -5,8 +5,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import com.example.green.domain.challenge.entity.challenge.Challenge;
-import com.example.green.domain.challenge.entity.challenge.PersonalChallenge;
-import com.example.green.domain.challenge.entity.challenge.TeamChallenge;
 import com.example.green.domain.challenge.entity.challenge.vo.ChallengeContent;
 import com.example.green.domain.challenge.entity.challenge.vo.ChallengeDisplay;
 import com.example.green.domain.challenge.entity.challenge.vo.ChallengeInfo;
@@ -62,20 +60,6 @@ public record AdminChallengeCreateDto(
 		@JsonProperty("challengeImageUrl") String challengeImageUrl) {
 
 		this(challengeName, challengePoint, null, null, challengeContent, challengeImageUrl, ChallengeDisplay.VISIBLE);
-	}
-
-	public TeamChallenge toTeamChallenge(String challengeCode) {
-		return TeamChallenge.create(
-			challengeCode, challengeName, challengeImageUrl, challengeContent,
-			challengePoint, null, null, displayStatus
-		);
-	}
-
-	public PersonalChallenge toPersonalChallenge(String challengeCode) {
-		return PersonalChallenge.create(
-			challengeCode, challengeName, challengeImageUrl, challengeContent,
-			challengePoint, null, null, displayStatus
-		);
 	}
 
 	public Challenge toChallenge(String challengeCode, ChallengeType challengeType) {
