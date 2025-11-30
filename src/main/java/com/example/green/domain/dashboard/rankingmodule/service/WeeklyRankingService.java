@@ -13,8 +13,8 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.green.domain.certification.domain.ChallengeCertificationRepository;
 import com.example.green.domain.certification.infra.projections.MemberCertifiedCountProjection;
-import com.example.green.domain.certification.repository.ChallengeCertificationRepository;
 import com.example.green.domain.dashboard.rankingmodule.dto.response.MemberPointResponse;
 import com.example.green.domain.dashboard.rankingmodule.dto.response.TopMemberPointResponse;
 import com.example.green.domain.dashboard.rankingmodule.entity.WeeklyRanking;
