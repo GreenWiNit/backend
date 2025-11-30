@@ -1,5 +1,9 @@
 package com.example.green.domain.dashboard.rankingmodule.service;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.ZoneId;
+
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +20,12 @@ public class WeeklyRankingScheduler {
 	 */
 	@Scheduled(cron = "0 0 0 * * MON", zone = "Asia/Seoul")
 	public void calculateWeeklyRankingBatch() {
-		weeklyRankingService.updateWeeklyRanks();
+		LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
+
+		// 오늘이 월요일 → 지난주 계산
+		LocalDate weekStart = today.minusWeeks(1).with(DayOfWeek.MONDAY);
+		LocalDate weekEnd = today.minusWeeks(1).with(DayOfWeek.SUNDAY);
+
+		weeklyRankingService.updateWeeklyRanks(weekStart, weekEnd);
 	}
 }
