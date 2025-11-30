@@ -13,5 +13,7 @@ public interface WeeklyRankingRepositoryCustom {
 	Optional<WeeklyRanking> myData(LocalDate weekStart, Long memberId);
 
 	List<WeeklyRanking> findTopNByWeekStart(LocalDate weekStart, int topN);
+
+	List<WeeklyRanking> findAllRankings();
 }
 

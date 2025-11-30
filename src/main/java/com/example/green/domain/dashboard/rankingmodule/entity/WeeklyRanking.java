@@ -58,4 +58,10 @@ public class WeeklyRanking extends TimeBaseEntity {
 	@Column(name = "week_end", nullable = false)
 	private LocalDate weekEnd;
 
+	public void setRank(int rank) {
+		if (this.rank != rank) {
+			this.rank = rank;
+		}
+	}
+
 }

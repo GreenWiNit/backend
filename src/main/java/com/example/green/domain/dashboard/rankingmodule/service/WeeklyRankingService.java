@@ -4,8 +4,11 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -76,6 +79,38 @@ public class WeeklyRankingService {
 			rankings.add(weeklyRanking);
 		}
 		weeklyRankingRepository.saveAll(rankings);
+	}
+
+	//모든 주별 TopN 계산 로직 추가
+	@Transactional
+	public void updateWeeklyRanks() {
+
+		List<WeeklyRanking> allWeeklyRankings = weeklyRankingRepository.findAllRankings();
+
+		Map<LocalDate, List<WeeklyRanking>> rankingsByWeek = allWeeklyRankings.stream()
+			.collect(Collectors.groupingBy(WeeklyRanking::getWeekStart));
+
+		//변경된 순위만 모으기 위한 리스트
+		List<WeeklyRanking> toUpdate = new ArrayList<>();
+
+		for (Map.Entry<LocalDate, List<WeeklyRanking>> entry : rankingsByWeek.entrySet()) {
+
+			List<WeeklyRanking> weeklyRankings = entry.getValue();
+
+			weeklyRankings.sort(Comparator.comparing(WeeklyRanking::getTotalPoint).reversed()
+				.thenComparing(WeeklyRanking::getCertificationCount).reversed()
+			);
+
+			for (int i = 0; i < weeklyRankings.size(); i++) {
+				WeeklyRanking weeklyRanking = weeklyRankings.get(i);
+				int newRank = i + 1;
+				if (weeklyRanking.getRank() != newRank) {
+					weeklyRanking.setRank(newRank);
+					toUpdate.add(weeklyRanking);
+				}
+			}
+		}
+
 	}
 
 	public List<TopMemberPointResponse> getAllRankData(LocalDate weekStart, int topN) {

@@ -86,4 +86,15 @@ public class WeeklyRankingRepositoryImpl implements WeeklyRankingRepositoryCusto
 			.limit(topN)
 			.fetch();
 	}
+
+	@Override
+	public List<WeeklyRanking> findAllRankings() {
+
+		QWeeklyRanking weeklyRanking = QWeeklyRanking.weeklyRanking;
+
+		return queryFactory
+			.selectFrom(weeklyRanking)
+			.fetch();
+	}
+
 }
