@@ -10,4 +10,6 @@ import com.querydsl.core.Tuple;
 
 public interface WeeklyRankingRepository extends JpaRepository<WeeklyRanking, Long>, WeeklyRankingRepositoryCustom {
 	List<Tuple> findByWeekStart(LocalDate weekStart);
+
+	void deleteByWeekStart(LocalDate weekStart);
 }

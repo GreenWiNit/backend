@@ -8,4 +8,5 @@ public interface CertificationClient {
 	int getTotalCertifiedCountByMember(Long memberId);
 
 	Map<Long, Long> getCertificationCountByMembers(List<Long> memberIds);
+
 }
