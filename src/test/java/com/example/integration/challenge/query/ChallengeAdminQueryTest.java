@@ -30,6 +30,7 @@ public class ChallengeAdminQueryTest extends BaseIntegrationTest {
 
 	@BeforeEach
 	void setUp() {
+		dataSource.init();
 		dataSource.챌린지_50개_생성();
 	}
 

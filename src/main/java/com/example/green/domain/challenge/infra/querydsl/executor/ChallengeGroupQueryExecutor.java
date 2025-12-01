@@ -1,6 +1,6 @@
 package com.example.green.domain.challenge.infra.querydsl.executor;
 
-import static com.example.green.domain.challenge.entity.challenge.QTeamChallengeParticipation.*;
+import static com.example.green.domain.challenge.entity.challenge.QParticipation.*;
 import static com.example.green.domain.challenge.entity.group.QChallengeGroup.*;
 import static com.example.green.domain.challenge.entity.group.QChallengeGroupParticipation.*;
 import static com.example.green.domain.challenge.infra.querydsl.projections.ChallengeGroupProjections.*;
@@ -103,9 +103,9 @@ public class ChallengeGroupQueryExecutor {
 	private JPAQuery<?> createBaseParticipantQuery(Long challengeId) {
 		return queryFactory.from(challengeGroup)
 			.join(challengeGroup.participants, challengeGroupParticipation)
-			.join(teamChallengeParticipation)
-			.on(teamChallengeParticipation.teamChallenge.id.eq(challengeId)
-				.and(teamChallengeParticipation.memberId.eq(challengeGroupParticipation.memberId)))
+			.join(participation)
+			.on(participation.challenge.id.eq(challengeId)
+				.and(participation.memberId.eq(challengeGroupParticipation.memberId)))
 			.where(challengeGroup.teamChallengeId.eq(challengeId));
 	}
 

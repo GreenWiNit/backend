@@ -3,7 +3,6 @@ package com.example.green.domain.challenge.controller.query.dto.challenge;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import com.example.green.domain.challenge.entity.challenge.BaseChallenge;
 import com.example.green.domain.challenge.entity.challenge.Challenge;
 import com.example.green.domain.challenge.entity.challenge.vo.ChallengeDisplay;
 import com.example.green.domain.challenge.entity.challenge.vo.ChallengeType;
@@ -42,21 +41,6 @@ public record AdminChallengeDetailDto(
 	@Schema(description = "챌린지 설명 및 참여방법", example = "매일 30분 이상 운동하기")
 	String challengeContent
 ) {
-
-	public static AdminChallengeDetailDto from(BaseChallenge challenge) {
-		return new AdminChallengeDetailDto(
-			challenge.getId(),
-			challenge.getChallengeCode(),
-			challenge.getChallengeName(),
-			challenge.getChallengeType(),
-			challenge.getChallengePoint(),
-			challenge.getBeginDate(),
-			challenge.getEndDate(),
-			challenge.getDisplayStatus(),
-			challenge.getChallengeImage(),
-			challenge.getChallengeContent()
-		);
-	}
 
 	public static AdminChallengeDetailDto from(Challenge challenge) {
 		return new AdminChallengeDetailDto(

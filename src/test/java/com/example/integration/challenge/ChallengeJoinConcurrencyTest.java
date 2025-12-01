@@ -2,18 +2,18 @@ package com.example.integration.challenge;
 
 import static org.assertj.core.api.Assertions.*;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.example.green.domain.challenge.entity.challenge.TeamChallenge;
-import com.example.green.domain.challenge.entity.challenge.vo.ChallengeDisplay;
-import com.example.green.domain.challenge.repository.TeamChallengeRepository;
-import com.example.green.domain.challenge.service.TeamChallengeService;
+import com.example.green.domain.challenge.entity.challenge.Challenge;
+import com.example.green.domain.challenge.entity.challenge.vo.ChallengeContent;
+import com.example.green.domain.challenge.entity.challenge.vo.ChallengeInfo;
+import com.example.green.domain.challenge.entity.challenge.vo.ChallengeType;
+import com.example.green.domain.challenge.repository.ChallengeRepository;
+import com.example.green.domain.challenge.service.ChallengeService;
 import com.example.integration.common.BaseIntegrationTest;
 import com.example.integration.common.concurrency.ConcurrencyTestResult;
 import com.example.integration.common.concurrency.ConcurrencyTestTemplate;
@@ -21,27 +21,23 @@ import com.example.integration.common.concurrency.ConcurrencyTestTemplate;
 class ChallengeJoinConcurrencyTest extends BaseIntegrationTest {
 
 	@Autowired
-	private TeamChallengeService teamChallengeService;
+	private ChallengeService teamChallengeService;
 
 	@Autowired
-	private TeamChallengeRepository teamChallengeRepository;
+	private ChallengeRepository teamChallengeRepository;
 
-	private TeamChallenge teamChallenge;
+	private Challenge teamChallenge;
 
 	@BeforeEach
 	void setUp() {
 		teamChallengeRepository.deleteAllInBatch();
 
 		// 팀 챌린지 생성 (참가자 수 제한 없음)
-		teamChallenge = TeamChallenge.create(
+		teamChallenge = Challenge.of(
 			"CHL-001",
-			"환경 정화 챌린지",
-			"thumbnail.jpg",
-			"환경 정화 활동을 함께 해요!",
-			BigDecimal.valueOf(100),
-			LocalDate.now(),
-			LocalDate.now().plusDays(7),
-			ChallengeDisplay.VISIBLE
+			ChallengeInfo.of("환경 정화 챌린지", 100),
+			ChallengeContent.of("환경 정화 활동을 함께 해요!", "https://thumbnail.jpg"),
+			ChallengeType.TEAM
 		);
 		teamChallenge = teamChallengeRepository.saveAndFlush(teamChallenge);
 	}
@@ -54,7 +50,6 @@ class ChallengeJoinConcurrencyTest extends BaseIntegrationTest {
 		// when & then
 		ConcurrencyTestResult result = ConcurrencyTestTemplate.build()
 			.threadCount(3)
-			.timeout(5)
 			.execute(() -> {
 				try {
 					teamChallengeService.join(teamChallenge.getId(), memberIdGenerator.getAndIncrement());
@@ -65,7 +60,7 @@ class ChallengeJoinConcurrencyTest extends BaseIntegrationTest {
 				}
 			});
 
-		TeamChallenge finalChallenge = teamChallengeRepository.findById(teamChallenge.getId()).orElseThrow();
+		Challenge finalChallenge = teamChallengeRepository.findByIdWithThrow(teamChallenge.getId());
 		assertThat(result.allSucceeded()).isTrue();
 		assertThat(finalChallenge.getParticipantCount()).isEqualTo(3);
 	}
