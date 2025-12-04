@@ -47,7 +47,7 @@ class WeeklyRankingControllerTest extends BaseControllerUnitTest {
 				BigDecimal.valueOf(120), 2, weekStart, weekStart.plusDays(6))
 		);
 
-		when(weeklyRankingService.getAllRankData(weekStart, 8))
+		when(weeklyRankingService.getAllRankData(weekStart))
 			.thenReturn(topMembers);
 
 		WeeklyRankingController controller = new WeeklyRankingController(weeklyRankingService);
@@ -62,7 +62,7 @@ class WeeklyRankingControllerTest extends BaseControllerUnitTest {
 		assertThat(response.message())
 			.isEqualTo(WeeklyRankingResponseMessage.LOAD_WEEKLY_RANKING_SUCCESS.getMessage());
 
-		verify(weeklyRankingService, times(1)).getAllRankData(weekStart, 8);
+		verify(weeklyRankingService, times(1)).getAllRankData(weekStart);
 	}
 
 	@Test
@@ -123,7 +123,7 @@ class WeeklyRankingControllerTest extends BaseControllerUnitTest {
 			)
 		);
 
-		when(weeklyRankingService.getAllRankData(weekStart, 8))
+		when(weeklyRankingService.getAllRankData(weekStart))
 			.thenReturn(topMembers);
 
 		// when & then
@@ -142,7 +142,7 @@ class WeeklyRankingControllerTest extends BaseControllerUnitTest {
 			.andReturn();
 
 		verify(weeklyRankingService, times(1))
-			.getAllRankData(weekStart, 8);
+			.getAllRankData(weekStart);
 	}
 }
 
