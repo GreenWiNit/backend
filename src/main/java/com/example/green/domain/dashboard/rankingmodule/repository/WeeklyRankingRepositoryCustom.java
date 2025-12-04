@@ -15,5 +15,7 @@ public interface WeeklyRankingRepositoryCustom {
 	List<WeeklyRanking> findTopNByWeekStart(LocalDate weekStart, int topN);
 
 	List<WeeklyRanking> findAllRankings();
+
+	List<WeeklyRanking> findTop8ByWeekStart(LocalDate weekStart);
 }
 

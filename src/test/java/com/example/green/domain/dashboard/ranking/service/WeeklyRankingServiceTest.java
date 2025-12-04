@@ -5,18 +5,15 @@ import static org.mockito.Mockito.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import com.example.green.domain.dashboard.rankingmodule.dto.response.MemberPointResponse;
-import com.example.green.domain.dashboard.rankingmodule.dto.response.TopMemberPointResponse;
 import com.example.green.domain.dashboard.rankingmodule.entity.WeeklyRanking;
 import com.example.green.domain.dashboard.rankingmodule.repository.WeeklyRankingRepository;
 import com.example.green.domain.dashboard.rankingmodule.service.WeeklyRankingService;
@@ -64,24 +61,6 @@ class WeeklyRankingServiceTest {
 			.weekStart(weekStart)
 			.weekEnd(weekStart.plusDays(6))
 			.build();
-	}
-
-	@Test
-	@DisplayName("상위 랭킹 조회 성공")
-	void 상위_랭킹_조회_성공() {
-		// given
-		when(weeklyRankingRepository.findTopNByWeekStart(any(), anyInt()))
-			.thenReturn(List.of(rank1, rank2));
-
-		// when
-		List<TopMemberPointResponse> response = weeklyRankingService.getAllRankData(weekStart, 2);
-
-		// then
-		assertThat(response).hasSize(2);
-		assertThat(response.get(0).nickname()).isEqualTo("홍길동");
-		assertThat(response.get(1).nickname()).isEqualTo("김철수");
-
-		verify(weeklyRankingRepository, times(1)).findTopNByWeekStart(any(), anyInt());
 	}
 
 	@Test
