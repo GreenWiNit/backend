@@ -55,7 +55,7 @@ public class WeeklyRankingService {
 
 		Map<Long, Integer> certifiedCounts = Optional.ofNullable(
 				challengeCertificationRepository.findCertifiedCountByMemberIds(memberIds))
-			.orElse(new ArrayList<>())
+			.orElse(List.of())
 			.stream()
 			.collect(Collectors.toMap(
 				MemberCertifiedCountProjection::getMemberId,
@@ -70,51 +70,63 @@ public class WeeklyRankingService {
 				w -> w
 			));
 
-		List<WeeklyRanking> updatedRanks = new ArrayList<>();
+		List<WeeklyRanking> rankingsToSave = new ArrayList<>();
 
 		for (Member member : allMembers) {
 
 			BigDecimal point = memberPoints.getOrDefault(member.getId(), BigDecimal.ZERO);
-
 			int certificationCount = certifiedCounts.getOrDefault(member.getId(), 0);
 
-			String profileImageUrl = (member.getProfile() != null) ?
-				member.getProfile().getProfileImageUrl() : null;
+			String profileImageUrl = member.getProfile() != null
+				? member.getProfile().getProfileImageUrl()
+				: null;
 
 			WeeklyRanking existing = existingMap.get(member.getId());
 
 			if (existing != null) {
 				existing.updatePointAndCertification(point, certificationCount);
-				updatedRanks.add(existing);
+				rankingsToSave.add(existing);
+
+			} else {
+				WeeklyRanking newRank = WeeklyRanking.builder()
+					.memberId(member.getId())
+					.memberName(member.getName())
+					.profileImageUrl(profileImageUrl)
+					.totalPoint(point)
+					.certificationCount(certificationCount)
+					.weekStart(weekStart)
+					.weekEnd(weekEnd)
+					.rank(0)
+					.build();
+
+				rankingsToSave.add(newRank);
 			}
 		}
 
-		// 정렬 (포인트 내림차순, 동점이면 인증 수 내림차순)
-		updatedRanks.sort(
+		rankingsToSave.sort(
 			Comparator.comparing(WeeklyRanking::getTotalPoint, Comparator.reverseOrder())
 				.thenComparing(WeeklyRanking::getCertificationCount, Comparator.reverseOrder())
 		);
 
-		int ranking = 1;
-		for (int i = 0; i < updatedRanks.size(); i++) {
+		int rankCounter = 1;
+		for (int i = 0; i < rankingsToSave.size(); i++) {
 
 			if (i > 0 &&
-				updatedRanks.get(i).getTotalPoint().compareTo(updatedRanks.get(i - 1).getTotalPoint()) == 0 &&
-				updatedRanks.get(i).getCertificationCount() ==
-					updatedRanks.get(i - 1).getCertificationCount()) {
+				rankingsToSave.get(i).getTotalPoint().compareTo(rankingsToSave.get(i - 1).getTotalPoint()) == 0 &&
+				rankingsToSave.get(i).getCertificationCount() ==
+					rankingsToSave.get(i - 1).getCertificationCount()) {
 
-				updatedRanks.get(i).updateRank(updatedRanks.get(i - 1).getRank());
+				rankingsToSave.get(i).updateRank(rankingsToSave.get(i - 1).getRank());
 			} else {
-				updatedRanks.get(i).updateRank(ranking);
+				rankingsToSave.get(i).updateRank(rankCounter);
 			}
 
-			ranking++;
+			rankCounter++;
 		}
-
-		weeklyRankingRepository.saveAll(updatedRanks);
+		weeklyRankingRepository.saveAll(rankingsToSave);
 	}
 
-	public List<TopMemberPointResponse> getAllRankData(LocalDate weekStart, int topN) {
+	public List<TopMemberPointResponse> getAllRankData(LocalDate weekStart) {
 
 		// 상위 N명 랭킹 엔티티 조회
 		List<WeeklyRanking> topMembersFromDb = weeklyRankingRepository.findTop8ByWeekStart(weekStart);

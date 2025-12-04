@@ -35,10 +35,9 @@ public class WeeklyRankingController implements WeeklyRankingControllerDocs {
 		@RequestParam("weekStart")
 		@DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate weekStart
 	) {
-		int topN = 8;
 
 		List<TopMemberPointResponse> response =
-			weeklyRankingService.getAllRankData(weekStart, topN);
+			weeklyRankingService.getAllRankData(weekStart);
 
 		return ApiTemplate.ok(WeeklyRankingResponseMessage.LOAD_WEEKLY_RANKING_SUCCESS, response);
 	}
