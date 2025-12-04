@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.repository.query.Param;
+
 import com.example.green.domain.challenge.entity.challenge.QParticipation;
 import com.example.green.domain.dashboard.rankingmodule.entity.QWeeklyRanking;
 import com.example.green.domain.dashboard.rankingmodule.entity.WeeklyRanking;
@@ -94,6 +96,19 @@ public class WeeklyRankingRepositoryImpl implements WeeklyRankingRepositoryCusto
 
 		return queryFactory
 			.selectFrom(weeklyRanking)
+			.fetch();
+	}
+
+	@Override
+	public List<WeeklyRanking> findTop8ByWeekStart(@Param("weekStart") LocalDate weekStart) {
+
+		QWeeklyRanking weeklyRanking = QWeeklyRanking.weeklyRanking;
+
+		return queryFactory
+			.selectFrom(weeklyRanking)
+			.where(weeklyRanking.weekStart.eq(weekStart))
+			.orderBy(weeklyRanking.rank.asc())
+			.limit(8) // TOP 8
 			.fetch();
 	}
 

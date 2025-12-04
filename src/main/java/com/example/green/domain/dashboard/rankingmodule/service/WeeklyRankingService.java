@@ -43,9 +43,6 @@ public class WeeklyRankingService {
 	@Transactional
 	public void updateWeeklyRanks(LocalDate weekStart, LocalDate weekEnd) {
 
-		// 기존 주차 랭킹 삭제
-		weeklyRankingRepository.deleteByWeekStart(weekStart);
-
 		// 모든 회원 조회
 		List<Member> allMembers = memberRepository.findAll();
 		List<Long> memberIds = allMembers.stream()
@@ -65,60 +62,62 @@ public class WeeklyRankingService {
 				MemberCertifiedCountProjection::getCertifiedCount
 			));
 
-		List<WeeklyRanking> weeklyRankings = allMembers.stream()
-			.map(member -> {
-				BigDecimal point = memberPoints.getOrDefault(member.getId(), BigDecimal.ZERO);
-				int certificationCount = certifiedCounts.getOrDefault(member.getId(), 0);
-				String profileImageUrl = (member.getProfile() != null) ?
-					member.getProfile().getProfileImageUrl() : null;
+		Map<Long, WeeklyRanking> existingMap = weeklyRankingRepository
+			.findByWeekStart(weekStart)
+			.stream()
+			.collect(Collectors.toMap(
+				WeeklyRanking::getMemberId,
+				w -> w
+			));
 
-				return WeeklyRanking.builder()
-					.memberId(member.getId())
-					.memberName(member.getName())
-					.profileImageUrl(profileImageUrl)
-					.totalPoint(point) // DB 저장/정렬용
-					.certificationCount(certificationCount)
-					.weekStart(weekStart)
-					.weekEnd(weekEnd)
-					.rank(0)
-					.build();
-			})
-			.toList();
+		List<WeeklyRanking> updatedRanks = new ArrayList<>();
+
+		for (Member member : allMembers) {
+
+			BigDecimal point = memberPoints.getOrDefault(member.getId(), BigDecimal.ZERO);
+
+			int certificationCount = certifiedCounts.getOrDefault(member.getId(), 0);
+
+			String profileImageUrl = (member.getProfile() != null) ?
+				member.getProfile().getProfileImageUrl() : null;
+
+			WeeklyRanking existing = existingMap.get(member.getId());
+
+			if (existing != null) {
+				existing.updatePointAndCertification(point, certificationCount);
+				updatedRanks.add(existing);
+			}
+		}
 
 		// 정렬 (포인트 내림차순, 동점이면 인증 수 내림차순)
-		weeklyRankings.sort(
+		updatedRanks.sort(
 			Comparator.comparing(WeeklyRanking::getTotalPoint, Comparator.reverseOrder())
 				.thenComparing(WeeklyRanking::getCertificationCount, Comparator.reverseOrder())
 		);
 
-		int rankCounter = 1;
-		for (int i = 0; i < weeklyRankings.size(); i++) {
-			if (i > 0 &&
-				weeklyRankings.get(i).getTotalPoint().compareTo(weeklyRankings.get(i - 1).getTotalPoint()) == 0 &&
-				weeklyRankings.get(i).getCertificationCount() ==
-					weeklyRankings.get(i - 1).getCertificationCount()) {
+		int ranking = 1;
+		for (int i = 0; i < updatedRanks.size(); i++) {
 
-				// 완전 동점 → 이전 rank와 동일
-				weeklyRankings.get(i).setRank(weeklyRankings.get(i - 1).getRank());
+			if (i > 0 &&
+				updatedRanks.get(i).getTotalPoint().compareTo(updatedRanks.get(i - 1).getTotalPoint()) == 0 &&
+				updatedRanks.get(i).getCertificationCount() ==
+					updatedRanks.get(i - 1).getCertificationCount()) {
+
+				updatedRanks.get(i).updateRank(updatedRanks.get(i - 1).getRank());
 			} else {
-				weeklyRankings.get(i).setRank(rankCounter);
+				updatedRanks.get(i).updateRank(ranking);
 			}
-			rankCounter++;
+
+			ranking++;
 		}
 
-		// DB 저장
-		weeklyRankingRepository.saveAll(weeklyRankings);
+		weeklyRankingRepository.saveAll(updatedRanks);
 	}
 
 	public List<TopMemberPointResponse> getAllRankData(LocalDate weekStart, int topN) {
 
 		// 상위 N명 랭킹 엔티티 조회
-		List<WeeklyRanking> topMembersFromDb = weeklyRankingRepository.findTopNByWeekStart(weekStart,
-			topN);
-
-		if (topMembersFromDb.isEmpty()) {
-			return new ArrayList<>();
-		}
+		List<WeeklyRanking> topMembersFromDb = weeklyRankingRepository.findTop8ByWeekStart(weekStart);
 
 		// 엔티티 → DTO 변환
 		return topMembersFromDb.stream()
