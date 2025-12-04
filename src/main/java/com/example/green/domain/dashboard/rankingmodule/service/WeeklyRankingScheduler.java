@@ -18,7 +18,7 @@ public class WeeklyRankingScheduler {
 	/**
 	 * 매주 월요일 00:00시 지난 주 랭킹 계산
 	 */
-	@Scheduled(cron = "0 0 0 * * MON", zone = "Asia/Seoul")
+	@Scheduled(cron = "0 0 17 * * THU", zone = "Asia/Seoul")
 	public void calculateWeeklyRankingBatch() {
 		LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
 
