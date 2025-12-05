@@ -23,7 +23,6 @@ import com.example.green.domain.pointshop.item.entity.vo.ItemBasicInfo;
 import com.example.green.domain.pointshop.item.entity.vo.ItemCode;
 import com.example.green.domain.pointshop.item.entity.vo.ItemMedia;
 import com.example.green.domain.pointshop.item.entity.vo.ItemPrice;
-import com.example.green.domain.pointshop.item.entity.vo.ItemStock;
 import com.example.green.domain.pointshop.item.repository.PointItemRepository;
 import com.example.green.domain.pointshop.item.service.PointItemOrderService;
 import com.example.green.domain.pointshop.item.service.command.OrderPointItemCommand;
@@ -51,9 +50,8 @@ class PointItemOrderServiceControllerTest extends BaseControllerUnitTest {
 		ItemBasicInfo itemBasicInfo = new ItemBasicInfo("무지개", "행운의 네잎클로버가 싱그럽게 피어나요. 오늘 하루도 행운 가득");
 		ItemMedia itemMedia = new ItemMedia("https://thumbnail.url/rainbow-pot.jpg");
 		ItemPrice itemPrice = new ItemPrice(BigDecimal.valueOf(400));
-		ItemStock itemStock = new ItemStock(10);
 
-		PointItem pointItem = new PointItem(itemCode, itemBasicInfo, itemMedia, itemPrice, itemStock);
+		PointItem pointItem = new PointItem(itemCode, itemBasicInfo, itemMedia, itemPrice);
 
 		when(pointItemRepository.findById(itemId)).thenReturn(Optional.of(pointItem));
 

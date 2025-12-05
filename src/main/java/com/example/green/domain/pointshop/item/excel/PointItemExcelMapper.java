@@ -35,8 +35,6 @@ public class PointItemExcelMapper implements ExcelDataMapper<PointItemSearchResp
 			ExcelField.of("아이템 코드", singleBackGroundColor, FieldFormat.TEXT),
 			ExcelField.of("아이템명", singleBackGroundColor, FieldFormat.TEXT),
 			ExcelField.of("아이템 포인트", singleBackGroundColor, FieldFormat.POINT),
-			ExcelField.of("수량", singleBackGroundColor, FieldFormat.NUMBER),
-			ExcelField.of("판매 상태", singleBackGroundColor, FieldFormat.TEXT),
 			ExcelField.of("전시 여부", singleBackGroundColor, FieldFormat.TEXT),
 			ExcelField.of("등록일", singleBackGroundColor, FieldFormat.DATE)
 		);
@@ -48,8 +46,6 @@ public class PointItemExcelMapper implements ExcelDataMapper<PointItemSearchResp
 			data.getCode(),
 			data.getName(),
 			data.getPointPrice(),
-			data.getStockQuantity(),
-			data.getSellingStatus().getValue(),
 			data.getDisplayStatus().getValue(),
 			data.getCreatedDate()
 		};

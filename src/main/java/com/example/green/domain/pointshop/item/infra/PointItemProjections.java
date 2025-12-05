@@ -19,8 +19,6 @@ public class PointItemProjections {
 			qPointItem.itemCode.code.as("code"),
 			qPointItem.itemBasicInfo.itemName.as("name"),
 			qPointItem.itemPrice.itemPrice.as("pointPrice"),
-			qPointItem.itemStock.stock.as("stockQuantity"),
-			qPointItem.sellingStatus,
 			qPointItem.displayStatus,
 			qPointItem.createdDate
 		);

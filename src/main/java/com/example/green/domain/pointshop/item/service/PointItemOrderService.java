@@ -33,7 +33,6 @@ public class PointItemOrderService {
 	private final PointItemOrderRepository pointItemOrderRepository;
 	private final PointItemRepository pointItemRepository;
 	private final PlantGrowthItemRepository plantGrowthItemRepository;
-	private final PointItemService pointItemService;
 	private final PointClient pointClient;
 	private final MemberRepository memberRepository;
 	private final TimeUtils timeUtils;
@@ -63,8 +62,6 @@ public class PointItemOrderService {
 		if (currentPoint == null || currentPoint.compareTo(totalPoint) < 0) {
 			throw new PointItemException(PointItemExceptionMessage.NOT_POSSIBLE_BUY_ITEM);
 		}
-
-		pointItemService.decreaseItemStock(itemId, amount);
 
 		BigDecimal remainPoint = currentPoint.subtract(totalPoint);
 

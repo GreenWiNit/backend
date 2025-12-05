@@ -30,7 +30,6 @@ import com.example.green.domain.pointshop.item.entity.vo.ItemBasicInfo;
 import com.example.green.domain.pointshop.item.entity.vo.ItemCode;
 import com.example.green.domain.pointshop.item.entity.vo.ItemMedia;
 import com.example.green.domain.pointshop.item.entity.vo.ItemPrice;
-import com.example.green.domain.pointshop.item.entity.vo.ItemStock;
 import com.example.green.domain.pointshop.item.repository.PointItemOrderRepository;
 import com.example.green.domain.pointshop.item.repository.PointItemQueryRepository;
 import com.example.green.domain.pointshop.item.service.PointItemQueryService;
@@ -83,8 +82,7 @@ public class PointItemAdminController implements PointItemAdminControllerDocs {
 			new ItemCode(updatePointItemRequest.code()),
 			new ItemBasicInfo(updatePointItemRequest.name(), updatePointItemRequest.description()),
 			new ItemMedia(updatePointItemRequest.thumbnailUrl()),
-			new ItemPrice(updatePointItemRequest.price()),
-			new ItemStock(updatePointItemRequest.stock())
+			new ItemPrice(updatePointItemRequest.price())
 		);
 
 		pointItemService.updatePointItem(command, pointItemId);

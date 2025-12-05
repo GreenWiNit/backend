@@ -56,8 +56,7 @@ public class PointItemQueryExecutor {
 				qPointItem.id,
 				qPointItem.itemBasicInfo.itemName,
 				qPointItem.itemMedia.itemThumbNailUrl,
-				qPointItem.itemPrice.itemPrice,
-				qPointItem.sellingStatus
+				qPointItem.itemPrice.itemPrice
 			))
 			.from(qPointItem)
 			.where(expression)

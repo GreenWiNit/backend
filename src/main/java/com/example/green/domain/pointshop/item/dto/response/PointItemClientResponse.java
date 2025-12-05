@@ -37,9 +37,6 @@ public class PointItemClientResponse {
 	@Column(nullable = false)
 	private BigDecimal remainPoint;
 
-	@Column(nullable = false)
-	private Integer stock;
-
 	public PointItemClientResponse(
 		String itemName,
 		String description,
@@ -47,8 +44,7 @@ public class PointItemClientResponse {
 		BigDecimal price,
 		BigDecimal enablePoint,
 		BigDecimal decreasePoint,
-		BigDecimal remainPoint,
-		Integer stock
+		BigDecimal remainPoint
 	) {
 		validateEmptyString(itemName, REQUIRED_ITEM_NAME);
 		validateEmptyString(description, REQUIRED_ITEM_DESCRIPTION);
@@ -57,7 +53,6 @@ public class PointItemClientResponse {
 		validateNullData(enablePoint, REQUIRED_ENABLE_POINT);
 		validateNullData(decreasePoint, REQUIRED_DECREASE_POINT);
 		validateNullData(remainPoint, REQUIRED_REMAIN_POINT);
-		validateNullData(stock, REQUIRED_ITEM_STOCK);
 
 		this.itemName = itemName;
 		this.description = description;
@@ -66,7 +61,6 @@ public class PointItemClientResponse {
 		this.enablePoint = enablePoint;
 		this.decreasePoint = decreasePoint;
 		this.remainPoint = remainPoint;
-		this.stock = stock;
 	}
 
 	public static PointItemClientResponse from(PointItem pointItem, BigDecimal enablePoint, BigDecimal decreasePoint,
@@ -78,8 +72,7 @@ public class PointItemClientResponse {
 			pointItem.getItemPrice().getItemPrice(),
 			enablePoint,
 			decreasePoint,
-			remainPoint,
-			pointItem.getItemStock().getStock()
+			remainPoint
 		);
 	}
 }
