@@ -19,7 +19,6 @@ import com.example.green.domain.pointshop.item.entity.vo.ItemBasicInfo;
 import com.example.green.domain.pointshop.item.entity.vo.ItemCode;
 import com.example.green.domain.pointshop.item.entity.vo.ItemMedia;
 import com.example.green.domain.pointshop.item.entity.vo.ItemPrice;
-import com.example.green.domain.pointshop.item.entity.vo.ItemStock;
 import com.example.green.domain.pointshop.item.exception.PointItemException;
 import com.example.green.domain.pointshop.item.exception.PointItemExceptionMessage;
 import com.example.green.domain.pointshop.item.repository.PointItemRepository;
@@ -81,8 +80,7 @@ class PointItemServiceTest {
 				new ItemCode("ITM-AA-002"),
 				new ItemBasicInfo("무지개 ", "무지개가 식물을 감싸요. 날씨가 좋을 것 같은 하루!"),
 				new ItemMedia("https://thumbnail.url/image.jpg"),
-				new ItemPrice(BigDecimal.valueOf(450)),
-				new ItemStock(10)
+				new ItemPrice(BigDecimal.valueOf(450))
 			));
 		when(pointItemQueryService.getPointItem(anyLong())).thenReturn(dummyEntity);
 		when(dummyEntity.isNewImage(command.media())).thenReturn(false);
@@ -104,8 +102,7 @@ class PointItemServiceTest {
 				new ItemCode("ITM-AA-002"),
 				new ItemBasicInfo("무지개 ", "무지개가 식물을 감싸요. 날씨가 좋을 것 같은 하루!"),
 				new ItemMedia("https://thumbnail.url/image.jpg"),
-				new ItemPrice(BigDecimal.valueOf(450)),
-				new ItemStock(10)
+				new ItemPrice(BigDecimal.valueOf(450))
 			));
 		String oldImageUrl = "https://thumbnail.url/image.jpg";
 		String newImageUrl = command.media().getItemThumbNailUrl();
@@ -151,8 +148,6 @@ class PointItemServiceTest {
 		when(dummyEntity.getItemMedia()).thenReturn(
 			new ItemMedia("https://thumbnail.url/image.jpg")
 		);
-		when(dummyEntity.getItemStock()).thenReturn(new ItemStock(10));
-
 		// when
 		var response = pointItemService.getPointItemInfo(null, itemId);
 
@@ -181,8 +176,6 @@ class PointItemServiceTest {
 		when(dummyEntity.getItemMedia()).thenReturn(
 			new ItemMedia("https://thumbnail.url/image.jpg")
 		);
-		when(dummyEntity.getItemStock()).thenReturn(new ItemStock(10));
-
 		// 포인트 계산 결과(record)
 		UserPointCalculation calc = new UserPointCalculation(
 			BigDecimal.valueOf(5000),
@@ -209,8 +202,7 @@ class PointItemServiceTest {
 			new ItemCode("ITM-AA-001"),
 			new ItemBasicInfo("맑은 뭉게 구름 ", "하늘에서 포근한 구름이 내려와 식물을 감싸요. 몽글몽글 기분 좋은 하루!"),
 			new ItemMedia("https://thumbnail.url/image.jpg"),
-			new ItemPrice(BigDecimal.valueOf(1200)),
-			new ItemStock(10)
+			new ItemPrice(BigDecimal.valueOf(1200))
 		);
 	}
 
@@ -219,8 +211,6 @@ class PointItemServiceTest {
 			new ItemCode("ITM-AA-001"),
 			new ItemBasicInfo("행운의 네잎클로버 ", "행운의 네잎클로버가 식물을 감싸요. 뭔가 운이 좋을 것 같은 하루!"),
 			new ItemMedia("https://thumbnail.url/image.jpg"),
-			new ItemPrice(BigDecimal.valueOf(600)),
-			new ItemStock(10)
-		);
+			new ItemPrice(BigDecimal.valueOf(600)));
 	}
 }

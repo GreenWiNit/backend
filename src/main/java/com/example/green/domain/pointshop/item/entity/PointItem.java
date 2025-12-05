@@ -9,9 +9,6 @@ import com.example.green.domain.pointshop.item.entity.vo.ItemCode;
 import com.example.green.domain.pointshop.item.entity.vo.ItemDisplayStatus;
 import com.example.green.domain.pointshop.item.entity.vo.ItemMedia;
 import com.example.green.domain.pointshop.item.entity.vo.ItemPrice;
-import com.example.green.domain.pointshop.item.entity.vo.ItemStock;
-import com.example.green.domain.pointshop.item.exception.PointItemException;
-import com.example.green.domain.pointshop.product.entity.vo.SellingStatus;
 
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
@@ -60,46 +57,32 @@ public class PointItem extends BaseEntity {
 	@Embedded
 	private ItemPrice itemPrice;
 
-	@Embedded
-	private ItemStock itemStock;
-
-	@Column(nullable = false)
-	@Enumerated(EnumType.STRING)
-	private SellingStatus sellingStatus;
-
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private ItemDisplayStatus displayStatus;
 
 	@Builder
-	public PointItem(ItemCode itemCode, ItemBasicInfo itemBasicInfo, ItemMedia itemMedia, ItemPrice itemPrice,
-		ItemStock itemStock) {
-		validatePointItem(itemCode, itemBasicInfo, itemMedia, itemPrice, itemStock);
+	public PointItem(ItemCode itemCode, ItemBasicInfo itemBasicInfo, ItemMedia itemMedia, ItemPrice itemPrice
+	) {
+		validatePointItem(itemCode, itemBasicInfo, itemMedia, itemPrice);
 		this.itemCode = itemCode;
 		this.itemBasicInfo = itemBasicInfo;
 		this.itemMedia = itemMedia;
 		this.itemPrice = itemPrice;
-		this.itemStock = itemStock;
-		this.sellingStatus = SellingStatus.EXCHANGEABLE;
 		this.displayStatus = ItemDisplayStatus.DISPLAY;
 	}
 
 	public static PointItem create(ItemCode itemCode, ItemBasicInfo itemBasicInfo, ItemMedia itemMedia,
-		ItemPrice itemPrice, ItemStock itemStock) {
-		return new PointItem(itemCode, itemBasicInfo, itemMedia, itemPrice, itemStock);
+		ItemPrice itemPrice) {
+		return new PointItem(itemCode, itemBasicInfo, itemMedia, itemPrice);
 	}
 
 	private static void validatePointItem(ItemCode itemCode, ItemBasicInfo itemBasicInfo, ItemMedia itemMedia,
-		ItemPrice itemPrice, ItemStock itemStock) {
+		ItemPrice itemPrice) {
 		validateNullData(itemCode, REQUIRED_ITEM_CODE);
 		validateNullData(itemBasicInfo, REQUIRED_ITEM_BASIC_INFO);
 		validateNullData(itemMedia, REQUIRED_ITEM_MEDIA);
 		validateNullData(itemPrice, REQUIRED_ITEM_PRICE);
-		validateNullData(itemStock, REQUIRED_ITEM_STOCK);
-		if (itemStock.isSoldOut()) {
-			throw new PointItemException(INVALID_ITEM_STOCK_CREATION);
-		}
-
 	}
 
 	public void updateItemCode(ItemCode itemCode) {
@@ -120,24 +103,6 @@ public class PointItem extends BaseEntity {
 	public void updateItemPrice(ItemPrice itemPrice) {
 		validateNullData(itemPrice, REQUIRED_ITEM_PRICE);
 		this.itemPrice = itemPrice;
-	}
-
-	public void updateItemStock(ItemStock itemStock) {
-		validateNullData(itemStock, REQUIRED_ITEM_STOCK);
-		this.itemStock = itemStock;
-		this.sellingStatus = updateSellingStatus();
-	}
-
-	public void decreaseStock(int amount) {
-		this.itemStock = this.itemStock.decreaseStock(amount);
-		this.sellingStatus = updateSellingStatus();
-	}
-
-	private SellingStatus updateSellingStatus() {
-		if (this.itemStock.isSoldOut()) {
-			return SellingStatus.SOLD_OUT;
-		}
-		return SellingStatus.EXCHANGEABLE;
 	}
 
 	public boolean isNewImage(ItemMedia media) {

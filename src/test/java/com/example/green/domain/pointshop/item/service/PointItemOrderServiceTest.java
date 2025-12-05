@@ -91,9 +91,6 @@ class PointItemOrderServiceTest {
 		given(pointItemRepository.findById(anyLong()))
 			.willReturn(Optional.of(mock(com.example.green.domain.pointshop.item.entity.PointItem.class)));
 
-		// Stock 감소 mock
-		doNothing().when(pointItemService).decreaseItemStock(1L, 4);
-
 		// spend 포인트 mock
 		doNothing().when(pointClient).spendPoints(any(PointSpendRequest.class));
 
@@ -130,47 +127,6 @@ class PointItemOrderServiceTest {
 		assertThatThrownBy(() -> pointItemOrderService.orderPointItem(command, request))
 			.isInstanceOf(PointItemException.class)
 			.hasMessage(PointItemExceptionMessage.NOT_POSSIBLE_BUY_ITEM.getMessage());
-	}
-
-	@Test
-	void 재고가_부족하면_예외발생() {
-		// given
-		MemberSnapshot memberSnapshot = new MemberSnapshot(1L, "member_key", "user1@test.com");
-
-		PointItemSnapshot snapshot = new PointItemSnapshot(
-			1L,
-			"무지개",
-			"ITM-AA-002",
-			"https://thumbnail.url/image.jpg",
-			BigDecimal.valueOf(450)
-		);
-
-		OrderPointItemCommand command = new OrderPointItemCommand(memberSnapshot, snapshot);
-		OrderPointItemRequest request = new OrderPointItemRequest(5); // 구매 요청 수량: 5
-
-		// member mocking
-		given(memberRepository.findById(1L)).willReturn(Optional.of(member));
-
-		// 아이템 존재
-		given(pointItemRepository.findById(anyLong()))
-			.willReturn(Optional.of(mock(com.example.green.domain.pointshop.item.entity.PointItem.class)));
-
-		// 포인트는 충분하다고 가정 (문제 관심사는 재고)
-		given(pointClient.getTotalPoints(1L)).willReturn(BigDecimal.valueOf(9999));
-
-		// 재고 부족 상황 mocking
-		doThrow(new PointItemException(PointItemExceptionMessage.OUT_OF_ITEM_STOCK))
-			.when(pointItemService)
-			.decreaseItemStock(1L, 5);
-
-		// when & then
-		assertThatThrownBy(() -> pointItemOrderService.orderPointItem(command, request))
-			.isInstanceOf(PointItemException.class)
-			.hasMessage(PointItemExceptionMessage.OUT_OF_ITEM_STOCK.getMessage());
-
-		// spendPoints, save 등 → 호출되면 안 됨
-		verify(pointClient, never()).spendPoints(any());
-		verify(pointItemOrderRepository, never()).save(any());
 	}
 
 }
