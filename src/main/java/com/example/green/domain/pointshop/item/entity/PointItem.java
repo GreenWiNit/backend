@@ -4,6 +4,7 @@ import static com.example.green.domain.pointshop.item.exception.PointItemExcepti
 import static com.example.green.global.utils.EntityValidator.*;
 
 import com.example.green.domain.common.BaseEntity;
+import com.example.green.domain.pointshop.item.entity.vo.Category;
 import com.example.green.domain.pointshop.item.entity.vo.ItemBasicInfo;
 import com.example.green.domain.pointshop.item.entity.vo.ItemCode;
 import com.example.green.domain.pointshop.item.entity.vo.ItemDisplayStatus;
@@ -61,20 +62,25 @@ public class PointItem extends BaseEntity {
 	@Enumerated(EnumType.STRING)
 	private ItemDisplayStatus displayStatus;
 
+	@Column(nullable = false)
+	@Enumerated(EnumType.STRING)
+	private Category category;
+
 	@Builder
-	public PointItem(ItemCode itemCode, ItemBasicInfo itemBasicInfo, ItemMedia itemMedia, ItemPrice itemPrice
-	) {
+	public PointItem(ItemCode itemCode, ItemBasicInfo itemBasicInfo, ItemMedia itemMedia, ItemPrice itemPrice,
+		Category category) {
 		validatePointItem(itemCode, itemBasicInfo, itemMedia, itemPrice);
 		this.itemCode = itemCode;
 		this.itemBasicInfo = itemBasicInfo;
 		this.itemMedia = itemMedia;
 		this.itemPrice = itemPrice;
 		this.displayStatus = ItemDisplayStatus.DISPLAY;
+		this.category = category;
 	}
 
 	public static PointItem create(ItemCode itemCode, ItemBasicInfo itemBasicInfo, ItemMedia itemMedia,
-		ItemPrice itemPrice) {
-		return new PointItem(itemCode, itemBasicInfo, itemMedia, itemPrice);
+		ItemPrice itemPrice, Category category) {
+		return new PointItem(itemCode, itemBasicInfo, itemMedia, itemPrice, category);
 	}
 
 	private static void validatePointItem(ItemCode itemCode, ItemBasicInfo itemBasicInfo, ItemMedia itemMedia,

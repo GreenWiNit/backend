@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.example.green.domain.pointshop.item.dto.response.PointItemClientResponse;
 import com.example.green.domain.pointshop.item.dto.response.UserPointCalculation;
 import com.example.green.domain.pointshop.item.entity.PointItem;
+import com.example.green.domain.pointshop.item.entity.vo.Category;
 import com.example.green.domain.pointshop.item.entity.vo.ItemCode;
 import com.example.green.domain.pointshop.item.exception.PointItemException;
 import com.example.green.domain.pointshop.item.exception.PointItemExceptionMessage;
@@ -27,13 +28,14 @@ public class PointItemService {
 	private final PointItemQueryService pointItemQueryService;
 	private final FileClient fileClient;
 
-	public Long create(PointItemCreateCommand createCommand) {
+	public Long create(PointItemCreateCommand createCommand, Category category) {
 		validatePointItemCode(createCommand.itemCode());
 		PointItem pointItem = PointItem.create(
 			createCommand.itemCode(),
 			createCommand.info(),
 			createCommand.media(),
-			createCommand.price()
+			createCommand.price(),
+			category
 		);
 
 		PointItem savedPointItem = pointItemRepository.save(pointItem);

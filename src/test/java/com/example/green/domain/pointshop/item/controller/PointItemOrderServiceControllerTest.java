@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.example.green.domain.pointshop.item.dto.request.OrderPointItemRequest;
 import com.example.green.domain.pointshop.item.dto.response.OrderPointItemResponse;
 import com.example.green.domain.pointshop.item.entity.PointItem;
+import com.example.green.domain.pointshop.item.entity.vo.Category;
 import com.example.green.domain.pointshop.item.entity.vo.ItemBasicInfo;
 import com.example.green.domain.pointshop.item.entity.vo.ItemCode;
 import com.example.green.domain.pointshop.item.entity.vo.ItemMedia;
@@ -51,7 +52,7 @@ class PointItemOrderServiceControllerTest extends BaseControllerUnitTest {
 		ItemMedia itemMedia = new ItemMedia("https://thumbnail.url/rainbow-pot.jpg");
 		ItemPrice itemPrice = new ItemPrice(BigDecimal.valueOf(400));
 
-		PointItem pointItem = new PointItem(itemCode, itemBasicInfo, itemMedia, itemPrice);
+		PointItem pointItem = new PointItem(itemCode, itemBasicInfo, itemMedia, itemPrice, Category.ITEM);
 
 		when(pointItemRepository.findById(itemId)).thenReturn(Optional.of(pointItem));
 

@@ -1,5 +1,6 @@
 package com.example.green.domain.pointshop.item.service.command;
 
+import com.example.green.domain.pointshop.item.entity.vo.Category;
 import com.example.green.domain.pointshop.item.entity.vo.ItemBasicInfo;
 import com.example.green.domain.pointshop.item.entity.vo.ItemCode;
 import com.example.green.domain.pointshop.item.entity.vo.ItemMedia;
@@ -9,6 +10,7 @@ public record PointItemUpdateCommand(
 	ItemCode itemCode,
 	ItemBasicInfo info,
 	ItemMedia media,
-	ItemPrice price
+	ItemPrice price,
+	Category category
 ) {
 }

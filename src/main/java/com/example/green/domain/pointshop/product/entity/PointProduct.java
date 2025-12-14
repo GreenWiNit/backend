@@ -4,6 +4,7 @@ import static com.example.green.domain.pointshop.product.exception.PointProductE
 import static com.example.green.global.utils.EntityValidator.*;
 
 import com.example.green.domain.common.BaseEntity;
+import com.example.green.domain.pointshop.item.entity.vo.Category;
 import com.example.green.domain.pointshop.product.entity.vo.BasicInfo;
 import com.example.green.domain.pointshop.product.entity.vo.Code;
 import com.example.green.domain.pointshop.product.entity.vo.DisplayStatus;
@@ -65,8 +66,12 @@ public class PointProduct extends BaseEntity {
 	@Enumerated(EnumType.STRING)
 	private DisplayStatus displayStatus;
 
+	@Column(nullable = false)
+	@Enumerated(EnumType.STRING)
+	private Category category;
+
 	@Builder
-	public PointProduct(Code code, BasicInfo basicInfo, Media media, Price price, Stock stock) {
+	public PointProduct(Code code, BasicInfo basicInfo, Media media, Price price, Stock stock, Category category) {
 		validatePointProduct(code, basicInfo, media, price, stock);
 		this.code = code;
 		this.basicInfo = basicInfo;
@@ -75,10 +80,12 @@ public class PointProduct extends BaseEntity {
 		this.stock = stock;
 		this.sellingStatus = SellingStatus.EXCHANGEABLE;
 		this.displayStatus = DisplayStatus.DISPLAY;
+		this.category = category;
 	}
 
-	public static PointProduct create(Code code, BasicInfo basicInfo, Media media, Price price, Stock stock) {
-		return new PointProduct(code, basicInfo, media, price, stock);
+	public static PointProduct create(Code code, BasicInfo basicInfo, Media media, Price price, Stock stock,
+		Category category) {
+		return new PointProduct(code, basicInfo, media, price, stock, category);
 	}
 
 	private static void validatePointProduct(Code code, BasicInfo basicInfo, Media media, Price price, Stock stock) {

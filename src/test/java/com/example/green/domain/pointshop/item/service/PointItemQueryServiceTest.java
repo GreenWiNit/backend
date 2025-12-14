@@ -13,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.example.green.domain.pointshop.item.entity.PointItem;
+import com.example.green.domain.pointshop.item.entity.vo.Category;
 import com.example.green.domain.pointshop.item.entity.vo.ItemBasicInfo;
 import com.example.green.domain.pointshop.item.entity.vo.ItemCode;
 import com.example.green.domain.pointshop.item.entity.vo.ItemMedia;
@@ -74,7 +75,9 @@ class PointItemQueryServiceTest {
 				new ItemCode("ITM-AA-002"),
 				new ItemBasicInfo("무지개 ", "무지개가 식물을 감싸요. 날씨가 좋을 것 같은 하루!"),
 				new ItemMedia("https://thumbnail.url/image.jpg"),
-				new ItemPrice(BigDecimal.valueOf(450))));
+				new ItemPrice(BigDecimal.valueOf(450)),
+				Category.ITEM
+			));
 		//when
 		when(repository.findById(anyLong())).thenReturn(Optional.of(dummyEntity));
 		PointItem pointItem = service.getPointItem(1L);

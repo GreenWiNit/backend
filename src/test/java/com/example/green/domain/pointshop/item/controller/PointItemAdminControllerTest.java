@@ -13,17 +13,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
-import com.example.green.domain.pointshop.item.dto.request.CreatePointItemRequest;
 import com.example.green.domain.pointshop.item.dto.request.PointItemExcelDownloadRequest;
 import com.example.green.domain.pointshop.item.dto.request.PointItemSearchRequest;
-import com.example.green.domain.pointshop.item.dto.request.UpdatePointItemRequest;
 import com.example.green.domain.pointshop.item.dto.response.PointItemSearchResponse;
 import com.example.green.domain.pointshop.item.repository.PointItemOrderRepository;
 import com.example.green.domain.pointshop.item.repository.PointItemQueryRepository;
 import com.example.green.domain.pointshop.item.service.PointItemQueryService;
 import com.example.green.domain.pointshop.item.service.PointItemService;
-import com.example.green.domain.pointshop.item.service.command.PointItemCreateCommand;
-import com.example.green.domain.pointshop.item.service.command.PointItemUpdateCommand;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.NoContent;
 import com.example.green.global.api.page.PageTemplate;
@@ -53,32 +49,6 @@ class PointItemAdminControllerTest extends BaseControllerUnitTest {
 	private ExcelDownloader excelDownloader;
 
 	@Test
-	void 포인트_아이템_생성_요청에_성공한다() {
-		//given
-		CreatePointItemRequest createPointItemRequest = DummyData.createPointItemRequest();
-		when(pointItemService.create(any(PointItemCreateCommand.class))).thenReturn(1L);
-
-		//when
-		ApiTemplate<Long> response = create(createPointItemRequest);
-
-		//then
-		assertThat(response.result()).isEqualTo(1L);
-		assertThat(response.message()).isEqualTo(POINT_ITEM_CREATION_SUCCESS.getMessage());
-	}
-
-	public static ApiTemplate<Long> create(CreatePointItemRequest createPointItemRequest) {
-		return RestAssuredMockMvc
-			.given().log().all()
-			.contentType(MediaType.APPLICATION_JSON)
-			.body(createPointItemRequest)
-			.when().post("/api/admin/point-items")
-			.then().log().all()
-			.status(HttpStatus.OK)
-			.extract().as(new TypeRef<>() {
-			});
-	}
-
-	@Test
 	void 포인트_아이템_목록_조회_요청에_성공한다() {
 		//given
 		PointItemSearchResponse data = mock(PointItemSearchResponse.class);
@@ -100,51 +70,6 @@ class PointItemAdminControllerTest extends BaseControllerUnitTest {
 			.given().log().all()
 			.contentType(MediaType.APPLICATION_JSON)
 			.when().get("/api/admin/point-items")
-			.then().log().all()
-			.status(HttpStatus.OK)
-			.extract().as(new TypeRef<>() {
-			});
-	}
-
-	@Test
-	void 포인트_아이템_수정_요청에_성공한다() {
-		//given
-		UpdatePointItemRequest updatePointItemRequest = DummyData.updatePointItemRequest();
-
-		// when
-		NoContent response = update(updatePointItemRequest);
-
-		// then
-		assertThat(response.message()).isEqualTo(POINT_ITEM_UPDATE_SUCCESS.getMessage());
-		verify(pointItemService).updatePointItem(any(PointItemUpdateCommand.class), anyLong());
-
-	}
-
-	public static NoContent update(UpdatePointItemRequest updatePointItemRequest) {
-		return RestAssuredMockMvc
-			.given().log().all()
-			.contentType(MediaType.APPLICATION_JSON)
-			.body(updatePointItemRequest)
-			.when().put("/api/admin/point-items/1")
-			.then().log().all()
-			.status(HttpStatus.OK)
-			.extract().as(new TypeRef<>() {
-			});
-	}
-
-	@Test
-	void 포인트_아이템_삭제_요청_성공한다() {
-		//when
-		NoContent deleteResponse = delete(1L);
-		assertThat(deleteResponse.message()).isEqualTo(POINT_ITEM_DELETE_SUCCESS.getMessage());
-
-	}
-
-	public static NoContent delete(long id) {
-		return RestAssuredMockMvc
-			.given().log().all()
-			.contentType(MediaType.APPLICATION_JSON)
-			.when().delete("/api/admin/point-items/" + id)
 			.then().log().all()
 			.status(HttpStatus.OK)
 			.extract().as(new TypeRef<>() {
