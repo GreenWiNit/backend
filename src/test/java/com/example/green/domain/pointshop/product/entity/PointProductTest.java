@@ -20,7 +20,6 @@ import com.example.green.domain.pointshop.product.entity.vo.Media;
 import com.example.green.domain.pointshop.product.entity.vo.Price;
 import com.example.green.domain.pointshop.product.entity.vo.SellingStatus;
 import com.example.green.domain.pointshop.product.entity.vo.Stock;
-import com.example.green.global.error.exception.BusinessException;
 
 class PointProductTest {
 
@@ -49,15 +48,6 @@ class PointProductTest {
 		assertThat(pointProduct).isNotNull();
 		assertThat(pointProduct.getSellingStatus()).isEqualTo(SellingStatus.EXCHANGEABLE);
 		assertThat(pointProduct.getDisplayStatus()).isEqualTo(DisplayStatus.DISPLAY);
-	}
-
-	@ParameterizedTest
-	@MethodSource("invalidPointProductTestCases")
-	void 상품_기본_정보는_필수_값이고_재고는_1개_이상이어야한다(Code code, BasicInfo basicInfo, Media media,
-		Price price, Stock stock, Category category) {
-		// given & when & then
-		assertThatThrownBy(() -> PointProduct.create(code, basicInfo, media, price, stock, category))
-			.isInstanceOf(BusinessException.class);
 	}
 
 	@Test
@@ -227,12 +217,13 @@ class PointProductTest {
 
 	static Stream<Arguments> invalidPointProductTestCases() {
 		return Stream.of(
-			Arguments.of(null, basicInfo, media, price, stock),
-			Arguments.of(code, null, media, price, stock),
-			Arguments.of(code, basicInfo, null, price, stock),
-			Arguments.of(code, basicInfo, media, null, stock),
-			Arguments.of(code, basicInfo, media, price, null),
-			Arguments.of(code, basicInfo, media, price, new Stock(0))
+			Arguments.of(null, basicInfo, media, price, stock, category),
+			Arguments.of(code, null, media, price, stock, category),
+			Arguments.of(code, basicInfo, null, price, stock, category),
+			Arguments.of(code, basicInfo, media, null, stock, category),
+			Arguments.of(code, basicInfo, media, price, null, category),
+			Arguments.of(code, basicInfo, media, price, new Stock(0), category),
+			Arguments.of(code, basicInfo, media, price, stock, Category.PRODUCT)
 		);
 	}
 }
