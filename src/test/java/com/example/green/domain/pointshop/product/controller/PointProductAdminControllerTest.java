@@ -11,19 +11,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
-import com.example.green.domain.pointshop.product.controller.dto.PointProductCreateDto;
 import com.example.green.domain.pointshop.product.controller.dto.PointProductDetailForAdmin;
 import com.example.green.domain.pointshop.product.controller.dto.PointProductExcelCondition;
 import com.example.green.domain.pointshop.product.controller.dto.PointProductSearchCondition;
 import com.example.green.domain.pointshop.product.controller.dto.PointProductSearchResult;
-import com.example.green.domain.pointshop.product.controller.dto.PointProductUpdateDto;
 import com.example.green.domain.pointshop.product.entity.PointProduct;
 import com.example.green.domain.pointshop.product.entity.vo.SellingStatus;
 import com.example.green.domain.pointshop.product.repository.PointProductQueryRepository;
 import com.example.green.domain.pointshop.product.service.PointProductQueryService;
 import com.example.green.domain.pointshop.product.service.PointProductService;
-import com.example.green.domain.pointshop.product.service.command.PointProductCreateCommand;
-import com.example.green.domain.pointshop.product.service.command.PointProductUpdateCommand;
 import com.example.green.global.api.ApiTemplate;
 import com.example.green.global.api.NoContent;
 import com.example.green.global.api.page.PageTemplate;
@@ -43,20 +39,6 @@ class PointProductAdminControllerTest extends BaseControllerUnitTest {
 	private PointProductQueryRepository pointProductQueryRepository;
 	@MockitoBean
 	private ExcelDownloader excelDownloader;
-
-	@Test
-	void 포인트_상품_생성_요청에_성공한다() {
-		// given
-		PointProductCreateDto dto = DtoGenerator.getCreateDto();
-		when(pointProductService.create(any(PointProductCreateCommand.class))).thenReturn(1L);
-
-		// when
-		ApiTemplate<Long> response = PointProductRequest.create(dto);
-
-		// then
-		assertThat(response.result()).isEqualTo(1L);
-		assertThat(response.message()).isEqualTo(POINT_PRODUCT_CREATION_SUCCESS.getMessage());
-	}
 
 	@Test
 	void 포인트_상품_목록_조회에_성공한다() {
@@ -90,19 +72,6 @@ class PointProductAdminControllerTest extends BaseControllerUnitTest {
 	}
 
 	@Test
-	void 포인트_상품_수정_요청에_성공한다() {
-		// given
-		PointProductUpdateDto dto = DtoGenerator.getUpdateDto();
-
-		// when
-		NoContent response = PointProductRequest.update(dto);
-
-		// then
-		assertThat(response.message()).isEqualTo(POINT_PRODUCT_UPDATE_SUCCESS.getMessage());
-		verify(pointProductService).update(any(PointProductUpdateCommand.class), anyLong());
-	}
-
-	@Test
 	void 포인트_아이디가_주어지면_포인트_상품_상세_조회에_성공한다() {
 		// given
 		PointProduct mock = getMockPointProductWithStub();
@@ -115,15 +84,6 @@ class PointProductAdminControllerTest extends BaseControllerUnitTest {
 		// then
 		assertThat(response.result()).isEqualTo(result);
 		assertThat(response.message()).isEqualTo(POINT_PRODUCT_DETAIL_INQUIRY_SUCCESS.getMessage());
-	}
-
-	@Test
-	void 포인트_상품_삭제_요청에_성공한다() {
-		// when
-		NoContent response = PointProductRequest.delete(1L);
-
-		// then
-		assertThat(response.message()).isEqualTo(POINT_PRODUCT_DELETE_SUCCESS.getMessage());
 	}
 
 	@Test

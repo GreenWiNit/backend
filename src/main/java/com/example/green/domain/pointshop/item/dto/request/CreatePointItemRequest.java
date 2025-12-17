@@ -2,6 +2,7 @@ package com.example.green.domain.pointshop.item.dto.request;
 
 import java.math.BigDecimal;
 
+import com.example.green.domain.pointshop.item.entity.vo.Category;
 import com.example.green.domain.pointshop.item.entity.vo.ItemBasicInfo;
 import com.example.green.domain.pointshop.item.entity.vo.ItemCode;
 import com.example.green.domain.pointshop.item.entity.vo.ItemMedia;
@@ -34,14 +35,19 @@ public record CreatePointItemRequest(
 	String thumbnailUrl,
 	@NotNull(message = "아이템 상품 가격은 필수입니다.")
 	@Schema(description = "아이템 상품 가격", example = "10000")
-	BigDecimal price
+	BigDecimal price,
+
+	@Schema(description = "분류 카테고리", example = "ITEM")
+	Category category
+
 ) {
 	public PointItemCreateCommand toCommand() {
 		return new PointItemCreateCommand(
 			new ItemCode(code),
 			new ItemBasicInfo(name, description),
 			new ItemMedia(thumbnailUrl),
-			new ItemPrice(price)
+			new ItemPrice(price),
+			category
 		);
 	}
 }

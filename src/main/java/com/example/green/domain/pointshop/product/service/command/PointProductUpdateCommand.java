@@ -1,5 +1,6 @@
 package com.example.green.domain.pointshop.product.service.command;
 
+import com.example.green.domain.pointshop.item.entity.vo.Category;
 import com.example.green.domain.pointshop.product.entity.vo.BasicInfo;
 import com.example.green.domain.pointshop.product.entity.vo.Code;
 import com.example.green.domain.pointshop.product.entity.vo.Media;
@@ -11,6 +12,7 @@ public record PointProductUpdateCommand(
 	BasicInfo basicInfo,
 	Media media,
 	Price price,
-	Stock stock
+	Stock stock,
+	Category category
 ) {
 }
