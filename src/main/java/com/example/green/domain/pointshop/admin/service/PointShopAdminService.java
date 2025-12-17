@@ -51,7 +51,7 @@ public class PointShopAdminService {
 				new ItemPrice(request.price()),
 				Category.ITEM
 			);
-			return pointItemService.create(command, Category.ITEM);
+			return pointItemService.create(command);
 		}
 
 		if (request.type() == PointShopType.PRODUCT) {
@@ -62,7 +62,7 @@ public class PointShopAdminService {
 				new Price(request.price()),
 				new Stock(request.stock())
 			);
-			return pointProductService.create(command, Category.PRODUCT);
+			return pointProductService.create(command);
 		}
 
 		throw new PointShopAdminException(PointShopAdminExceptionMessage.NOT_FOUND_CATEGORY);

@@ -83,9 +83,8 @@ public class PointProduct extends BaseEntity {
 		this.category = category;
 	}
 
-	public static PointProduct create(Code code, BasicInfo basicInfo, Media media, Price price, Stock stock,
-		Category category) {
-		return new PointProduct(code, basicInfo, media, price, stock, category);
+	public static PointProduct create(Code code, BasicInfo basicInfo, Media media, Price price, Stock stock) {
+		return new PointProduct(code, basicInfo, media, price, stock, Category.PRODUCT);
 	}
 
 	private static void validatePointProduct(Code code, BasicInfo basicInfo, Media media, Price price, Stock stock) {

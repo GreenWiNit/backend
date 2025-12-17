@@ -57,7 +57,7 @@ class PointShopAdminServiceTest {
 			.price(BigDecimal.valueOf(1000))
 			.build();
 
-		when(pointItemService.create(any(PointItemCreateCommand.class), any()))
+		when(pointItemService.create(any(PointItemCreateCommand.class)))
 			.thenReturn(1L);
 
 		// when
@@ -65,8 +65,8 @@ class PointShopAdminServiceTest {
 
 		// then
 		assertThat(result).isEqualTo(1L);
-		verify(pointItemService).create(any(PointItemCreateCommand.class), any());
-		verify(pointProductService, never()).create(any(), any());
+		verify(pointItemService).create(any(PointItemCreateCommand.class));
+		verify(pointProductService, never()).create(any());
 	}
 
 	@Test
@@ -82,7 +82,7 @@ class PointShopAdminServiceTest {
 			.stock(10)
 			.build();
 
-		when(pointProductService.create(any(PointProductCreateCommand.class), any()))
+		when(pointProductService.create(any(PointProductCreateCommand.class)))
 			.thenReturn(2L);
 
 		// when
@@ -90,8 +90,8 @@ class PointShopAdminServiceTest {
 
 		// then
 		assertThat(result).isEqualTo(2L);
-		verify(pointProductService).create(any(PointProductCreateCommand.class), any());
-		verify(pointItemService, never()).create(any(), any());
+		verify(pointProductService).create(any(PointProductCreateCommand.class));
+		verify(pointItemService, never()).create(any());
 	}
 
 	@Test

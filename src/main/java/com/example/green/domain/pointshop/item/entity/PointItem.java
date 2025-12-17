@@ -79,8 +79,8 @@ public class PointItem extends BaseEntity {
 	}
 
 	public static PointItem create(ItemCode itemCode, ItemBasicInfo itemBasicInfo, ItemMedia itemMedia,
-		ItemPrice itemPrice, Category category) {
-		return new PointItem(itemCode, itemBasicInfo, itemMedia, itemPrice, category);
+		ItemPrice itemPrice) {
+		return new PointItem(itemCode, itemBasicInfo, itemMedia, itemPrice, Category.ITEM);
 	}
 
 	private static void validatePointItem(ItemCode itemCode, ItemBasicInfo itemBasicInfo, ItemMedia itemMedia,

@@ -3,7 +3,6 @@ package com.example.green.domain.pointshop.product.service;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.green.domain.pointshop.item.entity.vo.Category;
 import com.example.green.domain.pointshop.order.entity.vo.ItemSnapshot;
 import com.example.green.domain.pointshop.product.entity.PointProduct;
 import com.example.green.domain.pointshop.product.entity.vo.Code;
@@ -25,15 +24,14 @@ public class PointProductService {
 	private final PointProductRepository pointProductRepository;
 	private final FileClient fileClient;
 
-	public Long create(PointProductCreateCommand command, Category category) {
+	public Long create(PointProductCreateCommand command) {
 		validateProductCode(command.code());
 		PointProduct pointProduct = PointProduct.create(
 			command.code(),
 			command.basicInfo(),
 			command.media(),
 			command.price(),
-			command.stock(),
-			category
+			command.stock()
 		);
 
 		PointProduct saved = pointProductRepository.save(pointProduct);

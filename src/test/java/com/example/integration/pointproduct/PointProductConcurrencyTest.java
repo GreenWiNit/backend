@@ -9,7 +9,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.example.green.domain.pointshop.item.entity.vo.Category;
 import com.example.green.domain.pointshop.product.entity.PointProduct;
 import com.example.green.domain.pointshop.product.entity.vo.BasicInfo;
 import com.example.green.domain.pointshop.product.entity.vo.Code;
@@ -41,8 +40,7 @@ class PointProductConcurrencyTest extends BaseIntegrationTest {
 			new BasicInfo("name", "desc"),
 			new Media("http://thumbnail.com"),
 			new Price(BigDecimal.valueOf(1000)),
-			stock,
-			Category.PRODUCT
+			stock
 		));
 	}
 

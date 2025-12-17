@@ -12,7 +12,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import com.example.green.domain.pointshop.item.entity.vo.Category;
 import com.example.green.domain.pointshop.product.controller.dto.PointProductDetail;
 import com.example.green.domain.pointshop.product.controller.dto.PointProductView;
 import com.example.green.domain.pointshop.product.entity.PointProduct;
@@ -71,8 +70,7 @@ class PointProductControllerTest extends BaseControllerUnitTest {
 		Media media = new Media("https://image.png");
 		Stock mockStock = new Stock(10);
 		Price mockPrice = new Price(BigDecimal.ONE);
-		Category category = Category.PRODUCT;
-		PointProduct pointProduct = PointProduct.create(code, mockBasicInfo, media, mockPrice, mockStock, category);
+		PointProduct pointProduct = PointProduct.create(code, mockBasicInfo, media, mockPrice, mockStock);
 		ReflectionTestUtils.setField(pointProduct, "id", 1L);
 		return pointProduct;
 	}
